@@ -92,7 +92,7 @@ export function DashboardView({
       }
     })
 
-    // งานที่อยู่ในขั้นตอนสถานะรอpublished: ตรวจ/ลงเว็บเสร็จแล้ว รอ published
+    // งานที่อยู่ในขั้นตอนสถานะรอpublished: ลงคำเสร็จแล้ว รออัพลงเว็ป
     let waitPostCount = 0
     queueList.forEach((q) => {
       if (isStepDone(q.poststatus)) return
@@ -361,7 +361,7 @@ export function DashboardView({
               </p>
             )}
             <p className="text-[11px] text-slate-500 mt-0.5">
-              ตรวจ/ลงเว็บเสร็จแล้ว รอ published
+              ลงคำเสร็จแล้ว รออัพลงเว็ป
             </p>
           </div>
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/20 text-sky-400">
