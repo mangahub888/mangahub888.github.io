@@ -139,7 +139,7 @@ export function DashboardView({
       return 5
     }
 
-    // Prior month backlog (วันที่ 0) - All tasks created before this month that are incomplete
+    // Prior month backlog (วันที่ 0) - Only tasks created before this month that are incomplete (translate & typeset only)
     const dayZeroItems = queueList.filter((q) => {
       const qDate = getQueueItemDate(q)
       if (!qDate) return false
@@ -147,7 +147,9 @@ export function DashboardView({
         qDate.getFullYear() < year ||
         (qDate.getFullYear() === year && qDate.getMonth() < month)
       if (!isBeforeThisMonth) return false
-      return !isStepDone(q.poststatus)
+      if (isStepDone(q.poststatus)) return false
+      const stepKey = getQueueCurrentStep(q)
+      return stepKey === "translate" || stepKey === "typeset"
     })
 
     dayZeroItems.sort((a, b) => {
@@ -428,7 +430,7 @@ export function DashboardView({
                     </Badge>
                   </div>
                   <span className="text-[11px] text-amber-300/80">
-                    งานเดือนก่อนๆ ที่ยังไม่เสร็จ • คลิกเพื่อไปยังคิวงาน
+                    งานเดือนก่อนๆ ที่ยังไม่เสร็จ (เฉพาะรอแปล / รอลงคำ) • คลิกเพื่อไปยังคิวงาน
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
@@ -463,12 +465,6 @@ export function DashboardView({
                       badgeStyle = isDoing
                         ? "bg-emerald-500/30 text-emerald-200 border-l-2 border-emerald-500 font-medium"
                         : "bg-emerald-500/20 text-emerald-300 border-l-2 border-emerald-400"
-                    } else if (stepKey === "upload") {
-                      badgeStyle = "bg-blue-500/25 text-blue-200 border-l-2 border-blue-400"
-                    } else if (stepKey === "extract") {
-                      badgeStyle = "bg-orange-500/25 text-orange-200 border-l-2 border-orange-400"
-                    } else if (stepKey === "publish" || stepKey === "post") {
-                      badgeStyle = "bg-purple-500/25 text-purple-200 border-l-2 border-purple-400"
                     }
 
                     return (
@@ -565,12 +561,6 @@ export function DashboardView({
                               badgeStyle = isDoing
                                 ? "bg-emerald-500/30 text-emerald-200 border-l-2 border-emerald-500 font-medium"
                                 : "bg-emerald-500/20 text-emerald-300 border-l-2 border-emerald-400"
-                            } else if (stepKey === "upload") {
-                              badgeStyle = "bg-blue-500/20 text-blue-200 border-l-2 border-blue-400"
-                            } else if (stepKey === "extract") {
-                              badgeStyle = "bg-orange-500/20 text-orange-200 border-l-2 border-orange-400"
-                            } else if (stepKey === "publish" || stepKey === "post") {
-                              badgeStyle = "bg-purple-500/20 text-purple-200 border-l-2 border-purple-400"
                             }
 
                             return (
@@ -649,9 +639,6 @@ export function DashboardView({
                             badgeStyle = isDoing
                               ? "bg-emerald-500/25 text-emerald-200 border-l-2 border-emerald-500 font-medium"
                               : "bg-emerald-500/15 text-emerald-300 border-l-2 border-emerald-400"
-                          } else if (stepKey === "extract") {
-                            badgeStyle =
-                              "bg-orange-500/20 text-orange-200 border-l-2 border-orange-400"
                           }
 
                           return (
