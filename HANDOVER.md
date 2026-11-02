@@ -80,6 +80,9 @@
   - สร้าง Workflow แยก [.github/workflows/thunderscans_auto_purchaser.yml](file:///D:/new%20backend/mangahub888.github.io/.github/workflows/thunderscans_auto_purchaser.yml) รันอัตโนมัติ 24 ชั่วโมง ทุก 1 ชั่วโมง (นาทีที่ 15: `15 * * * *`) และรองรับ Manual Dispatch
   - **ระบบ 24/7 Pipeline พร้อม 5-Minute Cooldown Delay:** ปรับค่าเริ่มต้นระหว่างตอนเป็น **300 วินาที (5 นาที)** พร้อมฟังก์ชันนับถอยหลัง `countdown_sleep(300)` แสดงผล `[05:00] ...` บน GitHub Actions Log แบบโปร่งใสและปลอดภัยสูงสุด
   - อัปเดต [.github/workflows/auto_raw_tracker.yml](file:///D:/new%20backend/mangahub888.github.io/.github/workflows/auto_raw_tracker.yml) ให้รับ secret `THUNDERSCANS_COOKIE`
+  - **การทดสอบจริงบน GitHub Actions Run #2 (Live Verified):**
+    - Workflow: `ThunderScans (en-thunder) 24/7 Pipeline (5-Min Cooldown)` (Run ID: [41379746881](https://github.com/mangahub888/mangahub888.github.io/actions/runs/41379746881))
+    - Status: `completed` / `conclusion: success` 100% ทุกขั้นตอนสมบูรณ์แบบ
 - **🚀 อัปเกรดความเร็ว 10 เท่า (ThunderScans 10x Speedup like KuaiKan):**
   - **12 Workers Parallel Image Download:** ดึงภาพทั้งตอนพร้อมกันเสร็จสิ้นใน **0.8 วินาที**
   - **High-speed In-Memory Continuous Slicing:** ข้ามการ resize หากความกว้างตรงกับ standard_width ตัดเย็บ 20 หน้ามาตรฐานเสร็จสิ้นใน **1.8 วินาที** (จากเดิม 5.2s)
