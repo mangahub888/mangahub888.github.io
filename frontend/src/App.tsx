@@ -142,6 +142,19 @@ export default function App() {
     }
   }, [activeView])
 
+  // Connectors Gate state (Passcode 720102)
+  const [connectorsUnlocked, setConnectorsUnlocked] = React.useState<boolean>(
+    () => {
+      try {
+        return sessionStorage.getItem("connectors_unlocked") === "true"
+      } catch {
+        return false
+      }
+    }
+  )
+  const [connectorsGateOpen, setConnectorsGateOpen] = React.useState(false)
+  const [connectorsPassInput, setConnectorsPassInput] = React.useState("")
+
   // Sensitive view passcode modal (Financials / Budget)
   const [sensitiveGateOpen, setSensitiveGateOpen] = React.useState(false)
   const [financialUnlocked, setFinancialUnlocked] = React.useState(false)
@@ -342,6 +355,14 @@ export default function App() {
     }
   }, [activeView, financialUnlocked])
 
+  // Prompt connectors gate if user navigated directly to connectors without unlocking
+  React.useEffect(() => {
+    if (activeView === "connectors" && !connectorsUnlocked) {
+      setConnectorsPassInput("")
+      setConnectorsGateOpen(true)
+    }
+  }, [activeView, connectorsUnlocked])
+
   const handleNavClick = (view: ViewKey) => {
     setSidebarOpen(false)
     if ((view === "financials" || view === "budget") && !financialUnlocked) {
@@ -350,7 +371,39 @@ export default function App() {
       setSensitiveGateOpen(true)
       return
     }
+    if (view === "connectors" && !connectorsUnlocked) {
+      setConnectorsPassInput("")
+      setConnectorsGateOpen(true)
+      return
+    }
     changeView(view)
+  }
+
+  const handleCloseConnectorsGate = () => {
+    setConnectorsGateOpen(false)
+    setConnectorsPassInput("")
+    if (!connectorsUnlocked && activeView === "connectors") {
+      changeView("dashboard")
+    }
+  }
+
+  const handleVerifyConnectorsPass = (e: React.FormEvent) => {
+    e.preventDefault()
+    const input = connectorsPassInput.trim()
+    if (!input) return
+
+    if (input === "720102") {
+      setConnectorsUnlocked(true)
+      try {
+        sessionStorage.setItem("connectors_unlocked", "true")
+      } catch {}
+      setConnectorsGateOpen(false)
+      setConnectorsPassInput("")
+      changeView("connectors")
+      toast.success("ปลดล็อคหน้าจัดการตัวเชื่อมต่อสำเร็จ")
+    } else {
+      toast.error("รหัสผ่านไม่ถูกต้อง")
+    }
   }
 
   const handleCloseSensitiveGate = () => {
@@ -547,12 +600,12 @@ export default function App() {
             )}
 
             {/* KuaiKan VIP & Coin Status / Alert Badge in Header */}
-            <KuaikanCoinHeaderBadge onClick={() => setKuaikanModalOpen(true)} />
+            <KuaikanCoinHeaderBadge onClick={() => handleNavClick("connectors")} />
 
             <Button
               variant="outline"
               size="sm"
-              onClick={() => changeView("connectors")}
+              onClick={() => handleNavClick("connectors")}
               className="border-amber-500/40 bg-amber-950/20 text-amber-300 hover:bg-amber-900/30 gap-1.5 text-xs font-semibold shadow-xs"
               title="จัดการตัวเชื่อมต่อและ KuaiKan VIP"
             >
@@ -576,7 +629,7 @@ export default function App() {
 
         {/* Global Emergency Warning Banner: KuaiKan Insufficient Coins */}
         <KuaikanCoinWarningBanner
-          onNavigateConnectors={() => changeView("connectors")}
+          onNavigateConnectors={() => handleNavClick("connectors")}
         />
 
         {/* View Container */}
@@ -595,7 +648,7 @@ export default function App() {
                 setUpdateQueueOpen(true)
               }}
               onManualRefresh={handleManualRefresh}
-              onSwitchToConnectors={() => changeView("connectors")}
+              onSwitchToConnectors={() => handleNavClick("connectors")}
             />
           )}
 
@@ -631,12 +684,14 @@ export default function App() {
                 setPreselectedQueueChapter(nextChap || "")
                 setAddQueueOpen(true)
               }}
-              onOpenKuaikanModal={() => changeView("connectors")}
+              onOpenKuaikanModal={() => handleNavClick("connectors")}
             />
           )}
 
           {activeView === "connectors" && (
-            <ConnectorsView mangaList={mangaList} />
+            connectorsUnlocked ? (
+              <ConnectorsView mangaList={mangaList} />
+            ) : null
           )}
 
           {activeView === "expenses" && (
@@ -778,6 +833,46 @@ export default function App() {
         open={kuaikanModalOpen}
         onClose={() => setKuaikanModalOpen(false)}
       />
+
+      {/* Passcode Prompt for Connectors Gate */}
+      <Dialog
+        open={connectorsGateOpen}
+        onOpenChange={(v) => !v && handleCloseConnectorsGate()}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-amber-400" />
+              ยืนยันรหัสผ่านจัดการตัวเชื่อมต่อ
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleVerifyConnectorsPass} className="space-y-4 mt-2">
+            <div className="space-y-1.5">
+              <Label>กรุณากรอกรหัสผ่าน 6 หลักเพื่อเข้าถึงตัวเชื่อมต่อ</Label>
+              <Input
+                type="password"
+                maxLength={6}
+                placeholder="รหัสผ่าน 6 หลัก..."
+                value={connectorsPassInput}
+                onChange={(e) => setConnectorsPassInput(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCloseConnectorsGate}
+              >
+                ยกเลิก
+              </Button>
+              <Button type="submit">
+                ยืนยัน
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Passcode Prompt for Financials / Budget */}
       <Dialog
