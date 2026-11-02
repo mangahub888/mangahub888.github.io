@@ -475,10 +475,11 @@ def main():
         if success:
             completed_count += 1
 
-        # จบ 1 ตอน ให้พัก 5 นาที (ถ้าสำเร็จและยังมีตอนถัดไป)
+        # จบ 1 ตอน ให้พักตามกฎความปลอดภัย (KuaiKan: 5 นาที เพื่อเซฟบัญชี VIP, ThunderScans: 30 วินาที)
         if idx < total_tasks - 1:
             if success:
-                countdown_sleep(COOLDOWN_SECONDS)
+                cd_sec = int(os.environ.get("THUNDERSCANS_COOLDOWN_SECONDS", "30")) if conn == "thunderscans" else COOLDOWN_SECONDS
+                countdown_sleep(cd_sec)
             else:
                 print("   ⏩ ข้ามการพักสำหรับตอนที่ไม่สำเร็จ เริ่มตอนถัดไปทันที...")
 

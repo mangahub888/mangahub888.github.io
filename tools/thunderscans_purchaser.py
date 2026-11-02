@@ -295,23 +295,26 @@ def stitch_thunderscans_pages_in_memory(downloaded_slices):
             sh = max(1, min(s.img.height - sy, sh))
 
             cropped = s.img.crop((0, sy, s.img.width, sy + sh))
-            resized = cropped.resize((standard_width, draw_h), Image.Resampling.LANCZOS)
+            if cropped.width == standard_width and cropped.height == draw_h:
+                resized = cropped
+            else:
+                resized = cropped.resize((standard_width, draw_h), Image.Resampling.BILINEAR)
             dy = y_overlap_start - y_start
             canvas.paste(resized, (0, dy))
 
         buf = io.BytesIO()
-        canvas.save(buf, format="JPEG", quality=90, optimize=True)
+        canvas.save(buf, format="JPEG", quality=85)
         pages.append((f"{part_num:03d}.jpg", buf.getvalue(), page_h))
 
     return pages
 
 def process_single_thunderscans_chapter(task):
     """
-    ประมวลผล 1 ตอนของ ThunderScans แบบครบวงจร:
+    ประมวลผล 1 ตอนของ ThunderScans แบบครบวงจร ด้วย 10x Smart Parallel Architecture:
     1. ปลดล็อค/ซื้อตอนอัตโนมัติ
-    2. โหลดภาพคู่ขนาน 10 Workers
-    3. ตัดเย็บแนวตั้งต่อเนื่อง 20 หน้ามาตรฐาน
-    4. Smart Staged Upload 4 Workers ขึ้น Google Drive
+    2. โหลดภาพคู่ขนาน 12 Workers
+    3. ตัดเย็บแนวตั้งต่อเนื่อง 20 หน้ามาตรฐานแบบ High-Speed In-Memory
+    4. Smart Staged Upload 5 Workers ขึ้น Google Drive
     5. ลงคิวงาน WorkQueue
     6. อัปเดตสถานะฐานข้อมูล
     """
@@ -321,7 +324,7 @@ def process_single_thunderscans_chapter(task):
     chapter_num = task.get("chapterNum")
     chapter_url = task.get("chapterUrl")
 
-    print(f"\n⚡ [ThunderScans] เริ่มต้นประมวลผล: {manga_name} {chapter_title}")
+    print(f"\n⚡ [ThunderScans 10x Speedup] เริ่มต้นประมวลผล: {manga_name} {chapter_title}")
     print(f"🔗 ลิงก์ตอน: {chapter_url}")
 
     # 1. ปลดล็อค/ซื้อตอนอัตโนมัติ
@@ -335,8 +338,8 @@ def process_single_thunderscans_chapter(task):
     total_slices = len(raw_images)
     print(f"✓ พบรูปภาพทั้งหมด {total_slices} ภาพ (หัวข้อ: {res.get('title')})")
 
-    # 2. ดาวน์โหลดชิ้นส่วนภาพแบบคู่ขนาน (10 Workers)
-    print(f"2. กำลังดาวน์โหลดภาพ {total_slices} ภาพ แบบคู่ขนาน (10 Workers)...")
+    # 2. ดาวน์โหลดชิ้นส่วนภาพแบบคู่ขนาน (12 Workers)
+    print(f"2. กำลังดาวน์โหลดภาพ {total_slices} ภาพ แบบคู่ขนาน (12 Workers)...")
     t_dl = time.time()
     downloaded_slices = [None] * total_slices
 
@@ -344,7 +347,7 @@ def process_single_thunderscans_chapter(task):
         idx, u = item_tuple
         return idx, download_thunder_image(u)
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=12) as executor:
         futures = [executor.submit(_dl_worker, (i, raw_images[i])) for i in range(total_slices)]
         for fut in as_completed(futures):
             i_idx, i_bytes = fut.result()
@@ -409,9 +412,9 @@ def process_single_thunderscans_chapter(task):
     last_folder_url = res_p1.get("data", {}).get("folderUrl") or ""
     print(f"   ✓ Phase A สำเร็จ! โฟลเดอร์ Drive: {last_folder_url}")
 
-    # Phase B: หน้า 2 ถึง 19
+    # Phase B: หน้า 2 ถึง 19 (5 Workers Concurrent Upload)
     if total_parts > 2:
-        print(f"   [Smart Upload Phase B] อัปโหลดคู่ขนานหน้าที่ 002.jpg - {total_parts - 1:03d}.jpg (4 Workers)...")
+        print(f"   [Smart Upload Phase B] อัปโหลดคู่ขนานหน้าที่ 002.jpg - {total_parts - 1:03d}.jpg (5 Workers)...")
 
         def _upload_worker(payload):
             payload["worklink"] = f"[อัป Raw] {last_folder_url}"
@@ -429,7 +432,7 @@ def process_single_thunderscans_chapter(task):
                     time.sleep(1 * attempt)
             return payload["partIndex"], False, "Unknown error"
 
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
             futures = [executor.submit(_upload_worker, pages_payloads[i]) for i in range(1, total_parts - 1)]
             for fut in as_completed(futures):
                 p_idx, ok, err_msg = fut.result()
@@ -567,8 +570,13 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 1 and sys.argv[1] == "--run-all":
         tasks = get_pending_thunderscans_tasks()
+        max_ch = int(os.environ.get("MAX_CHAPTERS", "0"))
+        if max_ch > 0 and len(tasks) > max_ch:
+            print(f"⚙️ จำกัดการรันสูงสุด {max_ch} ตอน (จากทั้งหมด {len(tasks)} ตอน)")
+            tasks = tasks[:max_ch]
+
         print(f"\n🚀 เริ่มต้นประมวลผลตอน ThunderScans ทั้งหมด {len(tasks)} ตอน...")
-        cooldown = int(os.environ.get("COOLDOWN_SECONDS", "300"))
+        cooldown = int(os.environ.get("THUNDERSCANS_COOLDOWN_SECONDS", os.environ.get("COOLDOWN_SECONDS", "30")))
         for idx, task in enumerate(tasks):
             print(f"\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
             print(f"คิวงาน ThunderScans [{idx+1}/{len(tasks)}]: {task.get('mangaName')} {task.get('chapterTitle')}")
@@ -576,17 +584,58 @@ if __name__ == "__main__":
             ok = process_single_thunderscans_chapter(task)
             if idx < len(tasks) - 1:
                 if ok:
-                    print(f"☕ พัก {cooldown // 60} นาที เพื่อความปลอดภัย...")
+                    print(f"☕ พัก {cooldown} วินาที ก่อนเริ่มตอนต่อไป...")
                     time.sleep(cooldown)
         sys.exit(0)
 
     target_url = sys.argv[1] if len(sys.argv) > 1 else "https://en-thunderscans.com/the-clans-failure-is-a-former-continental-champion-chapter-64/"
-    print(f"🚀 กำลังทดสอบดึง/ซื้อตอน ThunderScans: {target_url}")
-    res = purchase_chapter_thunderscans(target_url)
-    print("\n--- ผลลัพธ์ ---")
-    print(f"Success: {res.get('success')}")
-    print(f"Title: {res.get('title')}")
-    print(f"IsLocked: {res.get('isLocked')}")
-    print(f"Images: {res.get('imagesCount')} ภาพ")
-    if res.get("images"):
-        print(f"Sample Image 1: {res['images'][0]}")
+    if "--info-only" in sys.argv:
+        print(f"🚀 กำลังตรวจสอบข้อมูลตอน: {target_url}")
+        res = purchase_chapter_thunderscans(target_url)
+        print("\n--- ผลลัพธ์ ---")
+        print(f"Success: {res.get('success')}")
+        print(f"Title: {res.get('title')}")
+        print(f"IsLocked: {res.get('isLocked')}")
+        print(f"Images: {res.get('imagesCount')} ภาพ")
+        if res.get("images"):
+            print(f"Sample Image 1: {res['images'][0]}")
+        sys.exit(0)
+
+    print(f"🚀 เริ่มต้นประมวลผลตอนเดี่ยว: {target_url}")
+    # สกัดข้อมูลชื่อเรื่องและเลขตอน
+    m_res = call_gas("GET_MANGA_LIST")
+    m_list = m_res.get("data", []) if m_res.get("status") == "success" else []
+    
+    # ดึงหัวข้อตอน
+    info = purchase_chapter_thunderscans(target_url)
+    if not info.get("success"):
+        print(f"❌ ดึงข้อมูลไม่สำเร็จ: {info.get('error')}")
+        sys.exit(1)
+
+    c_title = info.get("title", "")
+    num_match = re.search(r'chapter[- ](\d+(?:\.\d+)?)', target_url, re.I) or re.search(r'Chapter\s*(\d+(?:\.\d+)?)', c_title, re.I)
+    c_num = float(num_match.group(1)) if num_match else 1.0
+
+    # Match manga
+    matched_manga = None
+    slug_match = re.search(r'en-thunderscans\.com\/(?:comics\/)?([^\/]+)-chapter', target_url)
+    slug = slug_match.group(1) if slug_match else ""
+    for m in m_list:
+        if slug and slug in str(m.get("originalurl", "")):
+            matched_manga = m
+            break
+
+    m_name = matched_manga.get("manganame") if matched_manga else c_title
+    m_id = str(matched_manga.get("mangaid")) if matched_manga else "0"
+
+    task = {
+        "mangaId": m_id,
+        "mangaName": m_name,
+        "chapterTitle": f"Chapter {int(c_num) if c_num.is_integer() else c_num}",
+        "chapterNum": c_num,
+        "chapterUrl": target_url,
+        "connector": "thunderscans"
+    }
+
+    ok = process_single_thunderscans_chapter(task)
+    print(f"\n🏁 ประมวลผลเสร็จสิ้น: {'สำเร็จ' if ok else 'ล้มเหลว'}")

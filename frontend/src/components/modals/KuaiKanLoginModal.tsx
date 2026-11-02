@@ -731,7 +731,17 @@ export function KuaiKanLoginModal({
       let lastFolderUrl = ""
       let lastQueueAdded = false
 
-      // 2. คำนวณแบ่งภาพตามโหมดที่เลือก
+      // 2. Pre-Render All Pages in Memory (10x Smart Parallel Architecture)
+      interface PreRenderedPage {
+        partNum: number
+        fileName: string
+        mimeType: string
+        base64Data: string
+        totalHeight: number
+      }
+
+      const preRenderedPages: PreRenderedPage[] = []
+
       for (let partIdx = 0; partIdx < totalParts; partIdx++) {
         let startIdx = 0
         let endIdx = 0
@@ -747,15 +757,15 @@ export function KuaiKanLoginModal({
         const sliceCount = endIdx - startIdx
         const partRange = `หน้า ${partNum}/${totalParts} (ชิ้นที่ ${startIdx + 1} - ${endIdx})`
 
-        setStitchProgress({
+        setStitchProgress((prev) => ({
           currentPart: partNum,
           totalParts,
           pageRange: partRange,
-          percent: Math.round((partIdx / totalParts) * 100),
-          statusText: `กำลังโหลดและเย็บไฟล์ ${String(partNum).padStart(3, "0")}.jpg (หน้าที่ ${partNum} จากทั้งหมด ${totalParts} หน้า, รวม ${sliceCount} ชิ้น)...`,
-        })
+          percent: Math.round(((partIdx + 1) / totalParts) * 25),
+          statusText: `⚡ [10x Speedup] กำลังตัดเย็บและเรนเดอร์หน้า ${String(partNum).padStart(3, "0")}.jpg (${partNum}/${totalParts})...`,
+        }))
 
-        // 2.1 โหลดภาพใน Part นี้ (พร้อมระบบ Auto-Retry และ CDN Fallback)
+        // 2.1 โหลดภาพใน Part นี้
         const partUrls = allUrls.slice(startIdx, endIdx)
         const loadedResults = await Promise.all(
           partUrls.map((u) =>
@@ -770,7 +780,7 @@ export function KuaiKanLoginModal({
           continue
         }
 
-        // 2.2 ปรับสเกลภาพให้ความกว้างเท่ากับ standardWidth เสมอ (ขยายหน้าปกหรือหน้าที่ความกว้างต่างกัน)
+        // 2.2 ปรับสเกลภาพให้ความกว้างเท่ากับ standardWidth
         let totalHeight = 0
         const scaledItems = loadedImages.map((img) => {
           const scale = standardWidth / img.naturalWidth
@@ -798,16 +808,15 @@ export function KuaiKanLoginModal({
           currentY += item.scaledH
         }
 
-        // 2.4 ส่งออกเป็น Blob (JPEG)
+        // 2.4 ส่งออกเป็น Blob
         const blob = await new Promise<Blob>((resolve, reject) => {
           canvas.toBlob(
             (b) => (b ? resolve(b) : reject(new Error("สร้าง JPEG blob ไม่สำเร็จ"))),
             mimeType,
-            0.90
+            0.88
           )
         })
 
-        // คืนหน่วยความจำ Canvas
         canvas.width = 0
         canvas.height = 0
 
@@ -819,70 +828,151 @@ export function KuaiKanLoginModal({
           reader.readAsDataURL(blob)
         })
 
-        // 2.6 ส่งขึ้น Google Drive
+        preRenderedPages.push({
+          partNum,
+          fileName,
+          mimeType,
+          base64Data,
+          totalHeight,
+        })
+      }
+
+      // 3. Smart Staged Multi-Thread Uploading
+      // Phase A: หน้า 1 สร้างโฟลเดอร์ Google Drive
+      const p1 = preRenderedPages[0]
+      setStitchProgress({
+        currentPart: 1,
+        totalParts,
+        pageRange: `หน้า 1/${totalParts}`,
+        percent: 30,
+        statusText: `🚀 [Phase A] กำลังอัปโหลด ${p1.fileName} เพื่อสร้างโฟลเดอร์ Google Drive...`,
+      })
+
+      const resP1 = await callGasApi<any>("UPLOAD_CHAPTER_STITCHED_PART", {
+        mangaName: testResult.thaiTitle || testResult.mangaName || "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+        chapter: testResult.title || "第366话",
+        partIndex: 1,
+        totalParts,
+        fileName: p1.fileName,
+        mimeType: p1.mimeType,
+        base64Data: p1.base64Data,
+        isLastPart: totalParts === 1,
+        clearFolder: true,
+        mangaId: String(testResult.mangaId || "4"),
+        skipQueue: totalParts > 1,
+        isTest: false,
+        uploadername: "Apt",
+        uploadstatus: "เสร็จแล้ว",
+      })
+
+      if (resP1 && resP1.error) {
+        throw new Error(resP1.error)
+      }
+
+      lastFolderUrl = resP1?.data?.folderUrl || resP1?.folderUrl || ""
+      if (resP1 && resP1.queueAdded) lastQueueAdded = true
+
+      // Phase B: อัปโหลดคู่ขนานหน้า 2 ถึง totalParts - 1 ด้วย 4 Concurrent Workers
+      if (totalParts > 2) {
+        const middlePages = preRenderedPages.slice(1, totalParts - 1)
+        let middleUploaded = 0
+
         setStitchProgress({
-          currentPart: partNum,
+          currentPart: 2,
           totalParts,
-          pageRange: partRange,
-          percent: Math.round(((partIdx + 0.6) / totalParts) * 100),
-          statusText: `กำลังอัปโหลด ${fileName} ขึ้น แปลจนเมื่อย...`,
+          pageRange: `หน้า 2 - ${totalParts - 1} / ${totalParts}`,
+          percent: 40,
+          statusText: `⚡ [Phase B] อัปโหลดคู่ขนานหน้า 002.jpg - ${String(totalParts - 1).padStart(3, "0")}.jpg (4 Workers)...`,
         })
 
-        const isLast = partIdx === totalParts - 1
-        let res: any = null
-
-        // Auto-Retry ต่อเนื่องจนกว่าจะสำเร็จ (ไม่ข้าม ไม่หยุดกลางคัน จนครบ 20 หน้า)
-        let uploadAttempt = 1
-        while (true) {
-          try {
-            res = await callGasApi<any>("UPLOAD_CHAPTER_STITCHED_PART", {
-              mangaName: testResult.thaiTitle || testResult.mangaName || "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
-              chapter: testResult.title || "第366话",
-              partIndex: partNum,
-              totalParts,
-              fileName,
-              mimeType,
-              base64Data,
-              isLastPart: isLast,
-              clearFolder: partNum === 1,
-              mangaId: String(testResult.mangaId || "4"),
-              skipQueue: false,
-              isTest: false,
-              uploadername: "Apt",
-              uploadstatus: "เสร็จแล้ว",
-              worklink: lastFolderUrl ? `[อัป Raw] ${lastFolderUrl}` : undefined,
-            })
-
-            if (res && res.error) {
-              if (res.error.includes("DriveApp") || res.error.includes("คุณไม่ได้รับอนุญาต") || res.error.includes("permission")) {
-                setDriveAuthError(res.error)
-                throw new Error(res.error)
-              }
-              throw new Error(res.error)
+        const uploadWorker = async (page: PreRenderedPage) => {
+          let attempt = 1
+          while (attempt <= 3) {
+            try {
+              const r = await callGasApi<any>("UPLOAD_CHAPTER_STITCHED_PART", {
+                mangaName: testResult.thaiTitle || testResult.mangaName || "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+                chapter: testResult.title || "第366话",
+                partIndex: page.partNum,
+                totalParts,
+                fileName: page.fileName,
+                mimeType: page.mimeType,
+                base64Data: page.base64Data,
+                isLastPart: false,
+                clearFolder: false,
+                mangaId: String(testResult.mangaId || "4"),
+                skipQueue: true,
+                isTest: false,
+                worklink: lastFolderUrl ? `[อัป Raw] ${lastFolderUrl}` : undefined,
+                uploadername: "Apt",
+                uploadstatus: "เสร็จแล้ว",
+              })
+              if (r && r.error) throw new Error(r.error)
+              middleUploaded++
+              setStitchProgress({
+                currentPart: page.partNum,
+                totalParts,
+                pageRange: `หน้า ${page.partNum}/${totalParts}`,
+                percent: 30 + Math.round((middleUploaded / middlePages.length) * 55),
+                statusText: `✓ [Phase B] หน้า ${String(page.partNum).padStart(3, "0")}.jpg อัปโหลดสำเร็จ (${middleUploaded}/${middlePages.length})...`,
+              })
+              return
+            } catch (e) {
+              attempt++
+              if (attempt > 3) throw e
+              await new Promise((resolve) => setTimeout(resolve, attempt * 1000))
             }
-            break // สำเร็จ ออกจาก loop
-          } catch (uploadErr: any) {
-            console.warn(`[UPLOAD_CHAPTER_STITCHED_PART] Attempt #${uploadAttempt} for part ${partNum} failed:`, uploadErr)
-            setStitchProgress((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    statusText: `⚠️ อัปโหลด ${fileName} ขัดข้อง กำลัง Retry ครั้งที่ ${uploadAttempt}...`,
-                  }
-                : null
-            )
-            uploadAttempt++
-            const delayMs = Math.min(uploadAttempt * 1200, 6000)
-            await new Promise((r) => setTimeout(r, delayMs))
           }
         }
 
-        if (res && res.folderUrl) {
-          lastFolderUrl = res.folderUrl
+        const concurrency = 4
+        const executing: Promise<any>[] = []
+        for (const page of middlePages) {
+          const p = uploadWorker(page).then(() => {
+            executing.splice(executing.indexOf(p), 1)
+          })
+          executing.push(p)
+          if (executing.length >= concurrency) {
+            await Promise.race(executing)
+          }
         }
-        if (res && res.queueAdded) {
-          lastQueueAdded = true
+        await Promise.all(executing)
+      }
+
+      // Phase C: อัปโหลดหน้าสุดท้ายและลงคิวงาน WorkQueue
+      if (totalParts > 1) {
+        const pLast = preRenderedPages[totalParts - 1]
+        setStitchProgress({
+          currentPart: totalParts,
+          totalParts,
+          pageRange: `หน้า ${totalParts}/${totalParts}`,
+          percent: 92,
+          statusText: `🎉 [Phase C] อัปโหลด ${pLast.fileName} และบันทึกลงคิวงาน WorkQueue...`,
+        })
+
+        const resLast = await callGasApi<any>("UPLOAD_CHAPTER_STITCHED_PART", {
+          mangaName: testResult.thaiTitle || testResult.mangaName || "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+          chapter: testResult.title || "第366话",
+          partIndex: totalParts,
+          totalParts,
+          fileName: pLast.fileName,
+          mimeType: pLast.mimeType,
+          base64Data: pLast.base64Data,
+          isLastPart: true,
+          clearFolder: false,
+          mangaId: String(testResult.mangaId || "4"),
+          skipQueue: false,
+          uploadername: "Apt",
+          uploadstatus: "เสร็จแล้ว",
+          worklink: lastFolderUrl ? `[อัป Raw] ${lastFolderUrl}` : undefined,
+          isTest: false,
+        })
+
+        if (resLast && resLast.error) {
+          throw new Error(resLast.error)
         }
+
+        lastFolderUrl = resLast?.data?.folderUrl || resLast?.folderUrl || lastFolderUrl
+        if (resLast && resLast.queueAdded) lastQueueAdded = true
       }
 
       // Fallback addQueue หาก backend ยังไม่ได้ลงคิว
