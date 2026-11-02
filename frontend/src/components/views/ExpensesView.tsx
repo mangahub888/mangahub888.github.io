@@ -226,6 +226,8 @@ export function ExpensesView({
   })
   const [claimNote, setClaimNote] = React.useState<string>("")
   const [submittingClaim, setSubmittingClaim] = React.useState(false)
+  const [unclaimedViewMode, setUnclaimedViewMode] = React.useState<"summary" | "detailed">("summary")
+  const [expandedStaffSet, setExpandedStaffSet] = React.useState<Set<string>>(new Set())
 
   const [activeTab, setActiveTab] = React.useState<"members" | "chapters" | "claims">(
     "members"
@@ -453,34 +455,84 @@ export function ExpensesView({
     return { hasOverlap: false, overlappingClaim: null, invalidRange: false, prevLabel: "" }
   }, [claimStaffName, claimStartDate, claimEndDate, staffPreviousClaims, getClaimPeriod])
 
-  // Completed work for the selected staff that has not been claimed, filtered by selected date range
-  const unclaimedWork = React.useMemo(() => {
-    if (!claimStaffName || !claimStartDate || !claimEndDate) return []
-    if (dateOverlapInfo.hasOverlap || dateOverlapInfo.invalidRange) return []
+  // Helper to toggle expand/collapse for staff inline chapters
+  const toggleExpandStaff = React.useCallback((staffNameLower: string) => {
+    setExpandedStaffSet((prev) => {
+      const next = new Set(prev)
+      if (next.has(staffNameLower)) next.delete(staffNameLower)
+      else next.add(staffNameLower)
+      return next
+    })
+  }, [])
 
-    const startBoundary = new Date(claimStartDate + "T00:00:00").getTime()
-    const endBoundary = new Date(claimEndDate + "T23:59:59.999").getTime()
+  // All completed, unclaimed work grouped by staff member
+  const allStaffUnclaimedSummary = React.useMemo(() => {
+    const startBoundary = claimStartDate ? new Date(claimStartDate + "T00:00:00").getTime() : null
+    const endBoundary = claimEndDate ? new Date(claimEndDate + "T23:59:59.999").getTime() : null
 
     const isDateInRange = (dateStr: any) => {
       if (!dateStr) return false
       const d = parseQueueDate(dateStr)
       if (!d) return false
       const t = d.getTime()
-      return t >= startBoundary && t <= endBoundary
+      if (startBoundary && t < startBoundary) return false
+      if (endBoundary && t > endBoundary) return false
+      return true
     }
 
-    const cleanStaff = claimStaffName.trim().toLowerCase()
-    const tasks: Array<{
-      queueid: string
-      chapter: string
-      mangaName: string
-      step: string
-      stepLabel: string
-      date: string
-      rate: number
-      count: number
-      cost: number
-    }> = []
+    interface StaffSummaryItem {
+      staffName: string
+      role: string
+      uploadCount: number
+      uploadCost: number
+      extractCount: number
+      extractCost: number
+      translateCount: number
+      translateCost: number
+      typesetCount: number
+      typesetCost: number
+      totalChapters: number
+      totalAmount: number
+      tasks: Array<{
+        queueid: string
+        chapter: string
+        mangaName: string
+        step: string
+        stepLabel: string
+        date: string
+        rate: number
+        count: number
+        cost: number
+      }>
+    }
+
+    const staffMap = new Map<string, StaffSummaryItem>()
+
+    const getOrCreateStaff = (rawName: string) => {
+      const cleanName = (rawName || "").trim()
+      const key = cleanName.toLowerCase()
+      if (!staffMap.has(key)) {
+        const member = (teamList || []).find(
+          (m) => (m.name || "").trim().toLowerCase() === key
+        )
+        staffMap.set(key, {
+          staffName: cleanName,
+          role: member?.role || "Staff",
+          uploadCount: 0,
+          uploadCost: 0,
+          extractCount: 0,
+          extractCost: 0,
+          translateCount: 0,
+          translateCost: 0,
+          typesetCount: 0,
+          typesetCost: 0,
+          totalChapters: 0,
+          totalAmount: 0,
+          tasks: [],
+        })
+      }
+      return staffMap.get(key)!
+    }
 
     queueItems.forEach((q) => {
       const count = getChapterCount(q.chapter)
@@ -494,7 +546,7 @@ export function ExpensesView({
 
       // 1. Upload
       if (
-        (q.uploadername || "").trim().toLowerCase() === cleanStaff &&
+        q.uploadername &&
         isStepDone(q.uploadstatus) &&
         q.uploadstatus !== "Skipped" &&
         q.uploadstatus !== "ข้าม" &&
@@ -504,7 +556,13 @@ export function ExpensesView({
         if (isDateInRange(taskDate)) {
           const key = `${q.queueid}_upload`.toLowerCase()
           if (!claimedTaskKeys.has(key)) {
-            tasks.push({
+            const cost = count * rates.uploadRate
+            const s = getOrCreateStaff(q.uploadername)
+            s.uploadCount += count
+            s.uploadCost += cost
+            s.totalChapters += count
+            s.totalAmount += cost
+            s.tasks.push({
               queueid: String(q.queueid),
               chapter: String(q.chapter),
               mangaName,
@@ -513,7 +571,7 @@ export function ExpensesView({
               date: taskDate,
               rate: rates.uploadRate,
               count,
-              cost: count * rates.uploadRate,
+              cost,
             })
           }
         }
@@ -521,7 +579,7 @@ export function ExpensesView({
 
       // 2. Extract
       if (
-        (q.extractorname || "").trim().toLowerCase() === cleanStaff &&
+        q.extractorname &&
         isStepDone(q.extractstatus) &&
         q.extractstatus !== "Skipped" &&
         q.extractstatus !== "ข้าม" &&
@@ -531,7 +589,13 @@ export function ExpensesView({
         if (isDateInRange(taskDate)) {
           const key = `${q.queueid}_extract`.toLowerCase()
           if (!claimedTaskKeys.has(key)) {
-            tasks.push({
+            const cost = count * rates.extractRate
+            const s = getOrCreateStaff(q.extractorname)
+            s.extractCount += count
+            s.extractCost += cost
+            s.totalChapters += count
+            s.totalAmount += cost
+            s.tasks.push({
               queueid: String(q.queueid),
               chapter: String(q.chapter),
               mangaName,
@@ -540,7 +604,7 @@ export function ExpensesView({
               date: taskDate,
               rate: rates.extractRate,
               count,
-              cost: count * rates.extractRate,
+              cost,
             })
           }
         }
@@ -548,7 +612,7 @@ export function ExpensesView({
 
       // 3. Translate
       if (
-        (q.translatorname || "").trim().toLowerCase() === cleanStaff &&
+        q.translatorname &&
         isStepDone(q.translatestatus) &&
         q.translatestatus !== "Skipped" &&
         q.translatestatus !== "ข้าม"
@@ -557,9 +621,16 @@ export function ExpensesView({
         if (isDateInRange(taskDate)) {
           const key = `${q.queueid}_translate`.toLowerCase()
           if (!claimedTaskKeys.has(key)) {
-            const isSpecial = cleanStaff.includes(rates.translateSpecialName.toLowerCase())
+            const cleanName = (q.translatorname || "").trim().toLowerCase()
+            const isSpecial = cleanName.includes(rates.translateSpecialName.toLowerCase())
             const rate = isSpecial ? rates.translateSpecialRate : rates.translateNormalRate
-            tasks.push({
+            const cost = count * rate
+            const s = getOrCreateStaff(q.translatorname)
+            s.translateCount += count
+            s.translateCost += cost
+            s.totalChapters += count
+            s.totalAmount += cost
+            s.tasks.push({
               queueid: String(q.queueid),
               chapter: String(q.chapter),
               mangaName,
@@ -576,7 +647,7 @@ export function ExpensesView({
 
       // 4. Typeset
       if (
-        (q.typesettername || "").trim().toLowerCase() === cleanStaff &&
+        q.typesettername &&
         isStepDone(q.typesetstatus) &&
         q.typesetstatus !== "Skipped" &&
         q.typesetstatus !== "ข้าม"
@@ -585,9 +656,16 @@ export function ExpensesView({
         if (isDateInRange(taskDate)) {
           const key = `${q.queueid}_typeset`.toLowerCase()
           if (!claimedTaskKeys.has(key)) {
-            const isSpecial = cleanStaff.includes(rates.typesetSpecialName.toLowerCase())
+            const cleanName = (q.typesettername || "").trim().toLowerCase()
+            const isSpecial = cleanName.includes(rates.typesetSpecialName.toLowerCase())
             const rate = isSpecial ? rates.typesetSpecialRate : rates.typesetNormalRate
-            tasks.push({
+            const cost = count * rate
+            const s = getOrCreateStaff(q.typesettername)
+            s.typesetCount += count
+            s.typesetCost += cost
+            s.totalChapters += count
+            s.totalAmount += cost
+            s.tasks.push({
               queueid: String(q.queueid),
               chapter: String(q.chapter),
               mangaName,
@@ -596,21 +674,71 @@ export function ExpensesView({
               date: taskDate,
               rate,
               count,
-              cost: count * rate,
+              cost,
             })
           }
         }
       }
     })
 
-    return tasks
-  }, [claimStaffName, claimStartDate, claimEndDate, dateOverlapInfo, queueItems, claimedTaskKeys, mangaList, rates])
+    const list = Array.from(staffMap.values())
+    list.sort((a, b) => b.totalAmount - a.totalAmount)
+    return list
+  }, [queueItems, claimedTaskKeys, claimStartDate, claimEndDate, mangaList, rates, teamList])
+
+  // Selected staff summary
+  const selectedStaffSummary = React.useMemo(() => {
+    if (!claimStaffName) return null
+    const clean = claimStaffName.trim().toLowerCase()
+    return allStaffUnclaimedSummary.find((s) => s.staffName.toLowerCase() === clean) || null
+  }, [claimStaffName, allStaffUnclaimedSummary])
+
+  // Completed work for the selected staff (or empty if overlapping/invalid)
+  const unclaimedWork = React.useMemo(() => {
+    if (!claimStaffName) return []
+    if (dateOverlapInfo.hasOverlap || dateOverlapInfo.invalidRange) return []
+    return selectedStaffSummary?.tasks || []
+  }, [claimStaffName, selectedStaffSummary, dateOverlapInfo])
 
   const unclaimedTotals = React.useMemo(() => {
-    const chapters = unclaimedWork.reduce((acc, t) => acc + t.count, 0)
-    const amount = unclaimedWork.reduce((acc, t) => acc + t.cost, 0)
-    return { chapters, amount }
-  }, [unclaimedWork])
+    return {
+      chapters: selectedStaffSummary?.totalChapters || 0,
+      amount: selectedStaffSummary?.totalAmount || 0,
+    }
+  }, [selectedStaffSummary])
+
+  // Grand totals across all staff members
+  const grandTotalsAllStaff = React.useMemo(() => {
+    return allStaffUnclaimedSummary.reduce(
+      (acc, s) => {
+        acc.uploadCount += s.uploadCount
+        acc.uploadCost += s.uploadCost
+        acc.extractCount += s.extractCount
+        acc.extractCost += s.extractCost
+        acc.translateCount += s.translateCount
+        acc.translateCost += s.translateCost
+        acc.typesetCount += s.typesetCount
+        acc.typesetCost += s.typesetCost
+        acc.totalChapters += s.totalChapters
+        acc.totalAmount += s.totalAmount
+        acc.totalTasks += s.tasks.length
+        return acc
+      },
+      {
+        uploadCount: 0,
+        uploadCost: 0,
+        extractCount: 0,
+        extractCost: 0,
+        translateCount: 0,
+        translateCost: 0,
+        typesetCount: 0,
+        typesetCost: 0,
+        totalChapters: 0,
+        totalAmount: 0,
+        totalTasks: 0,
+      }
+    )
+  }, [allStaffUnclaimedSummary])
 
   const handleSubmitClaim = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -2090,81 +2218,356 @@ export function ExpensesView({
                   </div>
                 )}
 
-                {/* Unclaimed Work Table */}
-                {claimStaffName ? (
-                  <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between text-xs text-slate-300">
-                      <span className="font-semibold">
-                        📋 รายการงานที่ทำเสร็จและยังไม่เคยเบิก ({unclaimedWork.length} รายการ):
+                {/* Unclaimed Work Section Header with View Mode Switcher */}
+                <div className="space-y-3 pt-2">
+                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-bold text-sm text-slate-100">
+                        📋 รายการงานที่ทำเสร็จและยังไม่เคยเบิก ({grandTotalsAllStaff.totalTasks} รายการ):
                       </span>
-                      {unclaimedWork.length > 0 && (
-                        <span className="text-emerald-400 font-bold">
-                          รวม {unclaimedTotals.chapters} ตอน = ฿{unclaimedTotals.amount.toLocaleString()} บาท
+                      {grandTotalsAllStaff.totalTasks > 0 && (
+                        <span className="text-emerald-400 font-bold text-xs bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                          รวม {grandTotalsAllStaff.totalChapters} ตอน = ฿{grandTotalsAllStaff.totalAmount.toLocaleString()} บาท ({allStaffUnclaimedSummary.length} คน)
                         </span>
                       )}
                     </div>
 
-                    {unclaimedWork.length === 0 ? (
-                      <div className="rounded-lg border border-slate-800 bg-[#0b1120] p-6 text-center text-sm text-slate-400">
-                        🎉 พนักงานคนนี้ไม่มีงานค้างเบิก (เบิกครบทั้งหมดแล้ว หรือยังไม่มีงานที่ทำเสร็จ)
-                      </div>
-                    ) : (
-                      <div className="rounded-lg border border-[#26334d] overflow-hidden max-h-60 overflow-y-auto">
+                    {/* View Switcher: Summary by Person vs Detailed Chapter List */}
+                    <div className="flex items-center p-0.5 rounded-lg bg-[#0b1120] border border-[#26334d]">
+                      <button
+                        type="button"
+                        onClick={() => setUnclaimedViewMode("summary")}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                          unclaimedViewMode === "summary"
+                            ? "bg-indigo-600 text-white shadow-xs"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        📊 ตารางสรุปรายคน ({allStaffUnclaimedSummary.length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUnclaimedViewMode("detailed")}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                          unclaimedViewMode === "detailed"
+                            ? "bg-indigo-600 text-white shadow-xs"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        📋 รายตอน ({claimStaffName ? `${claimStaffName} (${unclaimedWork.length})` : `ทั้งหมด (${grandTotalsAllStaff.totalTasks})`})
+                      </button>
+                    </div>
+                  </div>
+
+                  {allStaffUnclaimedSummary.length === 0 ? (
+                    <div className="rounded-lg border border-slate-800 bg-[#0b1120] p-6 text-center text-sm text-slate-400">
+                      🎉 ไม่มีงานค้างเบิกในช่วงเวลาที่เลือก (เบิกครบทั้งหมดแล้ว หรือยังไม่มีงานที่ทำเสร็จ)
+                    </div>
+                  ) : unclaimedViewMode === "summary" ? (
+                    /* 1. PER-PERSON SUMMARY TABLE */
+                    <div className="rounded-lg border border-[#26334d] overflow-hidden">
+                      <div className="overflow-x-auto max-h-80 overflow-y-auto">
                         <Table>
                           <TableHeader className="bg-[#0d1322] sticky top-0 z-10">
                             <TableRow className="border-[#26334d]">
-                              <TableHead className="text-xs text-slate-400">เรื่อง</TableHead>
-                              <TableHead className="text-xs text-slate-400 text-center">ตอน</TableHead>
-                              <TableHead className="text-xs text-slate-400">ขั้นตอน</TableHead>
-                              <TableHead className="text-xs text-slate-400 text-right">เรท (฿)</TableHead>
-                              <TableHead className="text-xs text-slate-400 text-right">ค่าแรง (฿)</TableHead>
-                              <TableHead className="text-xs text-slate-400 text-right">เวลาส่งงาน</TableHead>
+                              <TableHead className="text-xs text-slate-300 font-semibold">พนักงาน</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">อัป Raw</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">ดึงคำ</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">แปล</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">ลงคำ</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">รวมตอน</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-right">ยอดค้างเบิก (฿)</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">จัดการ</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {unclaimedWork.map((t, idx) => (
-                              <TableRow key={`${t.queueid}_${t.step}_${idx}`} className="border-[#26334d]/60 hover:bg-[#151d2f]/60 text-xs">
-                                <TableCell className="font-medium text-slate-200">{t.mangaName}</TableCell>
-                                <TableCell className="text-center font-bold text-amber-300">#{t.chapter}</TableCell>
-                                <TableCell>
-                                  <Badge variant="outline" className="text-[10px] border-slate-700 bg-slate-800/80">
-                                    {t.stepLabel}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="text-right text-slate-400">฿{t.rate}</TableCell>
-                                <TableCell className="text-right font-bold text-emerald-400">฿{t.cost.toLocaleString()}</TableCell>
-                                <TableCell className="text-right text-slate-500 font-mono text-[11px]">
-                                  {t.date ? new Date(t.date).toLocaleDateString("th-TH") : "-"}
-                                </TableCell>
-                              </TableRow>
-                            ))}
+                            {allStaffUnclaimedSummary.map((s) => {
+                              const isSelected = claimStaffName && claimStaffName.trim().toLowerCase() === s.staffName.toLowerCase()
+                              const isExpanded = expandedStaffSet.has(s.staffName.toLowerCase())
+
+                              return (
+                                <React.Fragment key={s.staffName}>
+                                  <TableRow
+                                    className={`border-[#26334d]/60 text-xs transition-colors ${
+                                      isSelected
+                                        ? "bg-indigo-950/40 border-l-4 border-l-indigo-500"
+                                        : "hover:bg-[#151d2f]/60"
+                                    }`}
+                                  >
+                                    <TableCell className="font-bold text-slate-200">
+                                      <div className="flex items-center gap-1.5">
+                                        <span>{s.staffName}</span>
+                                        <Badge variant="outline" className="text-[10px] border-slate-700 bg-slate-800/80">
+                                          {s.role}
+                                        </Badge>
+                                        {isSelected && (
+                                          <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[9px] px-1.5 py-0 font-bold">
+                                            เลือกอยู่
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </TableCell>
+
+                                    <TableCell className="text-center text-slate-300 font-mono">
+                                      {s.uploadCount > 0 ? (
+                                        <div>
+                                          <span className="font-semibold">{s.uploadCount} ตอน</span>
+                                          <span className="block text-[10px] text-indigo-300/80">฿{s.uploadCost.toLocaleString()}</span>
+                                        </div>
+                                      ) : (
+                                        <span className="text-slate-600">-</span>
+                                      )}
+                                    </TableCell>
+
+                                    <TableCell className="text-center text-slate-300 font-mono">
+                                      {s.extractCount > 0 ? (
+                                        <div>
+                                          <span className="font-semibold">{s.extractCount} ตอน</span>
+                                          <span className="block text-[10px] text-orange-300/80">฿{s.extractCost.toLocaleString()}</span>
+                                        </div>
+                                      ) : (
+                                        <span className="text-slate-600">-</span>
+                                      )}
+                                    </TableCell>
+
+                                    <TableCell className="text-center text-slate-300 font-mono">
+                                      {s.translateCount > 0 ? (
+                                        <div>
+                                          <span className="font-semibold text-pink-300">{s.translateCount} ตอน</span>
+                                          <span className="block text-[10px] text-pink-300/80">฿{s.translateCost.toLocaleString()}</span>
+                                        </div>
+                                      ) : (
+                                        <span className="text-slate-600">-</span>
+                                      )}
+                                    </TableCell>
+
+                                    <TableCell className="text-center text-slate-300 font-mono">
+                                      {s.typesetCount > 0 ? (
+                                        <div>
+                                          <span className="font-semibold text-amber-300">{s.typesetCount} ตอน</span>
+                                          <span className="block text-[10px] text-amber-300/80">฿{s.typesetCost.toLocaleString()}</span>
+                                        </div>
+                                      ) : (
+                                        <span className="text-slate-600">-</span>
+                                      )}
+                                    </TableCell>
+
+                                    <TableCell className="text-center">
+                                      <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-300 font-bold text-xs">
+                                        {s.totalChapters} ตอน
+                                      </Badge>
+                                    </TableCell>
+
+                                    <TableCell className="text-right font-bold text-emerald-400 text-sm font-mono">
+                                      ฿{s.totalAmount.toLocaleString()}
+                                    </TableCell>
+
+                                    <TableCell className="text-center">
+                                      <div className="flex items-center justify-center gap-1.5">
+                                        <Button
+                                          type="button"
+                                          size="sm"
+                                          variant={isSelected ? "default" : "outline"}
+                                          onClick={() => setClaimStaffName(s.staffName)}
+                                          className={`h-7 px-2.5 text-[11px] font-semibold cursor-pointer ${
+                                            isSelected
+                                              ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                                              : "border-[#26334d] text-slate-300 hover:text-white hover:bg-slate-800"
+                                          }`}
+                                        >
+                                          {isSelected ? "✅ เลือกแล้ว" : "👤 เลือกคนนี้"}
+                                        </Button>
+
+                                        <Button
+                                          type="button"
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={() => toggleExpandStaff(s.staffName.toLowerCase())}
+                                          className="h-7 px-2 text-[11px] text-slate-400 hover:text-white gap-1 cursor-pointer"
+                                          title="คลิกเพื่อดูรายการตอนย่อยของคนนี้"
+                                        >
+                                          {isExpanded ? (
+                                            <>
+                                              <ChevronUp className="h-3 w-3" /> ย่อ
+                                            </>
+                                          ) : (
+                                            <>
+                                              <ChevronDown className="h-3 w-3" /> ดูตอน ({s.tasks.length})
+                                            </>
+                                          )}
+                                        </Button>
+                                      </div>
+                                    </TableCell>
+                                  </TableRow>
+
+                                  {/* Inline Expanded Chapters Table */}
+                                  {isExpanded && (
+                                    <TableRow className="bg-[#0b0f19] border-[#26334d]/60">
+                                      <TableCell colSpan={8} className="p-3">
+                                        <div className="rounded-md border border-[#26334d]/80 bg-[#0d1322] p-2.5 space-y-2">
+                                          <div className="flex items-center justify-between text-xs text-slate-300">
+                                            <span className="font-semibold text-slate-200">
+                                              📖 รายละเอียดตอนค้างเบิกของ {s.staffName} ({s.tasks.length} ตอน):
+                                            </span>
+                                            <span className="text-emerald-400 font-bold">
+                                              รวม ฿{s.totalAmount.toLocaleString()} บาท
+                                            </span>
+                                          </div>
+                                          <div className="max-h-48 overflow-y-auto rounded border border-[#26334d]/60">
+                                            <Table>
+                                              <TableHeader className="bg-[#0b0f19] sticky top-0">
+                                                <TableRow className="border-[#26334d]/60 text-[11px]">
+                                                  <TableHead className="text-slate-400 py-1.5">เรื่อง</TableHead>
+                                                  <TableHead className="text-slate-400 text-center py-1.5">ตอน</TableHead>
+                                                  <TableHead className="text-slate-400 py-1.5">ขั้นตอน</TableHead>
+                                                  <TableHead className="text-slate-400 text-right py-1.5">เรท (฿)</TableHead>
+                                                  <TableHead className="text-slate-400 text-right py-1.5">ค่าแรง (฿)</TableHead>
+                                                  <TableHead className="text-slate-400 text-right py-1.5">เวลาส่งงาน</TableHead>
+                                                </TableRow>
+                                              </TableHeader>
+                                              <TableBody>
+                                                {s.tasks.map((t, idx) => (
+                                                  <TableRow key={`${t.queueid}_${t.step}_${idx}`} className="border-[#26334d]/40 text-xs hover:bg-[#151d2f]/40">
+                                                    <TableCell className="font-medium text-slate-200 py-1.5">{t.mangaName}</TableCell>
+                                                    <TableCell className="text-center font-bold text-amber-300 py-1.5">#{t.chapter}</TableCell>
+                                                    <TableCell className="py-1.5">
+                                                      <Badge variant="outline" className="text-[10px] border-slate-700 bg-slate-800/80">
+                                                        {t.stepLabel}
+                                                      </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="text-right text-slate-400 py-1.5">฿{t.rate}</TableCell>
+                                                    <TableCell className="text-right font-bold text-emerald-400 py-1.5">฿{t.cost.toLocaleString()}</TableCell>
+                                                    <TableCell className="text-right text-slate-500 font-mono text-[11px] py-1.5">
+                                                      {t.date ? new Date(t.date).toLocaleDateString("th-TH") : "-"}
+                                                    </TableCell>
+                                                  </TableRow>
+                                                ))}
+                                              </TableBody>
+                                            </Table>
+                                          </div>
+                                        </div>
+                                      </TableCell>
+                                    </TableRow>
+                                  )}
+                                </React.Fragment>
+                              )
+                            })}
                           </TableBody>
+
+                          {/* Grand Total Footer */}
+                          <tfoot className="bg-[#0d1322] border-t-2 border-[#26334d] font-bold text-xs sticky bottom-0">
+                            <TableRow className="border-transparent">
+                              <TableCell className="text-slate-200">
+                                รวมทั้งหมด ({allStaffUnclaimedSummary.length} คน)
+                              </TableCell>
+                              <TableCell className="text-center text-slate-300 font-mono">
+                                <div>
+                                  <span>{grandTotalsAllStaff.uploadCount} ตอน</span>
+                                  <span className="block text-[10px] text-indigo-300/80">฿{grandTotalsAllStaff.uploadCost.toLocaleString()}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center text-slate-300 font-mono">
+                                <div>
+                                  <span>{grandTotalsAllStaff.extractCount} ตอน</span>
+                                  <span className="block text-[10px] text-orange-300/80">฿{grandTotalsAllStaff.extractCost.toLocaleString()}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center text-slate-300 font-mono">
+                                <div>
+                                  <span className="text-pink-300">{grandTotalsAllStaff.translateCount} ตอน</span>
+                                  <span className="block text-[10px] text-pink-300/80">฿{grandTotalsAllStaff.translateCost.toLocaleString()}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center text-slate-300 font-mono">
+                                <div>
+                                  <span className="text-amber-300">{grandTotalsAllStaff.typesetCount} ตอน</span>
+                                  <span className="block text-[10px] text-amber-300/80">฿{grandTotalsAllStaff.typesetCost.toLocaleString()}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center text-amber-300 font-bold">
+                                {grandTotalsAllStaff.totalChapters} ตอน
+                              </TableCell>
+                              <TableCell className="text-right text-emerald-400 font-bold text-sm font-mono">
+                                ฿{grandTotalsAllStaff.totalAmount.toLocaleString()}
+                              </TableCell>
+                              <TableCell />
+                            </TableRow>
+                          </tfoot>
                         </Table>
                       </div>
-                    )}
+                    </div>
+                  ) : (
+                    /* 2. CHAPTER-BY-CHAPTER DETAILED TABLE */
+                    <div className="rounded-lg border border-[#26334d] overflow-hidden max-h-80 overflow-y-auto">
+                      <Table>
+                        <TableHeader className="bg-[#0d1322] sticky top-0 z-10">
+                          <TableRow className="border-[#26334d]">
+                            <TableHead className="text-xs text-slate-400">พนักงาน</TableHead>
+                            <TableHead className="text-xs text-slate-400">เรื่อง</TableHead>
+                            <TableHead className="text-xs text-slate-400 text-center">ตอน</TableHead>
+                            <TableHead className="text-xs text-slate-400">ขั้นตอน</TableHead>
+                            <TableHead className="text-xs text-slate-400 text-right">เรท (฿)</TableHead>
+                            <TableHead className="text-xs text-slate-400 text-right">ค่าแรง (฿)</TableHead>
+                            <TableHead className="text-xs text-slate-400 text-right">เวลาส่งงาน</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {(claimStaffName ? unclaimedWork : allStaffUnclaimedSummary.flatMap((s) => s.tasks.map((t) => ({ ...t, staffName: s.staffName })))).map((t: any, idx) => (
+                            <TableRow key={`${t.queueid}_${t.step}_${idx}`} className="border-[#26334d]/60 hover:bg-[#151d2f]/60 text-xs">
+                              <TableCell className="font-bold text-slate-300">{t.staffName || claimStaffName}</TableCell>
+                              <TableCell className="font-medium text-slate-200">{t.mangaName}</TableCell>
+                              <TableCell className="text-center font-bold text-amber-300">#{t.chapter}</TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="text-[10px] border-slate-700 bg-slate-800/80">
+                                  {t.stepLabel}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right text-slate-400">฿{t.rate}</TableCell>
+                              <TableCell className="text-right font-bold text-emerald-400">฿{t.cost.toLocaleString()}</TableCell>
+                              <TableCell className="text-right text-slate-500 font-mono text-[11px]">
+                                {t.date ? new Date(t.date).toLocaleDateString("th-TH") : "-"}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
 
-                    {unclaimedWork.length > 0 && (
-                      <div className="flex justify-end pt-2">
-                        <Button
-                          type="submit"
-                          disabled={submittingClaim || dateOverlapInfo.hasOverlap || dateOverlapInfo.invalidRange || unclaimedWork.length === 0}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-lg shadow-emerald-600/30 disabled:opacity-50"
-                        >
-                          <Send className="h-4 w-4" />
-                          {submittingClaim
-                            ? "กำลังส่งคำขอเบิก..."
-                            : dateOverlapInfo.hasOverlap
-                            ? "ไม่สามารถเบิกได้ (ช่วงวันที่ทับซ้อน)"
-                            : `ตัดยอดขอเบิกเงิน (฿${unclaimedTotals.amount.toLocaleString()} บาท)`}
-                        </Button>
+                  {/* Submission Action Bar */}
+                  {claimStaffName ? (
+                    <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-lg border border-emerald-500/40 bg-emerald-950/25 mt-3 shadow-md">
+                      <div className="text-xs">
+                        <span className="text-slate-300">👤 กำลังทำรายการเบิกให้: </span>
+                        <strong className="text-slate-100 text-sm">{claimStaffName}</strong>
+                        {unclaimedTotals.chapters > 0 ? (
+                          <span className="text-emerald-400 font-bold ml-2">
+                            (รวม {unclaimedTotals.chapters} ตอน = ฿{unclaimedTotals.amount.toLocaleString()} บาท)
+                          </span>
+                        ) : (
+                          <span className="text-amber-300 ml-2">(ไม่มีงานค้างเบิกในช่วงนี้)</span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="rounded-lg border border-dashed border-slate-800 bg-[#0b1120]/40 p-6 text-center text-xs text-slate-400">
-                    👈 กรุณาเลือกชื่อพนักงานเพื่อคำนวณงานที่ยังไม่เคยเบิก
-                  </div>
-                )}
+
+                      <Button
+                        type="submit"
+                        disabled={submittingClaim || dateOverlapInfo.hasOverlap || dateOverlapInfo.invalidRange || unclaimedWork.length === 0}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-lg shadow-emerald-600/30 disabled:opacity-50 cursor-pointer"
+                      >
+                        <Send className="h-4 w-4" />
+                        {submittingClaim
+                          ? "กำลังส่งคำขอเบิก..."
+                          : dateOverlapInfo.hasOverlap
+                          ? "ไม่สามารถเบิกได้ (ช่วงวันที่ทับซ้อน)"
+                          : `ตัดยอดขอเบิกเงินของ ${claimStaffName} (฿${unclaimedTotals.amount.toLocaleString()} บาท)`}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-dashed border-slate-800 bg-[#0b1120]/40 p-4 text-center text-xs text-slate-400 mt-2">
+                      👈 กดปุ่ม <strong className="text-slate-200">"👤 เลือกคนนี้"</strong> ในตารางสรุปด้านบน หรือเลือกชื่อพนักงานจาก Dropdown เพื่อดำเนินการตัดยอดขอเบิกเงิน
+                    </div>
+                  )}
+                </div>
               </form>
             </CardContent>
           </Card>
