@@ -139,15 +139,74 @@ export function DashboardView({
       return 5
     }
 
+    // Prior month backlog (วันที่ 0) - All tasks created before this month that are incomplete
+    const dayZeroItems = queueList.filter((q) => {
+      const qDate = getQueueItemDate(q)
+      if (!qDate) return false
+      const isBeforeThisMonth =
+        qDate.getFullYear() < year ||
+        (qDate.getFullYear() === year && qDate.getMonth() < month)
+      if (!isBeforeThisMonth) return false
+      return !isStepDone(q.poststatus)
+    })
+
+    dayZeroItems.sort((a, b) => {
+      const pA = getMonthlyTaskPriority(a)
+      const pB = getMonthlyTaskPriority(b)
+      if (pA !== pB) return pA - pB
+      const mangaA = mangaList.find(
+        (m) => m.mangaid != null && a.mangaid != null && String(m.mangaid) === String(a.mangaid)
+      )
+      const mangaB = mangaList.find(
+        (m) => m.mangaid != null && b.mangaid != null && String(m.mangaid) === String(b.mangaid)
+      )
+      const urgA = isUrgentManga(mangaA) ? 1 : 0
+      const urgB = isUrgentManga(mangaB) ? 1 : 0
+      if (urgA !== urgB) return urgB - urgA
+      return (a.queueid || 0) - (b.queueid || 0)
+    })
+
+    const MAX_DISPLAY = 5
+
     const cells: Array<{
       day: number | null
       isToday?: boolean
+      isDayZero?: boolean
       items: any[]
       moreCount: number
     }> = []
 
-    for (let i = 0; i < firstDayIndex; i++) {
-      cells.push({ day: null, items: [], moreCount: 0 })
+    // Pad before Day 1: If there are incomplete items from previous months (dayZeroItems),
+    // display Day 0 in the slot immediately before Day 1
+    if (dayZeroItems.length > 0) {
+      if (firstDayIndex === 0) {
+        // If Day 1 is Monday, prepend 6 empty slots so Day 0 is on Sunday right before Day 1
+        for (let i = 0; i < 6; i++) {
+          cells.push({ day: null, items: [], moreCount: 0 })
+        }
+        cells.push({
+          day: 0,
+          isDayZero: true,
+          items: dayZeroItems.slice(0, MAX_DISPLAY),
+          moreCount: Math.max(0, dayZeroItems.length - MAX_DISPLAY),
+        })
+      } else {
+        // Slots 0 to firstDayIndex - 2 are empty padding
+        for (let i = 0; i < firstDayIndex - 1; i++) {
+          cells.push({ day: null, items: [], moreCount: 0 })
+        }
+        // Slot firstDayIndex - 1 is Day 0
+        cells.push({
+          day: 0,
+          isDayZero: true,
+          items: dayZeroItems.slice(0, MAX_DISPLAY),
+          moreCount: Math.max(0, dayZeroItems.length - MAX_DISPLAY),
+        })
+      }
+    } else {
+      for (let i = 0; i < firstDayIndex; i++) {
+        cells.push({ day: null, items: [], moreCount: 0 })
+      }
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
@@ -184,7 +243,6 @@ export function DashboardView({
         return (a.queueid || 0) - (b.queueid || 0)
       })
 
-      const MAX_DISPLAY = 5
       cells.push({
         day,
         isToday,
@@ -192,35 +250,6 @@ export function DashboardView({
         moreCount: Math.max(0, queueItemsOnDay.length - MAX_DISPLAY),
       })
     }
-
-    // Prior month backlog (วันที่ 0) - Only tasks created before this month that are incomplete
-    const dayZeroItems = queueList.filter((q) => {
-      const qDate = getQueueItemDate(q)
-      if (!qDate) return false
-      const isBeforeThisMonth =
-        qDate.getFullYear() < year ||
-        (qDate.getFullYear() === year && qDate.getMonth() < month)
-      if (!isBeforeThisMonth) return false
-      if (isStepDone(q.poststatus)) return false
-      const stepKey = getQueueCurrentStep(q)
-      return allowedMonthlySteps.includes(stepKey)
-    })
-
-    dayZeroItems.sort((a, b) => {
-      const pA = getMonthlyTaskPriority(a)
-      const pB = getMonthlyTaskPriority(b)
-      if (pA !== pB) return pA - pB
-      const mangaA = mangaList.find(
-        (m) => m.mangaid != null && a.mangaid != null && String(m.mangaid) === String(a.mangaid)
-      )
-      const mangaB = mangaList.find(
-        (m) => m.mangaid != null && b.mangaid != null && String(m.mangaid) === String(b.mangaid)
-      )
-      const urgA = isUrgentManga(mangaA) ? 1 : 0
-      const urgB = isUrgentManga(mangaB) ? 1 : 0
-      if (urgA !== urgB) return urgB - urgA
-      return (a.queueid || 0) - (b.queueid || 0)
-    })
 
     return { cells, dayZeroItems }
   }, [year, month, mangaList, queueList])
@@ -399,7 +428,7 @@ export function DashboardView({
                     </Badge>
                   </div>
                   <span className="text-[11px] text-amber-300/80">
-                    งานเดือนก่อนๆ ที่ยังไม่เสร็จ (รอแปล / รอลงคำ) • คลิกเพื่อไปยังคิวงาน
+                    งานเดือนก่อนๆ ที่ยังไม่เสร็จ • คลิกเพื่อไปยังคิวงาน
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
@@ -434,6 +463,12 @@ export function DashboardView({
                       badgeStyle = isDoing
                         ? "bg-emerald-500/30 text-emerald-200 border-l-2 border-emerald-500 font-medium"
                         : "bg-emerald-500/20 text-emerald-300 border-l-2 border-emerald-400"
+                    } else if (stepKey === "upload") {
+                      badgeStyle = "bg-blue-500/25 text-blue-200 border-l-2 border-blue-400"
+                    } else if (stepKey === "extract") {
+                      badgeStyle = "bg-orange-500/25 text-orange-200 border-l-2 border-orange-400"
+                    } else if (stepKey === "publish" || stepKey === "post") {
+                      badgeStyle = "bg-purple-500/25 text-purple-200 border-l-2 border-purple-400"
                     }
 
                     return (
@@ -477,6 +512,90 @@ export function DashboardView({
                         key={`pad-${idx}`}
                         className="min-h-[96px] rounded-lg bg-[#0b0f19]/40 border border-transparent"
                       />
+                    )
+                  }
+
+                  if (cell.day === 0 || cell.isDayZero) {
+                    return (
+                      <div
+                        key="day-0"
+                        className="min-h-[96px] rounded-lg border border-amber-500/50 bg-amber-950/25 p-1.5 flex flex-col gap-1 shadow-xs ring-1 ring-amber-500/20"
+                      >
+                        <div className="flex items-center justify-between text-xs font-bold text-amber-300 px-0.5">
+                          <span className="flex items-center gap-1">
+                            <span className="flex h-4 w-4 items-center justify-center rounded bg-amber-500 text-slate-950 text-[10px] font-black">
+                              0
+                            </span>
+                            <span>วันที่ 0</span>
+                          </span>
+                          <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1 py-0.2 rounded font-semibold border border-amber-500/40">
+                            ค้าง {dayZeroItems.length}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1">
+                          {cell.items.map((q) => {
+                            const manga = mangaList.find(
+                              (m) =>
+                                m.mangaid != null &&
+                                q.mangaid != null &&
+                                String(m.mangaid) === String(q.mangaid)
+                            )
+                            const fullName = manga ? manga.manganame : "Unknown"
+                            let displayName = fullName
+                            if (displayName.length > 18) {
+                              displayName = displayName.substring(0, 18) + "..."
+                            }
+                            const searchKeyword = displayName
+                              .replace(/\.\.\.+$/, "")
+                              .replace(/…+$/, "")
+                              .trim()
+                            const urgent = isUrgentManga(manga)
+                            const stepKey = getQueueCurrentStep(q)
+
+                            let badgeStyle =
+                              "bg-slate-800 text-slate-200 border-l-2 border-slate-400"
+                            if (stepKey === "translate") {
+                              badgeStyle = urgent
+                                ? "bg-red-500/25 text-red-200 border-l-2 border-red-500 font-medium"
+                                : "bg-amber-500/25 text-amber-200 border-l-2 border-amber-400"
+                            } else if (stepKey === "typeset") {
+                              const isDoing =
+                                String(q.typesetstatus || "").trim() === "กำลังทำ"
+                              badgeStyle = isDoing
+                                ? "bg-emerald-500/30 text-emerald-200 border-l-2 border-emerald-500 font-medium"
+                                : "bg-emerald-500/20 text-emerald-300 border-l-2 border-emerald-400"
+                            } else if (stepKey === "upload") {
+                              badgeStyle = "bg-blue-500/20 text-blue-200 border-l-2 border-blue-400"
+                            } else if (stepKey === "extract") {
+                              badgeStyle = "bg-orange-500/20 text-orange-200 border-l-2 border-orange-400"
+                            } else if (stepKey === "publish" || stepKey === "post") {
+                              badgeStyle = "bg-purple-500/20 text-purple-200 border-l-2 border-purple-400"
+                            }
+
+                            return (
+                              <div
+                                key={q.queueid}
+                                onClick={() => onSwitchToQueue(searchKeyword)}
+                                title={`${fullName} ตอนที่ ${q.chapter} (งานค้างจากเดือนก่อน)`}
+                                className={`truncate rounded px-1.5 py-0.5 text-[11px] cursor-pointer hover:opacity-85 transition-opacity ${badgeStyle}`}
+                              >
+                                {urgent ? "🔥 " : ""}
+                                {displayName} #{q.chapter}
+                              </div>
+                            )
+                          })}
+
+                          {cell.moreCount > 0 && (
+                            <div
+                              onClick={() => onSwitchToQueue()}
+                              className="text-[10px] text-amber-300 font-medium text-center cursor-pointer hover:text-amber-200"
+                            >
+                              +อีก {cell.moreCount} รายการ
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     )
                   }
 
