@@ -312,6 +312,9 @@ export function ExpensesView({
       if (
         isStepDone(q.uploadstatus) &&
         q.uploadername &&
+        q.uploadstatus !== "Skipped" &&
+        q.uploadstatus !== "ข้าม" &&
+        String(q.uploadstatus).toLowerCase() !== "skip" &&
         isUploadInPeriod &&
         !uploaderExcluded
       ) {
