@@ -415,6 +415,19 @@ def main():
     print(f"⏱️ กฎความปลอดภัย: จบ 1 ตอน พัก {COOLDOWN_SECONDS // 60} นาที ก่อนเริ่มตอนต่อไป")
     print("=================================================================")
 
+    # ถ้าเป็นการรันสแกนทั้งหมด ให้ trigger ตรวจสอบสถานะอัปเดตล่าสุดจากหน้าเว็บต้นฉบับก่อน
+    if not target_tracker_id:
+        print("\n🔍 0. ตรวจสอบสถานะตอนใหม่ล่าสุดจากเว็บต้นทาง (CHECK_ALL_RAW_TRACKERS)...")
+        try:
+            check_res = call_gas("CHECK_ALL_RAW_TRACKERS", {"notifyTelegram": False})
+            if check_res and check_res.get("status") == "success":
+                new_up = check_res.get("data", {}).get("newUpdates", [])
+                print(f"   ✓ ตรวจสอบเว็บต้นทางเสร็จสิ้น (พบตอนใหม่เพิ่ม: {len(new_up)} เรื่อง)")
+            else:
+                print("   ⚠️ ตรวจสอบเว็บต้นทางไม่สำเร็จ ข้ามไปยังคิวงานเดิม...")
+        except Exception as e:
+            print(f"   ⚠️ ตรวจสอบเว็บต้นทางผิดพลาด ({e}) ข้ามไปยังคิวงานเดิม...")
+
     print("\n1. กำลังสแกนรายการตอนใหม่ทั้งหมดจาก RawTracker...")
     res = call_gas("GET_RAW_TRACKER_PENDING_CHAPTERS", {"trackerId": target_tracker_id})
     if not res.get("status") == "success" or not res.get("data"):
