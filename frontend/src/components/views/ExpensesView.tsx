@@ -63,6 +63,7 @@ import {
   Send,
   Eye,
   XCircle,
+  Lock,
 } from "lucide-react"
 
 ChartJS.register(
@@ -215,7 +216,14 @@ export function ExpensesView({
 
   // Staff Self-Claim Form state
   const [claimStaffName, setClaimStaffName] = React.useState<string>("")
-  const [claimDateRange, setClaimDateRange] = React.useState<string>("")
+  const [claimStartDate, setClaimStartDate] = React.useState<string>(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`
+  })
+  const [claimEndDate, setClaimEndDate] = React.useState<string>(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+  })
   const [claimNote, setClaimNote] = React.useState<string>("")
   const [submittingClaim, setSubmittingClaim] = React.useState(false)
 
@@ -329,9 +337,138 @@ export function ExpensesView({
     return set
   }, [payoutClaims])
 
-  // Completed work for the selected staff that has not been claimed
-  const unclaimedWork = React.useMemo(() => {
+  // Helper to parse start/end dates from a claim (handles startdate/enddate and fallback daterange)
+  const getClaimPeriod = React.useCallback(
+    (claim: any): { start: Date | null; end: Date | null; label: string } => {
+      let s: Date | null = null
+      let e: Date | null = null
+
+      if (claim.startdate) {
+        const d = new Date(claim.startdate + "T00:00:00")
+        if (!isNaN(d.getTime())) s = d
+      }
+      if (claim.enddate) {
+        const d = new Date(claim.enddate + "T23:59:59.999")
+        if (!isNaN(d.getTime())) e = d
+      }
+
+      if ((!s || !e) && claim.daterange) {
+        const matches = String(claim.daterange).match(/\d{4}-\d{2}-\d{2}/g)
+        if (matches && matches.length >= 2) {
+          if (!s) s = new Date(matches[0] + "T00:00:00")
+          if (!e) e = new Date(matches[1] + "T23:59:59.999")
+        }
+      }
+
+      const startLabel = s ? s.toLocaleDateString("th-TH") : claim.startdate || "?"
+      const endLabel = e ? e.toLocaleDateString("th-TH") : claim.enddate || "?"
+      const label = s && e ? `${startLabel} - ${endLabel}` : claim.daterange || "รอบเบิก"
+
+      return { start: s, end: e, label }
+    },
+    []
+  )
+
+  // Previous non-rejected claims for the selected staff
+  const staffPreviousClaims = React.useMemo(() => {
     if (!claimStaffName) return []
+    const clean = claimStaffName.trim().toLowerCase()
+    return payoutClaims.filter(
+      (c) => (c.staffname || "").trim().toLowerCase() === clean && c.status !== "Rejected"
+    )
+  }, [claimStaffName, payoutClaims])
+
+  // Automatically initialize claimStartDate to the day after the latest claim's end date
+  React.useEffect(() => {
+    if (!claimStaffName) return
+
+    let maxEndTime = 0
+    let latestEndStr = ""
+
+    staffPreviousClaims.forEach((c) => {
+      const p = getClaimPeriod(c)
+      if (p.end && p.end.getTime() > maxEndTime) {
+        maxEndTime = p.end.getTime()
+        if (c.enddate) {
+          latestEndStr = c.enddate
+        } else {
+          const d = p.end
+          latestEndStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+        }
+      }
+    })
+
+    if (maxEndTime > 0 && latestEndStr) {
+      // Add 1 day to the previous end date
+      const prevEnd = new Date(latestEndStr + "T00:00:00")
+      const nextDay = new Date(prevEnd.getTime() + 86400000)
+      const nextDayStr = `${nextDay.getFullYear()}-${String(nextDay.getMonth() + 1).padStart(2, "0")}-${String(nextDay.getDate()).padStart(2, "0")}`
+      setClaimStartDate(nextDayStr)
+
+      const now = new Date()
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`
+      if (todayStr >= nextDayStr) {
+        setClaimEndDate(todayStr)
+      } else {
+        setClaimEndDate(nextDayStr)
+      }
+    } else {
+      const now = new Date()
+      setClaimStartDate(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`)
+      setClaimEndDate(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`)
+    }
+  }, [claimStaffName, staffPreviousClaims, getClaimPeriod])
+
+  // Check if selected [claimStartDate, claimEndDate] overlaps with any previous claim for this staff
+  const dateOverlapInfo = React.useMemo(() => {
+    if (!claimStaffName || !claimStartDate || !claimEndDate) {
+      return { hasOverlap: false, overlappingClaim: null, invalidRange: false, prevLabel: "" }
+    }
+
+    const currentStart = new Date(claimStartDate + "T00:00:00").getTime()
+    const currentEnd = new Date(claimEndDate + "T23:59:59.999").getTime()
+
+    if (isNaN(currentStart) || isNaN(currentEnd) || currentStart > currentEnd) {
+      return { hasOverlap: false, overlappingClaim: null, invalidRange: true, prevLabel: "" }
+    }
+
+    for (const c of staffPreviousClaims) {
+      const p = getClaimPeriod(c)
+      if (p.start && p.end) {
+        const prevStart = p.start.getTime()
+        const prevEnd = p.end.getTime()
+
+        // Overlap: currentStart <= prevEnd && currentEnd >= prevStart
+        if (currentStart <= prevEnd && currentEnd >= prevStart) {
+          return {
+            hasOverlap: true,
+            overlappingClaim: c,
+            invalidRange: false,
+            prevLabel: p.label,
+          }
+        }
+      }
+    }
+
+    return { hasOverlap: false, overlappingClaim: null, invalidRange: false, prevLabel: "" }
+  }, [claimStaffName, claimStartDate, claimEndDate, staffPreviousClaims, getClaimPeriod])
+
+  // Completed work for the selected staff that has not been claimed, filtered by selected date range
+  const unclaimedWork = React.useMemo(() => {
+    if (!claimStaffName || !claimStartDate || !claimEndDate) return []
+    if (dateOverlapInfo.hasOverlap || dateOverlapInfo.invalidRange) return []
+
+    const startBoundary = new Date(claimStartDate + "T00:00:00").getTime()
+    const endBoundary = new Date(claimEndDate + "T23:59:59.999").getTime()
+
+    const isDateInRange = (dateStr: any) => {
+      if (!dateStr) return false
+      const d = parseQueueDate(dateStr)
+      if (!d) return false
+      const t = d.getTime()
+      return t >= startBoundary && t <= endBoundary
+    }
+
     const cleanStaff = claimStaffName.trim().toLowerCase()
     const tasks: Array<{
       queueid: string
@@ -363,19 +500,22 @@ export function ExpensesView({
         q.uploadstatus !== "ข้าม" &&
         String(q.uploadstatus).toLowerCase() !== "skip"
       ) {
-        const key = `${q.queueid}_upload`.toLowerCase()
-        if (!claimedTaskKeys.has(key)) {
-          tasks.push({
-            queueid: String(q.queueid),
-            chapter: String(q.chapter),
-            mangaName,
-            step: "upload",
-            stepLabel: "อัป Raw",
-            date: q.uploadtime || q.createdat || "",
-            rate: rates.uploadRate,
-            count,
-            cost: count * rates.uploadRate,
-          })
+        const taskDate = q.uploadtime || q.createdat || ""
+        if (isDateInRange(taskDate)) {
+          const key = `${q.queueid}_upload`.toLowerCase()
+          if (!claimedTaskKeys.has(key)) {
+            tasks.push({
+              queueid: String(q.queueid),
+              chapter: String(q.chapter),
+              mangaName,
+              step: "upload",
+              stepLabel: "อัป Raw",
+              date: taskDate,
+              rate: rates.uploadRate,
+              count,
+              cost: count * rates.uploadRate,
+            })
+          }
         }
       }
 
@@ -387,19 +527,22 @@ export function ExpensesView({
         q.extractstatus !== "ข้าม" &&
         String(q.extractstatus).toLowerCase() !== "skip"
       ) {
-        const key = `${q.queueid}_extract`.toLowerCase()
-        if (!claimedTaskKeys.has(key)) {
-          tasks.push({
-            queueid: String(q.queueid),
-            chapter: String(q.chapter),
-            mangaName,
-            step: "extract",
-            stepLabel: "ดึงคำ",
-            date: q.extracttime || q.createdat || "",
-            rate: rates.extractRate,
-            count,
-            cost: count * rates.extractRate,
-          })
+        const taskDate = q.extracttime || q.createdat || ""
+        if (isDateInRange(taskDate)) {
+          const key = `${q.queueid}_extract`.toLowerCase()
+          if (!claimedTaskKeys.has(key)) {
+            tasks.push({
+              queueid: String(q.queueid),
+              chapter: String(q.chapter),
+              mangaName,
+              step: "extract",
+              stepLabel: "ดึงคำ",
+              date: taskDate,
+              rate: rates.extractRate,
+              count,
+              cost: count * rates.extractRate,
+            })
+          }
         }
       }
 
@@ -410,21 +553,24 @@ export function ExpensesView({
         q.translatestatus !== "Skipped" &&
         q.translatestatus !== "ข้าม"
       ) {
-        const key = `${q.queueid}_translate`.toLowerCase()
-        if (!claimedTaskKeys.has(key)) {
-          const isSpecial = cleanStaff.includes(rates.translateSpecialName.toLowerCase())
-          const rate = isSpecial ? rates.translateSpecialRate : rates.translateNormalRate
-          tasks.push({
-            queueid: String(q.queueid),
-            chapter: String(q.chapter),
-            mangaName,
-            step: "translate",
-            stepLabel: "แปล",
-            date: q.translatetime || q.createdat || "",
-            rate,
-            count,
-            cost: count * rate,
-          })
+        const taskDate = q.translatetime || q.createdat || ""
+        if (isDateInRange(taskDate)) {
+          const key = `${q.queueid}_translate`.toLowerCase()
+          if (!claimedTaskKeys.has(key)) {
+            const isSpecial = cleanStaff.includes(rates.translateSpecialName.toLowerCase())
+            const rate = isSpecial ? rates.translateSpecialRate : rates.translateNormalRate
+            tasks.push({
+              queueid: String(q.queueid),
+              chapter: String(q.chapter),
+              mangaName,
+              step: "translate",
+              stepLabel: "แปล",
+              date: taskDate,
+              rate,
+              count,
+              cost: count * rate,
+            })
+          }
         }
       }
 
@@ -435,27 +581,30 @@ export function ExpensesView({
         q.typesetstatus !== "Skipped" &&
         q.typesetstatus !== "ข้าม"
       ) {
-        const key = `${q.queueid}_typeset`.toLowerCase()
-        if (!claimedTaskKeys.has(key)) {
-          const isSpecial = cleanStaff.includes(rates.typesetSpecialName.toLowerCase())
-          const rate = isSpecial ? rates.typesetSpecialRate : rates.typesetNormalRate
-          tasks.push({
-            queueid: String(q.queueid),
-            chapter: String(q.chapter),
-            mangaName,
-            step: "typeset",
-            stepLabel: "ลงคำ",
-            date: q.typesettime || q.createdat || "",
-            rate,
-            count,
-            cost: count * rate,
-          })
+        const taskDate = q.typesettime || q.createdat || ""
+        if (isDateInRange(taskDate)) {
+          const key = `${q.queueid}_typeset`.toLowerCase()
+          if (!claimedTaskKeys.has(key)) {
+            const isSpecial = cleanStaff.includes(rates.typesetSpecialName.toLowerCase())
+            const rate = isSpecial ? rates.typesetSpecialRate : rates.typesetNormalRate
+            tasks.push({
+              queueid: String(q.queueid),
+              chapter: String(q.chapter),
+              mangaName,
+              step: "typeset",
+              stepLabel: "ลงคำ",
+              date: taskDate,
+              rate,
+              count,
+              cost: count * rate,
+            })
+          }
         }
       }
     })
 
     return tasks
-  }, [claimStaffName, queueItems, claimedTaskKeys, mangaList, rates])
+  }, [claimStaffName, claimStartDate, claimEndDate, dateOverlapInfo, queueItems, claimedTaskKeys, mangaList, rates])
 
   const unclaimedTotals = React.useMemo(() => {
     const chapters = unclaimedWork.reduce((acc, t) => acc + t.count, 0)
@@ -486,7 +635,9 @@ export function ExpensesView({
           role: staffMember?.role || "Staff",
           totalChapters: unclaimedTotals.chapters,
           totalAmount: unclaimedTotals.amount,
-          dateRange: claimDateRange || (dateMode === "custom" ? `${customStartDate} ถึง ${customEndDate}` : "รอบปัจจุบัน"),
+          startDate: claimStartDate,
+          endDate: claimEndDate,
+          dateRange: `${claimStartDate} ถึง ${claimEndDate}`,
           queueItemIds: unclaimedWork.map((t) => ({
             queueId: t.queueid,
             step: t.step,
@@ -1818,7 +1969,7 @@ export function ExpensesView({
             </CardHeader>
             <CardContent className="p-5 space-y-4">
               <form onSubmit={handleSubmitClaim} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                   <div className="space-y-1.5">
                     <Label className="text-xs text-slate-300 font-semibold">
                       👤 เลือกชื่อพนักงานขอเบิก:
@@ -1840,20 +1991,34 @@ export function ExpensesView({
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-slate-300">
-                      📅 ระบุรอบเวลา / งวดงาน (ถ้ามี):
+                    <Label className="text-xs text-slate-300 font-semibold flex items-center gap-1">
+                      <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                      📅 วันเริ่มต้น (Start Date):
                     </Label>
                     <Input
-                      placeholder="เช่น รอบ 25 ก.ย. - 31 ต.ค."
-                      value={claimDateRange}
-                      onChange={(e) => setClaimDateRange(e.target.value)}
-                      className="h-10 bg-[#0b1120] border-[#26334d] text-sm"
+                      type="date"
+                      value={claimStartDate}
+                      onChange={(e) => setClaimStartDate(e.target.value)}
+                      className="h-10 bg-[#0b1120] border-[#26334d] text-sm text-slate-100"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-slate-300 font-semibold flex items-center gap-1">
+                      <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                      📅 วันสิ้นสุด (End Date):
+                    </Label>
+                    <Input
+                      type="date"
+                      value={claimEndDate}
+                      onChange={(e) => setClaimEndDate(e.target.value)}
+                      className="h-10 bg-[#0b1120] border-[#26334d] text-sm text-slate-100"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <Label className="text-xs text-slate-300">
-                      📝 โน้ตเพิ่มเติม / ช่องทางรับเงิน:
+                      📝 โน้ต / บัญชีรับเงิน:
                     </Label>
                     <Input
                       placeholder="เช่น ธ.กสิกร 123-xxx-xxx"
@@ -1863,6 +2028,67 @@ export function ExpensesView({
                     />
                   </div>
                 </div>
+
+                {/* Locked Past Claimed Cycles for this Staff */}
+                {claimStaffName && staffPreviousClaims.length > 0 && (
+                  <div className="p-3 rounded-lg border border-slate-700/60 bg-[#0b1120] text-xs space-y-2">
+                    <div className="flex items-center gap-1.5 text-slate-300 font-semibold">
+                      <Lock className="h-3.5 w-3.5 text-amber-400" />
+                      <span>🔒 รอบการเบิกที่ผ่านมาของ {claimStaffName} (ล็อคแล้ว ห้ามเบิกซ้ำ):</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {staffPreviousClaims.map((c) => {
+                        const p = getClaimPeriod(c)
+                        const statusText =
+                          c.status === "Paid"
+                            ? "จ่ายแล้ว"
+                            : c.status === "Approved"
+                            ? "อนุมัติแล้ว"
+                            : "รออนุมัติ"
+                        const statusColor =
+                          c.status === "Paid"
+                            ? "border-emerald-500/40 text-emerald-300 bg-emerald-500/10"
+                            : c.status === "Approved"
+                            ? "border-sky-500/40 text-sky-300 bg-sky-500/10"
+                            : "border-amber-500/40 text-amber-300 bg-amber-500/10"
+
+                        return (
+                          <Badge
+                            key={c.claimid}
+                            variant="outline"
+                            className={`text-[11px] px-2.5 py-1 gap-1.5 font-medium ${statusColor}`}
+                          >
+                            <span>📅 {p.label}</span>
+                            <span className="opacity-80 font-bold">({statusText})</span>
+                          </Badge>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Date Overlap Alert */}
+                {dateOverlapInfo.hasOverlap && (
+                  <div className="p-3.5 rounded-lg border border-red-500/50 bg-red-950/40 text-red-200 text-xs flex items-start gap-2.5 shadow-md">
+                    <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="font-bold text-red-100 text-sm">
+                        ⚠️ ช่วงวันที่เลือกทับซ้อนกับรอบที่เบิกไปแล้ว (ไม่สามารถเบิกซ้ำได้)
+                      </p>
+                      <p className="text-xs text-red-300">
+                        ช่วง <strong>{dateOverlapInfo.prevLabel || dateOverlapInfo.overlappingClaim?.daterange}</strong> ({dateOverlapInfo.overlappingClaim?.claimid}) ถูกล็อคไว้เพราะเบิกแล้ว กรุณาเลือกวันเริ่มต้นหลังจากรอบนี้
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Invalid Date Range Warning */}
+                {dateOverlapInfo.invalidRange && (
+                  <div className="p-2.5 rounded-lg border border-amber-500/40 bg-amber-950/30 text-amber-200 text-xs flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-amber-400 shrink-0" />
+                    <span>วันเริ่มต้นต้องไม่มากกว่าวันสิ้นสุด</span>
+                  </div>
+                )}
 
                 {/* Unclaimed Work Table */}
                 {claimStaffName ? (
@@ -1921,12 +2147,14 @@ export function ExpensesView({
                       <div className="flex justify-end pt-2">
                         <Button
                           type="submit"
-                          disabled={submittingClaim}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-lg shadow-emerald-600/30"
+                          disabled={submittingClaim || dateOverlapInfo.hasOverlap || dateOverlapInfo.invalidRange || unclaimedWork.length === 0}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-lg shadow-emerald-600/30 disabled:opacity-50"
                         >
                           <Send className="h-4 w-4" />
                           {submittingClaim
                             ? "กำลังส่งคำขอเบิก..."
+                            : dateOverlapInfo.hasOverlap
+                            ? "ไม่สามารถเบิกได้ (ช่วงวันที่ทับซ้อน)"
                             : `ตัดยอดขอเบิกเงิน (฿${unclaimedTotals.amount.toLocaleString()} บาท)`}
                         </Button>
                       </div>
@@ -2002,7 +2230,11 @@ export function ExpensesView({
                               {claim.staffname}
                               <span className="block text-[10px] text-slate-400 font-normal">{claim.role}</span>
                             </TableCell>
-                            <TableCell className="text-slate-300">{claim.daterange || "-"}</TableCell>
+                            <TableCell className="text-slate-300">
+                              {claim.startdate && claim.enddate
+                                ? `${claim.startdate} ถึง ${claim.enddate}`
+                                : claim.daterange || "-"}
+                            </TableCell>
                             <TableCell className="text-center font-bold text-amber-300">
                               {claim.totalchapters} ตอน
                             </TableCell>
@@ -2116,7 +2348,11 @@ export function ExpensesView({
                 </div>
                 <div>
                   <span className="text-slate-400 block">รอบเวลา:</span>
-                  <span className="font-semibold text-slate-200">{selectedClaimDetail.daterange || "-"}</span>
+                  <span className="font-semibold text-slate-200">
+                    {selectedClaimDetail.startdate && selectedClaimDetail.enddate
+                      ? `${selectedClaimDetail.startdate} ถึง ${selectedClaimDetail.enddate}`
+                      : selectedClaimDetail.daterange || "-"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-400 block">ยอดรวม:</span>

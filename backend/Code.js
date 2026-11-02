@@ -565,6 +565,24 @@ function ensureSheetHeaders(sheet, name) {
       });
     }
   }
+
+  if (name === PAYOUT_CLAIMS_SHEET_NAME) {
+    const lastCol = sheet.getLastColumn();
+    if (lastCol > 0) {
+      const currentHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(h => h.toString().toLowerCase().trim());
+      const required = ['startdate', 'enddate'];
+      const displayMap = {
+        'startdate': 'StartDate',
+        'enddate': 'EndDate'
+      };
+      required.forEach(req => {
+        if (currentHeaders.indexOf(req) === -1) {
+          const newCol = sheet.getLastColumn() + 1;
+          sheet.getRange(1, newCol).setValue(displayMap[req]);
+        }
+      });
+    }
+  }
 }
 
 function getSheet(name = SHEET_NAME) {
@@ -635,7 +653,7 @@ function getSheet(name = SHEET_NAME) {
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#ec4899').setFontColor('#ffffff');
     } else if (name === PAYOUT_CLAIMS_SHEET_NAME) {
       const headers = [
-        'ClaimID', 'CreatedAt', 'StaffName', 'Role', 'DateRange',
+        'ClaimID', 'CreatedAt', 'StaffName', 'Role', 'DateRange', 'StartDate', 'EndDate',
         'TotalChapters', 'TotalAmount', 'Status', 'ApprovedAt', 'PaidAt', 'Note', 'QueueItemIds'
       ];
       sheet.appendRow(headers);
@@ -5006,6 +5024,8 @@ function submitPayoutClaim(payload) {
       if (header === 'staffname') return payload.staffName || '';
       if (header === 'role') return payload.role || 'All';
       if (header === 'daterange') return payload.dateRange || '';
+      if (header === 'startdate') return payload.startDate || '';
+      if (header === 'enddate') return payload.endDate || '';
       if (header === 'totalchapters') return Number(payload.totalChapters) || 0;
       if (header === 'totalamount') return Number(payload.totalAmount) || 0;
       if (header === 'status') return 'Pending';
