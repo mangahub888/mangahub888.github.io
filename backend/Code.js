@@ -2973,18 +2973,41 @@ function getRawTrackerPendingChapters(targetTrackerId) {
               }
             });
             const html = resp.getContentText();
-            // Regex สกัด (comicId, title, chapterNum)
+            // Regex สกัด (comicId, title, chapterNum) ครอบคลุมทั้ง 第X话, 第X集, 第X回, และตัวเลขนำหน้า เช่น "4 苦战", "5 交卷离场"
             const chapterMatches = [];
-            const regex = /(\d{5,9}),"((?:第)?\s*(\d+(?:\.\d+)?)\s*(?:话|集)\s*[^"]*)"/g;
+            const regex = /(\d{5,9}),"([^"]*?)"/g;
             let m;
             while ((m = regex.exec(html)) !== null) {
-              const cNum = parseFloat(m[3]);
-              if (!isNaN(cNum)) {
-                chapterMatches.push({
-                  comicId: m[1],
-                  chapterTitle: m[2],
-                  chapterNum: cNum
-                });
+              const cid = m[1];
+              const title = m[2].trim();
+              
+              // 1. ลองหาแบบ 第X话 / 第X集 / 第X回
+              let numMatch = title.match(/(?:第)?\s*(\d+(?:\.\d+)?)\s*(?:话|集|回)/i);
+              // 2. ถ้าไม่พบ ลองหาตัวเลขขึ้นต้น เช่น "4 苦战" หรือ "04. 苦战"
+              if (!numMatch) {
+                numMatch = title.match(/^(?:第)?\s*(\d+(?:\.\d+)?)/i);
+              }
+              // 3. ถ้าไม่พบ ลองหา Chapter / Ch. / Ep. / ตอนที่
+              if (!numMatch) {
+                numMatch = title.match(/(?:Chapter|Ch\.|Ep\.|ตอน(?:ที่)?)\s*(\d+(?:\.\d+)?)/i);
+              }
+              
+              if (numMatch) {
+                const cNum = parseFloat(numMatch[1]);
+                // กรองข้ามปี พ.ศ./ค.ศ. เช่น 2024, 2025, 2026 ที่มักเป็นประกาศปีใหม่
+                if (cNum >= 1900 && cNum <= 2100 && !/(?:话|集|回)/.test(title)) {
+                  continue;
+                }
+                if (!isNaN(cNum) && cNum > 0 && cNum < 1900) {
+                  // ป้องกันซ้ำ
+                  if (!chapterMatches.some(function(item) { return item.comicId === cid; })) {
+                    chapterMatches.push({
+                      comicId: cid,
+                      chapterTitle: title,
+                      chapterNum: cNum
+                    });
+                  }
+                }
               }
             }
 
