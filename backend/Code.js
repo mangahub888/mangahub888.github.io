@@ -226,6 +226,12 @@ function doPost(e) {
       case 'DELETE_BUDGET_TRANSACTION':
         result = deleteBudgetTransaction(payload.id);
         break;
+      case 'GET_PENDING_PAID_CLAIMS_FOR_BUDGET':
+        result = getPendingPaidClaimsForBudget(payload);
+        break;
+      case 'SYNC_PAID_CLAIMS_TO_BUDGET':
+        result = syncPaidClaimsToBudget(payload);
+        break;
 
       // --- FINANCIALS (MANGA SALES) CRUD ---
       case 'GET_FINANCIAL_DATA':
@@ -1808,6 +1814,139 @@ function deleteBudgetTransaction(id) {
     return { error: 'Transaction not found' };
   } catch (err) {
     return { error: 'Delete Transaction Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getPendingPaidClaimsForBudget(payload) {
+  try {
+    payload = payload || {};
+    const month = payload.month !== undefined && payload.month !== null && payload.month !== '' && payload.month !== 'all' ? Number(payload.month) : null;
+    const year = payload.year !== undefined && payload.year !== null && payload.year !== '' && payload.year !== 'all' ? Number(payload.year) : null;
+
+    const claims = getPayoutClaims();
+    const transactions = getBudgetTransactions();
+
+    const existingRefs = new Set();
+    transactions.forEach(t => {
+      if (t.reference) {
+        existingRefs.add(String(t.reference).trim().toLowerCase());
+      }
+    });
+
+    const paidClaims = claims.filter(c => {
+      const status = String(c.status || '').trim().toLowerCase();
+      if (status !== 'paid') return false;
+
+      if (month !== null || year !== null) {
+        const dateStr = c.paidat || c.createdat || c.startdate;
+        if (!dateStr) return false;
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return false;
+
+        if (month !== null && (d.getMonth() + 1) !== month) {
+          return false;
+        }
+        if (year !== null && d.getFullYear() !== year) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    const result = paidClaims.map(c => {
+      const isImported = existingRefs.has(String(c.claimid || '').trim().toLowerCase());
+      return {
+        ...c,
+        alreadyImported: isImported
+      };
+    });
+
+    return {
+      success: true,
+      claims: result
+    };
+  } catch (err) {
+    console.error('getPendingPaidClaimsForBudget error:', err);
+    return { error: 'Get Pending Paid Claims Failed: ' + err.toString() };
+  }
+}
+
+function syncPaidClaimsToBudget(payload) {
+  if (!payload || !Array.isArray(payload.claimIds) || payload.claimIds.length === 0) {
+    return { error: 'กรุณาระบุ Claim IDs ที่ต้องการนำเข้า' };
+  }
+
+  const targetIds = new Set(payload.claimIds.map(id => String(id).trim().toLowerCase()));
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(BUDGET_TRANSACTION_SHEET_NAME);
+    const claims = getPayoutClaims();
+    const transactions = getBudgetTransactions();
+
+    const existingRefs = new Set();
+    transactions.forEach(t => {
+      if (t.reference) {
+        existingRefs.add(String(t.reference).trim().toLowerCase());
+      }
+    });
+
+    const claimsToImport = claims.filter(c => {
+      const cid = String(c.claimid || '').trim().toLowerCase();
+      const status = String(c.status || '').trim().toLowerCase();
+      return targetIds.has(cid) && status === 'paid' && !existingRefs.has(cid);
+    });
+
+    if (claimsToImport.length === 0) {
+      return {
+        success: true,
+        importedCount: 0,
+        message: 'ไม่มีรายการใหม่ที่ต้องนำเข้า (อาจถูกนำเข้าไปแล้วหรือไม่มีสถานะ Paid)',
+        transactions: getBudgetTransactions()
+      };
+    }
+
+    const rowsToAppend = [];
+    const now = new Date();
+    claimsToImport.forEach((c, index) => {
+      const transId = 'TR' + (now.getTime() + index);
+      let transDate = c.paidat ? new Date(c.paidat) : (c.createdat ? new Date(c.createdat) : now);
+      if (isNaN(transDate.getTime())) transDate = now;
+
+      const staff = c.staffname || '';
+      const role = c.role ? ` [${c.role}]` : '';
+      const dateRange = c.daterange ? ` (${c.daterange})` : '';
+      const note = `ค่าตอบแทน: ${staff}${role}${dateRange}`.trim();
+
+      rowsToAppend.push([
+        transId,
+        transDate,
+        'Expense',
+        parseFloat(c.totalamount) || 0,
+        'ค่าตอบแทนทีมงาน',
+        c.claimid,
+        note
+      ]);
+    });
+
+    if (rowsToAppend.length > 0) {
+      rowsToAppend.forEach(row => {
+        sheet.appendRow(row);
+      });
+      invalidateCache('budget_transactions');
+    }
+
+    return {
+      success: true,
+      importedCount: rowsToAppend.length,
+      transactions: getBudgetTransactions()
+    };
+  } catch (err) {
+    console.error('syncPaidClaimsToBudget error:', err);
+    return { error: 'Sync Paid Claims Failed: ' + err.toString() };
   } finally {
     lock.releaseLock();
   }

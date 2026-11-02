@@ -33,6 +33,10 @@ import {
   TrendingDown,
   Wallet,
   Landmark,
+  ArrowDownToLine,
+  RefreshCw,
+  Receipt,
+  Calendar,
 } from "lucide-react"
 
 const DEFAULT_WEBSITES = [
