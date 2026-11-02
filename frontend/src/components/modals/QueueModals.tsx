@@ -48,6 +48,7 @@ export function AddQueueModal({
   const [extractLinkInput, setExtractLinkInput] = React.useState("")
   const [translatorName, setTranslatorName] = React.useState("")
   const [typesetterName, setTypesetterName] = React.useState("")
+  const [typesetType, setTypesetType] = React.useState<"จีน" | "เกาหลี">("จีน")
   const [publisherName, setPublisherName] = React.useState("")
   const [workLink, setWorkLink] = React.useState("")
   const [note, setNote] = React.useState("")
@@ -64,6 +65,7 @@ export function AddQueueModal({
         setExtractLinkInput("")
         setTranslatorName("")
         setTypesetterName("")
+        setTypesetType("จีน")
         setPublisherName("")
         setWorkLink("")
         setNote("")
@@ -162,6 +164,7 @@ export function AddQueueModal({
         translatorname: translatorName,
         typesetstatus: "รอเริ่ม",
         typesettername: typesetterName,
+        typesettype: typesetType,
         publishstatus: "รอเริ่ม",
         publishername: publisherName,
         poststatus: "รอเริ่ม",
@@ -278,13 +281,28 @@ export function AddQueueModal({
             </div>
 
             <div className="space-y-1.5">
-              <Label>✍️ ผู้ลงคำ (Typesetter)</Label>
-              <SearchableSelect
-                options={teamOptions}
-                value={typesetterName}
-                onChange={setTypesetterName}
-                placeholder="-- เลือกผู้รับผิดชอบ --"
-              />
+              <div className="flex items-center justify-between">
+                <Label>✍️ ผู้ลงคำ (Typesetter)</Label>
+                <span className="text-[10px] text-slate-400 font-medium">เรทลงคำ:</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                <div className="sm:col-span-2">
+                  <SearchableSelect
+                    options={teamOptions}
+                    value={typesetterName}
+                    onChange={setTypesetterName}
+                    placeholder="-- เลือกผู้รับผิดชอบ --"
+                  />
+                </div>
+                <select
+                  value={typesetType}
+                  onChange={(e) => setTypesetType(e.target.value as "จีน" | "เกาหลี")}
+                  className="flex h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-2 py-2 text-xs font-semibold text-slate-200 cursor-pointer"
+                >
+                  <option value="จีน">🇨🇳 เรทจีน</option>
+                  <option value="เกาหลี">🇰🇷 เรทเกาหลี</option>
+                </select>
+              </div>
             </div>
 
             <div className="space-y-1.5">
@@ -371,6 +389,7 @@ export function UpdateQueueModal({
 
   const [typesetStatus, setTypesetStatus] = React.useState("รอเริ่ม")
   const [typesetterName, setTypesetterName] = React.useState("")
+  const [typesetType, setTypesetType] = React.useState<"จีน" | "เกาหลี">("จีน")
 
   const [publishStatus, setPublishStatus] = React.useState("รอเริ่ม")
   const [publisherName, setPublisherName] = React.useState("")
@@ -406,6 +425,7 @@ export function UpdateQueueModal({
 
       setTypesetStatus(item.typesetstatus || "รอเริ่ม")
       setTypesetterName(item.typesettername || "")
+      setTypesetType(item.typesettype === "เกาหลี" || item.typesetratetype === "เกาหลี" ? "เกาหลี" : "จีน")
 
       setPublishStatus(item.publishstatus || "รอเริ่ม")
       setPublisherName(item.publishername || "")
@@ -466,6 +486,7 @@ export function UpdateQueueModal({
         extractorname: extractorName,
         translatorname: translatorName,
         typesettername: typesetterName,
+        typesettype: typesetType,
         publishername: publisherName,
         postername: posterName,
         worklink: finalWorkLink,
@@ -609,7 +630,7 @@ export function UpdateQueueModal({
             </div>
 
             {/* Typeset */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-end">
               <div className="space-y-1">
                 <Label>✍️ ลงคำ</Label>
                 <select
@@ -622,12 +643,24 @@ export function UpdateQueueModal({
                   <option value="เสร็จแล้ว">เสร็จแล้ว</option>
                 </select>
               </div>
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2 space-y-1">
+                <Label className="text-xs text-slate-400 block sm:hidden">ผู้ลงคำ</Label>
                 <SearchableSelect
                   options={teamOptions}
                   value={typesetterName}
                   onChange={setTypesetterName}
                 />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[11px] text-slate-400 block sm:hidden">เรทลงคำ</Label>
+                <select
+                  className="flex h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-2 py-2 text-xs font-semibold text-slate-200 cursor-pointer"
+                  value={typesetType}
+                  onChange={(e) => setTypesetType(e.target.value as "จีน" | "เกาหลี")}
+                >
+                  <option value="จีน">🇨🇳 เรทจีน</option>
+                  <option value="เกาหลี">🇰🇷 เรทเกาหลี</option>
+                </select>
               </div>
             </div>
 

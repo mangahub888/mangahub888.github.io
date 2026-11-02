@@ -548,14 +548,15 @@ function ensureSheetHeaders(sheet, name) {
     const lastCol = sheet.getLastColumn();
     if (lastCol > 0) {
       const currentHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(h => h.toString().toLowerCase().trim());
-      const required = ['poststatus', 'postername', 'posttime', 'isediting', 'editingby', 'editingtime'];
+      const required = ['poststatus', 'postername', 'posttime', 'isediting', 'editingby', 'editingtime', 'typesettype'];
       const displayMap = {
         'poststatus': 'PostStatus',
         'postername': 'PosterName',
         'posttime': 'PostTime',
         'isediting': 'IsEditing',
         'editingby': 'EditingBy',
-        'editingtime': 'EditingTime'
+        'editingtime': 'EditingTime',
+        'typesettype': 'TypesetType'
       };
       required.forEach(req => {
         if (currentHeaders.indexOf(req) === -1) {
@@ -1001,6 +1002,7 @@ function addQueue(queueData) {
         return '';
       }
       if (header === 'typesettername') return queueData.typesettername || '';
+      if (header === 'typesettype' || header === 'typesetratetype') return queueData.typesettype || queueData.typesetratetype || 'จีน';
       if (header === 'publishername') return queueData.publishername || '';
       if (header === 'postername') return queueData.postername || '';
 
@@ -1446,6 +1448,9 @@ function updateFullQueueItem(queueId, updateData) {
         updateCell('extractorname', updateData.extractorname);
         updateCell('translatorname', updateData.translatorname);
         updateCell('typesettername', updateData.typesettername);
+        if (updateData.typesettype !== undefined || updateData.typesetratetype !== undefined) {
+          updateCell('typesettype', updateData.typesettype || updateData.typesetratetype || 'จีน');
+        }
         updateCell('publishername', updateData.publishername);
         updateCell('postername', updateData.postername);
 
