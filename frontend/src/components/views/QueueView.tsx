@@ -26,6 +26,7 @@ import {
   parseQueueDate,
 } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
+import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
 import { toast } from "sonner"
 import {
   Plus,
@@ -37,6 +38,7 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
+  RefreshCw,
 } from "lucide-react"
 
 interface QueueViewProps {
@@ -75,6 +77,7 @@ export function QueueView({
   const [urgentFilter, setUrgentFilter] = React.useState("all")
   const [assigneeFilter, setAssigneeFilter] = React.useState("all")
   const [showPublishPost, setShowPublishPost] = React.useState(false)
+  const { isAnyRunning, isKuaikanRunning, latestActiveRun } = useGitHubActionsStatus()
 
   // Bulk Action state
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())
@@ -502,12 +505,25 @@ export function QueueView({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#26334d] pt-5">
         <div>
           <h2 className="text-2xl font-bold text-white">รายการคิวงาน</h2>
-          <p className="text-sm text-slate-400">
-            ติดตามความคืบหน้าการทำงานรายตอน ({filteredQueue.length} รายการ)
+          <p className="text-sm text-slate-400 flex flex-wrap items-center gap-2">
+            <span>ติดตามความคืบหน้าการทำงานรายตอน ({filteredQueue.length} รายการ)</span>
             {!showPublishPost && publishPostCount > 0 && (
-              <span className="ml-2 text-xs text-sky-400 font-medium">
+              <span className="text-xs text-sky-400 font-medium">
                 (ซ่อนรอ Publish & โพสต์ไว้ {publishPostCount} ตอน)
               </span>
+            )}
+            {isAnyRunning && latestActiveRun && (
+              <a
+                href={latestActiveRun.html_url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/40 font-semibold animate-pulse hover:bg-emerald-500/25"
+                title="คลิกเพื่อดู GitHub Actions Log สด"
+              >
+                <RefreshCw className="h-3 w-3 animate-spin text-emerald-400" />
+                <span>⚡ GitAction: กำลังรัน ({isKuaikanRunning ? "KuaiKan" : latestActiveRun.name})</span>
+                <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+              </a>
             )}
           </p>
         </div>
@@ -540,6 +556,44 @@ export function QueueView({
           </Button>
         </div>
       </div>
+
+      {/* GitHub Actions Active Running Alert Banner */}
+      {isAnyRunning && latestActiveRun && (
+        <div className="rounded-xl border border-sky-500/40 bg-gradient-to-r from-sky-950/60 via-[#0e172e] to-purple-950/40 p-3.5 shadow-lg shadow-sky-950/20 animate-pulse">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/40">
+                <RefreshCw className="h-4 w-4 animate-spin text-sky-300" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-bold text-sm text-sky-200">
+                    ⚡ GitHub Actions กำลังประมวลผลดึง/ซื้อ Raw อัตโนมัติ
+                  </span>
+                  <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px] font-bold">
+                    {latestActiveRun.name} (Run #{latestActiveRun.run_number})
+                  </Badge>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  สถานะ: <span className="text-amber-300 font-semibold">{latestActiveRun.status === 'in_progress' ? 'กำลังทำงาน (In Progress)' : 'รอคิว (Queued)'}</span> • ระบบกำลังดาวน์โหลดตอนและอัปเดตสถานะคิวงานให้อัตโนมัติ
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href={latestActiveRun.html_url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                ดูสถานะบน GitHub Actions
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters Toolbar */}
       <Card className="p-4">

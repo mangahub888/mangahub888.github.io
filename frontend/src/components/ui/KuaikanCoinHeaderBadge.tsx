@@ -1,7 +1,8 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, Crown } from "lucide-react"
+import { AlertTriangle, Crown, RefreshCw } from "lucide-react"
 import { useKuaikanCoinAlert } from "@/lib/kuaikanCoinAlert"
+import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
 
 interface KuaikanCoinHeaderBadgeProps {
   onClick: () => void
@@ -9,6 +10,7 @@ interface KuaikanCoinHeaderBadgeProps {
 
 export function KuaikanCoinHeaderBadge({ onClick }: KuaikanCoinHeaderBadgeProps) {
   const { hasAlert, alertInfo, sessionData, vipInfo, isVip, coinBalance } = useKuaikanCoinAlert()
+  const { isKuaikanRunning, activeKuaikanRun } = useGitHubActionsStatus()
 
   // 1. If active emergency alert (insufficient coins or VIP required)
   if (hasAlert) {
@@ -77,6 +79,12 @@ export function KuaikanCoinHeaderBadge({ onClick }: KuaikanCoinHeaderBadgeProps)
           <span className="flex items-center gap-1 text-[11px] text-amber-300/90 font-mono">
             <span>•</span>
             <span>🪙 {formattedCoins} KK</span>
+          </span>
+        )}
+        {isKuaikanRunning && (
+          <span className="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold animate-pulse">
+            <RefreshCw className="h-2.5 w-2.5 animate-spin text-emerald-300" />
+            <span>กำลังซื้อ Raw</span>
           </span>
         )}
       </Button>

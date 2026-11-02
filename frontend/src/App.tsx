@@ -18,6 +18,7 @@ import { MangaSettingsView } from "@/components/views/MangaSettingsView"
 import { ConnectorsView } from "@/components/views/ConnectorsView"
 import { KuaikanCoinWarningBanner } from "@/components/ui/KuaikanCoinWarningBanner"
 import { KuaikanCoinHeaderBadge } from "@/components/ui/KuaikanCoinHeaderBadge"
+import { GitHubActionsHeaderBadge } from "@/components/ui/GitHubActionsHeaderBadge"
 import { MangaModal } from "@/components/modals/MangaModal"
 import { KuaiKanLoginModal } from "@/components/modals/KuaiKanLoginModal"
 import {
@@ -599,6 +600,9 @@ export default function App() {
 
             {/* KuaiKan VIP & Coin Status / Alert Badge in Header */}
             <KuaikanCoinHeaderBadge onClick={() => handleNavClick("connectors")} />
+
+            {/* GitHub Actions Real-time Status Badge */}
+            <GitHubActionsHeaderBadge />
 
             <Button
               variant="outline"
