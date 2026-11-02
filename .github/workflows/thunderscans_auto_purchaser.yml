@@ -2,8 +2,8 @@ name: ThunderScans (en-thunder) 24/7 Pipeline (5-Min Cooldown)
 
 on:
   schedule:
-    # รันอัตโนมัติตลอด 24 ชั่วโมง ทุกๆ 1 ชั่วโมง (นาทีที่ 15 ของทุกชั่วโมง)
-    - cron: '15 * * * *'
+    # รันอัตโนมัติตลอด 24 ชั่วโมง ทุกๆ ต้นชั่วโมง (นาทีที่ 0 ของทุกชั่วโมง)
+    - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       chapter_url:
@@ -20,7 +20,7 @@ on:
         default: '300'
 
 concurrency:
-  group: thunderscans-purchaser
+  group: raw-pipeline-master-queue
   cancel-in-progress: false
 
 permissions:

@@ -29,7 +29,7 @@ on:
         default: '300'
 
 concurrency:
-  group: kuaikan-purchaser
+  group: raw-pipeline-master-queue
   cancel-in-progress: false
 
 permissions:

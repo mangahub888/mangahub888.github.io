@@ -16,7 +16,7 @@ on:
         default: '0'
 
 concurrency:
-  group: auto-raw-tracker
+  group: raw-pipeline-master-queue
   cancel-in-progress: false
 
 permissions:
@@ -46,7 +46,9 @@ jobs:
 
       - name: Run Auto Raw Pipeline
         env:
+          PYTHONUNBUFFERED: '1'
           COOLDOWN_SECONDS: ${{ github.event.inputs.cooldown_seconds || '300' }}
+          THUNDERSCANS_COOLDOWN_SECONDS: ${{ github.event.inputs.cooldown_seconds || '300' }}
           MAX_CHAPTERS: ${{ github.event.inputs.max_chapters || '0' }}
           KUAIKAN_COOKIE: ${{ secrets.KUAIKAN_COOKIE || '' }}
           THUNDERSCANS_COOKIE: ${{ secrets.THUNDERSCANS_COOKIE || '' }}

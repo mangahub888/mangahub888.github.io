@@ -77,7 +77,8 @@
   - บันทึกสถานะตอน 64 ลงฐานข้อมูล Mangas & RawTracker กลายเป็นสถานะ "เป็นปัจจุบัน" เรียบร้อย
 - **การบูรณาการระบบ (Pipeline Integration):**
   - เชื่อมต่อเข้ากับ `tools/auto_raw_tracker.py` รองรับการรันผสมทั้ง KuaiKan และ ThunderScans ในคิวงานเดียว
-  - สร้าง Workflow แยก [.github/workflows/thunderscans_auto_purchaser.yml](file:///D:/new%20backend/mangahub888.github.io/.github/workflows/thunderscans_auto_purchaser.yml) รันอัตโนมัติ 24 ชั่วโมง ทุก 1 ชั่วโมง (นาทีที่ 15: `15 * * * *`) และรองรับ Manual Dispatch
+  - สร้าง Workflow แยก [.github/workflows/thunderscans_auto_purchaser.yml](file:///D:/new%20backend/mangahub888.github.io/.github/workflows/thunderscans_auto_purchaser.yml) รันอัตโนมัติ 24 ชั่วโมง ทุกต้นชั่วโมง (`0 * * * *`) และรองรับ Manual Dispatch
+  - **ระบบเข้าคิวรอตามลำดับ (Sequential Queue Lock via Concurrency):** รวม Workflows ทั้งหมด (`auto_raw_tracker.yml`, `thunderscans_auto_purchaser.yml`, และ `kuaikan_auto_purchaser.yml`) ให้อยู่ภายใต้ Concurrency Group เดียวกัน (`group: raw-pipeline-master-queue`, `cancel-in-progress: false`) หากมีตัวใดกำลังรันเคลียร์คิวอยู่ อีกตัวจะขึ้นสถานะ "Queued / Waiting" รอจนกว่าตัวแรกจะเสร็จสิ้น จึงจะเริ่มรันตามลำดับ ป้องกันการแย่งทรัพยากรหรือชนกัน 100%
   - **ระบบ 24/7 Pipeline พร้อม 5-Minute Cooldown Delay:** ปรับค่าเริ่มต้นระหว่างตอนเป็น **300 วินาที (5 นาที)** พร้อมฟังก์ชันนับถอยหลัง `countdown_sleep(300)` แสดงผล `[05:00] ...` บน GitHub Actions Log แบบโปร่งใสและปลอดภัยสูงสุด
   - อัปเดต [.github/workflows/auto_raw_tracker.yml](file:///D:/new%20backend/mangahub888.github.io/.github/workflows/auto_raw_tracker.yml) ให้รับ secret `THUNDERSCANS_COOKIE`
   - **การทดสอบจริงบน GitHub Actions Run #2 (Live Verified):**
