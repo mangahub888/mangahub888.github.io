@@ -11,3 +11,19 @@ frontend/public/version.json
 .agents/
 __pycache__/
 *.pyc
+
+# Sensitive / large local artifacts (never commit)
+base.apk
+*.apk
+qqac.db
+*.db
+*.pcap
+*.pcapng
+test_output/
+scratch/
+brain/
+__pycache__/
+tools/__pycache__/
+tools/tencent_app_session.json
+storageState.json
+tools/storageState.json

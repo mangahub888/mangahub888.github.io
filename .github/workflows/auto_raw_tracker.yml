@@ -52,5 +52,7 @@ jobs:
           MAX_CHAPTERS: ${{ github.event.inputs.max_chapters || '0' }}
           KUAIKAN_COOKIE: ${{ secrets.KUAIKAN_COOKIE || '' }}
           THUNDERSCANS_COOKIE: ${{ secrets.THUNDERSCANS_COOKIE || '' }}
+          TENCENT_COOKIE: ${{ secrets.TENCENT_COOKIE || '' }}
+          TENCENT_INCLUDE_APP_ONLY: ${{ vars.TENCENT_INCLUDE_APP_ONLY || '1' }}
         run: |
           python tools/auto_raw_tracker.py

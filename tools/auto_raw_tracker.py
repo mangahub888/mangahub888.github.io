@@ -92,7 +92,7 @@ def countdown_sleep(seconds):
     """
     นับถอยหลังพักระหว่างตอน (รองรับทั้ง Terminal และ GitHub Actions CI/CD)
     """
-    print(f"\n☕ จบตอนแล้ว! พัก {seconds // 60} นาที เพื่อความปลอดภัยของบัญชี KuaiKan VIP...")
+    print(f"\n☕ จบตอนแล้ว! พัก {seconds // 60} นาที เพื่อความปลอดภัยของบัญชี VIP...")
     
     # ถ้าเป็น CI/CD เช่น GitHub Actions (ไม่มี interactive TTY)
     if not sys.stdout.isatty():
@@ -118,7 +118,7 @@ def countdown_sleep(seconds):
         except KeyboardInterrupt:
             print("\n   ⏩ ข้ามการพัก 5 นาที เริ่มตอนต่อไปทันที!")
             return
-    print("\n   ✓ ครบเวลาพัก 5 นาทีแล้ว เริ่มทำตอนถัดไปทันที!\n")
+    print("\n   ✓ ครบเวลาพัก 5 นาทีแล้ว เริ่มตอนถัดไปทันที!\n")
 
 def process_single_chapter(task):
     """
@@ -211,7 +211,6 @@ def process_single_chapter(task):
     total_images = len(urls)
     thai_name = data.get("thaiTitle") or data.get("mangaName") or manga_name
 
-    # ตรวจสอบความถูกต้องว่าภาพเป็นของ comic_id นี้จริงๆ ป้องกันการเย็บผิดเรื่อง
     cid_str = f"c{comic_id}"
     valid_urls = []
     for item in urls:
@@ -229,7 +228,6 @@ def process_single_chapter(task):
         print(f"❌ ไม่พบรูปภาพที่สมบูรณ์สำหรับ ComicID {comic_id} ข้าม")
         return False
 
-    # 2. ดาวน์โหลดชิ้นส่วนภาพแบบคู่ขนาน (Parallel Slice Image Downloading - 10 Workers)
     print(f"2. กำลังดาวน์โหลดชิ้นส่วนภาพ {total_images} ชิ้น แบบคู่ขนาน (10 Workers)...")
     t_start_dl = time.time()
     downloaded_slices = [None] * total_images
@@ -247,11 +245,8 @@ def process_single_chapter(task):
     success_slices = sum(1 for b in downloaded_slices if b is not None)
     print(f"✓ ดาวน์โหลดสำเร็จ {success_slices}/{total_images} ชิ้น (ใช้เวลา {time.time() - t_start_dl:.1f} วินาที)")
 
-    # 3. วัดขนาดความกว้างมาตรฐานจากหน้าย่อยที่ 15 (Index 14) ของเรื่อง/ตอนนั้นๆ เสมอ (ไม่ล็อค 1280px)
     sample_idx = 14 if total_images >= 15 else total_images // 2
-    sample_bytes = downloaded_slices[sample_idx]
-    if not sample_bytes:
-        sample_bytes = downloaded_slices[0]
+    sample_bytes = downloaded_slices[sample_idx] or downloaded_slices[0]
     if not sample_bytes:
         for b in downloaded_slices:
             if b:
@@ -264,7 +259,6 @@ def process_single_chapter(task):
     standard_width = sample_img.width
     print(f"✓ ความกว้างมาตรฐานคือ {standard_width}px (จากหน้าย่อย #{sample_idx + 1})")
 
-    # 4. Pre-Stitching All 20 Pages (ประกอบภาพ 20 หน้ามาตรฐานล่วงหน้าใน Memory)
     total_parts = min(TARGET_TOTAL_PAGES, total_images)
     print(f"3. กำลังเย็บประกอบภาพล่วงหน้าทั้ง {total_parts} หน้า (001.jpg - {total_parts:03d}.jpg)...")
     t_start_stitch = time.time()
@@ -300,24 +294,20 @@ def process_single_chapter(task):
             strip_canvas.paste(p_img, (0, current_y))
             current_y += p_img.height
 
-        ext = "jpg"
-        mime_type = "image/jpeg"
-        part_file_name = f"{part_num:03d}.jpg"
-
         img_buf = io.BytesIO()
         strip_canvas.save(img_buf, format="JPEG", quality=90, optimize=True)
 
         img_bytes = img_buf.getvalue()
         b64_str = base64.b64encode(img_bytes).decode('utf-8')
-        data_url = f"data:{mime_type};base64," + b64_str
+        data_url = f"data:image/jpeg;base64,{b64_str}"
 
         pages_payloads[part_idx] = {
             "mangaName": thai_name,
             "chapter": chapter_title,
             "partIndex": part_num,
             "totalParts": total_parts,
-            "fileName": part_file_name,
-            "mimeType": mime_type,
+            "fileName": f"{part_num:03d}.jpg",
+            "mimeType": "image/jpeg",
             "base64Data": data_url,
             "isLastPart": False,
             "clearFolder": False,
@@ -330,11 +320,9 @@ def process_single_chapter(task):
 
     print(f"✓ เย็บประกอบภาพครบทั้ง {total_parts} หน้าเสร็จสิ้น (ใช้เวลา {time.time() - t_start_stitch:.1f} วินาที)")
 
-    # 5. Smart Staged Multi-Thread Uploading
     t_start_up = time.time()
     last_folder_url = ""
 
-    # Phase A: Initial Setup & Folder Cleanup (Upload Part 1)
     print(f"4. [Smart Upload Phase A] อัปโหลด 001.jpg เพื่อสร้าง/เตรียมโฟลเดอร์ Google Drive...")
     p1 = pages_payloads[0]
     p1["clearFolder"] = True
@@ -350,7 +338,6 @@ def process_single_chapter(task):
     last_folder_url = up_data.get("folderUrl") or ""
     print(f"   ✓ Phase A สำเร็จ! โฟลเดอร์ Drive: {last_folder_url}")
 
-    # Phase B: Parallel Concurrent Upload (Upload Parts 2 to total_parts - 1 with 4 workers)
     if total_parts > 2:
         print(f"   [Smart Upload Phase B] อัปโหลดคู่ขนานหน้าที่ 002.jpg - {total_parts - 1:03d}.jpg (4 Workers)...")
 
@@ -379,7 +366,6 @@ def process_single_chapter(task):
                 else:
                     print(f"      ❌ หน้า {p_idx:02d}/{total_parts} ผิดพลาด: {err_msg}")
 
-    # Phase C: Final Page & WorkQueue Trigger (Upload Last Part)
     if total_parts > 1:
         last_idx = total_parts - 1
         p_last = pages_payloads[last_idx]
@@ -415,7 +401,6 @@ def main():
     print(f"⏱️ กฎความปลอดภัย: จบ 1 ตอน พัก {COOLDOWN_SECONDS // 60} นาที ก่อนเริ่มตอนต่อไป")
     print("=================================================================")
 
-    # ถ้าเป็นการรันสแกนทั้งหมด ให้ trigger ตรวจสอบสถานะอัปเดตล่าสุดจากหน้าเว็บต้นฉบับก่อน
     if not target_tracker_id:
         print("\n🔍 0. ตรวจสอบสถานะตอนใหม่ล่าสุดจากเว็บต้นทาง (CHECK_ALL_RAW_TRACKERS)...")
         try:
@@ -428,7 +413,7 @@ def main():
         except Exception as e:
             print(f"   ⚠️ ตรวจสอบเว็บต้นทางผิดพลาด ({e}) ข้ามไปยังคิวงานเดิม...")
 
-    print("\n1. กำลังสแกนรายการตอนใหม่ทั้งหมดจาก RawTracker (KuaiKan & ThunderScans)...")
+    print("\n1. กำลังสแกนรายการตอนใหม่ทั้งหมดจาก RawTracker (KuaiKan, ThunderScans & Tencent Comic)...")
     tasks = []
     res = call_gas("GET_RAW_TRACKER_PENDING_CHAPTERS", {"trackerId": target_tracker_id})
     if res.get("status") == "success" and res.get("data"):
@@ -445,6 +430,17 @@ def main():
     except Exception as th_err:
         print(f"   ⚠️ ไม่สามารถดึงคิวงาน ThunderScans: {th_err}")
 
+    # ดึงคิวตอนใหม่จาก Tencent Comic (ac.qq.com / qq)
+    try:
+        from tencent_purchaser import get_pending_tencent_tasks, process_single_tencent_chapter
+        tencent_tasks = get_pending_tencent_tasks()
+        if tencent_tasks:
+            if target_tracker_id:
+                tencent_tasks = [t for t in tencent_tasks if str(t.get("trackerId")) == str(target_tracker_id)]
+            tasks.extend(tencent_tasks)
+    except Exception as tc_err:
+        print(f"   ⚠️ ไม่สามารถดึงคิวงาน Tencent Comic: {tc_err}")
+
     max_chapters = int(os.environ.get("MAX_CHAPTERS", "0"))
     if max_chapters > 0 and len(tasks) > max_chapters:
         print(f"⚙️ จำกัดการรันสูงสุด {max_chapters} ตอน (จากทั้งหมด {len(tasks)} ตอน)")
@@ -460,7 +456,6 @@ def main():
         print("\n✨ ไม่มีตอนใหม่ที่ค้างอยู่ ระบบเป็นปัจจุบันครบทั้งหมดแล้วครับ!")
         return
 
-    # ลูปประมวลผลทีละตอน
     completed_count = 0
     for idx, task in enumerate(tasks):
         conn = task.get("connector", "kuaikan")
@@ -470,15 +465,16 @@ def main():
 
         if conn == "thunderscans":
             success = process_single_thunderscans_chapter(task)
+        elif conn in ["tencent", "qq"]:
+            success = process_single_tencent_chapter(task)
         else:
             success = process_single_chapter(task)
         if success:
             completed_count += 1
 
-        # จบ 1 ตอน ให้พักตามกฎความปลอดภัย (KuaiKan & ThunderScans: 5 นาที / 300 วินาที เพื่อความปลอดภัย)
         if idx < total_tasks - 1:
             if success:
-                cd_sec = int(os.environ.get("THUNDERSCANS_COOLDOWN_SECONDS", str(COOLDOWN_SECONDS))) if conn == "thunderscans" else COOLDOWN_SECONDS
+                cd_sec = int(os.environ.get("THUNDERSCANS_COOLDOWN_SECONDS", str(COOLDOWN_SECONDS))) if conn in ["thunderscans", "tencent", "qq"] else COOLDOWN_SECONDS
                 countdown_sleep(cd_sec)
             else:
                 print("   ⏩ ข้ามการพักสำหรับตอนที่ไม่สำเร็จ เริ่มตอนถัดไปทันที...")

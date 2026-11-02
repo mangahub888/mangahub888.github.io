@@ -652,6 +652,9 @@ export function AutoRawPipelineModal({
                       </div>
                       <div>
                         <div className="font-semibold text-sm text-white flex items-center gap-2">
+                          <Badge className={`text-[10px] px-1.5 py-0.2 ${task.connector === 'thunderscans' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : task.connector === 'tencent' || task.connector === 'qq' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'bg-pink-500/20 text-pink-300 border border-pink-500/40'}`}>
+                            {task.connector === 'thunderscans' ? 'Thunder' : task.connector === 'tencent' || task.connector === 'qq' ? 'Tencent' : 'KuaiKan'}
+                          </Badge>
                           <span>{task.mangaName}</span>
                           <Badge variant="outline" className="text-xs border-indigo-500/40 text-indigo-300">
                             {task.chapterTitle}
