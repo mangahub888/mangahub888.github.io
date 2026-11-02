@@ -271,6 +271,9 @@ function doPost(e) {
       case 'UPDATE_PAYOUT_CLAIM_STATUS':
         result = updatePayoutClaimStatus(payload.claimId, payload.status, payload.note);
         break;
+      case 'UPDATE_PAYOUT_CLAIM':
+        result = updatePayoutClaim(payload.claimId, payload.updateData || payload);
+        break;
 
       // --- RAW TRACKER (ต้นฉบับ UPDATE) ---
       case 'GET_RAW_TRACKER_LIST':
@@ -5154,6 +5157,53 @@ function updatePayoutClaimStatus(claimId, status, note) {
     return { success: true, claims: getPayoutClaims() };
   } catch (err) {
     console.error('updatePayoutClaimStatus error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function updatePayoutClaim(claimId, updateData) {
+  if (!claimId || !updateData) return { error: 'ข้อมูลไม่ครบถ้วน' };
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(PAYOUT_CLAIMS_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { error: 'ไม่พบข้อมูลใบขอเบิก' };
+    
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const idCol = headers.indexOf('claimid');
+    if (idCol === -1) return { error: 'ตารางไม่ถูกต้อง' };
+
+    let foundRow = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][idCol]).trim() === String(claimId).trim()) {
+        foundRow = i + 1;
+        break;
+      }
+    }
+
+    if (foundRow === -1) return { error: 'ไม่พบใบขอเบิก Claim ID นี้' };
+
+    const updateCell = (header, val) => {
+      const col = headers.indexOf(header.toLowerCase()) + 1;
+      if (col > 0 && val !== undefined) {
+        sheet.getRange(foundRow, col).setValue(val);
+      }
+    };
+
+    if (updateData.totalAmount !== undefined) updateCell('totalamount', Number(updateData.totalAmount) || 0);
+    if (updateData.totalChapters !== undefined) updateCell('totalchapters', Number(updateData.totalChapters) || 0);
+    if (updateData.note !== undefined) updateCell('note', String(updateData.note));
+    if (updateData.status !== undefined) updateCell('status', String(updateData.status));
+    if (updateData.dateRange !== undefined) updateCell('daterange', String(updateData.dateRange));
+    if (updateData.startDate !== undefined) updateCell('startdate', String(updateData.startDate));
+    if (updateData.endDate !== undefined) updateCell('enddate', String(updateData.endDate));
+
+    return { success: true, claimId, claims: getPayoutClaims() };
+  } catch (err) {
+    console.error('updatePayoutClaim error:', err);
     return { error: err.toString() };
   } finally {
     lock.releaseLock();
