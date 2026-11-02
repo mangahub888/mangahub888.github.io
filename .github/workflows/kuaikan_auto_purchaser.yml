@@ -2,8 +2,8 @@ name: KuaiKan Auto-Purchaser (Playwright Headless)
 
 on:
   schedule:
-    # รันตรวจสอบและปลดล็อคตอนอัตโนมัติทุก 4 ชั่วโมง
-    - cron: '30 */4 * * *'
+    # รันตรวจสอบและปลดล็อคตอนอัตโนมัติทุกๆ 1 ชั่วโมง (นาทีที่ 30)
+    - cron: '30 * * * *'
   workflow_dispatch:
     inputs:
       comic_id:

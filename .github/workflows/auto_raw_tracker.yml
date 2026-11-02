@@ -2,8 +2,8 @@ name: Auto Raw Tracker Pipeline
 
 on:
   schedule:
-    # รันอัตโนมัติทุก 4 ชั่วโมง (เช่น 00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
-    - cron: '0 */4 * * *'
+    # รันอัตโนมัติทุกๆ 1 ชั่วโมง (วนเช็คคิวและติดตามต้นฉบับใหม่ตลอด 24 ชั่วโมง)
+    - cron: '0 * * * *'
   workflow_dispatch:
     inputs:
       cooldown_seconds:
