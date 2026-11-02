@@ -209,3 +209,18 @@
 
 ---
 *บันทึกโดย: Antigravity Multi-Agent Automation System*
+
+---
+
+### H. การบูรณาการตัวเชื่อมต่อ Tencent Comic (ac.qq.com) เข้าสู่ Auto Raw Pipeline
+- **เชื่อมต่อและตรวจสอบสมบูรณ์**:
+  - รองรับการดึงข้อมูลและรายการตอนจาก https://ac.qq.com/Comic/comicInfo/id/{comic_id}
+  - ตรวจสอบและกรองตอนเฉพาะ App (re.search(r'APP$', title, re.IGNORECASE) หรือ is_app_chapter == 1) อัตโนมัติ
+  - ถอดรหัส URL ภาพจากตัวแปร DATA และ nonce รวมถึงดาวน์โหลดตรงจาก CDN manhua.acimg.cn
+  - เย็บประกอบภาพแนวตั้งต่อเนื่องและสไลซ์ออกเป็น 20 หน้ามาตรฐานพอดี (001.jpg ถึง 020.jpg, image/jpeg)
+  - อัปโหลดขึ้น Google Drive ไปยังโฟลเดอร์ แปลจนเมื่อย / {ชื่อเรื่อง} / {เลขตอน}
+  - ลงทะเบียนคิวงาน WorkQueue ด้วยมาตรฐาน:
+    - worklink: [อัป Raw] https://drive.google.com/drive/folders/...
+    - uploadstatus: เสร็จแล้ว
+    - uploadername: Apt
+- บันทึกการเปลี่ยนแปลงและอัปเดต git push ขึ้น origin main เรียบร้อยแล้ว
