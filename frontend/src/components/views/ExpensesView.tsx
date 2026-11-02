@@ -98,7 +98,7 @@ const DEFAULT_RATES: ExpenseRates = {
   translateNormalRate: 25,
   typesetSpecialName: "Tilly",
   typesetSpecialRate: 45,
-  typesetNormalRate: 40,
+  typesetNormalRate: 45,
   typesetKoreanRate: 50,
   supportName: "KIKKUK",
   supportAmount: 1500,
@@ -115,6 +115,7 @@ function loadSavedRates(): ExpenseRates {
       return {
         ...DEFAULT_RATES,
         ...parsed,
+        typesetNormalRate: parsed.typesetNormalRate ?? DEFAULT_RATES.typesetNormalRate,
         typesetKoreanRate: parsed.typesetKoreanRate ?? DEFAULT_RATES.typesetKoreanRate,
       }
     }
@@ -669,13 +670,13 @@ export function ExpensesView({
             const isNov2026OrLater = parsedDate ? parsedDate.getTime() >= new Date("2026-11-01T00:00:00").getTime() : false
             const isKorean = isNov2026OrLater && (q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี")
 
-            let rate = rates.typesetNormalRate
-            if (isSpecial) {
-              rate = rates.typesetSpecialRate
-            } else if (isKorean) {
-              rate = rates.typesetKoreanRate || 50
+            let rate = 40
+            if (isNov2026OrLater) {
+              // พฤศจิกายน 2569 เป็นต้นไป: เรทมาตรฐานทุกคน จีน 45 บาท, เกาหลี 50 บาท
+              rate = isKorean ? (rates.typesetKoreanRate || 50) : (rates.typesetNormalRate || 45)
             } else {
-              rate = rates.typesetNormalRate
+              // ก่อน พฤศจิกายน 2569: ประวัติเดิม Tilly 45 บาท, พนักงานทั่วไป 40 บาท
+              rate = isSpecial ? (rates.typesetSpecialRate || 45) : 40
             }
 
             const cost = count * rate
@@ -1016,13 +1017,13 @@ export function ExpensesView({
         const isNov2026OrLater = parsedDate ? parsedDate.getTime() >= new Date("2026-11-01T00:00:00").getTime() : false
         const isKorean = isNov2026OrLater && (q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี")
 
-        let rate = rates.typesetNormalRate
-        if (isSpecial) {
-          rate = rates.typesetSpecialRate
-        } else if (isKorean) {
-          rate = rates.typesetKoreanRate || 50
+        let rate = 40
+        if (isNov2026OrLater) {
+          // พฤศจิกายน 2569 เป็นต้นไป: เรทมาตรฐานทุกคน จีน 45 บาท, เกาหลี 50 บาท
+          rate = isKorean ? (rates.typesetKoreanRate || 50) : (rates.typesetNormalRate || 45)
         } else {
-          rate = rates.typesetNormalRate
+          // ก่อน พฤศจิกายน 2569: ประวัติเดิม Tilly 45 บาท, พนักงานทั่วไป 40 บาท
+          rate = isSpecial ? (rates.typesetSpecialRate || 45) : 40
         }
 
         member.typesetRate = rate
@@ -1499,7 +1500,7 @@ export function ExpensesView({
               แปล: {rates.translateSpecialName} {rates.translateSpecialRate}บ. / ทั่วไป {rates.translateNormalRate}บ.
             </Badge>
             <Badge variant="outline" className="bg-[#151d2f] text-amber-300 border-amber-500/30">
-              ลงคำ: {rates.typesetSpecialName} {rates.typesetSpecialRate}บ. / จีน {rates.typesetNormalRate}บ. / เกาหลี {rates.typesetKoreanRate || 50}บ.
+              ลงคำ (พ.ย. 69 เป็นต้นไป): จีน {rates.typesetNormalRate}บ. / เกาหลี {rates.typesetKoreanRate || 50}บ. (ก่อน พ.ย.: {rates.typesetSpecialName} {rates.typesetSpecialRate}บ. / ทั่วไป 40บ.)
             </Badge>
             <Badge variant="outline" className="bg-[#151d2f] text-emerald-300 border-emerald-500/30">
               Support: {rates.supportName} {rates.supportAmount.toLocaleString()}บ.
@@ -3050,7 +3051,7 @@ export function ExpensesView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-[11px] text-slate-300">
-                    เรทคนลงคำทั่วไป / เรทจีน (บาท/ตอน)
+                    เรทลงคำ จีน (มาตรฐานทุกคน) (บาท/ตอน)
                   </Label>
                   <Input
                     type="number"
@@ -3065,7 +3066,7 @@ export function ExpensesView({
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[11px] text-sky-400 font-semibold">
-                    เรทคนลงคำ (เรทเกาหลี) (บาท/ตอน)
+                    เรทลงคำ เกาหลี (มาตรฐานทุกคน) (บาท/ตอน)
                   </Label>
                   <Input
                     type="number"
@@ -3080,7 +3081,7 @@ export function ExpensesView({
                 </div>
               </div>
               <div className="text-[10px] text-slate-400">
-                * เรทเกาหลีเริ่มคำนวณแยกประเภทสำหรับงานตั้งแต่วันที่ 1 พ.ย. 2026 เป็นต้นไป
+                * เรทลงคำมาตรฐาน (จีน 45 บาท, เกาหลี 50 บาท) มีผลตั้งแต่ พฤศจิกายน 2569 เป็นต้นไป (งานก่อน พ.ย. คิดตามประวัติเดิม: Tilly 45 บาท, ทั่วไป 40 บาท)
               </div>
             </div>
 
