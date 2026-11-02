@@ -164,7 +164,8 @@ function doPost(e) {
           payload.status,
           payload.assignee,
           payload.link,
-          payload.note
+          payload.note,
+          payload.typesetType || payload.typesettype
         );
         break;
       case 'BULK_UPDATE_QUEUE_STEP':
@@ -1039,7 +1040,7 @@ function addQueue(queueData) {
   }
 }
 
-function updateQueueStep(queueId, step, status, assignee, link, note) {
+function updateQueueStep(queueId, step, status, assignee, link, note, typesetType) {
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(30000);
@@ -1083,6 +1084,13 @@ function updateQueueStep(queueId, step, status, assignee, link, note) {
         
         if (nameCol > 0 && assignee !== undefined) {
           sheet.getRange(rowNum, nameCol).setValue(assignee);
+        }
+        
+        if (typesetType) {
+          const typesetTypeCol = headers.indexOf('typesettype') + 1;
+          if (typesetTypeCol > 0) {
+            sheet.getRange(rowNum, typesetTypeCol).setValue(typesetType);
+          }
         }
         
         if (status === 'เสร็จแล้ว') {

@@ -780,6 +780,7 @@ export function StepUpdateModal({
   const [assignee, setAssignee] = React.useState("")
   const [link, setLink] = React.useState("")
   const [note, setNote] = React.useState("")
+  const [typesetType, setTypesetType] = React.useState<"จีน" | "เกาหลี">("จีน")
 
   const stepLabels: Record<string, string> = {
     upload: "🔼 อัปโหลด Raw",
@@ -816,6 +817,15 @@ export function StepUpdateModal({
       setAssignee(queueItem[nameField] || "")
       setLink("")
       setNote("")
+      if (step.toLowerCase() === "typeset") {
+        setTypesetType(
+          queueItem.typesettype === "เกาหลี" || queueItem.typesetratetype === "เกาหลี"
+            ? "เกาหลี"
+            : "จีน"
+        )
+      } else {
+        setTypesetType("จีน")
+      }
     }
   }, [open, queueItem, step])
 
@@ -851,6 +861,7 @@ export function StepUpdateModal({
       [statusField]: status,
       [nameField]: assignee,
       ...(status === "เสร็จแล้ว" ? { [timeField]: new Date().toISOString() } : {}),
+      ...(stepLower === "typeset" ? { typesettype: typesetType } : {}),
       ...(stepLower === "publish" &&
       status === "เสร็จแล้ว" &&
       (!queueItem.poststatus || String(queueItem.poststatus).trim() === "")
@@ -870,6 +881,7 @@ export function StepUpdateModal({
         assignee,
         link: link.trim(),
         note: note.trim(),
+        typesetType: stepLower === "typeset" ? typesetType : undefined,
       })
       toast.success("✅ บันทึกสำเร็จ", { id: "step-update" })
       if (res.queue) {
@@ -919,6 +931,20 @@ export function StepUpdateModal({
               placeholder="-- เลือกผู้รับผิดชอบ --"
             />
           </div>
+
+          {step.toLowerCase() === "typeset" && (
+            <div className="space-y-1.5">
+              <Label>🎨 ประเภทงานลงคำ (เรทค่าแรง)</Label>
+              <select
+                className="flex h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-3 py-2 text-sm text-slate-100 cursor-pointer"
+                value={typesetType}
+                onChange={(e) => setTypesetType(e.target.value as "จีน" | "เกาหลี")}
+              >
+                <option value="จีน">🇨🇳 เรทจีน (มาตรฐาน)</option>
+                <option value="เกาหลี">🇰🇷 เรทเกาหลี</option>
+              </select>
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label>🔗 ลิงก์งาน (ถ้ามี)</Label>
