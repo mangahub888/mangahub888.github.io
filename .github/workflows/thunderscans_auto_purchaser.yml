@@ -1,0 +1,65 @@
+name: ThunderScans Auto-Purchaser Pipeline
+
+on:
+  schedule:
+    # รันอัตโนมัติทุกๆ 1 ชั่วโมง (นาทีที่ 15 ของทุกชั่วโมง)
+    - cron: '15 * * * *'
+  workflow_dispatch:
+    inputs:
+      chapter_url:
+        description: 'Specific Chapter URL to process (leave empty for all pending)'
+        required: false
+        default: ''
+      max_chapters:
+        description: 'Maximum chapters to process (0 = all pending chapters)'
+        required: false
+        default: '0'
+      cooldown_seconds:
+        description: 'Cooldown seconds between chapters (default: 300 = 5 minutes)'
+        required: false
+        default: '300'
+
+concurrency:
+  group: thunderscans-purchaser
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  thunderscans-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run ThunderScans Pipeline
+        env:
+          GAS_URL: ${{ secrets.GAS_URL || 'https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec' }}
+          PASSCODE: ${{ secrets.PASSCODE || '10211032' }}
+          THUNDERSCANS_COOKIE: ${{ secrets.THUNDERSCANS_COOKIE || '' }}
+          COOLDOWN_SECONDS: ${{ github.event.inputs.cooldown_seconds || '300' }}
+          MAX_CHAPTERS: ${{ github.event.inputs.max_chapters || '0' }}
+        run: |
+          CHAPTER_URL="${{ github.event.inputs.chapter_url }}"
+          if [ -n "$CHAPTER_URL" ]; then
+            echo "🎯 Processing single chapter: $CHAPTER_URL"
+            python tools/thunderscans_purchaser.py "$CHAPTER_URL"
+          else
+            echo "📋 Processing all pending ThunderScans chapters..."
+            python tools/thunderscans_purchaser.py --run-all
+          fi

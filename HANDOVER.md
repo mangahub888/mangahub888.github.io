@@ -58,8 +58,27 @@
     - Phase C: อัปโหลดหน้า `020.jpg` ปิดท้ายและกระตุ้นการลงคิวงาน WorkQueue
   - **ผลลัพธ์:** ลดเวลาประมวลผลต่อตอนจาก 15-20 นาที เหลือเพียง **~1-1.5 นาที (48-52 วินาที)** อัตราความเร็วเพิ่มขึ้น 10 เท่าสมบูรณ์แบบ
 
-### 🚀 ภารกิจที่ 2: GitHub Actions Pipeline & Auto-Purchase สำหรับ ThunderScans (en-thunder)
-- ออกแบบและสร้าง Roadmap 4 Phase สำหรับระบบซื้อตอนอัตโนมัติและดึง Raw ของ ThunderScans ผ่าน GitHub Actions Pipeline
+### 🚀 ภารกิจที่ 2: GitHub Actions Pipeline & Auto-Purchase สำหรับ ThunderScans (en-thunder) [✅ เสร็จสมบูรณ์ 100%]
+- **พัฒนาเครื่องมือ:** `tools/thunderscans_purchaser.py` รองรับการทำงานแบบครบวงจร 100%
+- **ระบบ Auto-Purchase Coin-Locked Chapters:**
+  - สกัด `post_id` และ `nonce` อัตโนมัติจากหน้าเว็บ `en-thunderscans.com`
+  - ยิง AJAX Endpoint `/wp-admin/admin-ajax.php` (Action: `buy_chapter`) พร้อม Session Cookie
+  - ได้รับการทดสอบสั่งซื้อจริงสำเร็จ 100% บน Live Production:
+    - **ตอนที่ 64 *อดีตแชมเปี้ยนไร้เทียมทานฯ*:** ปลดล็อคและดึงภาพ 12 ภาพ
+    - **ตอนที่ 129 *ฉันกลายเป็นอัจฉริยะประจำอคาเดมีฯ* (PostID: 694095):** ซื้อสำเร็จ 50 Coins ปลดล็อคดึงภาพ 10 ภาพ
+    - **ตอนที่ 38 *จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัดฯ* (PostID: 693991):** ซื้อสำเร็จ 50 Coins ปลดล็อคดึงภาพ 28 ภาพ
+- **ระบบ Continuous Vertical Slicing สู่ 20 หน้ามาตรฐานพอดีเป๊ะ (`001.jpg` ถึง `020.jpg`):**
+  - นำชิ้นส่วนภาพทั้งตอนมาคำนวณแนวตั้งต่อเนื่องบน Virtual Canvas
+  - ตัดแบ่งออกเป็น 20 ส่วนเท่าๆ กันอย่างสมบูรณ์แบบ ไร้รอยขาด รอยขาว หรือภาพกระตุก
+  - เข้ารหัสเป็นไฟล์ `.jpg` คุณภาพ 90 (MIME `image/jpeg`)
+- **การทดสอบรันสดจริง (Live Execution Verified):**
+  - **ตอนที่ 64 *อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล*:** โหลดภาพ 12 ชิ้น (0.6s) เย็บ 20 หน้า (5.2s) อัปโหลดขึ้น Google Drive เสร็จใน 55.4 วินาที โฟลเดอร์: [Google Drive ตอนที่ 64](https://drive.google.com/drive/folders/1m2lT9YMkZAoSjhQ1FnS-YnYUb14qyYqC)
+  - ลงคิวงาน WorkQueue อัตโนมัติ: `[อัป Raw] https://drive.google.com/drive/folders/1m2lT9YMkZAoSjhQ1FnS-YnYUb14qyYqC` | `เสร็จแล้ว` | `Apt`
+  - บันทึกสถานะตอน 64 ลงฐานข้อมูล Mangas & RawTracker กลายเป็นสถานะ "เป็นปัจจุบัน" เรียบร้อย
+- **การบูรณาการระบบ (Pipeline Integration):**
+  - เชื่อมต่อเข้ากับ `tools/auto_raw_tracker.py` รองรับการรันผสมทั้ง KuaiKan และ ThunderScans ในคิวงานเดียว
+  - สร้าง Workflow แยก [.github/workflows/thunderscans_auto_purchaser.yml](file:///D:/new%20backend/mangahub888.github.io/.github/workflows/thunderscans_auto_purchaser.yml) รันอัตโนมัติทุก 1 ชั่วโมง (นาทีที่ 15) และรองรับ Manual Dispatch
+  - อัปเดต [.github/workflows/auto_raw_tracker.yml](file:///D:/new%20backend/mangahub888.github.io/.github/workflows/auto_raw_tracker.yml) ให้รับ secret `THUNDERSCANS_COOKIE`
 
 ---
 

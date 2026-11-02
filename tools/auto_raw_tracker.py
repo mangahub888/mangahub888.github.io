@@ -428,14 +428,23 @@ def main():
         except Exception as e:
             print(f"   ⚠️ ตรวจสอบเว็บต้นทางผิดพลาด ({e}) ข้ามไปยังคิวงานเดิม...")
 
-    print("\n1. กำลังสแกนรายการตอนใหม่ทั้งหมดจาก RawTracker...")
+    print("\n1. กำลังสแกนรายการตอนใหม่ทั้งหมดจาก RawTracker (KuaiKan & ThunderScans)...")
+    tasks = []
     res = call_gas("GET_RAW_TRACKER_PENDING_CHAPTERS", {"trackerId": target_tracker_id})
-    if not res.get("status") == "success" or not res.get("data"):
-        print("❌ เกิดข้อผิดพลาดในการดึงรายการตอนใหม่:", res)
-        return
+    if res.get("status") == "success" and res.get("data"):
+        tasks.extend(res["data"].get("tasks", []))
 
-    data = res["data"]
-    tasks = data.get("tasks", [])
+    # ดึงคิวตอนใหม่จาก ThunderScans (en-thunderscans.com)
+    try:
+        from thunderscans_purchaser import get_pending_thunderscans_tasks, process_single_thunderscans_chapter
+        thunder_tasks = get_pending_thunderscans_tasks()
+        if thunder_tasks:
+            if target_tracker_id:
+                thunder_tasks = [t for t in thunder_tasks if str(t.get("trackerId")) == str(target_tracker_id)]
+            tasks.extend(thunder_tasks)
+    except Exception as th_err:
+        print(f"   ⚠️ ไม่สามารถดึงคิวงาน ThunderScans: {th_err}")
+
     max_chapters = int(os.environ.get("MAX_CHAPTERS", "0"))
     if max_chapters > 0 and len(tasks) > max_chapters:
         print(f"⚙️ จำกัดการรันสูงสุด {max_chapters} ตอน (จากทั้งหมด {len(tasks)} ตอน)")
@@ -444,7 +453,8 @@ def main():
     total_tasks = len(tasks)
     print(f"✓ พบตอนใหม่ที่รออัป raw ทั้งหมด {total_tasks} ตอน:")
     for idx, t in enumerate(tasks):
-        print(f"   [{idx + 1:02d}/{total_tasks}] {t.get('mangaName')} | {t.get('chapterTitle')} (ComicID: {t.get('comicId')})")
+        conn_tag = f"[{t.get('connector', 'kuaikan').upper()}]"
+        print(f"   [{idx + 1:02d}/{total_tasks}] {conn_tag} {t.get('mangaName')} | {t.get('chapterTitle')}")
 
     if not tasks:
         print("\n✨ ไม่มีตอนใหม่ที่ค้างอยู่ ระบบเป็นปัจจุบันครบทั้งหมดแล้วครับ!")
@@ -453,11 +463,15 @@ def main():
     # ลูปประมวลผลทีละตอน
     completed_count = 0
     for idx, task in enumerate(tasks):
+        conn = task.get("connector", "kuaikan")
         print(f"\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-        print(f"คิวงานที่ [{idx + 1}/{total_tasks}]: {task.get('mangaName')} {task.get('chapterTitle')}")
+        print(f"คิวงานที่ [{idx + 1}/{total_tasks}] ({conn.upper()}): {task.get('mangaName')} {task.get('chapterTitle')}")
         print(f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
-        success = process_single_chapter(task)
+        if conn == "thunderscans":
+            success = process_single_thunderscans_chapter(task)
+        else:
+            success = process_single_chapter(task)
         if success:
             completed_count += 1
 
