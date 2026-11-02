@@ -943,7 +943,12 @@ export function QueueView({
                     <TableCell>
                       {renderStatusBadge(q, "typeset", q.typesetstatus)}
                       <div className="text-xs text-slate-400 mt-1">
-                        {q.typesettername || "-"}
+                        <span>{q.typesettername || "-"}</span>
+                        {(q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี") && (
+                          <span className="ml-1.5 inline-block text-[10px] text-sky-400 font-bold bg-sky-500/10 px-1 py-0.2 rounded border border-sky-500/30">
+                            เกาหลี
+                          </span>
+                        )}
                         {tsDur && (
                           <div className="text-[11px] text-slate-500">
                             ⏱️ {tsDur}

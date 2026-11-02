@@ -85,6 +85,7 @@ export interface ExpenseRates {
   typesetSpecialName: string
   typesetSpecialRate: number
   typesetNormalRate: number
+  typesetKoreanRate: number
   supportName: string
   supportAmount: number
 }
@@ -98,6 +99,7 @@ const DEFAULT_RATES: ExpenseRates = {
   typesetSpecialName: "Tilly",
   typesetSpecialRate: 45,
   typesetNormalRate: 40,
+  typesetKoreanRate: 50,
   supportName: "KIKKUK",
   supportAmount: 1500,
 }
@@ -109,7 +111,12 @@ function loadSavedRates(): ExpenseRates {
   try {
     const raw = localStorage.getItem(STORAGE_RATES_KEY)
     if (raw) {
-      return { ...DEFAULT_RATES, ...JSON.parse(raw) }
+      const parsed = JSON.parse(raw)
+      return {
+        ...DEFAULT_RATES,
+        ...parsed,
+        typesetKoreanRate: parsed.typesetKoreanRate ?? DEFAULT_RATES.typesetKoreanRate,
+      }
     }
   } catch (e) {
     console.error("Failed to load saved rates:", e)
@@ -658,7 +665,19 @@ export function ExpensesView({
           if (!claimedTaskKeys.has(key)) {
             const cleanName = (q.typesettername || "").trim().toLowerCase()
             const isSpecial = cleanName.includes(rates.typesetSpecialName.toLowerCase())
-            const rate = isSpecial ? rates.typesetSpecialRate : rates.typesetNormalRate
+            const parsedDate = parseQueueDate(taskDate)
+            const isNov2026OrLater = parsedDate ? parsedDate.getTime() >= new Date("2026-11-01T00:00:00").getTime() : false
+            const isKorean = isNov2026OrLater && (q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี")
+
+            let rate = rates.typesetNormalRate
+            if (isSpecial) {
+              rate = rates.typesetSpecialRate
+            } else if (isKorean) {
+              rate = rates.typesetKoreanRate || 50
+            } else {
+              rate = rates.typesetNormalRate
+            }
+
             const cost = count * rate
             const s = getOrCreateStaff(q.typesettername)
             s.typesetCount += count
@@ -670,7 +689,7 @@ export function ExpensesView({
               chapter: String(q.chapter),
               mangaName,
               step: "typeset",
-              stepLabel: "ลงคำ",
+              stepLabel: isKorean ? "ลงคำ (เกาหลี)" : "ลงคำ",
               date: taskDate,
               rate,
               count,
@@ -993,9 +1012,19 @@ export function ExpensesView({
         const isSpecial = member.name
           .toLowerCase()
           .includes(rates.typesetSpecialName.toLowerCase())
-        const rate = isSpecial
-          ? rates.typesetSpecialRate
-          : rates.typesetNormalRate
+        const parsedDate = parseQueueDate(q.typesettime || q.createdat)
+        const isNov2026OrLater = parsedDate ? parsedDate.getTime() >= new Date("2026-11-01T00:00:00").getTime() : false
+        const isKorean = isNov2026OrLater && (q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี")
+
+        let rate = rates.typesetNormalRate
+        if (isSpecial) {
+          rate = rates.typesetSpecialRate
+        } else if (isKorean) {
+          rate = rates.typesetKoreanRate || 50
+        } else {
+          rate = rates.typesetNormalRate
+        }
+
         member.typesetRate = rate
         rowTypesetCost = count * rate
         member.typesetChapters += count
@@ -1470,7 +1499,7 @@ export function ExpensesView({
               แปล: {rates.translateSpecialName} {rates.translateSpecialRate}บ. / ทั่วไป {rates.translateNormalRate}บ.
             </Badge>
             <Badge variant="outline" className="bg-[#151d2f] text-amber-300 border-amber-500/30">
-              ลงคำ: {rates.typesetSpecialName} {rates.typesetSpecialRate}บ. / ทั่วไป {rates.typesetNormalRate}บ.
+              ลงคำ: {rates.typesetSpecialName} {rates.typesetSpecialRate}บ. / จีน {rates.typesetNormalRate}บ. / เกาหลี {rates.typesetKoreanRate || 50}บ.
             </Badge>
             <Badge variant="outline" className="bg-[#151d2f] text-emerald-300 border-emerald-500/30">
               Support: {rates.supportName} {rates.supportAmount.toLocaleString()}บ.
@@ -3018,20 +3047,40 @@ export function ExpensesView({
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <Label className="text-[11px] text-slate-300">
-                  เรทคนลงคำทั่วไป (บาท/ตอน)
-                </Label>
-                <Input
-                  type="number"
-                  value={tempRates.typesetNormalRate}
-                  onChange={(e) =>
-                    setTempRates({
-                      ...tempRates,
-                      typesetNormalRate: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-[11px] text-slate-300">
+                    เรทคนลงคำทั่วไป / เรทจีน (บาท/ตอน)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={tempRates.typesetNormalRate}
+                    onChange={(e) =>
+                      setTempRates({
+                        ...tempRates,
+                        typesetNormalRate: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[11px] text-sky-400 font-semibold">
+                    เรทคนลงคำ (เรทเกาหลี) (บาท/ตอน)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={tempRates.typesetKoreanRate}
+                    onChange={(e) =>
+                      setTempRates({
+                        ...tempRates,
+                        typesetKoreanRate: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="text-[10px] text-slate-400">
+                * เรทเกาหลีเริ่มคำนวณแยกประเภทสำหรับงานตั้งแต่วันที่ 1 พ.ย. 2026 เป็นต้นไป
               </div>
             </div>
 
