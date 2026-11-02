@@ -158,7 +158,7 @@ export function AddQueueModal({
         chapter: chapter.trim(),
         uploadstatus: "รอเริ่ม",
         uploadername: uploaderName,
-        extractstatus: needsExtract ? "รอเริ่ม" : "Skipped",
+        extractstatus: needsExtract ? "รอเริ่ม" : "skip",
         extractorname: extractorName,
         translatestatus: "รอเริ่ม",
         translatorname: translatorName,
@@ -587,7 +587,7 @@ export function UpdateQueueModal({
                   <option value="รอเริ่ม">รอเริ่ม</option>
                   <option value="กำลังทำ">กำลังทำ</option>
                   <option value="เสร็จแล้ว">เสร็จแล้ว</option>
-                  <option value="Skipped">ข้าม (Skipped)</option>
+                  <option value="skip">ข้าม</option>
                   <option value="skip">ข้าม (skip)</option>
                 </select>
               </div>
@@ -915,7 +915,7 @@ export function StepUpdateModal({
               <option value="เสร็จแล้ว">✅ เสร็จแล้ว</option>
               {step === "extract" && (
                 <React.Fragment>
-                  <option value="Skipped">⏭️ ข้าม (Skipped)</option>
+                  <option value="skip">⏭️ ข้าม</option>
                   <option value="skip">⏭️ ข้าม (skip)</option>
                 </React.Fragment>
               )}

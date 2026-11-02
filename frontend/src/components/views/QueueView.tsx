@@ -761,7 +761,7 @@ export function QueueView({
               <option value="เสร็จแล้ว">✅ เสร็จแล้ว</option>
               <option value="กำลังทำ">⏳ กำลังทำ</option>
               <option value="รอเริ่ม">⏸️ รอเริ่ม</option>
-              <option value="Skipped">⏭️ ข้าม (Skipped)</option>
+              <option value="skip">⏭️ ข้าม</option>
             </select>
 
             <select
