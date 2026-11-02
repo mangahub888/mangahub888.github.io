@@ -44,6 +44,14 @@
   - **ตอนที่ 22 *ยุคเปลี่ยนอาชีพฯ* (ComicID: 855785):** สั่งซื้อสำเร็จ Order #2759731915050653872 ปลดล็อคดึงภาพ Full HD ได้ **177 ภาพ** สมบูรณ์แบบ
 - **GitHub Actions Workflow:** จัดทำ `.github/workflows/kuaikan_auto_purchaser.yml` รองรับ Trigger ทั้ง Schedule (ทุก 4 ชม.) และ Manual Workflow Dispatch
 - **ยกระดับ Auto Raw Tracker:** เชื่อมต่อระบบ Playwright Escalation เข้ากับ `tools/auto_raw_tracker.py` และ `.github/workflows/auto_raw_tracker.yml` ปลดล็อคอัตโนมัติทันทีหากพบตอนติด Lock
+- **🚀 อัปเกรดความเร็ว 10 เท่า (Smart Parallel Architecture):**
+  - **Parallel Slice Download (10 Workers):** โหลดชิ้นส่วนภาพ 140-180 ชิ้นพร้อมกันเสร็จใน 20 วินาที
+  - **Pre-Stitching In-Memory:** ประกอบภาพ 20 หน้ามาตรฐานล่วงหน้าเสร็จใน 9 วินาที
+  - **Smart Staged Multi-Thread Upload:**
+    - Phase A: อัปโหลด `001.jpg` เดี่ยวเพื่อสร้างโฟลเดอร์ Google Drive ไร้ปัญหา Race Condition
+    - Phase B: อัปโหลดคู่ขนานหน้า `002.jpg` - `019.jpg` ด้วย 4 Workers
+    - Phase C: อัปโหลดหน้า `020.jpg` ปิดท้ายและกระตุ้นการลงคิวงาน WorkQueue
+  - **ผลลัพธ์:** ลดเวลาประมวลผลต่อตอนจาก 15-20 นาที เหลือเพียง **~1.5 นาที (95 วินาที)** ได้รับการทดสอบจริงกับ *ข้าคือจอมวายร้ายฯ* ตอนที่ 367 สำเร็จสมบูรณ์แบบ
 
 ### 🚀 ภารกิจที่ 2: GitHub Actions Pipeline & Auto-Purchase สำหรับ ThunderScans (en-thunder)
 - ออกแบบและสร้าง Roadmap 4 Phase สำหรับระบบซื้อตอนอัตโนมัติและดึง Raw ของ ThunderScans ผ่าน GitHub Actions Pipeline
