@@ -6,6 +6,17 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้วในเซสชันนี้ (Completed Milestones)
 
+### A. ระบบ 1-Click Session Refresh & Pipeline Trigger (เพิ่มใหม่ล่าสุด)
+- **1-Click Session Refresh Tool (`tools/quick_refresh_session.py` & `REFRESH_TENCENT_SESSION.bat`)**:
+  - รองรับการเชื่อมต่อ ADB (`127.0.0.1:5555`) กับ LDPlayer อัตโนมัติ
+  - ดึงข้อมูล cookies, uin, skey และ device info จากแอป `com.qq.ac.android`
+  - อัปเดตไฟล์ `tools/tencent_app_session.json` และแสดงผล Cookie string สำหรับคัดลอกใส่ GitHub Secret (`TENCENT_COOKIE`) ทันที
+  - ผู้ใช้งาน Windows สามารถดับเบิ้ลคลิกไฟล์ `REFRESH_TENCENT_SESSION.bat` ที่โฟลเดอร์หลักเพื่อรีเฟรชได้ทันที
+- **Auto Raw Tracker Pipeline Trigger**:
+  - สั่งรัน Workflow บน GitHub Actions สำเร็จผ่าน GitHub CLI (`gh workflow run auto_raw_tracker.yml`, Run ID: `41454394118`).
+
+---
+
 ### A. กฎเหล็กโครงสร้างการทำงาน Multi-Agent (`AGENTS.md` & `GEMINI.md`)
 - ยึดตามลำดับสายการบังคับบัญชา: `[USER] ➔ [👑 หัวหน้าหลัก (Main Lead)] ➔ [🎖️ หัวหน้าทีม (Team Leads)] ➔ [👷 ลูกทีม / Specialists]`
 - **Zero Direct Execution & Zero Manual Polling**: หัวหน้าหลักต้องไม่เขียนโค้ด Dev, ไม่รัน Build/Deploy และไม่ Polling shell log เอง ทุกงานเทคนิคต้องส่งต่อผ่าน Sub-Agent (`invoke_subagent`) เท่านั้น
