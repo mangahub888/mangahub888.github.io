@@ -57,37 +57,6 @@ export function MangaSettingsView({
     }
   }
 
-  const handleCreateMoveTrigger = async () => {
-    setTriggerLoading(true)
-    try {
-      const res = await callGasApi("CREATE_MOVE_PENDING_TRIGGER")
-      toast.success(res.message || "ตั้งเวลาย้ายงานค้างเรียบร้อย")
-    } catch (err: any) {
-      toast.error(err.message || "เกิดข้อผิดพลาด")
-    } finally {
-      setTriggerLoading(false)
-    }
-  }
-
-  const handleManualMovePending = async () => {
-    if (
-      !window.confirm(
-        "ระบบจะย้ายงานที่ยังโพสต์ไม่เสร็จทั้งหมดจากเดือนก่อนๆ มาเป็นเดือนปัจจุบัน ยืนยันหรือไม่?"
-      )
-    )
-      return
-    setTriggerLoading(true)
-    try {
-      const res = await callGasApi("MOVE_PENDING_QUEUE")
-      toast.success(res.message || "ย้ายงานค้างเรียบร้อย")
-      if (res.queue) onQueueChange(res.queue)
-    } catch (err: any) {
-      toast.error(err.message || "เกิดข้อผิดพลาด")
-    } finally {
-      setTriggerLoading(false)
-    }
-  }
-
   const handleCreateAutoQueueTrigger = async () => {
     setTriggerLoading(true)
     try {
@@ -240,32 +209,7 @@ export function MangaSettingsView({
             ⚙️ ตั้งค่าระบบอัตโนมัติ (System Triggers & Database)
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
-            <h4 className="font-semibold text-sm text-slate-100">
-              ย้ายงานค้างอัตโนมัติ
-            </h4>
-            <p className="text-xs text-slate-400">
-              ย้ายงานที่ยังโพสต์ไม่เสร็จจากเดือนก่อนๆ มายังเดือนปัจจุบันโดยอัตโนมัติทุกวัน
-            </p>
-            <div className="flex flex-wrap gap-2 pt-2">
-              <Button
-                size="sm"
-                onClick={handleCreateMoveTrigger}
-                disabled={triggerLoading}
-              >
-                <Clock className="h-3.5 w-3.5" /> ตั้งเวลาออโต้ (03:00 น.)
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleManualMovePending}
-                disabled={triggerLoading}
-              >
-                <Play className="h-3.5 w-3.5" /> รันเดี๋ยวนี้ (Manual)
-              </Button>
-            </div>
-          </div>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <div className="space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
             <h4 className="font-semibold text-sm text-slate-100">
@@ -305,7 +249,7 @@ export function MangaSettingsView({
             </div>
           </div>
 
-          <div className="md:col-span-3 space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
+          <div className="md:col-span-2 space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
             <Label className="flex items-center gap-1.5 font-semibold text-sm text-slate-100">
               <Link2 className="h-4 w-4 text-indigo-400" />
               ตั้งค่า GAS API URL (Web App Endpoint)

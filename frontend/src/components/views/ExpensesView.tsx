@@ -54,6 +54,15 @@ import {
   ChevronUp,
   RefreshCw,
   UserX,
+  Calendar,
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  FileText,
+  Send,
+  Eye,
+  XCircle,
 } from "lucide-react"
 
 ChartJS.register(
@@ -187,7 +196,30 @@ export function ExpensesView({
     [excludeAptPhum]
   )
 
-  const [activeTab, setActiveTab] = React.useState<"members" | "chapters">(
+  // Date mode: Calendar Month vs Custom Date Range
+  const [dateMode, setDateMode] = React.useState<"calendar" | "custom">("calendar")
+  const [customStartDate, setCustomStartDate] = React.useState<string>(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`
+  })
+  const [customEndDate, setCustomEndDate] = React.useState<string>(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+  })
+
+  // Payout Claims State
+  const [payoutClaims, setPayoutClaims] = React.useState<any[]>([])
+  const [loadingClaims, setLoadingClaims] = React.useState(false)
+  const [selectedClaimDetail, setSelectedClaimDetail] = React.useState<any | null>(null)
+  const [updatingClaimId, setUpdatingClaimId] = React.useState<string | null>(null)
+
+  // Staff Self-Claim Form state
+  const [claimStaffName, setClaimStaffName] = React.useState<string>("")
+  const [claimDateRange, setClaimDateRange] = React.useState<string>("")
+  const [claimNote, setClaimNote] = React.useState<string>("")
+  const [submittingClaim, setSubmittingClaim] = React.useState(false)
+
+  const [activeTab, setActiveTab] = React.useState<"members" | "chapters" | "claims">(
     "members"
   )
   const [copied, setCopied] = React.useState(false)
@@ -219,22 +251,305 @@ export function ExpensesView({
     fetchQueueData()
   }, [fetchQueueData])
 
-  // Helper: check if a step's timestamp falls in selected month and year
+  // Fetch Payout Claims from GAS
+  const fetchPayoutClaims = React.useCallback(async () => {
+    setLoadingClaims(true)
+    try {
+      const res = await callGasApi<any[]>("GET_PAYOUT_CLAIMS")
+      setPayoutClaims(Array.isArray(res) ? res : [])
+    } catch (err: any) {
+      console.warn("Fetch payout claims error:", err)
+    } finally {
+      setLoadingClaims(false)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    fetchPayoutClaims()
+  }, [fetchPayoutClaims])
+
+  // Helper: check if a step's timestamp falls in selected month and year or custom date range
   const isDateInPeriod = React.useCallback(
     (dateStr: any, targetMonth: string, targetYear: string): boolean => {
       if (!dateStr) return false
-      if (targetMonth === "all" && targetYear === "all") return true
       const d = parseQueueDate(dateStr)
       if (!d) return false
-      const mMatch =
-        targetMonth === "all" || String(d.getMonth() + 1) === targetMonth
-      const yMatch = targetYear === "all" || String(d.getFullYear()) === targetYear
-      return mMatch && yMatch
+
+      if (dateMode === "calendar") {
+        if (targetMonth === "all" && targetYear === "all") return true
+        const mMatch =
+          targetMonth === "all" || String(d.getMonth() + 1) === targetMonth
+        const yMatch = targetYear === "all" || String(d.getFullYear()) === targetYear
+        return mMatch && yMatch
+      } else {
+        // Custom Date Range mode (supports arbitrary dates, e.g. 25 Sep - 31 Oct)
+        let validStart = true
+        let validEnd = true
+        if (customStartDate) {
+          const s = new Date(customStartDate + "T00:00:00")
+          validStart = d.getTime() >= s.getTime()
+        }
+        if (customEndDate) {
+          const e = new Date(customEndDate + "T23:59:59.999")
+          validEnd = d.getTime() <= e.getTime()
+        }
+        return validStart && validEnd
+      }
     },
-    []
+    [dateMode, customStartDate, customEndDate]
   )
 
-  // Calculate payroll per member based on actual step completion timestamps
+
+  // Set of task keys already claimed in non-rejected claims
+  const claimedTaskKeys = React.useMemo(() => {
+    const set = new Set<string>()
+    payoutClaims.forEach((c) => {
+      if (c.status === "Rejected") return
+      if (!c.queueitemids) return
+      try {
+        let items: any[] = []
+        if (typeof c.queueitemids === "string") {
+          if (c.queueitemids.startsWith("[") || c.queueitemids.startsWith("{")) {
+            items = JSON.parse(c.queueitemids)
+          } else {
+            items = c.queueitemids.split(",").map((s: string) => s.trim())
+          }
+        } else if (Array.isArray(c.queueitemids)) {
+          items = c.queueitemids
+        }
+        items.forEach((it: any) => {
+          if (typeof it === "string") {
+            set.add(it.toLowerCase())
+          } else if (it && it.queueId && it.step) {
+            set.add(`${it.queueId}_${it.step}`.toLowerCase())
+          }
+        })
+      } catch {}
+    })
+    return set
+  }, [payoutClaims])
+
+  // Completed work for the selected staff that has not been claimed
+  const unclaimedWork = React.useMemo(() => {
+    if (!claimStaffName) return []
+    const cleanStaff = claimStaffName.trim().toLowerCase()
+    const tasks: Array<{
+      queueid: string
+      chapter: string
+      mangaName: string
+      step: string
+      stepLabel: string
+      date: string
+      rate: number
+      count: number
+      cost: number
+    }> = []
+
+    queueItems.forEach((q) => {
+      const count = getChapterCount(q.chapter)
+      const manga = mangaList.find(
+        (m) =>
+          m.mangaid != null &&
+          q.mangaid != null &&
+          String(m.mangaid) === String(q.mangaid)
+      )
+      const mangaName = manga ? manga.manganame : "Unknown"
+
+      // 1. Upload
+      if (
+        (q.uploadername || "").trim().toLowerCase() === cleanStaff &&
+        isStepDone(q.uploadstatus) &&
+        q.uploadstatus !== "Skipped" &&
+        q.uploadstatus !== "ข้าม" &&
+        String(q.uploadstatus).toLowerCase() !== "skip"
+      ) {
+        const key = `${q.queueid}_upload`.toLowerCase()
+        if (!claimedTaskKeys.has(key)) {
+          tasks.push({
+            queueid: String(q.queueid),
+            chapter: String(q.chapter),
+            mangaName,
+            step: "upload",
+            stepLabel: "อัป Raw",
+            date: q.uploadtime || q.createdat || "",
+            rate: rates.uploadRate,
+            count,
+            cost: count * rates.uploadRate,
+          })
+        }
+      }
+
+      // 2. Extract
+      if (
+        (q.extractorname || "").trim().toLowerCase() === cleanStaff &&
+        isStepDone(q.extractstatus) &&
+        q.extractstatus !== "Skipped" &&
+        q.extractstatus !== "ข้าม" &&
+        String(q.extractstatus).toLowerCase() !== "skip"
+      ) {
+        const key = `${q.queueid}_extract`.toLowerCase()
+        if (!claimedTaskKeys.has(key)) {
+          tasks.push({
+            queueid: String(q.queueid),
+            chapter: String(q.chapter),
+            mangaName,
+            step: "extract",
+            stepLabel: "ดึงคำ",
+            date: q.extracttime || q.createdat || "",
+            rate: rates.extractRate,
+            count,
+            cost: count * rates.extractRate,
+          })
+        }
+      }
+
+      // 3. Translate
+      if (
+        (q.translatorname || "").trim().toLowerCase() === cleanStaff &&
+        isStepDone(q.translatestatus) &&
+        q.translatestatus !== "Skipped" &&
+        q.translatestatus !== "ข้าม"
+      ) {
+        const key = `${q.queueid}_translate`.toLowerCase()
+        if (!claimedTaskKeys.has(key)) {
+          const isSpecial = cleanStaff.includes(rates.translateSpecialName.toLowerCase())
+          const rate = isSpecial ? rates.translateSpecialRate : rates.translateNormalRate
+          tasks.push({
+            queueid: String(q.queueid),
+            chapter: String(q.chapter),
+            mangaName,
+            step: "translate",
+            stepLabel: "แปล",
+            date: q.translatetime || q.createdat || "",
+            rate,
+            count,
+            cost: count * rate,
+          })
+        }
+      }
+
+      // 4. Typeset
+      if (
+        (q.typesettername || "").trim().toLowerCase() === cleanStaff &&
+        isStepDone(q.typesetstatus) &&
+        q.typesetstatus !== "Skipped" &&
+        q.typesetstatus !== "ข้าม"
+      ) {
+        const key = `${q.queueid}_typeset`.toLowerCase()
+        if (!claimedTaskKeys.has(key)) {
+          const isSpecial = cleanStaff.includes(rates.typesetSpecialName.toLowerCase())
+          const rate = isSpecial ? rates.typesetSpecialRate : rates.typesetNormalRate
+          tasks.push({
+            queueid: String(q.queueid),
+            chapter: String(q.chapter),
+            mangaName,
+            step: "typeset",
+            stepLabel: "ลงคำ",
+            date: q.typesettime || q.createdat || "",
+            rate,
+            count,
+            cost: count * rate,
+          })
+        }
+      }
+    })
+
+    return tasks
+  }, [claimStaffName, queueItems, claimedTaskKeys, mangaList, rates])
+
+  const unclaimedTotals = React.useMemo(() => {
+    const chapters = unclaimedWork.reduce((acc, t) => acc + t.count, 0)
+    const amount = unclaimedWork.reduce((acc, t) => acc + t.cost, 0)
+    return { chapters, amount }
+  }, [unclaimedWork])
+
+  const handleSubmitClaim = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!claimStaffName) {
+      toast.error("กรุณาเลือกชื่อพนักงาน")
+      return
+    }
+    if (unclaimedWork.length === 0) {
+      toast.error("ไม่มีงานที่ยังไม่ได้เบิกสำหรับพนักงานคนนี้")
+      return
+    }
+
+    setSubmittingClaim(true)
+    try {
+      const staffMember = (teamList || []).find(
+        (m) => (m.name || "").trim().toLowerCase() === claimStaffName.trim().toLowerCase()
+      )
+      const res = await callGasApi<{ success: boolean; claimId: string; claims?: any[] }>(
+        "SUBMIT_PAYOUT_CLAIM",
+        {
+          staffName: claimStaffName,
+          role: staffMember?.role || "Staff",
+          totalChapters: unclaimedTotals.chapters,
+          totalAmount: unclaimedTotals.amount,
+          dateRange: claimDateRange || (dateMode === "custom" ? `${customStartDate} ถึง ${customEndDate}` : "รอบปัจจุบัน"),
+          queueItemIds: unclaimedWork.map((t) => ({
+            queueId: t.queueid,
+            step: t.step,
+            chapter: t.chapter,
+            mangaName: t.mangaName,
+            amount: t.cost,
+          })),
+          note: claimNote.trim(),
+        }
+      )
+
+      if (res && res.success) {
+        toast.success(`สร้างใบขอเบิกเงินสำเร็จ! รหัส ${res.claimId}`)
+        if (res.claims) setPayoutClaims(res.claims)
+        else fetchPayoutClaims()
+        setClaimNote("")
+      } else {
+        toast.error("สร้างใบขอเบิกไม่สำเร็จ")
+      }
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการขอเบิก")
+    } finally {
+      setSubmittingClaim(false)
+    }
+  }
+
+  const handleUpdateClaimStatus = async (
+    claimId: string,
+    status: "Approved" | "Paid" | "Rejected",
+    note?: string
+  ) => {
+    setUpdatingClaimId(claimId)
+    try {
+      const res = await callGasApi<{ success: boolean; claims?: any[] }>(
+        "UPDATE_PAYOUT_CLAIM_STATUS",
+        {
+          claimId,
+          status,
+          note: note || "",
+        }
+      )
+      if (res && res.success) {
+        const statusLabel =
+          status === "Paid" ? "ยืนยันจ่ายเงินแล้ว" : status === "Approved" ? "อนุมัติเรียบร้อย" : "ปฏิเสธคำขอแล้ว"
+        toast.success(`${statusLabel} (${claimId})`)
+        if (res.claims) setPayoutClaims(res.claims)
+        else fetchPayoutClaims()
+        if (selectedClaimDetail && selectedClaimDetail.claimid === claimId) {
+          setSelectedClaimDetail((prev: any) => ({ ...prev, status }))
+        }
+      } else {
+        toast.error("อัปเดตสถานะไม่สำเร็จ")
+      }
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการอัปเดตสถานะ")
+    } finally {
+      setUpdatingClaimId(null)
+    }
+  }
+
+  const pendingClaimsCount = payoutClaims.filter((c) => c.status === "Pending").length
+
+    // Calculate payroll per member based on actual step completion timestamps
   const { memberPayrolls, chapterPayrolls, grandTotals } = React.useMemo(() => {
     const membersMap = new Map<string, MemberPayroll>()
 
@@ -680,35 +995,128 @@ export function ExpensesView({
       <Card className="p-4 bg-[#111726] border-[#26334d]">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-              <span>เลือกช่วงเวลา:</span>
+            {/* Mode Switcher: Calendar Month vs Custom Date Range */}
+            <div className="flex items-center p-0.5 rounded-lg bg-[#0b1120] border border-[#26334d]">
+              <button
+                type="button"
+                onClick={() => setDateMode("calendar")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                  dateMode === "calendar"
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <Calendar className="h-3.5 w-3.5" /> เดือนปฏิทิน
+              </button>
+              <button
+                type="button"
+                onClick={() => setDateMode("custom")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                  dateMode === "custom"
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <CalendarDays className="h-3.5 w-3.5" /> กำหนดช่วงวันเอง
+              </button>
             </div>
 
-            <select
-              className="h-9 rounded-lg border border-[#26334d] bg-[#0b1120] px-3 text-sm text-slate-100 font-medium"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-            >
-              <option value="all">ทุกเดือน</option>
-              {THAI_MONTHS.map((m, i) => (
-                <option key={m} value={String(i + 1)}>
-                  {m}
-                </option>
-              ))}
-            </select>
+            {dateMode === "calendar" ? (
+              <>
+                <select
+                  className="h-9 rounded-lg border border-[#26334d] bg-[#0b1120] px-3 text-sm text-slate-100 font-medium"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                >
+                  <option value="all">ทุกเดือน</option>
+                  {THAI_MONTHS.map((m, i) => (
+                    <option key={m} value={String(i + 1)}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
 
-            <select
-              className="h-9 rounded-lg border border-[#26334d] bg-[#0b1120] px-3 text-sm text-slate-100 font-medium"
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-            >
-              <option value="all">ทุกปี</option>
-              {years.map((y) => (
-                <option key={y} value={String(y)}>
-                  {y + 543}
-                </option>
-              ))}
-            </select>
+                <select
+                  className="h-9 rounded-lg border border-[#26334d] bg-[#0b1120] px-3 text-sm text-slate-100 font-medium"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                >
+                  <option value="all">ทุกปี</option>
+                  {years.map((y) => (
+                    <option key={y} value={String(y)}>
+                      {y + 543}
+                    </option>
+                  ))}
+                </select>
+              </>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-slate-400">จาก:</span>
+                  <Input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="h-9 w-36 bg-[#0b1120] border-[#26334d] text-xs text-slate-100 px-2"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-slate-400">ถึง:</span>
+                  <Input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="h-9 w-36 bg-[#0b1120] border-[#26334d] text-xs text-slate-100 px-2"
+                  />
+                </div>
+
+                {/* Presets */}
+                <div className="flex flex-wrap items-center gap-1 pl-1">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setCustomStartDate("2026-09-25")
+                      setCustomEndDate("2026-10-31")
+                      toast.info("เลือกช่วง: รอบตัดยอด 25 ก.ย. - 31 ต.ค.")
+                    }}
+                    className="h-8 px-2.5 text-[11px] font-semibold border-amber-500/40 bg-amber-950/20 text-amber-300 hover:bg-amber-900/30"
+                  >
+                    รอบตัดยอด 25 (25 ก.ย. - 31 ต.ค.)
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const d = new Date()
+                      setCustomStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`)
+                      setCustomEndDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`)
+                      toast.info("เลือกช่วง: เดือนนี้ (1 - วันนี้)")
+                    }}
+                    className="h-8 px-2 text-[11px] text-slate-300 hover:text-white"
+                  >
+                    เดือนนี้ (1-วันนี้)
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const now = new Date()
+                      const past = new Date(Date.now() - 30 * 86400000)
+                      setCustomStartDate(`${past.getFullYear()}-${String(past.getMonth() + 1).padStart(2, "0")}-${String(past.getDate()).padStart(2, "0")}`)
+                      setCustomEndDate(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`)
+                      toast.info("เลือกช่วง: ย้อนหลัง 30 วัน")
+                    }}
+                    className="h-8 px-2 text-[11px] text-slate-300 hover:text-white"
+                  >
+                    ย้อนหลัง 30 วัน
+                  </Button>
+                </div>
+              </div>
+            )}
 
             <select
               className="h-9 rounded-lg border border-[#26334d] bg-[#0b1120] px-3 text-sm text-slate-100 font-medium"
@@ -971,6 +1379,23 @@ export function ExpensesView({
         >
           <BookOpen className="h-4 w-4" />
           แจกแจงรายตอน ({chapterPayrolls.length} รายการ)
+        </button>
+
+        <button
+          onClick={() => setActiveTab("claims")}
+          className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
+            activeTab === "claims"
+              ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30"
+              : "text-slate-400 hover:text-white hover:bg-slate-800/50"
+          }`}
+        >
+          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          <span>ระบบเบิกจ่ายค่าจ้าง (Payout Claims)</span>
+          {pendingClaimsCount > 0 && (
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-amber-500 text-slate-950 font-bold">
+              {pendingClaimsCount}
+            </span>
+          )}
         </button>
       </div>
 
@@ -1322,6 +1747,500 @@ export function ExpensesView({
           </Table>
         </Card>
       )}
+
+      {/* 3. Payout Claims Management (ระบบตัดยอดขอเบิกเงินและอนุมัติการจ่าย) */}
+      {activeTab === "claims" && (
+        <div className="space-y-6">
+          {/* Top Overview Cards for Claims */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card className="p-4 bg-[#111726] border-[#26334d]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">ใบขอเบิกรออนุมัติ</p>
+                  <p className="text-2xl font-bold text-amber-400 mt-1">
+                    {pendingClaimsCount} รายการ
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <Clock className="h-6 w-6" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-[#111726] border-[#26334d]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">อนุมัติแล้ว (รอจ่าย)</p>
+                  <p className="text-2xl font-bold text-sky-400 mt-1">
+                    {payoutClaims.filter((c) => c.status === "Approved").length} รายการ
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                  <FileText className="h-6 w-6" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-[#111726] border-[#26334d]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">จ่ายเงินเรียบร้อยแล้ว (Paid)</p>
+                  <p className="text-2xl font-bold text-emerald-400 mt-1">
+                    {payoutClaims.filter((c) => c.status === "Paid").length} รายการ
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <CheckCircle2 className="h-6 w-6" />
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Section 1: Staff Self-Claim (ตัดยอดขอเบิกเงิน) */}
+          <Card className="bg-[#111726] border-[#26334d]">
+            <CardHeader className="pb-3 border-b border-[#26334d]/60">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <Send className="h-4 w-4 text-emerald-400" />
+                    ฝั่งพนักงาน: สรุปตัดยอดงานที่ทำเสร็จ & ขอเบิกเงิน
+                  </CardTitle>
+                  <p className="text-xs text-slate-400 mt-1">
+                    เลือกชื่อพนักงานเพื่อดึงงานที่ทำเสร็จแต่ยังไม่ได้ตัดยอดขอเบิกเงิน (ป้องกันการเบิกซ้ำ 100%)
+                  </p>
+                </div>
+                {claimStaffName && unclaimedTotals.chapters > 0 && (
+                  <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-bold px-3 py-1 text-sm">
+                    ยอดขอเบิก: ฿{unclaimedTotals.amount.toLocaleString()} ({unclaimedTotals.chapters} ตอน)
+                  </Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="p-5 space-y-4">
+              <form onSubmit={handleSubmitClaim} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-slate-300 font-semibold">
+                      👤 เลือกชื่อพนักงานขอเบิก:
+                    </Label>
+                    <select
+                      className="h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-3 text-sm text-slate-100 font-medium"
+                      value={claimStaffName}
+                      onChange={(e) => setClaimStaffName(e.target.value)}
+                    >
+                      <option value="">-- เลือกพนักงาน --</option>
+                      {(teamList || [])
+                        .filter((m) => m.status === "Active")
+                        .map((m) => (
+                          <option key={m.memberid} value={m.name}>
+                            {m.name} ({m.role})
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-slate-300">
+                      📅 ระบุรอบเวลา / งวดงาน (ถ้ามี):
+                    </Label>
+                    <Input
+                      placeholder="เช่น รอบ 25 ก.ย. - 31 ต.ค."
+                      value={claimDateRange}
+                      onChange={(e) => setClaimDateRange(e.target.value)}
+                      className="h-10 bg-[#0b1120] border-[#26334d] text-sm"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-slate-300">
+                      📝 โน้ตเพิ่มเติม / ช่องทางรับเงิน:
+                    </Label>
+                    <Input
+                      placeholder="เช่น ธ.กสิกร 123-xxx-xxx"
+                      value={claimNote}
+                      onChange={(e) => setClaimNote(e.target.value)}
+                      className="h-10 bg-[#0b1120] border-[#26334d] text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Unclaimed Work Table */}
+                {claimStaffName ? (
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center justify-between text-xs text-slate-300">
+                      <span className="font-semibold">
+                        📋 รายการงานที่ทำเสร็จและยังไม่เคยเบิก ({unclaimedWork.length} รายการ):
+                      </span>
+                      {unclaimedWork.length > 0 && (
+                        <span className="text-emerald-400 font-bold">
+                          รวม {unclaimedTotals.chapters} ตอน = ฿{unclaimedTotals.amount.toLocaleString()} บาท
+                        </span>
+                      )}
+                    </div>
+
+                    {unclaimedWork.length === 0 ? (
+                      <div className="rounded-lg border border-slate-800 bg-[#0b1120] p-6 text-center text-sm text-slate-400">
+                        🎉 พนักงานคนนี้ไม่มีงานค้างเบิก (เบิกครบทั้งหมดแล้ว หรือยังไม่มีงานที่ทำเสร็จ)
+                      </div>
+                    ) : (
+                      <div className="rounded-lg border border-[#26334d] overflow-hidden max-h-60 overflow-y-auto">
+                        <Table>
+                          <TableHeader className="bg-[#0d1322] sticky top-0 z-10">
+                            <TableRow className="border-[#26334d]">
+                              <TableHead className="text-xs text-slate-400">เรื่อง</TableHead>
+                              <TableHead className="text-xs text-slate-400 text-center">ตอน</TableHead>
+                              <TableHead className="text-xs text-slate-400">ขั้นตอน</TableHead>
+                              <TableHead className="text-xs text-slate-400 text-right">เรท (฿)</TableHead>
+                              <TableHead className="text-xs text-slate-400 text-right">ค่าแรง (฿)</TableHead>
+                              <TableHead className="text-xs text-slate-400 text-right">เวลาส่งงาน</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {unclaimedWork.map((t, idx) => (
+                              <TableRow key={`${t.queueid}_${t.step}_${idx}`} className="border-[#26334d]/60 hover:bg-[#151d2f]/60 text-xs">
+                                <TableCell className="font-medium text-slate-200">{t.mangaName}</TableCell>
+                                <TableCell className="text-center font-bold text-amber-300">#{t.chapter}</TableCell>
+                                <TableCell>
+                                  <Badge variant="outline" className="text-[10px] border-slate-700 bg-slate-800/80">
+                                    {t.stepLabel}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-right text-slate-400">฿{t.rate}</TableCell>
+                                <TableCell className="text-right font-bold text-emerald-400">฿{t.cost.toLocaleString()}</TableCell>
+                                <TableCell className="text-right text-slate-500 font-mono text-[11px]">
+                                  {t.date ? new Date(t.date).toLocaleDateString("th-TH") : "-"}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+
+                    {unclaimedWork.length > 0 && (
+                      <div className="flex justify-end pt-2">
+                        <Button
+                          type="submit"
+                          disabled={submittingClaim}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-lg shadow-emerald-600/30"
+                        >
+                          <Send className="h-4 w-4" />
+                          {submittingClaim
+                            ? "กำลังส่งคำขอเบิก..."
+                            : `ตัดยอดขอเบิกเงิน (฿${unclaimedTotals.amount.toLocaleString()} บาท)`}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="rounded-lg border border-dashed border-slate-800 bg-[#0b1120]/40 p-6 text-center text-xs text-slate-400">
+                    👈 กรุณาเลือกชื่อพนักงานเพื่อคำนวณงานที่ยังไม่เคยเบิก
+                  </div>
+                )}
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Section 2: Admin Approvals (ประวัติใบขอเบิกเงิน & อนุมัติการจ่าย) */}
+          <Card className="bg-[#111726] border-[#26334d]">
+            <CardHeader className="pb-3 border-b border-[#26334d]/60">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-sky-400" />
+                  ฝั่งแอดมิน: ประวัติใบขอเบิกเงิน & อนุมัติการจ่าย (Payout History & Approvals)
+                </CardTitle>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={fetchPayoutClaims}
+                  disabled={loadingClaims}
+                  className="h-8 text-xs text-slate-300 hover:text-white gap-1.5"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${loadingClaims ? "animate-spin text-amber-400" : ""}`} />
+                  รีเฟรชคำขอ
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {loadingClaims && payoutClaims.length === 0 ? (
+                <div className="p-8 text-center text-sm text-slate-400">
+                  กำลังโหลดข้อมูลคำขอเบิกเงิน...
+                </div>
+              ) : payoutClaims.length === 0 ? (
+                <div className="p-8 text-center text-sm text-slate-400">
+                  ยังไม่มีประวัติใบขอเบิกเงินในระบบ
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader className="bg-[#0d1322]">
+                      <TableRow className="border-[#26334d]">
+                        <TableHead className="text-xs text-slate-400">Claim ID</TableHead>
+                        <TableHead className="text-xs text-slate-400">วันที่ขอ</TableHead>
+                        <TableHead className="text-xs text-slate-400">พนักงาน</TableHead>
+                        <TableHead className="text-xs text-slate-400">รอบเวลา</TableHead>
+                        <TableHead className="text-xs text-slate-400 text-center">จำนวนตอน</TableHead>
+                        <TableHead className="text-xs text-slate-400 text-right">ยอดเงิน (฿)</TableHead>
+                        <TableHead className="text-xs text-slate-400 text-center">สถานะ</TableHead>
+                        <TableHead className="text-xs text-slate-400 text-center">การจัดการ (แอดมิน)</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {payoutClaims.map((claim) => {
+                        const isPending = claim.status === "Pending"
+                        const isApproved = claim.status === "Approved"
+                        const isPaid = claim.status === "Paid"
+                        const isRejected = claim.status === "Rejected"
+
+                        return (
+                          <TableRow key={claim.claimid} className="border-[#26334d]/60 hover:bg-[#151d2f]/50 text-xs">
+                            <TableCell className="font-mono text-slate-400">{claim.claimid}</TableCell>
+                            <TableCell className="text-slate-300">
+                              {claim.createdat ? new Date(claim.createdat).toLocaleDateString("th-TH") : "-"}
+                            </TableCell>
+                            <TableCell className="font-bold text-slate-200">
+                              {claim.staffname}
+                              <span className="block text-[10px] text-slate-400 font-normal">{claim.role}</span>
+                            </TableCell>
+                            <TableCell className="text-slate-300">{claim.daterange || "-"}</TableCell>
+                            <TableCell className="text-center font-bold text-amber-300">
+                              {claim.totalchapters} ตอน
+                            </TableCell>
+                            <TableCell className="text-right font-bold text-emerald-400 text-sm">
+                              ฿{Number(claim.totalamount || 0).toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {isPending && (
+                                <Badge className="bg-amber-500/15 text-amber-300 border-amber-500/40 text-[10px]">
+                                  🟡 รออนุมัติ
+                                </Badge>
+                              )}
+                              {isApproved && (
+                                <Badge className="bg-sky-500/15 text-sky-300 border-sky-500/40 text-[10px]">
+                                  🔵 อนุมัติแล้ว (รอจ่าย)
+                                </Badge>
+                              )}
+                              {isPaid && (
+                                <Badge className="bg-emerald-500/15 text-emerald-300 border-emerald-500/40 text-[10px]">
+                                  🟢 จ่ายเงินแล้ว
+                                </Badge>
+                              )}
+                              {isRejected && (
+                                <Badge className="bg-rose-500/15 text-rose-300 border-rose-500/40 text-[10px]">
+                                  🔴 ปฏิเสธ
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex items-center justify-center gap-1.5">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setSelectedClaimDetail(claim)}
+                                  className="h-7 px-2 text-[11px] gap-1 text-slate-300 hover:text-white"
+                                  title="ดูรายละเอียดตอนในใบขอเบิกนี้"
+                                >
+                                  <Eye className="h-3 w-3" /> ดูตอน
+                                </Button>
+
+                                {isPending && (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      disabled={updatingClaimId === claim.claimid}
+                                      onClick={() => handleUpdateClaimStatus(claim.claimid, "Approved")}
+                                      className="h-7 px-2 text-[11px] bg-sky-600 hover:bg-sky-700 text-white"
+                                    >
+                                      อนุมัติ
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      disabled={updatingClaimId === claim.claimid}
+                                      onClick={() => handleUpdateClaimStatus(claim.claimid, "Paid")}
+                                      className="h-7 px-2 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white"
+                                    >
+                                      จ่ายแล้ว
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      disabled={updatingClaimId === claim.claimid}
+                                      onClick={() => handleUpdateClaimStatus(claim.claimid, "Rejected")}
+                                      className="h-7 px-2 text-[11px]"
+                                    >
+                                      ปฏิเสธ
+                                    </Button>
+                                  </>
+                                )}
+
+                                {isApproved && (
+                                  <Button
+                                    size="sm"
+                                    disabled={updatingClaimId === claim.claimid}
+                                    onClick={() => handleUpdateClaimStatus(claim.claimid, "Paid")}
+                                    className="h-7 px-2 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                                  >
+                                    ยืนยันจ่ายแล้ว
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Claim Detail Modal */}
+      <Dialog open={Boolean(selectedClaimDetail)} onOpenChange={(v) => !v && setSelectedClaimDetail(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base font-bold">
+              <FileText className="h-5 w-5 text-emerald-400" />
+              รายละเอียดใบขอเบิกเงิน: {selectedClaimDetail?.claimid}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedClaimDetail && (
+            <div className="space-y-4 my-2 overflow-y-auto pr-1">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-lg bg-[#0b1120] border border-[#26334d] text-xs">
+                <div>
+                  <span className="text-slate-400 block">พนักงาน:</span>
+                  <span className="font-bold text-slate-200">{selectedClaimDetail.staffname}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">รอบเวลา:</span>
+                  <span className="font-semibold text-slate-200">{selectedClaimDetail.daterange || "-"}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">ยอดรวม:</span>
+                  <span className="font-bold text-emerald-400 text-sm">
+                    ฿{Number(selectedClaimDetail.totalamount || 0).toLocaleString()}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">สถานะ:</span>
+                  <span className="font-bold">
+                    {selectedClaimDetail.status === "Paid"
+                      ? "🟢 จ่ายเงินแล้ว"
+                      : selectedClaimDetail.status === "Approved"
+                      ? "🔵 อนุมัติแล้ว"
+                      : selectedClaimDetail.status === "Pending"
+                      ? "🟡 รออนุมัติ"
+                      : "🔴 ปฏิเสธ"}
+                  </span>
+                </div>
+              </div>
+
+              {selectedClaimDetail.note && (
+                <div className="p-2.5 rounded-lg bg-[#0b1120]/60 border border-[#26334d] text-xs">
+                  <span className="text-slate-400 font-semibold">โน้ต: </span>
+                  <span className="text-slate-200">{selectedClaimDetail.note}</span>
+                </div>
+              )}
+
+              {/* Items List */}
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-slate-300">
+                  รายการตอนที่ขอเบิกในใบนี้:
+                </span>
+                <div className="rounded-lg border border-[#26334d] overflow-hidden max-h-64 overflow-y-auto">
+                  <Table>
+                    <TableHeader className="bg-[#0d1322] sticky top-0">
+                      <TableRow className="border-[#26334d]">
+                        <TableHead className="text-xs text-slate-400">เรื่อง</TableHead>
+                        <TableHead className="text-xs text-slate-400 text-center">ตอน</TableHead>
+                        <TableHead className="text-xs text-slate-400">ขั้นตอน</TableHead>
+                        <TableHead className="text-xs text-slate-400 text-right">ค่าแรง</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(() => {
+                        let parsed: any[] = []
+                        try {
+                          if (selectedClaimDetail.queueitemids) {
+                            if (typeof selectedClaimDetail.queueitemids === "string") {
+                              parsed = JSON.parse(selectedClaimDetail.queueitemids)
+                            } else if (Array.isArray(selectedClaimDetail.queueitemids)) {
+                              parsed = selectedClaimDetail.queueitemids
+                            }
+                          }
+                        } catch {}
+                        if (parsed.length === 0) {
+                          return (
+                            <TableRow>
+                              <TableCell colSpan={4} className="text-center text-xs text-slate-400 py-4">
+                                ไม่มีรายการรายละเอียดตอน
+                              </TableCell>
+                            </TableRow>
+                          )
+                        }
+                        return parsed.map((item, i) => (
+                          <TableRow key={i} className="border-[#26334d]/60 text-xs">
+                            <TableCell className="font-medium text-slate-200">
+                              {item.mangaName || "Manga"}
+                            </TableCell>
+                            <TableCell className="text-center font-bold text-amber-300">
+                              #{item.chapter}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="text-[10px] border-slate-700">
+                                {item.step}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right font-bold text-emerald-400">
+                              ฿{Number(item.amount || 0).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      })()}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex items-center justify-between gap-2 border-t border-[#26334d] pt-3">
+            <Button variant="outline" size="sm" onClick={() => setSelectedClaimDetail(null)}>
+              ปิดหน้าต่าง
+            </Button>
+            {selectedClaimDetail && selectedClaimDetail.status === "Pending" && (
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => handleUpdateClaimStatus(selectedClaimDetail.claimid, "Approved")}
+                  className="bg-sky-600 hover:bg-sky-700 text-white"
+                >
+                  อนุมัติ
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => handleUpdateClaimStatus(selectedClaimDetail.claimid, "Paid")}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                >
+                  ยืนยันจ่ายเงินแล้ว
+                </Button>
+              </div>
+            )}
+            {selectedClaimDetail && selectedClaimDetail.status === "Approved" && (
+              <Button
+                size="sm"
+                onClick={() => handleUpdateClaimStatus(selectedClaimDetail.claimid, "Paid")}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+              >
+                ยืนยันจ่ายเงินแล้ว
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Rate Settings Modal */}
       <Dialog

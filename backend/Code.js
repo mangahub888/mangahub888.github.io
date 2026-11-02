@@ -14,6 +14,7 @@ const WEBSITE_SHEET_NAME = 'Websites';
 const ACCESS_PASSCODE = '10211032';
 const FINANCIAL_PASSCODE = '720102';
 const RAW_TRACKER_SHEET_NAME = 'RawTracker';
+const PAYOUT_CLAIMS_SHEET_NAME = 'PayoutClaims';
 
 // --- TELEGRAM CONFIGURATION ---
 const TELEGRAM_BOT_TOKEN = '7836927758:AAHpsoCToMUxoeAzo5UMtMum3Ix5rIO_VOc';
@@ -260,6 +261,17 @@ function doPost(e) {
         result = { message: 'ระบบเพิ่มคิวอัตโนมัติตามวันปล่อยดิบ (Release Day) ถูกปิดใช้งานแล้ว', queue: getWorkQueue(true) };
         break;
 
+      // --- PAYOUT CLAIMS (เบิกจ่ายค่าจ้าง) ---
+      case 'GET_PAYOUT_CLAIMS':
+        result = getPayoutClaims();
+        break;
+      case 'SUBMIT_PAYOUT_CLAIM':
+        result = submitPayoutClaim(payload);
+        break;
+      case 'UPDATE_PAYOUT_CLAIM_STATUS':
+        result = updatePayoutClaimStatus(payload.claimId, payload.status, payload.note);
+        break;
+
       // --- RAW TRACKER (ต้นฉบับ UPDATE) ---
       case 'GET_RAW_TRACKER_LIST':
         result = getRawTrackerList();
@@ -383,7 +395,8 @@ function initializeAllSheets() {
     BUDGET_PAYEE_SHEET_NAME,
     BUDGET_TRANSACTION_SHEET_NAME,
     MANGA_SALES_SHEET_NAME,
-    WEBSITE_SHEET_NAME
+    WEBSITE_SHEET_NAME,
+    PAYOUT_CLAIMS_SHEET_NAME
   ];
   sheetNames.forEach(name => getSheet(name));
   return { initialized: sheetNames };
@@ -620,6 +633,13 @@ function getSheet(name = SHEET_NAME) {
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#ec4899').setFontColor('#ffffff');
+    } else if (name === PAYOUT_CLAIMS_SHEET_NAME) {
+      const headers = [
+        'ClaimID', 'CreatedAt', 'StaffName', 'Role', 'DateRange',
+        'TotalChapters', 'TotalAmount', 'Status', 'ApprovedAt', 'PaidAt', 'Note', 'QueueItemIds'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#10b981').setFontColor('#ffffff');
     }
     ensureSheetHeaders(sheet, name);
   }
@@ -4946,5 +4966,146 @@ function proxyThunderScansImage(payload) {
   } catch (err) {
     console.error('proxyThunderScansImage error:', err);
     return { error: err.toString() };
+  }
+}
+
+
+// ==========================================
+// PAYOUT CLAIMS (ระบบตัดยอดขอเบิกเงินและอนุมัติการจ่าย)
+// ==========================================
+
+function getPayoutClaims() {
+  try {
+    const data = readSheetData(PAYOUT_CLAIMS_SHEET_NAME);
+    return data.reverse();
+  } catch (err) {
+    console.error('getPayoutClaims error:', err);
+    return [];
+  }
+}
+
+function submitPayoutClaim(payload) {
+  if (!payload || !payload.staffName) {
+    return { error: 'กรุณาระบุชื่อพนักงานที่ขอเบิก' };
+  }
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(PAYOUT_CLAIMS_SHEET_NAME);
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(h => h.toString().toLowerCase().trim());
+    
+    const id = 'CLM-' + new Date().getTime();
+    const now = new Date();
+    const queueIdsStr = typeof payload.queueItemIds === 'object' ? JSON.stringify(payload.queueItemIds) : String(payload.queueItemIds || '');
+
+    const newRow = headers.map(header => {
+      if (header === 'claimid') return id;
+      if (header === 'createdat') return now;
+      if (header === 'staffname') return payload.staffName || '';
+      if (header === 'role') return payload.role || 'All';
+      if (header === 'daterange') return payload.dateRange || '';
+      if (header === 'totalchapters') return Number(payload.totalChapters) || 0;
+      if (header === 'totalamount') return Number(payload.totalAmount) || 0;
+      if (header === 'status') return 'Pending';
+      if (header === 'approvedat') return '';
+      if (header === 'paidat') return '';
+      if (header === 'note') return payload.note || '';
+      if (header === 'queueitemids') return queueIdsStr;
+      return '';
+    });
+
+    sheet.appendRow(newRow);
+
+    try {
+      const msg = `💰 <b>มีคำขอเบิกเงินใหม่! (Payout Claim)</b>\n\n` +
+                  `👤 ผู้ขอเบิก: <b>${payload.staffName}</b> (${payload.role || 'พนักงาน'})\n` +
+                  `📅 ช่วงเวลา: ${payload.dateRange || '-'}\n` +
+                  `📚 จำนวนตอน: <b>${payload.totalChapters}</b> ตอน\n` +
+                  `💵 ยอดเงิน: <b>฿${Number(payload.totalAmount).toLocaleString()}</b> บาท\n` +
+                  (payload.note ? `📝 โน้ต: ${payload.note}\n` : '') +
+                  `\nกรุณาเข้าสู่ระบบ MangaHub เพื่อตรวจสอบและอนุมัติการจ่าย`;
+      sendTelegramNotification(msg);
+    } catch (e) {
+      console.warn('Telegram payout notification error:', e);
+    }
+
+    return { success: true, claimId: id, claims: getPayoutClaims() };
+  } catch (err) {
+    console.error('submitPayoutClaim error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function updatePayoutClaimStatus(claimId, status, note) {
+  if (!claimId || !status) return { error: 'ข้อมูลไม่ครบถ้วน' };
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(PAYOUT_CLAIMS_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { error: 'ไม่พบข้อมูลใบขอเบิก' };
+    
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const idCol = headers.indexOf('claimid');
+    const statusCol = headers.indexOf('status');
+    const approvedAtCol = headers.indexOf('approvedat');
+    const paidAtCol = headers.indexOf('paidat');
+    const noteCol = headers.indexOf('note');
+
+    if (idCol === -1 || statusCol === -1) return { error: 'ตารางไม่ถูกต้อง' };
+
+    let foundRow = -1;
+    let staffName = '';
+    let totalAmount = 0;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][idCol]).trim() === String(claimId).trim()) {
+        foundRow = i + 1;
+        staffName = data[i][headers.indexOf('staffname')] || '';
+        totalAmount = data[i][headers.indexOf('totalamount')] || 0;
+        break;
+      }
+    }
+
+    if (foundRow === -1) return { error: 'ไม่พบใบขอเบิก Claim ID นี้' };
+
+    const now = new Date();
+    sheet.getRange(foundRow, statusCol + 1).setValue(status);
+    
+    if (status === 'Approved' && approvedAtCol !== -1) {
+      sheet.getRange(foundRow, approvedAtCol + 1).setValue(now);
+    } else if (status === 'Paid') {
+      if (approvedAtCol !== -1 && !sheet.getRange(foundRow, approvedAtCol + 1).getValue()) {
+        sheet.getRange(foundRow, approvedAtCol + 1).setValue(now);
+      }
+      if (paidAtCol !== -1) {
+        sheet.getRange(foundRow, paidAtCol + 1).setValue(now);
+      }
+    }
+
+    if (note && noteCol !== -1) {
+      sheet.getRange(foundRow, noteCol + 1).setValue(note);
+    }
+
+    try {
+      const statusEmoji = status === 'Paid' ? '✅ จ่ายเงินแล้ว (Paid)' : status === 'Approved' ? '👍 อนุมัติแล้ว (Approved)' : '❌ ปฏิเสธ (Rejected)';
+      const msg = `📋 <b>อัปเดตสถานะใบขอเบิกเงิน!</b>\n\n` +
+                  `🔖 Claim ID: <code>${claimId}</code>\n` +
+                  `👤 ผู้รับเงิน: <b>${staffName}</b>\n` +
+                  `💵 ยอดเงิน: <b>฿${Number(totalAmount).toLocaleString()}</b> บาท\n` +
+                  `📊 สถานะใหม่: <b>${statusEmoji}</b>\n` +
+                  (note ? `📝 หมายเหตุ: ${note}` : '');
+      sendTelegramNotification(msg);
+    } catch (e) {
+      console.warn('Telegram status notification error:', e);
+    }
+
+    return { success: true, claims: getPayoutClaims() };
+  } catch (err) {
+    console.error('updatePayoutClaimStatus error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
   }
 }

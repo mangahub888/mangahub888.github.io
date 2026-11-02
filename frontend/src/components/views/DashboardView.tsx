@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   THAI_MONTHS,
@@ -112,7 +113,7 @@ export function DashboardView({
   }, [mangaList, queueList])
 
   // Calendar calculation
-  const calendarCells = React.useMemo(() => {
+  const calendarData = React.useMemo(() => {
     const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
 
@@ -120,7 +121,8 @@ export function DashboardView({
     if (firstDayIndex < 0) firstDayIndex = 6 // Monday start
 
     const daysInMonth = lastDay.getDate()
-    const allowedMonthlySteps = ["extract", "translate", "typeset"]
+    // Monthly overview only shows translate and typeset (excluded extract per user requirement)
+    const allowedMonthlySteps = ["translate", "typeset"]
 
     const getMonthlyTaskPriority = (q: any) => {
       const manga = mangaList.find(
@@ -134,8 +136,7 @@ export function DashboardView({
         const isDoing = String(q.typesetstatus || "").trim() === "กำลังทำ"
         return isDoing ? 3 : 4
       }
-      if (stepKey === "extract") return 5
-      return 6
+      return 5
     }
 
     const cells: Array<{
@@ -192,8 +193,40 @@ export function DashboardView({
       })
     }
 
-    return cells
+    // Prior month backlog (วันที่ 0) - Only tasks created before this month that are incomplete
+    const dayZeroItems = queueList.filter((q) => {
+      const qDate = getQueueItemDate(q)
+      if (!qDate) return false
+      const isBeforeThisMonth =
+        qDate.getFullYear() < year ||
+        (qDate.getFullYear() === year && qDate.getMonth() < month)
+      if (!isBeforeThisMonth) return false
+      if (isStepDone(q.poststatus)) return false
+      const stepKey = getQueueCurrentStep(q)
+      return allowedMonthlySteps.includes(stepKey)
+    })
+
+    dayZeroItems.sort((a, b) => {
+      const pA = getMonthlyTaskPriority(a)
+      const pB = getMonthlyTaskPriority(b)
+      if (pA !== pB) return pA - pB
+      const mangaA = mangaList.find(
+        (m) => m.mangaid != null && a.mangaid != null && String(m.mangaid) === String(a.mangaid)
+      )
+      const mangaB = mangaList.find(
+        (m) => m.mangaid != null && b.mangaid != null && String(m.mangaid) === String(b.mangaid)
+      )
+      const urgA = isUrgentManga(mangaA) ? 1 : 0
+      const urgB = isUrgentManga(mangaB) ? 1 : 0
+      if (urgA !== urgB) return urgB - urgA
+      return (a.queueid || 0) - (b.queueid || 0)
+    })
+
+    return { cells, dayZeroItems }
   }, [year, month, mangaList, queueList])
+
+  const calendarCells = calendarData.cells
+  const dayZeroItems = calendarData.dayZeroItems
 
   const stepThaiNames: Record<string, string> = {
     upload: "อัป Raw",
@@ -348,11 +381,77 @@ export function DashboardView({
                   รอลงคำ / ลงคำ
                 </span>
               </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-xs bg-orange-500/30 border-l-2 border-orange-400 inline-block" />
-                <span className="text-orange-300">รอดึงคำ</span>
-              </span>
             </div>
+
+            {/* วันที่ 0: งานค้างจากเดือนก่อน */}
+            {!isLoading && dayZeroItems.length > 0 && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3.5 mb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-5 w-5 items-center justify-center rounded bg-amber-500 text-slate-950 font-black text-xs shadow-xs">
+                      0
+                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-amber-200">
+                      วันที่ 0: งานค้างจากเดือนก่อน
+                    </span>
+                    <Badge variant="outline" className="border-amber-500/40 text-amber-300 bg-amber-500/10 text-[10px] px-1.5 py-0">
+                      {dayZeroItems.length} ตอนค้าง
+                    </Badge>
+                  </div>
+                  <span className="text-[11px] text-amber-300/80">
+                    งานเดือนก่อนๆ ที่ยังไม่เสร็จ (รอแปล / รอลงคำ) • คลิกเพื่อไปยังคิวงาน
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto pr-1">
+                  {dayZeroItems.map((q) => {
+                    const manga = mangaList.find(
+                      (m) =>
+                        m.mangaid != null &&
+                        q.mangaid != null &&
+                        String(m.mangaid) === String(q.mangaid)
+                    )
+                    const fullName = manga ? manga.manganame : "Unknown"
+                    let displayName = fullName
+                    if (displayName.length > 20) {
+                      displayName = displayName.substring(0, 20) + "..."
+                    }
+                    const searchKeyword = displayName
+                      .replace(/\.\.\.+$/, "")
+                      .replace(/…+$/, "")
+                      .trim()
+                    const urgent = isUrgentManga(manga)
+                    const stepKey = getQueueCurrentStep(q)
+
+                    let badgeStyle =
+                      "bg-slate-800 text-slate-200 border-l-2 border-slate-400"
+                    if (stepKey === "translate") {
+                      badgeStyle = urgent
+                        ? "bg-red-500/25 text-red-200 border-l-2 border-red-500 font-medium"
+                        : "bg-amber-500/25 text-amber-200 border-l-2 border-amber-400"
+                    } else if (stepKey === "typeset") {
+                      const isDoing =
+                        String(q.typesetstatus || "").trim() === "กำลังทำ"
+                      badgeStyle = isDoing
+                        ? "bg-emerald-500/30 text-emerald-200 border-l-2 border-emerald-500 font-medium"
+                        : "bg-emerald-500/20 text-emerald-300 border-l-2 border-emerald-400"
+                    }
+
+                    return (
+                      <div
+                        key={q.queueid}
+                        onClick={() => onSwitchToQueue(searchKeyword)}
+                        title={`${fullName} ตอนที่ ${q.chapter} (${stepThaiNames[stepKey] || stepKey})`}
+                        className={`truncate rounded px-2 py-1 text-xs cursor-pointer hover:opacity-85 transition-opacity ${badgeStyle}`}
+                      >
+                        {urgent ? "🔥 " : ""}
+                        {displayName} #{q.chapter}
+                        <span className="ml-1 opacity-75 text-[10px]">({stepThaiNames[stepKey] || stepKey})</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             {isLoading ? (
               <div className="grid grid-cols-7 gap-2">
