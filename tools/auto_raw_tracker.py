@@ -6,6 +6,7 @@ import io
 import base64
 import json
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -228,16 +229,33 @@ def process_single_chapter(task):
         print(f"❌ ไม่พบรูปภาพที่สมบูรณ์สำหรับ ComicID {comic_id} ข้าม")
         return False
 
-    # 2. วัดขนาดความกว้างมาตรฐานจากหน้าย่อยที่ 15 (Index 14) ของเรื่อง/ตอนนั้นๆ เสมอ (ไม่ล็อค 1280px)
+    # 2. ดาวน์โหลดชิ้นส่วนภาพแบบคู่ขนาน (Parallel Slice Image Downloading - 10 Workers)
+    print(f"2. กำลังดาวน์โหลดชิ้นส่วนภาพ {total_images} ชิ้น แบบคู่ขนาน (10 Workers)...")
+    t_start_dl = time.time()
+    downloaded_slices = [None] * total_images
+
+    def _dl_worker(item_tuple):
+        idx, u = item_tuple
+        return idx, download_image(u)
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(_dl_worker, (i, urls[i])) for i in range(total_images)]
+        for fut in as_completed(futures):
+            i_idx, i_bytes = fut.result()
+            downloaded_slices[i_idx] = i_bytes
+
+    success_slices = sum(1 for b in downloaded_slices if b is not None)
+    print(f"✓ ดาวน์โหลดสำเร็จ {success_slices}/{total_images} ชิ้น (ใช้เวลา {time.time() - t_start_dl:.1f} วินาที)")
+
+    # 3. วัดขนาดความกว้างมาตรฐานจากหน้าย่อยที่ 15 (Index 14) ของเรื่อง/ตอนนั้นๆ เสมอ (ไม่ล็อค 1280px)
     sample_idx = 14 if total_images >= 15 else total_images // 2
-    print(f"2. วัดขนาดความกว้างมาตรฐานจากหน้าย่อย #{sample_idx + 1}...")
-    sample_bytes = download_image(urls[sample_idx])
+    sample_bytes = downloaded_slices[sample_idx]
     if not sample_bytes:
-        sample_bytes = download_image(urls[0])
+        sample_bytes = downloaded_slices[0]
     if not sample_bytes:
-        for u in urls:
-            sample_bytes = download_image(u)
-            if sample_bytes:
+        for b in downloaded_slices:
+            if b:
+                sample_bytes = b
                 break
     if not sample_bytes:
         print("❌ ไม่สามารถดาวน์โหลดชิ้นส่วนใดๆ เพื่อวัดขนาดความกว้างมาตรฐานได้ ข้าม")
@@ -246,27 +264,26 @@ def process_single_chapter(task):
     standard_width = sample_img.width
     print(f"✓ ความกว้างมาตรฐานคือ {standard_width}px (จากหน้าย่อย #{sample_idx + 1})")
 
-    # 3. รวมชิ้นภาพแบ่งออกเป็น 20 หน้า (001-020)
+    # 4. Pre-Stitching All 20 Pages (ประกอบภาพ 20 หน้ามาตรฐานล่วงหน้าใน Memory)
     total_parts = min(TARGET_TOTAL_PAGES, total_images)
-    print(f"2. กำลังเย็บภาพทั้งหมด {total_images} ชิ้น รวมเป็น {total_parts} หน้า...")
+    print(f"3. กำลังเย็บประกอบภาพล่วงหน้าทั้ง {total_parts} หน้า (001.jpg - {total_parts:03d}.jpg)...")
+    t_start_stitch = time.time()
 
-    last_folder_url = ""
+    pages_payloads = [None] * total_parts
 
     for part_idx in range(total_parts):
         part_num = part_idx + 1
         start_idx = round(part_idx * total_images / total_parts)
         end_idx = round((part_idx + 1) * total_images / total_parts)
-        slice_count = end_idx - start_idx
-        part_urls = urls[start_idx:end_idx]
+        slice_bytes_list = downloaded_slices[start_idx:end_idx]
 
         processed_images = []
         total_height = 0
 
-        for i, u in enumerate(part_urls):
-            img_bytes = download_image(u)
-            if not img_bytes:
+        for b in slice_bytes_list:
+            if not b:
                 continue
-            pil_img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+            pil_img = Image.open(io.BytesIO(b)).convert("RGB")
             if pil_img.width != standard_width:
                 scale = standard_width / pil_img.width
                 scaled_h = round(pil_img.height * scale)
@@ -294,10 +311,7 @@ def process_single_chapter(task):
         b64_str = base64.b64encode(img_bytes).decode('utf-8')
         data_url = f"data:{mime_type};base64," + b64_str
 
-        is_last = (part_idx == total_parts - 1)
-        print(f"   [{part_num:02d}/{total_parts}] กำลังอัปโหลด {part_file_name} ({len(img_bytes)/1024:.1f} KB)...", end="", flush=True)
-
-        upload_payload = {
+        pages_payloads[part_idx] = {
             "mangaName": thai_name,
             "chapter": chapter_title,
             "partIndex": part_num,
@@ -305,30 +319,87 @@ def process_single_chapter(task):
             "fileName": part_file_name,
             "mimeType": mime_type,
             "base64Data": data_url,
-            "isLastPart": is_last,
-            "clearFolder": (part_num == 1),
+            "isLastPart": False,
+            "clearFolder": False,
             "mangaId": manga_id,
-            "skipQueue": False,  # ลงคิวงาน WorkQueue อัตโนมัติเมื่อครบหน้าสุดท้าย
+            "skipQueue": True,
             "isTest": False,
             "uploadername": "Apt",
             "uploadstatus": "เสร็จแล้ว"
         }
-        if last_folder_url:
-            upload_payload["worklink"] = f"[อัป Raw] {last_folder_url}"
 
-        upload_res = call_gas("UPLOAD_CHAPTER_STITCHED_PART", upload_payload)
+    print(f"✓ เย็บประกอบภาพครบทั้ง {total_parts} หน้าเสร็จสิ้น (ใช้เวลา {time.time() - t_start_stitch:.1f} วินาที)")
 
-        if upload_res.get("status") == "success":
-            up_data = upload_res.get("data", {})
-            last_folder_url = up_data.get("folderUrl") or last_folder_url
-            print(" ✓ สำเร็จ")
-        else:
-            print(f" ❌ ผิดพลาด: {upload_res.get('message')}")
+    # 5. Smart Staged Multi-Thread Uploading
+    t_start_up = time.time()
+    last_folder_url = ""
 
-    print(f"\n🎉 อัปโหลด {manga_name} {chapter_title} ครบทั้ง {total_parts} หน้า และลงคิวงานเรียบร้อยแล้ว!")
-    print(f"📂 Google Drive: {last_folder_url}")
+    # Phase A: Initial Setup & Folder Cleanup (Upload Part 1)
+    print(f"4. [Smart Upload Phase A] อัปโหลด 001.jpg เพื่อสร้าง/เตรียมโฟลเดอร์ Google Drive...")
+    p1 = pages_payloads[0]
+    p1["clearFolder"] = True
+    p1["isLastPart"] = (total_parts == 1)
+    p1["skipQueue"] = (total_parts > 1)
 
-    # 4. อัปเดตสถานะใน Mangas และ RawTracker
+    res_p1 = call_gas("UPLOAD_CHAPTER_STITCHED_PART", p1)
+    if res_p1.get("status") != "success":
+        print(f"❌ ผิดพลาดในการอัปโหลด Phase A (หน้า 1): {res_p1.get('message')}")
+        return False
+
+    up_data = res_p1.get("data", {})
+    last_folder_url = up_data.get("folderUrl") or ""
+    print(f"   ✓ Phase A สำเร็จ! โฟลเดอร์ Drive: {last_folder_url}")
+
+    # Phase B: Parallel Concurrent Upload (Upload Parts 2 to total_parts - 1 with 4 workers)
+    if total_parts > 2:
+        print(f"   [Smart Upload Phase B] อัปโหลดคู่ขนานหน้าที่ 002.jpg - {total_parts - 1:03d}.jpg (4 Workers)...")
+
+        def _upload_worker(payload):
+            payload["worklink"] = f"[อัป Raw] {last_folder_url}"
+            payload["skipQueue"] = True
+            payload["isLastPart"] = False
+            for attempt in range(1, 4):
+                try:
+                    res = call_gas("UPLOAD_CHAPTER_STITCHED_PART", payload)
+                    if res.get("status") == "success":
+                        return payload["partIndex"], True, ""
+                    time.sleep(1 * attempt)
+                except Exception as ex:
+                    if attempt == 3:
+                        return payload["partIndex"], False, str(ex)
+                    time.sleep(1 * attempt)
+            return payload["partIndex"], False, "Unknown error"
+
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [executor.submit(_upload_worker, pages_payloads[i]) for i in range(1, total_parts - 1)]
+            for fut in as_completed(futures):
+                p_idx, ok, err_msg = fut.result()
+                if ok:
+                    print(f"      ✓ หน้า {p_idx:02d}/{total_parts} อัปโหลดสำเร็จ")
+                else:
+                    print(f"      ❌ หน้า {p_idx:02d}/{total_parts} ผิดพลาด: {err_msg}")
+
+    # Phase C: Final Page & WorkQueue Trigger (Upload Last Part)
+    if total_parts > 1:
+        last_idx = total_parts - 1
+        p_last = pages_payloads[last_idx]
+        print(f"   [Smart Upload Phase C] อัปโหลดหน้าสุดท้าย {p_last['fileName']} และลงคิวงาน WorkQueue...")
+        p_last["worklink"] = f"[อัป Raw] {last_folder_url}"
+        p_last["isLastPart"] = True
+        p_last["skipQueue"] = False
+        p_last["uploadername"] = "Apt"
+        p_last["uploadstatus"] = "เสร็จแล้ว"
+
+        res_last = call_gas("UPLOAD_CHAPTER_STITCHED_PART", p_last)
+        if res_last.get("status") != "success":
+            print(f"❌ ผิดพลาดในการอัปโหลด Phase C: {res_last.get('message')}")
+            return False
+        up_last_data = res_last.get("data", {})
+        last_folder_url = up_last_data.get("folderUrl") or last_folder_url
+        print(f"   ✓ Phase C สำเร็จ! ลงคิวงาน WorkQueue เรียบร้อย")
+
+    print(f"\n🎉 อัปโหลด {manga_name} {chapter_title} ครบทั้ง {total_parts} หน้า สำเร็จใน {time.time() - t_start_up:.1f} วินาที!")
+    print(f"📂 Google Drive: {last_folder_url}\n")
     print(f"3. บันทึกสถานะตอน {chapter_num} ลงฐานข้อมูล Mangas & RawTracker...")
     comp_res = call_gas("COMPLETE_RAW_TRACKER_CHAPTER", {
         "mangaId": manga_id,
