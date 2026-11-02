@@ -15,6 +15,10 @@ __pycache__/
 # Sensitive / large local artifacts (never commit)
 base.apk
 *.apk
+tools/frida-server
+tools/frida-server.xz
+tools/frida-server16
+tools/frida-server16.xz
 qqac.db
 *.db
 *.pcap

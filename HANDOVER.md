@@ -235,3 +235,18 @@
     - uploadstatus: เสร็จแล้ว
     - uploadername: Apt
 - บันทึกการเปลี่ยนแปลงและอัปเดต git push ขึ้น origin main เรียบร้อยแล้ว
+
+---
+
+### I. 🔐 Tencent App Intercept (Frida) — ส่งมอบงานวันที่ 2026-11-02
+
+> **อ่านต่อที่ [`docs/HANDOVER_TENCENT_FRIDA.md`](./docs/HANDOVER_TENCENT_FRIDA.md)** (แผน A + C พร้อม checklist)
+
+สรุปสั้น:
+- ✅ ดัก API ของแอป `com.qq.ac.android` ได้แล้ว (HTTP/2 headers + URL ภาพ `manhua.acimg.cn`) โดย**ไม่ต้องปลด SSL pinning**
+- ✅ replay request จาก PC ได้ 200 OK (token ไม่ผูกเครื่อง) แต่ `sig` ผูก path → ยิงตอนใหม่ไม่ได้ (403)
+- ❌ response เข้ารหัส (`AES/CBC` + gzip) — ยังถอดไม่ได้
+- 📌 แผนต่อไป: **A** = hook `Cipher.doFinal` dump plaintext gzip → JSON ; **C** = ใช้ web flow (`tencent_purchaser.py`) บน CI
+- เอกสารประกอบ: `docs/TENCENT_SSL_INTERCEPT_PLAYBOOK.md`, `docs/TENCENT_APP_API.md`
+- เครื่องมือ: `tools/frida_tencent_http_dump.{js,py}`, `tools/frida_h2_headers.js`, `tools/frida_crypto_dump.js`
+
