@@ -181,9 +181,7 @@ export default function App() {
 
   // Queue period filter (controls which month/year is fetched from GAS)
   const nowInit = React.useMemo(() => new Date(), [])
-  const [queueMonth, setQueueMonth] = React.useState<string>(
-    String(nowInit.getMonth() + 1)
-  )
+  const [queueMonth, setQueueMonth] = React.useState<string>("all")
   const [queueYear, setQueueYear] = React.useState<string>(
     String(nowInit.getFullYear())
   )

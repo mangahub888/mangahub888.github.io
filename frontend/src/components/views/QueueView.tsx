@@ -19,6 +19,7 @@ import {
   extractStepLinks,
   formatDuration,
   getChapterCount,
+  getQueueCurrentStep,
   getQueueItemDate,
   isStepDone,
   isUrgentManga,
@@ -34,6 +35,8 @@ import {
   Zap,
   X,
   ExternalLink,
+  Eye,
+  EyeOff,
 } from "lucide-react"
 
 interface QueueViewProps {
@@ -71,6 +74,7 @@ export function QueueView({
   const [stepFilter, setStepFilter] = React.useState("all")
   const [urgentFilter, setUrgentFilter] = React.useState("all")
   const [assigneeFilter, setAssigneeFilter] = React.useState("all")
+  const [showPublishPost, setShowPublishPost] = React.useState(false)
 
   // Bulk Action state
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())
@@ -93,7 +97,7 @@ export function QueueView({
   }, [initialSearch, onClearInitialSearch])
 
   React.useEffect(() => {
-    if (stepFilter !== "all") {
+    if (stepFilter !== "all" && stepFilter !== "publish_post") {
       setBulkStep(stepFilter)
     }
   }, [stepFilter])
@@ -166,6 +170,17 @@ export function QueueView({
     }
   }, [queueList])
 
+  // Count tasks waiting in 'publish' or 'post' steps
+  const publishPostCount = React.useMemo(() => {
+    return queueList
+      .filter((q) => {
+        if (isStepDone(q.poststatus)) return false
+        const step = getQueueCurrentStep(q)
+        return step === "publish" || step === "post"
+      })
+      .reduce((acc, q) => acc + getChapterCount(q.chapter), 0)
+  }, [queueList])
+
   // Filtered Queue
   const filteredQueue = React.useMemo(() => {
     const cleanSearch = search
@@ -175,7 +190,7 @@ export function QueueView({
       .replace(/…+$/, "")
       .trim()
 
-    return queueList.filter((q) => {
+    const result = queueList.filter((q) => {
       // Month / Year (Uses true task date)
       if (monthFilter !== "all" || yearFilter !== "all") {
         const d = getQueueItemDate(q)
@@ -206,8 +221,19 @@ export function QueueView({
         if (completionFilter === "incomplete" && isFinished) return false
       }
 
-      // Step filter
-      if (stepFilter !== "all") {
+      // Step filter & Publish/Post visibility logic
+      const currentStep = getQueueCurrentStep(q)
+      const isPublishOrPost = currentStep === "publish" || currentStep === "post"
+
+      if (stepFilter === "publish_post") {
+        // Show ONLY publish and post steps
+        if (!isPublishOrPost) return false
+      } else if (stepFilter === "all") {
+        // If showPublishPost is false (default), hide publish and post tasks so they don't clutter production queue
+        if (!showPublishPost && isPublishOrPost) {
+          return false
+        }
+      } else {
         const statusField = stepFilter + "status"
         const rawStatus = q[statusField]
         const status =
@@ -259,6 +285,22 @@ export function QueueView({
 
       return true
     })
+
+    // If stepFilter is "all" and showPublishPost is enabled, sort publish & post tasks to the very bottom
+    if (stepFilter === "all" && showPublishPost) {
+      result.sort((a, b) => {
+        const stepA = getQueueCurrentStep(a)
+        const stepB = getQueueCurrentStep(b)
+        const isPubPostA = stepA === "publish" || stepA === "post"
+        const isPubPostB = stepB === "publish" || stepB === "post"
+        if (isPubPostA !== isPubPostB) {
+          return isPubPostA ? 1 : -1 // Push publish & post to bottom
+        }
+        return 0
+      })
+    }
+
+    return result
   }, [
     queueList,
     mangaList,
@@ -269,6 +311,7 @@ export function QueueView({
     stepFilter,
     assigneeFilter,
     urgentFilter,
+    showPublishPost,
   ])
 
   const assigneeOptions = React.useMemo(() => {
@@ -461,11 +504,41 @@ export function QueueView({
           <h2 className="text-2xl font-bold text-white">รายการคิวงาน</h2>
           <p className="text-sm text-slate-400">
             ติดตามความคืบหน้าการทำงานรายตอน ({filteredQueue.length} รายการ)
+            {!showPublishPost && publishPostCount > 0 && (
+              <span className="ml-2 text-xs text-sky-400 font-medium">
+                (ซ่อนรอ Publish & โพสต์ไว้ {publishPostCount} ตอน)
+              </span>
+            )}
           </p>
         </div>
-        <Button onClick={onOpenAddQueue}>
-          <Plus className="h-4 w-4" /> เพิ่มคิวงาน
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Quick Toggle Publish/Post button */}
+          <Button
+            type="button"
+            variant={showPublishPost ? "secondary" : "outline"}
+            onClick={() => setShowPublishPost((prev) => !prev)}
+            className={`h-9 text-xs font-semibold gap-1.5 transition-all cursor-pointer ${
+              showPublishPost
+                ? "bg-sky-600 hover:bg-sky-700 text-white border-sky-500 shadow-sm"
+                : "border-sky-500/40 bg-sky-950/20 text-sky-300 hover:bg-sky-900/30"
+            }`}
+          >
+            {showPublishPost ? (
+              <>
+                <EyeOff className="h-4 w-4" />
+                <span>ซ่อนงานรอ Publish & โพสต์</span>
+              </>
+            ) : (
+              <>
+                <Eye className="h-4 w-4" />
+                <span>แสดงงานรอ Publish & โพสต์ ({publishPostCount} ตอน)</span>
+              </>
+            )}
+          </Button>
+          <Button onClick={onOpenAddQueue}>
+            <Plus className="h-4 w-4" /> เพิ่มคิวงาน
+          </Button>
+        </div>
       </div>
 
       {/* Filters Toolbar */}
@@ -523,6 +596,7 @@ export function QueueView({
             onChange={(e) => setStepFilter(e.target.value)}
           >
             <option value="all">ขั้นตอน: ทั้งหมด</option>
+            <option value="publish_post">เฉพาะ 2 สเตป: รอ Publish & รอโพสต์ ({publishPostCount} ตอน)</option>
             <option value="upload">รอ/ทำ: อัป Raw</option>
             <option value="extract">รอ/ทำ: ดึงคำ</option>
             <option value="translate">รอ/ทำ: แปล</option>
@@ -545,14 +619,40 @@ export function QueueView({
         </div>
 
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#1a2337]">
-          <div className="w-full sm:w-64">
-            <SearchableSelect
-              options={assigneeOptions}
-              value={assigneeFilter}
-              onChange={(v) => setAssigneeFilter(v || "all")}
-              placeholder="ทีมงาน: ทั้งหมด"
-              searchPlaceholder="ค้นหาทีมงาน..."
-            />
+          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+            <div className="w-full sm:w-64">
+              <SearchableSelect
+                options={assigneeOptions}
+                value={assigneeFilter}
+                onChange={(v) => setAssigneeFilter(v || "all")}
+                placeholder="ทีมงาน: ทั้งหมด"
+                searchPlaceholder="ค้นหาทีมงาน..."
+              />
+            </div>
+
+            {/* Quick Toggle in Toolbar */}
+            <Button
+              type="button"
+              variant={showPublishPost ? "secondary" : "outline"}
+              onClick={() => setShowPublishPost((prev) => !prev)}
+              className={`h-10 text-xs font-semibold gap-1.5 transition-all cursor-pointer ${
+                showPublishPost
+                  ? "bg-sky-600 hover:bg-sky-700 text-white border-sky-500 shadow-sm"
+                  : "border-sky-500/40 bg-sky-950/20 text-sky-300 hover:bg-sky-900/30"
+              }`}
+            >
+              {showPublishPost ? (
+                <>
+                  <EyeOff className="h-4 w-4" />
+                  <span>ซ่อนงานรอ Publish & โพสต์</span>
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4" />
+                  <span>แสดงงานรอ Publish & โพสต์ ({publishPostCount} ตอน)</span>
+                </>
+              )}
+            </Button>
           </div>
 
           {/* Bulk Action Controls */}
