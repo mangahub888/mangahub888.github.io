@@ -2,7 +2,6 @@ import * as React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import {
   Table,
@@ -20,9 +19,6 @@ import {
   Pencil,
   Trash2,
   ExternalLink,
-  Clock,
-  Play,
-  Database,
   Link2,
   RotateCcw,
 } from "lucide-react"
@@ -42,7 +38,6 @@ export function MangaSettingsView({
   onMangaChange,
   onQueueChange,
 }: MangaSettingsViewProps) {
-  const [triggerLoading, setTriggerLoading] = React.useState(false)
   const [gasUrlInput, setGasUrlInput] = React.useState(getGasUrl())
 
   const handleDeleteManga = async (id: string) => {
@@ -54,30 +49,6 @@ export function MangaSettingsView({
       onMangaChange(Array.isArray(res) ? res : [])
     } catch (err: any) {
       toast.error(err.message || "ลบข้อมูลไม่สำเร็จ")
-    }
-  }
-
-  const handleCreateAutoQueueTrigger = async () => {
-    setTriggerLoading(true)
-    try {
-      const res = await callGasApi("CREATE_AUTO_QUEUE_TRIGGER")
-      toast.success(res.message || "ตั้งเวลาคิวงานอัตโนมัติเรียบร้อย")
-    } catch (err: any) {
-      toast.error(err.message || "เกิดข้อผิดพลาด")
-    } finally {
-      setTriggerLoading(false)
-    }
-  }
-
-  const handleInitSheets = async () => {
-    setTriggerLoading(true)
-    try {
-      await callGasApi("INIT_SHEETS")
-      toast.success("ตรวจสอบและสร้างหัวตารางใน Google Sheets เรียบร้อยแล้ว!")
-    } catch (err: any) {
-      toast.error(err.message || "เกิดข้อผิดพลาด")
-    } finally {
-      setTriggerLoading(false)
     }
   }
 
@@ -202,90 +173,46 @@ export function MangaSettingsView({
         </Table>
       </Card>
 
-      {/* System Triggers */}
+      {/* GAS API URL Settings */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            ⚙️ ตั้งค่าระบบอัตโนมัติ (System Triggers & Database)
+          <CardTitle className="text-base flex items-center gap-2">
+            <Link2 className="h-4 w-4 text-indigo-400" />
+            ตั้งค่า GAS API URL (Web App Endpoint)
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          <div className="space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
-            <h4 className="font-semibold text-sm text-slate-100">
-              คิวงานอัตโนมัติ (MangaList) <Badge variant="secondary" className="text-[10px] bg-amber-500/10 text-amber-400 border-amber-500/20">ปิดใช้งานแล้ว</Badge>
-            </h4>
-            <p className="text-xs text-slate-400">
-              ระบบเพิ่มมังงะเข้าคิวงานตามวันปล่อยดิบ (Release Day) ถูกปิดใช้งานแล้ว (กดเพื่อลบ Trigger เก่า)
-            </p>
-            <div className="pt-2">
-              <Button
-                size="sm"
-                onClick={handleCreateAutoQueueTrigger}
-                disabled={triggerLoading}
-              >
-                <Clock className="h-3.5 w-3.5" /> ลบ Trigger อัตโนมัติ (ปิดใช้งาน)
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
-            <h4 className="font-semibold text-sm text-slate-100">
-              เตรียมตาราง Google Sheets
-            </h4>
-            <p className="text-xs text-slate-400">
-              สร้างแท็บตารางและคอลัมน์มาตรฐานทั้งหมดใน Google Sheet ใหม่อัตโนมัติ
-            </p>
-            <div className="pt-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleInitSheets}
-                disabled={triggerLoading}
-              >
-                <Database className="h-3.5 w-3.5 text-emerald-400" />
-                สร้าง/ตรวจสอบ Sheets ทั้งหมด
-              </Button>
-            </div>
-          </div>
-
-          <div className="md:col-span-2 space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
-            <Label className="flex items-center gap-1.5 font-semibold text-sm text-slate-100">
-              <Link2 className="h-4 w-4 text-indigo-400" />
-              ตั้งค่า GAS API URL (Web App Endpoint)
-            </Label>
-            <p className="text-xs text-slate-400">
-              ใช้สำหรับเปลี่ยนลิงก์เชื่อมต่อกรณีที่มีการ Deploy Web App ใหม่บน Google Apps Script
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2 pt-1">
-              <Input
-                type="url"
-                value={gasUrlInput}
-                onChange={(e) => setGasUrlInput(e.target.value)}
-                placeholder="https://script.google.com/macros/s/.../exec"
-                className="flex-1 text-xs font-mono"
-              />
-              <Button
-                size="sm"
-                onClick={() => {
-                  setGasUrl(gasUrlInput)
-                  toast.success("บันทึก GAS API URL เรียบร้อยแล้ว")
-                }}
-              >
-                บันทึก URL
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  setGasUrlInput(DEFAULT_GAS_URL)
-                  setGasUrl(DEFAULT_GAS_URL)
-                  toast.info("คืนค่าเป็น URL เริ่มต้นแล้ว")
-                }}
-              >
-                <RotateCcw className="h-3.5 w-3.5" /> ค่าเริ่มต้น
-              </Button>
-            </div>
+        <CardContent className="space-y-2">
+          <p className="text-xs text-slate-400">
+            ใช้สำหรับเปลี่ยนลิงก์เชื่อมต่อกรณีที่มีการ Deploy Web App ใหม่บน Google Apps Script
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2 pt-1">
+            <Input
+              type="url"
+              value={gasUrlInput}
+              onChange={(e) => setGasUrlInput(e.target.value)}
+              placeholder="https://script.google.com/macros/s/.../exec"
+              className="flex-1 text-xs font-mono"
+            />
+            <Button
+              size="sm"
+              onClick={() => {
+                setGasUrl(gasUrlInput)
+                toast.success("บันทึก GAS API URL เรียบร้อยแล้ว")
+              }}
+            >
+              บันทึก URL
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setGasUrlInput(DEFAULT_GAS_URL)
+                setGasUrl(DEFAULT_GAS_URL)
+                toast.info("คืนค่าเป็น URL เริ่มต้นแล้ว")
+              }}
+            >
+              <RotateCcw className="h-3.5 w-3.5" /> ค่าเริ่มต้น
+            </Button>
           </div>
         </CardContent>
       </Card>
