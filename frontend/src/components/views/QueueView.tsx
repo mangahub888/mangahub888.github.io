@@ -127,7 +127,9 @@ export function QueueView({
         if (
           (getStatus(q.extractstatus) === "รอเริ่ม" ||
             getStatus(q.extractstatus) === "กำลังทำ") &&
-          getStatus(q.extractstatus) !== "Skipped"
+          getStatus(q.extractstatus) !== "Skipped" &&
+          String(getStatus(q.extractstatus)).toLowerCase() !== "skip" &&
+          getStatus(q.extractstatus) !== "ข้าม"
         )
           waitExtract += count
         if (
@@ -342,7 +344,7 @@ export function QueueView({
 
   const renderStatusBadge = (item: any, step: string, statusVal: string) => {
     const status = statusVal || "รอเริ่ม"
-    const isSkipped = status === "Skipped"
+    const isSkipped = status === "Skipped" || String(status).toLowerCase() === "skip" || status === "ข้าม"
     let variant: "default" | "success" | "warning" | "secondary" = "secondary"
     if (status === "เสร็จแล้ว") variant = "success"
     else if (status === "กำลังทำ") variant = "warning"

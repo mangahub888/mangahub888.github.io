@@ -82,7 +82,7 @@ export function getChapterCount(chapterStr: any, treatSingleAsCount = false): nu
 
 export function isStepDone(s: any): boolean {
   const str = (s || '').toString().trim()
-  return str === 'เสร็จแล้ว' || str === 'Skipped' || str === 'ข้าม' || str.toLowerCase() === 'done'
+  return str === 'เสร็จแล้ว' || str === 'Skipped' || str === 'ข้าม' || str.toLowerCase() === 'done' || str.toLowerCase() === 'skip'
 }
 
 export function getQueueCurrentStep(q: any): string {

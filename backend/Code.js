@@ -257,7 +257,7 @@ function doPost(e) {
         break;
       case 'PROCESS_AUTO_QUEUE':
         processAutoQueue();
-        result = { message: 'รันระบบคิวงานอัตโนมัติเรียบร้อยแล้ว', queue: getWorkQueue(true) };
+        result = { message: 'ระบบเพิ่มคิวอัตโนมัติตามวันปล่อยดิบ (Release Day) ถูกปิดใช้งานแล้ว', queue: getWorkQueue(true) };
         break;
 
       // --- RAW TRACKER (ต้นฉบับ UPDATE) ---
@@ -941,7 +941,13 @@ function addQueue(queueData) {
       if (header === 'chapter') return queueData.chapter;
       
       if (header === 'uploadstatus') return queueData.uploadstatus || 'รอเริ่ม';
-      if (header === 'extractstatus') return queueData.extractstatus || 'รอเริ่ม';
+      if (header === 'extractstatus') {
+        if (queueData.extractstatus && String(queueData.extractstatus).trim() !== '') {
+          return queueData.extractstatus;
+        }
+        const isExtractNeeded = manga && (manga.needsextract === true || String(manga.needsextract).toLowerCase() === 'true');
+        return isExtractNeeded ? 'รอเริ่ม' : 'skip';
+      }
       if (header === 'translatestatus') return queueData.translatestatus || 'รอเริ่ม';
       if (header === 'typesetstatus') return queueData.typesetstatus || 'รอเริ่ม';
       if (header === 'publishstatus') return queueData.publishstatus || 'รอเริ่ม';
@@ -1492,88 +1498,11 @@ function getTeamMembers() {
 
 /**
  * CRON: รันทุกวันเพื่อดึงมังงะเข้าคิวอัตโนมัติ (Batch Optimized)
+ * [ปิดการทำงาน] ยกเลิกระบบเพิ่มคิวอัตโนมัติตามวันปล่อยดิบ (Release Day) ตามคำสั่งผู้ใช้
  */
 function processAutoQueue() {
-  const today = getTodayDayName();
-  const mangaList = getMangaList();
-  const queueList = getWorkQueue();
-  
-  const scheduled = mangaList.filter(m => 
-    m.status === 'Ongoing' && 
-    m.releaseday && m.releaseday.split(',').map(d => d.trim()).includes(today)
-  );
-  
-  if (scheduled.length === 0) return;
-
-  const lock = LockService.getScriptLock();
-  try {
-    lock.waitLock(30000);
-    const sheet = getSheet(QUEUE_SHEET_NAME);
-    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(h => h.toString().toLowerCase().trim());
-    
-    const newRows = [];
-    const mangaUpdates = [];
-
-    const timestamp = new Date();
-    const todayStr = timestamp.toLocaleDateString('th-TH');
-
-    scheduled.forEach(m => {
-      const alreadyAdded = queueList.some(q => {
-        if (q.mangaid.toString() !== m.mangaid.toString()) return false;
-        const qDate = new Date(q.createdat).toLocaleDateString('th-TH');
-        if (qDate === todayStr) return true;
-        if (q.poststatus !== 'เสร็จแล้ว') return true;
-        return false;
-      });
-      
-      if (alreadyAdded) return;
-
-      let nextChapter = (parseFloat(m.lastchapter) || 0) + 1;
-      const id = new Date().getTime() + Math.floor(Math.random() * 1000);
-
-      const rowData = headers.map(header => {
-        if (header === 'queueid') return id;
-        if (header === 'createdat') return timestamp;
-        if (header === 'mangaid') return m.mangaid;
-        if (header === 'chapter') return nextChapter.toString();
-        if (header === 'uploadstatus') return 'รอเริ่ม';
-        if (header === 'extractstatus') return (m.needsextract === true || m.needsextract === 'true') ? 'รอเริ่ม' : 'Skipped';
-        if (header === 'translatestatus') return 'รอเริ่ม';
-        if (header === 'typesetstatus') return 'รอเริ่ม';
-        if (header === 'publishstatus') return 'รอเริ่ม';
-        if (header === 'poststatus') return 'รอเริ่ม';
-        if (header === 'translatorname') return m.lockedtranslator || '';
-        return '';
-      });
-      
-      newRows.push(rowData);
-
-      if (m.notifyonadd === true || m.notifyonadd === 'true') {
-        const message = `🤖 <b>เพิ่มคิวงานอัตโนมัติ!</b>\n\nเรื่อง: <b>${m.manganame}</b>\nตอนที่: ${nextChapter}\nสถานะ: เข้าระบบตามตารางเวลาแล้ว`;
-        sendTelegramNotification(message);
-      }
-      
-      mangaUpdates.push({
-        mangaId: m.mangaid,
-        newChapter: nextChapter.toString()
-      });
-    });
-
-    if (newRows.length > 0) {
-      const startRow = sheet.getLastRow() + 1;
-      sheet.getRange(startRow, 1, newRows.length, headers.length).setValues(newRows);
-      invalidateCache('workQueue');
-    }
-    
-    if (mangaUpdates.length > 0) {
-      batchSyncMangaStatus(mangaUpdates);
-      invalidateCache('mangaList');
-    }
-  } catch (err) {
-    console.error('Auto Queue Error:', err);
-  } finally {
-    lock.releaseLock();
-  }
+  console.log('processAutoQueue: ระบบเพิ่มคิวอัตโนมัติตามวันปล่อยดิบ (Release Day) ถูกปิดใช้งานแล้ว');
+  return;
 }
 
 function batchSyncMangaStatus(updates) {
@@ -1626,17 +1555,16 @@ function getTodayDayName() {
 
 function createAutoQueueTrigger() {
   const triggers = ScriptApp.getProjectTriggers();
+  let deletedCount = 0;
   triggers.forEach(t => {
-    if (t.getHandlerFunction() === 'processAutoQueue') ScriptApp.deleteTrigger(t);
+    if (t.getHandlerFunction() === 'processAutoQueue') {
+      ScriptApp.deleteTrigger(t);
+      deletedCount++;
+    }
   });
   
-  ScriptApp.newTrigger('processAutoQueue')
-    .timeBased()
-    .everyDays(1)
-    .atHour(2)
-    .create();
-    
-  return "สร้างระบบตั้งเวลาอัตโนมัติเรียบร้อยแล้ว! (รันทุกวันเวลา 02:00 น.)";
+  console.log(`createAutoQueueTrigger: ลบ Trigger processAutoQueue ทั้งหมด ${deletedCount} ตัวเรียบร้อยแล้ว (ระบบปิดใช้งานถาวร)`);
+  return "ระบบเพิ่มคิวอัตโนมัติตามวันปล่อยดิบ (Release Day) ถูกปิดใช้งานแล้ว และได้ลบ Trigger ทั้งหมดเรียบร้อยแล้ว";
 }
 
 function movePendingQueueToCurrentMonth() {
@@ -2234,7 +2162,7 @@ function getTelegramStatusSummary() {
   const queue = getWorkQueue();
   let waitUpload = 0, waitExtract = 0, waitTranslate = 0, waitTypeset = 0, waitPublish = 0, waitPost = 0;
   
-  const isDone = (s) => s === 'เสร็จแล้ว' || s === 'Skipped' || s === 'ข้าม';
+  const isDone = (s) => s === 'เสร็จแล้ว' || s === 'Skipped' || s === 'ข้าม' || String(s).toLowerCase() === 'skip';
   queue.forEach(q => {
     if (isDone(q.poststatus)) return;
 
@@ -2304,8 +2232,8 @@ function getTelegramReadyList(targetStep) {
     stepTitle = "แปลเสร็จ -> รอลงคำ";
     list = queue.filter(q => q.translatestatus === 'เสร็จแล้ว' && q.typesetstatus !== 'เสร็จแล้ว' && q.typesetstatus !== 'ข้าม');
   } else if (targetStep === 'translate') {
-    stepTitle = "ดึงคำเสร็จ -> รอแปล";
-    list = queue.filter(q => q.extractstatus === 'เสร็จแล้ว' && q.translatestatus !== 'เสร็จแล้ว' && q.translatestatus !== 'ข้าม');
+    stepTitle = "ดึงคำเสร็จ/ข้าม -> รอแปล";
+    list = queue.filter(q => (q.extractstatus === 'เสร็จแล้ว' || q.extractstatus === 'Skipped' || q.extractstatus === 'ข้าม' || String(q.extractstatus).toLowerCase() === 'skip') && q.translatestatus !== 'เสร็จแล้ว' && q.translatestatus !== 'ข้าม' && String(q.translatestatus).toLowerCase() !== 'skip');
   }
   
   if (list.length === 0) return `✅ ไม่มีงานที่ <b>${stepTitle}</b>`;
@@ -4376,6 +4304,12 @@ function uploadChapterStitchedPart(payload) {
         const workLink = rawWorkLink.startsWith('[อัป Raw]') ? rawWorkLink : ('[อัป Raw] ' + rawWorkLink);
         const cleanChapter = chapter.replace(/[^\d.]/g, '') || '0';
 
+        // ตรวจสอบข้อมูลมังงะจาก getMangaList() หรือ mangaId
+        const mangaList = getMangaList();
+        const manga = mangaList.find(m => String(m.mangaid) === String(payload.mangaId));
+        const isExtractNeeded = manga && (manga.needsextract === true || String(manga.needsextract).toLowerCase() === 'true');
+        const defaultExtractStatus = isExtractNeeded ? (payload.extractstatus || 'รอเริ่ม') : 'skip';
+
         // ตรวจสอบว่ามีคิวงานของ mangaId และ chapter นี้อยู่แล้วหรือไม่
         const existingQueue = getWorkQueue(true);
         const existingItem = existingQueue.find(q => 
@@ -4390,12 +4324,22 @@ function uploadChapterStitchedPart(payload) {
           links.push(workLink);
           const finalWorkLink = links.join('\n');
 
-          queueRes = updateFullQueueItem(existingItem.queueid, {
+          const updateObj = {
             uploadstatus: uploadStatus,
             uploadername: uploaderName,
             worklink: finalWorkLink,
             note: payload.note || ('KuaiKan VIP Concat รวมเป็น ' + totalParts + ' หน้า ลง แปลจนเมื่อย')
-          });
+          };
+
+          // หากมังงะนั้นไม่ได้ติ๊ก needsextract และสถานะดึงคำเดิมยังเป็น 'รอเริ่ม' หรือยังไม่ได้ทำ/ว่าง ให้เซ็ตเป็น 'skip' ด้วย
+          if (!isExtractNeeded) {
+            const curExStatus = existingItem.extractstatus ? String(existingItem.extractstatus).trim() : '';
+            if (!curExStatus || curExStatus === 'รอเริ่ม') {
+              updateObj.extractstatus = 'skip';
+            }
+          }
+
+          queueRes = updateFullQueueItem(existingItem.queueid, updateObj);
         } else {
           queueRes = addQueue({
             mangaid: payload.mangaId,
@@ -4403,7 +4347,8 @@ function uploadChapterStitchedPart(payload) {
             uploadstatus: uploadStatus,
             uploadername: uploaderName,
             worklink: workLink,
-            note: payload.note || ('KuaiKan VIP Concat รวมเป็น ' + totalParts + ' หน้า ลง แปลจนเมื่อย')
+            note: payload.note || ('KuaiKan VIP Concat รวมเป็น ' + totalParts + ' หน้า ลง แปลจนเมื่อย'),
+            extractstatus: defaultExtractStatus
           });
         }
       } catch (qe) {
@@ -4540,6 +4485,12 @@ function downloadKuaikanChapterToDrive(payload) {
         const workLink = rawWorkLink.startsWith('[อัป Raw]') ? rawWorkLink : ('[อัป Raw] ' + rawWorkLink);
         const cleanChapter = chapter.replace(/[^\d.]/g, '') || '366';
 
+        // ตรวจสอบข้อมูลมังงะจาก getMangaList() หรือ mangaId
+        const mangaList = getMangaList();
+        const manga = mangaList.find(m => String(m.mangaid) === String(mangaId));
+        const isExtractNeeded = manga && (manga.needsextract === true || String(manga.needsextract).toLowerCase() === 'true');
+        const defaultExtractStatus = isExtractNeeded ? ((payload && payload.extractstatus) || 'รอเริ่ม') : 'skip';
+
         // ตรวจสอบว่ามีคิวงานของ mangaId และ chapter นี้อยู่แล้วหรือไม่
         const existingQueue = getWorkQueue(true);
         const existingItem = existingQueue.find(q => 
@@ -4554,12 +4505,21 @@ function downloadKuaikanChapterToDrive(payload) {
           links.push(workLink);
           const finalWorkLink = links.join('\n');
 
-          queueRes = updateFullQueueItem(existingItem.queueid, {
+          const updateObj = {
             uploadstatus: uploadStatus,
             uploadername: uploaderName,
             worklink: finalWorkLink,
             note: (payload && payload.note) || ('Auto KuaiKan VIP DL (ตอน: ' + (testRes ? testRes.title : chapter) + ') ลง แปลจนเมื่อย')
-          });
+          };
+
+          if (!isExtractNeeded) {
+            const curExStatus = existingItem.extractstatus ? String(existingItem.extractstatus).trim() : '';
+            if (!curExStatus || curExStatus === 'รอเริ่ม') {
+              updateObj.extractstatus = 'skip';
+            }
+          }
+
+          queueRes = updateFullQueueItem(existingItem.queueid, updateObj);
         } else {
           queueRes = addQueue({
             mangaid: mangaId,
@@ -4567,7 +4527,8 @@ function downloadKuaikanChapterToDrive(payload) {
             uploadstatus: uploadStatus,
             uploadername: uploaderName,
             worklink: workLink,
-            note: (payload && payload.note) || ('Auto KuaiKan VIP DL (ตอน: ' + (testRes ? testRes.title : chapter) + ') ลง แปลจนเมื่อย')
+            note: (payload && payload.note) || ('Auto KuaiKan VIP DL (ตอน: ' + (testRes ? testRes.title : chapter) + ') ลง แปลจนเมื่อย'),
+            extractstatus: defaultExtractStatus
           });
         }
       } catch (qe) {

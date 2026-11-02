@@ -567,6 +567,7 @@ export function UpdateQueueModal({
                   <option value="กำลังทำ">กำลังทำ</option>
                   <option value="เสร็จแล้ว">เสร็จแล้ว</option>
                   <option value="Skipped">ข้าม (Skipped)</option>
+                  <option value="skip">ข้าม (skip)</option>
                 </select>
               </div>
               <div className="sm:col-span-2 space-y-1.5 sm:pt-5">
@@ -868,7 +869,10 @@ export function StepUpdateModal({
               <option value="กำลังทำ">⚙️ กำลังทำ</option>
               <option value="เสร็จแล้ว">✅ เสร็จแล้ว</option>
               {step === "extract" && (
-                <option value="Skipped">⏭️ ข้าม (Skipped)</option>
+                <React.Fragment>
+                  <option value="Skipped">⏭️ ข้าม (Skipped)</option>
+                  <option value="skip">⏭️ ข้าม (skip)</option>
+                </React.Fragment>
               )}
             </select>
           </div>

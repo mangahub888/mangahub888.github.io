@@ -269,10 +269,10 @@ export function MangaSettingsView({
 
           <div className="space-y-2 rounded-xl border border-[#26334d] bg-[#0d1322] p-4">
             <h4 className="font-semibold text-sm text-slate-100">
-              คิวงานอัตโนมัติ (MangaList)
+              คิวงานอัตโนมัติ (MangaList) <Badge variant="secondary" className="text-[10px] bg-amber-500/10 text-amber-400 border-amber-500/20">ปิดใช้งานแล้ว</Badge>
             </h4>
             <p className="text-xs text-slate-400">
-              เพิ่มมังงะเข้าคิวงานโดยอัตโนมัติตามวันที่กำหนดไว้ในตาราง MangaList
+              ระบบเพิ่มมังงะเข้าคิวงานตามวันปล่อยดิบ (Release Day) ถูกปิดใช้งานแล้ว (กดเพื่อลบ Trigger เก่า)
             </p>
             <div className="pt-2">
               <Button
@@ -280,7 +280,7 @@ export function MangaSettingsView({
                 onClick={handleCreateAutoQueueTrigger}
                 disabled={triggerLoading}
               >
-                <Clock className="h-3.5 w-3.5" /> ตั้งเวลาออโต้ (02:00 น.)
+                <Clock className="h-3.5 w-3.5" /> ลบ Trigger อัตโนมัติ (ปิดใช้งาน)
               </Button>
             </div>
           </div>

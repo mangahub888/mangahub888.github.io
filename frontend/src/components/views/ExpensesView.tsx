@@ -335,6 +335,7 @@ export function ExpensesView({
         q.extractorname &&
         q.extractstatus !== "Skipped" &&
         q.extractstatus !== "ข้าม" &&
+        String(q.extractstatus).toLowerCase() !== "skip" &&
         isExtractInPeriod &&
         !extractorExcluded
       ) {
@@ -430,7 +431,7 @@ export function ExpensesView({
           extractor:
             rowExtractCost > 0
               ? q.extractorname || "-"
-              : extractorExcluded && isStepDone(q.extractstatus)
+              : extractorExcluded && isStepDone(q.extractstatus) && q.extractstatus !== "Skipped" && q.extractstatus !== "ข้าม" && String(q.extractstatus).toLowerCase() !== "skip"
               ? `${q.extractorname} (ยกเว้น)`
               : "-",
           extractCost: rowExtractCost,
