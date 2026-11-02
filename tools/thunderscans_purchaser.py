@@ -562,6 +562,39 @@ def get_pending_thunderscans_tasks():
 
     return pending_tasks
 
+def countdown_sleep(seconds=300):
+    """
+    นับถอยหลังพัก 5 นาที (300 วินาที) ระหว่างตอนสำหรับ ThunderScans (รองรับทั้ง Terminal และ GitHub Actions CI/CD)
+    """
+    mins_total = seconds // 60
+    print(f"\n☕ จบตอนแล้ว! พัก {mins_total} นาที ({seconds} วินาที) เพื่อความปลอดภัยตามมาตรฐาน 24/7 Pipeline...", flush=True)
+
+    # ถ้าเป็น CI/CD เช่น GitHub Actions (ไม่มี interactive TTY)
+    if not sys.stdout.isatty():
+        step = 60
+        remaining = seconds
+        while remaining > 0:
+            mins = remaining // 60
+            secs = remaining % 60
+            print(f"   ⏳ [ThunderScans Cooldown] นับถอยหลังพัก: [{mins:02d}:{secs:02d}] ...", flush=True)
+            sleep_time = min(step, remaining)
+            time.sleep(sleep_time)
+            remaining -= sleep_time
+        print("   ✓ ครบเวลาพักแล้ว! เริ่มประมวลผลตอนถัดไปทันที...\n", flush=True)
+        return
+
+    # ถ้าเป็น Local Terminal
+    for remaining in range(seconds, 0, -1):
+        mins = remaining // 60
+        secs = remaining % 60
+        print(f"\r   ⏳ [ThunderScans Cooldown] นับถอยหลัง: [{mins:02d}:{secs:02d}] ... (กด Ctrl+C เพื่อข้ามการพัก)", end="", flush=True)
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            print("\n   ⏩ ข้ามการพัก เริ่มตอนต่อไปทันที!", flush=True)
+            return
+    print(f"\n   ✓ ครบเวลาพัก {mins_total} นาทีแล้ว! เริ่มประมวลผลตอนถัดไปทันที...\n", flush=True)
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--scan":
         tasks = get_pending_thunderscans_tasks()
@@ -576,7 +609,7 @@ if __name__ == "__main__":
             tasks = tasks[:max_ch]
 
         print(f"\n🚀 เริ่มต้นประมวลผลตอน ThunderScans ทั้งหมด {len(tasks)} ตอน...")
-        cooldown = int(os.environ.get("THUNDERSCANS_COOLDOWN_SECONDS", os.environ.get("COOLDOWN_SECONDS", "30")))
+        cooldown = int(os.environ.get("THUNDERSCANS_COOLDOWN_SECONDS", os.environ.get("COOLDOWN_SECONDS", "300")))
         for idx, task in enumerate(tasks):
             print(f"\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
             print(f"คิวงาน ThunderScans [{idx+1}/{len(tasks)}]: {task.get('mangaName')} {task.get('chapterTitle')}")
@@ -584,8 +617,9 @@ if __name__ == "__main__":
             ok = process_single_thunderscans_chapter(task)
             if idx < len(tasks) - 1:
                 if ok:
-                    print(f"☕ พัก {cooldown} วินาที ก่อนเริ่มตอนต่อไป...")
-                    time.sleep(cooldown)
+                    countdown_sleep(cooldown)
+                else:
+                    print("   ⏩ ข้ามการพักสำหรับตอนที่ไม่สำเร็จ เริ่มตอนถัดไปทันที...")
         sys.exit(0)
 
     target_url = sys.argv[1] if len(sys.argv) > 1 else "https://en-thunderscans.com/the-clans-failure-is-a-former-continental-champion-chapter-64/"

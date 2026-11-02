@@ -1,8 +1,8 @@
-name: ThunderScans Auto-Purchaser Pipeline
+name: ThunderScans (en-thunder) 24/7 Pipeline (5-Min Cooldown)
 
 on:
   schedule:
-    # รันอัตโนมัติทุกๆ 1 ชั่วโมง (นาทีที่ 15 ของทุกชั่วโมง)
+    # รันอัตโนมัติตลอด 24 ชั่วโมง ทุกๆ 1 ชั่วโมง (นาทีที่ 15 ของทุกชั่วโมง)
     - cron: '15 * * * *'
   workflow_dispatch:
     inputs:
@@ -15,7 +15,7 @@ on:
         required: false
         default: '0'
       cooldown_seconds:
-        description: 'Cooldown seconds between chapters (default: 300 = 5 minutes)'
+        description: 'Cooldown delay between chapters in seconds (default: 300 = 5 minutes)'
         required: false
         default: '300'
 
@@ -28,8 +28,9 @@ permissions:
 
 jobs:
   thunderscans-pipeline:
+    name: ThunderScans 24/7 Auto-Purchaser (5-Min Delay)
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 360
 
     steps:
       - name: Checkout Code
@@ -47,12 +48,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run ThunderScans Pipeline
+      - name: Run ThunderScans 24/7 Pipeline
         env:
+          PYTHONUNBUFFERED: '1'
           GAS_URL: ${{ secrets.GAS_URL || 'https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec' }}
           PASSCODE: ${{ secrets.PASSCODE || '10211032' }}
           THUNDERSCANS_COOKIE: ${{ secrets.THUNDERSCANS_COOKIE || '' }}
           COOLDOWN_SECONDS: ${{ github.event.inputs.cooldown_seconds || '300' }}
+          THUNDERSCANS_COOLDOWN_SECONDS: ${{ github.event.inputs.cooldown_seconds || '300' }}
           MAX_CHAPTERS: ${{ github.event.inputs.max_chapters || '0' }}
         run: |
           CHAPTER_URL="${{ github.event.inputs.chapter_url }}"
@@ -60,6 +63,6 @@ jobs:
             echo "🎯 Processing single chapter: $CHAPTER_URL"
             python tools/thunderscans_purchaser.py "$CHAPTER_URL"
           else
-            echo "📋 Processing all pending ThunderScans chapters..."
+            echo "📋 Processing all pending ThunderScans chapters (5-min delay between chapters)..."
             python tools/thunderscans_purchaser.py --run-all
           fi
