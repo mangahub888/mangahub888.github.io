@@ -140,6 +140,12 @@ def write_event(out_file, msg, filter_prefix):
                 print(f"      {h}", flush=True)
     elif kind == "glide_url":
         print(f"[IMG ] {msg.get('url')}", flush=True)
+    elif kind == "cipher":
+        data = msg.get("data") or {}
+        if data.get("phase"):
+            print(f"[CRYPT] {data.get('phase')} {data.get('algo') or ''} key={data.get('key')} iv={data.get('iv')}", flush=True)
+        else:
+            print(f"[CRYPT] id={data.get('id')} in={data.get('inLen')} out={data.get('outLen')} key={data.get('key')}", flush=True)
     elif kind in ("native_ssl_write", "native_ssl_read", "socket_send", "socket_recv"):
         mark = ">>" if kind.endswith("send") or kind.endswith("write") else "<<"
         print(f"[{mark}] {(msg.get('preview') or '')[:160]}", flush=True)

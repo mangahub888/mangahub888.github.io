@@ -1,19 +1,65 @@
 # 📋 MangaHub Project Handover & Next Tasks
 > **บันทึกสถานะงานและการส่งมอบโปรเจกต์ (สำหรับย้ายเครื่องทำงานต่อ / Machine Transition)**  
-> *วันที่อัปเดต: 2 พฤศจิกายน 2569 (2026-11-02)*
+> *วันที่อัปเดต: 3 พฤศจิกายน 2569 (2026-11-03)*
 
 ---
 
-## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้วในเซสชันนี้ (Completed Milestones)
+## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
-### A. ระบบ 1-Click Session Refresh & Pipeline Trigger (เพิ่มใหม่ล่าสุด)
-- **1-Click Session Refresh Tool (`tools/quick_refresh_session.py` & `REFRESH_TENCENT_SESSION.bat`)**:
-  - รองรับการเชื่อมต่อ ADB (`127.0.0.1:5555`) กับ LDPlayer อัตโนมัติ
-  - ดึงข้อมูล cookies, uin, skey และ device info จากแอป `com.qq.ac.android`
-  - อัปเดตไฟล์ `tools/tencent_app_session.json` และแสดงผล Cookie string สำหรับคัดลอกใส่ GitHub Secret (`TENCENT_COOKIE`) ทันที
-  - ผู้ใช้งาน Windows สามารถดับเบิ้ลคลิกไฟล์ `REFRESH_TENCENT_SESSION.bat` ที่โฟลเดอร์หลักเพื่อรีเฟรชได้ทันที
-- **Auto Raw Tracker Pipeline Trigger**:
-  - สั่งรัน Workflow บน GitHub Actions สำเร็จผ่าน GitHub CLI (`gh workflow run auto_raw_tracker.yml`, Run ID: `41454394118`).
+### 🏆 ไฮไลท์ความสำเร็จล่าสุด: ระบบ Tencent Comic 1-Click Master Pipeline & Frida Automation (3 พ.ย. 2569)
+
+#### 1. ระบบ 1-Click Master Pipeline (`tools/tencent_ldplayer_pipeline.py` & `RUN_TENCENT_PIPELINE.bat`)
+- **เชื่อมต่อ LDPlayer อัตโนมัติ (Auto-Detection)**:
+  - ค้นหาพาธ LDPlayer (`LDPlayer9`, `LDPlayer5`, `LDPlayer4`) และ ADB Port `127.0.0.1:5555` / `emulator-5554` อัตโนมัติ
+  - รองรับ Flag `--hide` ควบคุมหน้าต่างผ่าน Win32 API / `ldconsole.exe` สั่งซ่อนหน้าต่าง Emulator ไปทำงานเบื้องหลัง (Background Mode) 100% ไม่กวนสายตาหรือการใช้งานเครื่อง
+- **In-Process Intent Navigation (Zero Screen Clicks)**:
+  - สั่งเปิดหน้าอ่านตอนมังงะผ่าน Frida In-Process Intent สู่ Activity `com.qq.ac.android.reader.comic.ComicReaderActivity` ร่วมกับคลาส `ComicIdentity` โดยตรงในระดับ Process
+  - ทำงานรวดเร็ว เสถียรสูง และไม่ต้องพึ่งพาการสแกนพิกัดหน้าจอหรือจำลองคลิก (Zero UI Clicking)
+- **Plaintext JSON Interception (100% SSL Pinning Bypass)**:
+  - Hook ฟังก์ชัน `javax.crypto.Cipher.doFinal` และ `update` เพื่อดักจับ Decrypted Byte Stream ที่ขึ้นต้นด้วย Magic Bytes `0x1f, 0x8b` (GZIP Stream) ทันทีที่แอปทำการถอดรหัสเสร็จ
+  - คลายการบีบอัด GZIP ในหน่วยความจำสู่ Plaintext JSON Payload โดยตรง
+  - สกัด CDN Image URLs จาก `picture[].url` ได้ครบทุกหน้า 100% ก้าวข้ามข้อจำกัดเรื่อง SSL Pinning, Token Expiry และ Signature Hash (`sig`)
+  - มีระบบสำรองดักจับผ่าน OkHttp2 Header Sniffing เสริมความทนทาน
+- **Parallel Image Downloader (10 Workers)**:
+  - ดาวน์โหลดรูปภาพความละเอียดสูงคู่ขนาน 10 Threads จาก CDN `manhua.acimg.cn`
+  - แนบ Headers มาตรฐาน (`Referer: https://ac.qq.com/`) ป้องกันการถูกปฏิเสธการเชื่อมต่อ (403 Forbidden)
+- **Continuous Virtual Canvas Stitcher & 20-Page Standard Slicer**:
+  - เชื่อมต่อชิ้นส่วนภาพแนวตั้งต่อเนื่องบน Virtual Canvas ไร้รอยต่อ
+  - สไลซ์และคำนวณสัดส่วนออกมาเป็น **20 หน้ามาตรฐานพอดีเป๊ะ (`001.jpg` ถึง `020.jpg`)**
+  - เข้ารหัสไฟล์ฟอร์แมต `image/jpeg` (Quality 95) มาตรฐานเดียวกับระบบ ThunderScans และ KuaiKan
+- **ระบบ Auto-Upload Google Drive & WorkQueue**:
+  - อัปโหลดขึ้น Google Drive ไปยังโฟลเดอร์ปลายทาง `แปลจนเมื่อย / {ชื่อเรื่อง} / {เลขตอน}`
+  - ลงทะเบียนและอัปเดตคิวงาน WorkQueue บน Google Apps Script อัตโนมัติ:
+    * 🔗 **Work Link (`worklink`)**: `[อัป Raw] https://drive.google.com/drive/folders/...`
+    * **Upload Status (`uploadstatus`)**: `เสร็จแล้ว`
+    * **Uploader Name (`uploadername`)**: `Apt`
+- **1-Click Batch Launcher (`RUN_TENCENT_PIPELINE.bat`)**:
+  - สคริปต์ Pure ASCII Windows Batch ช่วยให้ผู้ใช้สามารถดับเบิ้ลคลิกเพื่อรัน Pipeline บนเครื่อง Windows ได้ทันที พร้อมส่งต่อพารามิเตอร์ทั้งหมด
+
+#### 2. ผลการทดสอบสดบนระบบจริง (Live End-to-End Verification)
+- **มังงะทดสอบ**: เรื่อง **武神重生 (Wu Shen Chong Sheng / Rebirth of the Martial God)**
+- **ตอนที่ทดสอบ**: ตอนที่ 22 (ID: `139650` จาก Comic ID: `632731`)
+- **Google Drive Output Folder**:  
+  🔗 [https://drive.google.com/drive/folders/1RthqL5hiaPkC2BOMRnGWK7wuBcgxEH2D](https://drive.google.com/drive/folders/1RthqL5hiaPkC2BOMRnGWK7wuBcgxEH2D)
+- **ผลลัพธ์**:
+  - สกัด URL ภาพจาก CDN ครบถ้วน
+  - ดาวน์โหลดและเย็บสไลซ์เป็น 20 หน้ามาตรฐาน `001.jpg` - `020.jpg` ครบ 100%
+  - อัปโหลดขึ้น Google Drive โฟลเดอร์ `แปลจนเมื่อย / 武神重生 / 22`
+  - ลงบันทึกคิวงาน WorkQueue อัตโนมัติ (`uploadstatus: เสร็จแล้ว`, `uploadername: Apt`)
+
+#### 3. Plan A: Frida Plaintext Dump (`tools/frida_plaintext_dump.js` & `tools/frida_plaintext_dump.py`)
+- เครื่องมือ Core Instrumentation ดักจับ Decrypted GZIP Stream จาก `javax.crypto.Cipher` และ HTTP/2 Header Frame
+- สรุปโครงสร้าง JSON ของ Tencent และแปลงโครงสร้างภาพออกมาเป็น Array URL
+- รองรับโหมด `--stitch` สั่งเย็บภาพและอัปโหลดเข้า Drive อัตโนมัติ
+
+#### 4. ระบบ Web Pipeline (Zero-LDPlayer)
+- ตัวเชื่อมต่อสกัดภาพผ่าน Web Reader `ac.qq.com` โดยใช้กลไก Deobfuscation ถอดรหัสตัวแปร `DATA` + `nonce`
+- ไม่จำเป็นต้องเปิด Emulator เหมาะสำหรับการรัน Headless บน GitHub Actions / CI สำหรับตอนฟรีหรือตอนที่เปิดให้อ่านบน Web
+
+#### 5. ชุดเครื่องมือวิจัยและวินิจฉัยทางเทคนิค (Reverse Engineering Suite)
+- `tools/test_intent_nav.py`: เครื่องมือทดสอบการยิง In-Process Intent ข้าม Activity ในแอป Android
+- `tools/frida_crypto_capture.js` & `tools/frida_decrypt_capture.py`: สคริปต์วิเคราะห์ Key/IV และโครงสร้าง Payload
+- `tools/analyze_pcap.py`, `tools/batch_strings.py`, `tools/inspect_image_cache.py`, `tools/list_disk_cache.py`: เครื่องมือตรวจสอบ Cache และฐานข้อมูล SQLite ของแอป
 
 ---
 
@@ -23,11 +69,11 @@
 
 ---
 
-### B. ระบบเย็บภาพ 20 หน้ามาตรฐานแบบ Continuous Vertical Slicing & Auto-Purchaser
+### B. ระบบเย็บภาพ 20 หน้ามาตรฐานแบบ Continuous Vertical Slicing & Auto-Purchaser (ThunderScans & KuaiKan)
 - **ThunderScans (en-thunder) & KuaiKan Manhua**:
   - รองรับการดาวน์โหลดคู่ขนานระดับสูง (10-12 Workers) เร็วขึ้น 10 เท่า (~48-55 วินาที/ตอน จากเดิม 15-20 นาที)
   - ตัดภาพแนวตั้งต่อเนื่องบน Virtual Canvas ได้ **20 หน้ามาตรฐานพอดีเป๊ะ (`001.jpg` ถึง `020.jpg`)** ไร้รอยต่อ ปลอดภัยจากขีดจำกัดความสูงของไฟล์ภาพ
-  - บังคับฟอร์แมตภาพทุกตัวเชื่อมต่อเป็น `.jpg` (MIME `image/jpeg`) เสมอ 100%
+  - บังคับฟอร์แมตภาพทุกตัวเชื่อมต่อเป็น `.jpg` (MIME `image/jpeg`, Quality 95) เสมอ 100%
   - **KuaiKan Playwright Auto-Purchaser บน GitHub Actions**: ดักจับ Modal ซื้อตอนอัตโนมัติพร้อมรับส่วนลด VIP 8.5 อัตโนมัติ (99 KK Coins -> 84 KK Coins, 149 KK Coins -> 127 KK Coins)
   - **KuaiKan Regex & Topic 27677**: ปรับปรุง Regular Expression ใน `tools/auto_raw_tracker.py` และ `tools/kuaikan_playwright_purchaser.py` ให้รองรับชื่อตอนที่มีแต่ตัวเลขนำหน้าโดยไม่มีคำว่า "话" หรือ "集" สามารถดึงตอน 4-5 ขึ้น Drive ได้สำเร็จ
   - บังคับใช้ระบบล็อกคิวงานเดี่ยวบน GitHub Actions ผ่าน Concurrency Group `raw-pipeline-master-queue` พร้อมพัก Cooldown 5 นาที (300 วินาที) อย่างปลอดภัย
@@ -99,105 +145,40 @@
 
 ---
 
-### H. ประวัติ Git Commits ล่าสุดในเซสชันนี้
-- `d589a0f`: feat(expenses): set standard typeset rates to Chinese 45 THB and Korean 50 THB from Nov 2026 onwards
-- `39761c5`: feat(typeset): add typeset rate type (Chinese/Korean) selector to StepUpdateModal
-- `c8cb602`: feat(payout): add UPDATE_PAYOUT_CLAIM endpoint and update Kikkuk October claim amount
-- `faf0b7d`: fix(dashboard): update status description to 'ลงคำเสร็จแล้ว รออัพลงเว็ป'
-- `c26f307`: feat(expenses): support Chinese and Korean typeset rates with Nov 2026 threshold and queue badges
-- `ce29c76`: feat(typeset): add typeset type (Chinese/Korean rate) support to queue modals and backend
-- `88b2ba4`: fix(kuaikan): enhance chapter title regex to support numeric prefix titles without 话/集
-- `3648536`: feat: display unclaimed completed work as per-person summary table with chapter expanders
-- `df0c56f`: feat: show real-time GitHub Actions status in header badge and work queue view
-- `6221f6d`: fix: strictly filter monthly overview and day 0 backlog to translate and typeset only
-
----
-
 ## 2. ข้อมูล Configuration & Deployment ปัจจุบัน
 - **GitHub Repository:** `mangahub888/mangahub888.github.io` (Branch: `main`)
 - **Live URL:** [https://mangahub888.github.io/](https://mangahub888.github.io/)
 - **Google Apps Script Production Deployment ID:**  
   `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` (Active Version: **`@62`**)
 - **Google Drive Root Folder:** `1hA_5XjT1gLnzrAOFpT-COVfIbuSfVG6_` (`แปลจนเมื่อย`)
+- **LDPlayer Port:** `127.0.0.1:5555` / `emulator-5554`
+- **Frida Client/Server Version:** `16.7.19` (Android x86_64 server binary at `/data/local/tmp/fsd`)
 
 ---
 
-## 3. แผนงานที่ต้องทำต่อทันที: ปุ่มดึงรายจ่ายที่จ่ายแล้วเข้าหน้างบประมาณและบัญชี (BudgetView)
+## 3. แผนงานสำหรับวันพรุ่งนี้และระยะถัดไป (Next Tasks for Tomorrow)
 
-### 🎯 เป้าหมายของฟีเจอร์ (Feature Objective)
-ในหน้างบประมาณและบัญชี (`frontend/src/components/views/BudgetView.tsx`) ให้เพิ่มปุ่มอำนวยความสะดวกสำหรับผู้ดูแลระบบ เพื่อกด **"ดึงรายจ่ายค่าตอบแทนทีมงานที่จ่ายแล้ว" (Sync Paid Payout Claims)** ของแต่ละเดือน เข้าสู่ตารางบัญชีรายรับ-รายจ่าย (`BudgetTransactions`) โดยอัตโนมัติ เพื่อไม่ต้องมานั่งคีย์ยอดค่าจ้างซ้ำซ้อนทีละคน
+### 📌 Task 1: Batch & Multi-Chapter Automation สำหรับ Tencent Pipeline
+- ต่อยอด `tools/tencent_ldplayer_pipeline.py` ให้รองรับการสั่งรันแบบหลายตอนพร้อมกัน:
+  - รองรับ Parameter `--chapters 22-25` หรือ `--all-unreleased` (อ่านเลขตอนล่าสุดจากชีต WorkQueue แล้วดึงเฉพาะตอนใหม่ที่ยังไม่มีในระบบ)
+  - ควบคุมการสลับตอนผ่าน In-Process Intent โดยอัตโนมัติทีละตอนพร้อมระบบ Cool-down ป้องกันเซิร์ฟเวอร์ Tencent ระงับบัญชี
 
----
+### 📌 Task 2: GitHub Actions Web Runner (`tencent_web_purchaser.yml`)
+- นำระบบ Web Pipeline (Zero-LDPlayer) จาก `tools/tencent_purchaser.py` ขึ้นทำงานบน GitHub Actions
+- กำหนด Cron Schedule ตรวจจับตอนใหม่ทุกชั่วโมง และรองรับ `workflow_dispatch` สำหรับสั่งทำงานแบบ Manual
+- บังคับใช้ Concurrency Group `raw-pipeline-master-queue` เพื่อไม่ชนกับ KuaiKan และ ThunderScans
 
-### 🏗️ โครงสร้างข้อมูลและการเชื่อมโยง (Data Mapping Architecture)
+### 📌 Task 3: In-App VIP Coin Purchaser Hook (Frida Payment Automation)
+- พัฒนา Frida Hook สั่งซื้อตอนที่มีค่าใช้จ่าย (VIP Chapters) ในแอป Tencent Comic บน LDPlayer อัตโนมัติ
+- ดักจับปุ่ม/เมธอดซื้อตอนและตัดคูปอง/เหรียญในบัญชีอัตโนมัติ เพื่อรองรับตอนที่ยังติดสถานะจ่ายเงิน
 
-| ชีตต้นทาง (`PayoutClaims`) | เงื่อนไขการดึงข้อมูล | ชีตปลายทาง (`BudgetTransactions`) | ค่าที่ต้องบันทึก (Mapped Value) |
-| :--- | :--- | :--- | :--- |
-| `status` | ต้องเป็น `'Paid'` | - | กรองเฉพาะใบเบิกที่จ่ายเงินแล้ว |
-| `paidat` / `enddate` | อยู่ในเดือน/ปีที่เลือก | `Date` | วันที่จ่ายเงิน (`paidat`) ในรูปแบบ `YYYY-MM-DD` (หากไม่มีให้ใช้ `enddate` หรือ `createdat`) |
-| - | รายจ่าย | `Type` | `'Expense'` |
-| `totalamount` | ยอดเงินสุทธิ | `Amount` | จำนวนเงินค่าจ้าง (Number/Float) |
-| - | หมวดหมู่ | `Category` | `'ค่าตอบแทนทีมงาน'` |
-| `claimid` | รหัสใบเบิก (เช่น `CLM-1793611402032`) | `Reference` | ใช้ `claimid` เป็นตัวอ้างอิงและ **ป้องกันการลงบัญชีซ้ำ (Deduplication Key)** |
-| `staffname`, `totalepisodes`, `startdate`, `enddate` | ข้อมูลประกอบ | `Note` | เช่น `ค่าจ้างทีมงาน คุณ ${staffname} ประจำวันที่ ${startdate} - ${enddate} (${totalepisodes} ตอน)` |
-
----
-
-### 🛡️ กฎเหล็กการป้องกันข้อมูลซ้ำซ้อน (Deduplication Rules)
-1. **Reference Check**: ทุกครั้งที่จะดึงรายการ ต้องตรวจสอบคอลัมน์ `Reference` ในชีต `BudgetTransactions` ก่อนเสมอ
-2. หากพบว่ามีรายการใดที่มี `Reference == claimid` อยู่แล้ว ให้ **ข้ามรายการนั้นทันที** และนับเป็น `skippedCount`
-3. บันทึกเฉพาะใบเบิกที่มีสถานะ `Paid` และยังไม่เคยถูกบันทึกลงใน `BudgetTransactions` เท่านั้น
-
----
-
-### 📐 ขั้นตอนการพัฒนาโดยละเอียด (Step-by-Step Implementation Plan)
-
-#### ขั้นตอนที่ 1: เพิ่มฟังก์ชัน API ใน Backend (`backend/Code.js`)
-1. เพิ่ม Action ใน `doPost(e)`:
-   ```javascript
-   case 'SYNC_PAID_CLAIMS_TO_BUDGET':
-     result = syncPaidClaimsToBudget(payload);
-     break;
-   ```
-2. สร้างฟังก์ชัน `syncPaidClaimsToBudget(payload)`:
-   - รับพารามิเตอร์ `{ month, year }` (หรือ `month = 'all'`)
-   - ดึงข้อมูลจากชีต `PayoutClaims` (`getPayoutClaims()`)
-   - กรองเฉพาะรายการที่ `status === 'Paid'` และวันที่ตรงกับเงื่อนไขเดือน/ปี
-   - ดึงข้อมูลจากชีต `BudgetTransactions` รวบรวม `reference` ทั้งหมดที่มีอยู่ในระบบ
-   - วนลูปสร้างแถวใหม่สำหรับใบเบิกที่ยังไม่มีในชีต `BudgetTransactions`:
-     ```javascript
-     const newTxId = 'TX-' + Utilities.getUuid().substring(0, 8);
-     const dateStr = claim.paidat ? Utilities.formatDate(new Date(claim.paidat), 'GMT+7', 'yyyy-MM-dd') : (claim.enddate || Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd'));
-     sheet.appendRow([
-       newTxId,
-       dateStr,
-       'Expense',
-       parseFloat(claim.totalamount) || 0,
-       'ค่าตอบแทนทีมงาน',
-       claim.claimid,
-       'ค่าจ้างทีมงาน คุณ ' + (claim.staffname || '') + ' (' + (claim.totalepisodes || 0) + ' ตอน) รอบวันที่ ' + (claim.startdate || '') + ' ถึง ' + (claim.enddate || '')
-     ]);
-     ```
-   - สั่ง `invalidateCache('budget_transactions')`
-   - ส่งผลลัพธ์กลับ: `{ success: true, addedCount, skippedCount, transactions: getBudgetTransactions() }`
-3. Deploy GAS Version ใหม่ผ่าน `clasp push` -> `clasp version` -> `clasp deploy`
-
----
-
-#### ขั้นตอนที่ 2: เพิ่ม UI ใน Frontend (`frontend/src/components/views/BudgetView.tsx`)
-1. **ตำแหน่งปุ่ม:**
-   - เพิ่มปุ่ม `"📥 ดึงรายจ่ายค่าจ้าง (จ่ายแล้ว)"` หรือ `"⚡ ซิงค์ค่าจ้างที่จ่ายแล้ว"` ที่แถบหัวหน้า (Header Actions) ข้างปุ่ม "จัดการรายชื่อผู้รับเงิน" และ "เพิ่มรายการ" หรือในแถบตัวกรองช่วงเวลา
-2. **Preview & Confirmation Modal:**
-   - เมื่อกดปุ่ม ให้เปิด Modal ตรวจสอบรายการล่วงหน้า โดยแสดง:
-     - รายการใบเบิกสถานะ `Paid` ในเดือนที่เลือก
-     - แสดงแถบสถานะแต่ละรายการ:
-       - 🟢 **พร้อมนำเข้า (Ready to Sync)**: ยังไม่มีในชีตบัญชี
-       - ⚪ **นำเข้าแล้ว (Already Synced)**: มีในชีตบัญชีแล้ว (แสดง Badge "บันทึกแล้ว")
-     - แสดงยอดรวมสุทธิที่จะนำเข้า
-     - ปุ่มยืนยัน `"ยืนยันนำเข้ารายการ (X รายการ)"` พร้อม Loading State ขณะกำลังบันทึก
-3. **การอัปเดตสถานะและแจ้งเตือน:**
-   - เมื่อทำงานสำเร็จ ให้แสดง `toast.success('นำเข้ารายจ่ายสำเร็จ X รายการ (ข้ามรายการที่เคยนำเข้าแล้ว Y รายการ)')`
-   - เรียก `onTransactionsChange(res.transactions)` เพื่อให้ตารางรายรับ-รายจ่ายและกราฟสรุปยอดกำไรสุทธิอัปเดตทันทีแบบ Reactive
+### 📌 Task 4: ปุ่มดึงรายจ่ายที่จ่ายแล้วเข้าหน้างบประมาณและบัญชี (BudgetView.tsx)
+- **Backend (`backend/Code.js`)**:
+  - สร้าง API Action `SYNC_PAID_CLAIMS_TO_BUDGET` ดึงใบเบิกสถานะ `Paid` จาก `PayoutClaims` เข้าสู่ `BudgetTransactions`
+  - ป้องกันการบันทึกรายการซ้ำซ้อนอย่างเข้มงวดด้วยการตรวจสอบ `claimid` กับคอลัมน์ `Reference`
+- **Frontend (`frontend/src/components/views/BudgetView.tsx`)**:
+  - เพิ่มปุ่ม `"⚡ ซิงค์ค่าจ้างที่จ่ายแล้ว"` ที่ Header Actions
+  - พัฒนา Preview & Confirmation Modal แสดงยอดรวมและรายการที่จะนำเข้า พร้อม Badge แสดงสถานะ `"พร้อมนำเข้า"` / `"บันทึกแล้ว"`
 
 ---
 
@@ -209,44 +190,14 @@
 สวัสดีครับ ผมย้ายมาทำงานต่อบนเครื่องใหม่ โปรเจกต์ MangaHub (mangahub888.github.io)
 กรุณาอ่านและปฏิบัติตามกฎใน AGENTS.md, GEMINI.md และศึกษาความคืบหน้าล่าสุดใน HANDOVER.md
 
-งานที่ต้องทำต่อไปในเซสชันนี้คือ:
-"พัฒนาปุ่มดึงรายจ่ายที่บันทึกว่าจ่ายแล้วของแต่ละเดือนในหน้างบประมาณและบัญชี (BudgetView.tsx)"
-ตามแผนงานข้อ 3 ใน HANDOVER.md:
-1. สร้าง Backend API 'SYNC_PAID_CLAIMS_TO_BUDGET' ใน backend/Code.js ที่ดึงใบเบิกสถานะ 'Paid' ใน PayoutClaims เข้าสู่ BudgetTransactions โดยป้องกันการบันทึกซ้ำผ่าน Reference (claimid)
-2. Deploy Google Apps Script และอัปเดตเวอร์ชัน
-3. พัฒนาปุ่มและ Preview Modal ใน frontend/src/components/views/BudgetView.tsx ให้เลือกดูรายการและยืนยันการนำเข้าค่าใช้จ่ายของเดือนที่เลือกได้
-4. ตรวจสอบ Typecheck, Build Frontend, Commit และ Push ขึ้น GitHub
+งานที่ต้องดำเนินการต่อในวันนี้:
+1. ต่อยอดระบบ Tencent Comic Automation:
+   - เพิ่มระบบ Batch / Multi-Chapter Processing ใน tools/tencent_ldplayer_pipeline.py ให้รองรับการดึงหลายตอนต่อเนื่อง
+   - ตั้งค่า Workflow tencent_web_purchaser.yml บน GitHub Actions สำหรับรันระบบ Web Pipeline (Zero-LDPlayer) อัตโนมัติ
+2. พัฒนาระบบบัญชีหน้างบประมาณ (BudgetView.tsx):
+   - สร้าง Backend API 'SYNC_PAID_CLAIMS_TO_BUDGET' ใน backend/Code.js ซิงค์ใบเบิกที่จ่ายแล้วเข้า BudgetTransactions
+   - สร้าง Preview Modal ใน BudgetView.tsx และทดสอบ Flow การทำงาน
 ```
 
 ---
-*บันทึกโดย: Antigravity Multi-Agent Automation System*
-
----
-
-### H. การบูรณาการตัวเชื่อมต่อ Tencent Comic (ac.qq.com) เข้าสู่ Auto Raw Pipeline
-- **เชื่อมต่อและตรวจสอบสมบูรณ์**:
-  - รองรับการดึงข้อมูลและรายการตอนจาก https://ac.qq.com/Comic/comicInfo/id/{comic_id}
-  - ตรวจสอบและกรองตอนเฉพาะ App (re.search(r'APP$', title, re.IGNORECASE) หรือ is_app_chapter == 1) อัตโนมัติ
-  - ถอดรหัส URL ภาพจากตัวแปร DATA และ nonce รวมถึงดาวน์โหลดตรงจาก CDN manhua.acimg.cn
-  - เย็บประกอบภาพแนวตั้งต่อเนื่องและสไลซ์ออกเป็น 20 หน้ามาตรฐานพอดี (001.jpg ถึง 020.jpg, image/jpeg)
-  - อัปโหลดขึ้น Google Drive ไปยังโฟลเดอร์ แปลจนเมื่อย / {ชื่อเรื่อง} / {เลขตอน}
-  - ลงทะเบียนคิวงาน WorkQueue ด้วยมาตรฐาน:
-    - worklink: [อัป Raw] https://drive.google.com/drive/folders/...
-    - uploadstatus: เสร็จแล้ว
-    - uploadername: Apt
-- บันทึกการเปลี่ยนแปลงและอัปเดต git push ขึ้น origin main เรียบร้อยแล้ว
-
----
-
-### I. 🔐 Tencent App Intercept (Frida) — ส่งมอบงานวันที่ 2026-11-02
-
-> **อ่านต่อที่ [`docs/HANDOVER_TENCENT_FRIDA.md`](./docs/HANDOVER_TENCENT_FRIDA.md)** (แผน A + C พร้อม checklist)
-
-สรุปสั้น:
-- ✅ ดัก API ของแอป `com.qq.ac.android` ได้แล้ว (HTTP/2 headers + URL ภาพ `manhua.acimg.cn`) โดย**ไม่ต้องปลด SSL pinning**
-- ✅ replay request จาก PC ได้ 200 OK (token ไม่ผูกเครื่อง) แต่ `sig` ผูก path → ยิงตอนใหม่ไม่ได้ (403)
-- ❌ response เข้ารหัส (`AES/CBC` + gzip) — ยังถอดไม่ได้
-- 📌 แผนต่อไป: **A** = hook `Cipher.doFinal` dump plaintext gzip → JSON ; **C** = ใช้ web flow (`tencent_purchaser.py`) บน CI
-- เอกสารประกอบ: `docs/TENCENT_SSL_INTERCEPT_PLAYBOOK.md`, `docs/TENCENT_APP_API.md`
-- เครื่องมือ: `tools/frida_tencent_http_dump.{js,py}`, `tools/frida_h2_headers.js`, `tools/frida_crypto_dump.js`
-
+*บันทึกโดย: Antigravity Multi-Agent Automation System (Git Release & Documentation Specialist)*
