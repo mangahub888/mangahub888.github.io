@@ -501,8 +501,8 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     print("=" * 95)
 
     # 8. Sync to Google Apps Script if requested
-    if send_to_gas or gas_url:
-        target_url = gas_url or os.environ.get("GAS_URL", "")
+    if send_to_gas or gas_url or os.environ.get("GAS_URL"):
+        target_url = gas_url or os.environ.get("GAS_URL", "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec")
         target_pass = passcode or os.environ.get("PASSCODE", "10211032")
         if target_url:
             send_data_to_gas(report_output, target_url, target_pass)
