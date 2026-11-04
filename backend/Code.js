@@ -3710,298 +3710,30 @@ function purchaseKuaikanChapter(payload) {
     if (!payload || !payload.comicId) {
       return { status: 'error', success: false, error: 'Missing comicId' };
     }
-
     const comicId = String(payload.comicId).trim();
-    const topicId = String(payload.topicId || '').trim();
-    const mangaName = String(payload.mangaName || '').trim();
-    const chapterTitle = String(payload.chapterTitle || '').trim();
-
-    // 1. ตรวจสอบสถานะกระเป๋าเหรียญและ Cookie ก่อน
     const session = getKuaikanSessionData();
-    if (!session || !session.cookie) {
-      return {
-        status: 'error',
-        success: false,
-        error: 'ยังไม่ได้เชื่อมต่อบัญชี KuaiKan VIP กรุณาล็อกอินก่อน'
-      };
-    }
+    const testResult = testKuaikanLatestChapter(comicId, session ? session.cookie : null, { skipAutoPurchase: true });
 
-    // อัปเดตยอดเหรียญและสถานะ VIP ล่าสุดจาก API
-    checkKuaikanWalletStatus();
-    const updatedSession = getKuaikanSessionData() || session;
-    const currentBalance = updatedSession.coinBalance !== undefined ? updatedSession.coinBalance : 0;
-    const isVip = Boolean(updatedSession.isVip);
-
-    // 2. ดึงข้อมูลสถานะของตอนจาก Mobile Web เพื่อตรวจประเภท Lock (VIP Exclusive vs Paid Comic)
-    let isVipExclusive = false;
-    let isPayComic = false;
-    let lockedCode = 0;
-    let isCurrentlyLocked = true;
-
-    try {
-      const mUrl = 'https://m.kuaikanmanhua.com/mobile/comics/' + comicId + '/';
-      const mRes = UrlFetchApp.fetch(mUrl, {
-        method: 'get',
-        muteHttpExceptions: true,
-        followRedirects: true,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15',
-          'Referer': 'https://m.kuaikanmanhua.com/',
-          'Cookie': updatedSession.cookie
-        }
-      });
-      const mHtml = mRes.getContentText();
-      const codeMatch = mHtml.match(/locked_code["']?\s*:\s*(\d+)/i);
-      if (codeMatch) lockedCode = parseInt(codeMatch[1], 10);
-      if (lockedCode === 10105 || mHtml.indexOf('10105') !== -1 || mHtml.indexOf('VIP提前看') !== -1 || mHtml.indexOf('is_vip_exclusive') !== -1) {
-        isVipExclusive = true;
-      }
-      if (lockedCode === 10103 || mHtml.indexOf('10103') !== -1) {
-        isPayComic = true;
-      }
-      if (lockedCode === 200) {
-        isCurrentlyLocked = false;
-      }
-    } catch (mErr) {
-      console.warn('Mobile comic check error:', mErr);
-    }
-
-    // ถ้าตอนไม่ได้ล็อคอยู่แล้ว
-    if (!isCurrentlyLocked && lockedCode === 200) {
-      return {
-        status: 'success',
-        success: true,
-        message: 'ตอนนี้ไม่ได้ติดล็อคหรือปลดล็อคอยู่แล้ว',
-        comicId: comicId
-      };
-    }
-
-    // 3. กรณีเป็นตอน VIP Early Access / 会员提前看 (10105):
-    // กฎของ KuaiKan: ตอน VIP提前看 ต้องมีสถานะสมาชิก VIP เท่านั้น ไม่สามารถใช้เหรียญซื้อได้
-    if (isVipExclusive || lockedCode === 10105) {
-      if (isVip) {
-        try {
-          UrlFetchApp.fetch('https://www.kuaikanmanhua.com/v2/comicbuy/vip_enjoy_h5?topic_id=' + topicId + '&comic_id=' + comicId + '&from=5', {
-            method: 'post',
-            muteHttpExceptions: true,
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X)',
-              'Cookie': updatedSession.cookie
-            }
-          });
-        } catch (vipErr) {
-          console.warn('VIP enjoy unlock error:', vipErr);
-        }
-      } else {
-        // บัญชีไม่มี VIP หรือ VIP หมดอายุ:
-        // **ห้ามแจ้งเตือนว่าเหรียญหมด** เพราะในบัญชีมีเหรียญ (เช่น 12,931 KK Coins)
-        // แต่ให้แจ้งเตือนตรงไปตรงมาว่า "ต้องมีสถานะสมาชิก VIP"
-        setKuaikanCoinAlert({
-          message: 'ตอน ' + (chapterTitle || comicId) + ' เป็นตอน VIP Early Access (抢先看) ต้องมีสถานะสมาชิก KuaiKan VIP จึงจะดูได้ (บัญชีมี ' + currentBalance + ' KK Coins แต่ VIP หมดอายุ)',
-          comicTitle: mangaName,
-          chapterTitle: chapterTitle,
-          comicId: comicId,
-          currentBalance: currentBalance,
-          requiredCoins: 0,
-          vipRequired: true,
-          outOfCoins: false
-        });
-
-        return {
-          status: 'error',
-          success: false,
-          vipRequired: true,
-          outOfCoins: false,
-          insufficientCoins: false,
-          error: 'ตอน ' + (chapterTitle || comicId) + ' เป็นตอน VIP Early Access (抢先看) ต้องมีสถานะสมาชิก KuaiKan VIP ถึงจะดูได้ (บัญชีปัจจุบันมี ' + currentBalance + ' KK Coins แต่สถานะ VIP หมดอายุ)',
-          comicId: comicId,
-          currentBalance: currentBalance
-        };
-      }
-    }
-
-    // 4. กรณีเป็นตอนซื้อด้วยเหรียญ (Pay Comic) หรือตอนล็อคปกติ:
-    // ตรวจสอบยอดเงิน หากเหรียญเป็น 0 หรือไม่พอ ให้แจ้งเตือนเหรียญหมดจริง
-    if (currentBalance <= 0) {
-      setKuaikanCoinAlert({
-        message: 'เหรียญ KuaiKan หมด กรุณาเติมเหรียญเพื่อปลดล็อคตอน',
-        comicTitle: mangaName,
-        chapterTitle: chapterTitle,
-        comicId: comicId,
-        currentBalance: 0,
-        requiredCoins: 58,
-        outOfCoins: true,
-        vipRequired: false
-      });
-      return {
-        status: 'error',
-        success: false,
-        outOfCoins: true,
-        insufficientCoins: true,
-        vipRequired: false,
-        error: 'เหรียญ KuaiKan หมด กรุณาเติมเหรียญเพื่อปลดล็อคตอน'
-      };
-    }
-
-    // ดำเนินการกดซื้อตอนด้วยเหรียญผ่าน KuaiKan APIs
-    let buySuccess = false;
-    let buyError = '';
-    let isOutOfCoins = false;
-
-    // เรียก API comic_pay_window
-    try {
-      const payWinUrl = 'https://www.kuaikanmanhua.com/v2/comicbuy/pc/comic_pay_window';
-      const payWinPayload = {
-        topic_id: topicId ? parseInt(topicId, 10) : 0,
-        comic_id: parseInt(comicId, 10),
-        entrance_type: 0,
-        from: 19
-      };
-
-      const payWinRes = UrlFetchApp.fetch(payWinUrl, {
-        method: 'post',
-        contentType: 'application/json',
-        payload: JSON.stringify(payWinPayload),
-        muteHttpExceptions: true,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Referer': 'https://www.kuaikanmanhua.com/webs/comic-next/' + comicId,
-          'Cookie': updatedSession.cookie
-        }
-      });
-
-      const winData = JSON.parse(payWinRes.getContentText());
-      if (winData && winData.code === 200 && winData.data) {
-        const priceInfo = winData.data.price_info || {};
-        const batchList = priceInfo.batch_purchase_list || [];
-        const singleBuy = batchList.length > 0 ? batchList[0] : null;
-        const encryptStr = singleBuy ? singleBuy.comicbuy_encrypt_str : '';
-
-        if (encryptStr) {
-          const buyUrl = 'https://www.kuaikanmanhua.com/v2/comicbuy/encrypt_buy_h5';
-          const buyPayload = {
-            target_id: parseInt(comicId, 10),
-            comicbuy_encrypt_str: encryptStr,
-            cps: 'pc',
-            auto_pay: true,
-            source: 1,
-            from: 19
-          };
-
-          const buyRes = UrlFetchApp.fetch(buyUrl, {
-            method: 'post',
-            contentType: 'application/json',
-            payload: JSON.stringify(buyPayload),
-            muteHttpExceptions: true,
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-              'Referer': 'https://www.kuaikanmanhua.com/webs/comic-next/' + comicId,
-              'Cookie': updatedSession.cookie
-            }
-          });
-
-          const buyResult = JSON.parse(buyRes.getContentText());
-          if (buyResult && buyResult.code === 200) {
-            buySuccess = true;
-          } else {
-            buyError = (buyResult && buyResult.message) || 'Purchase failed with code ' + (buyResult ? buyResult.code : 'unknown');
-            if (buyResult && (buyResult.code === 3004 || buyResult.code === 3005 || String(buyResult.message).indexOf('余额不足') !== -1)) {
-              isOutOfCoins = true;
-            }
-          }
-        }
-      } else {
-        buyError = (winData && winData.message) || 'Pay window returned code ' + (winData ? winData.code : 'unknown');
-        if (winData && (winData.code === 3004 || winData.code === 3005 || String(winData.message).indexOf('余额不足') !== -1)) {
-          isOutOfCoins = true;
-        } else if (winData && (winData.code === 3504 || String(winData.message).indexOf('系统开小差') !== -1)) {
-          isVipExclusive = true;
-        }
-      }
-    } catch (apiErr) {
-      console.warn('Web purchase API attempt error:', apiErr);
-      buyError = apiErr.toString();
-    }
-
-    // 5. ทดสอบดึงภาพเพื่อยืนยันว่าปลดล็อคสำเร็จจริงหรือไม่
-    const testResult = testKuaikanLatestChapter(comicId, updatedSession.cookie, { skipAutoPurchase: true });
     if (testResult && testResult.imagesCount > 1 && !testResult.isLocked) {
-      buySuccess = true;
-      dismissKuaikanCoinAlert();
       return {
         status: 'success',
         success: true,
-        message: 'ปลดล็อคตอน ' + chapterTitle + ' เรียบร้อยแล้ว',
+        message: 'ตอนนี้ปลดล็อคอยู่แล้ว',
         comicId: comicId,
         imagesCount: testResult.imagesCount,
         test: testResult
       };
     }
 
-    // 6. หากซื้อไม่สำเร็จเนื่องจากเหรียญไม่พอจริงๆ
-    checkKuaikanWalletStatus();
-    const finalSession = getKuaikanSessionData() || updatedSession;
-    const finalBalance = finalSession.coinBalance !== undefined ? finalSession.coinBalance : currentBalance;
-
-    if (isOutOfCoins || (isPayComic && finalBalance <= 58)) {
-      setKuaikanCoinAlert({
-        message: 'เหรียญ KuaiKan ไม่เพียงพอสำหรับการซื้อตอน กรุณาเติมเหรียญ',
-        comicTitle: mangaName,
-        chapterTitle: chapterTitle,
-        comicId: comicId,
-        currentBalance: finalBalance,
-        requiredCoins: 58,
-        outOfCoins: true,
-        vipRequired: false
-      });
-      return {
-        status: 'error',
-        success: false,
-        outOfCoins: true,
-        insufficientCoins: true,
-        vipRequired: false,
-        error: 'เหรียญ KuaiKan หมดหรือไม่เพียงพอสำหรับการซื้อตอน',
-        comicId: comicId,
-        currentBalance: finalBalance
-      };
-    }
-
-    if (isVipExclusive) {
-      setKuaikanCoinAlert({
-        message: 'ตอน ' + (chapterTitle || comicId) + ' เป็นตอน VIP Early Access (抢先看) ต้องมีสถานะสมาชิก KuaiKan VIP จึงจะดูได้ (บัญชีมี ' + finalBalance + ' KK Coins แต่ VIP หมดอายุ)',
-        comicTitle: mangaName,
-        chapterTitle: chapterTitle,
-        comicId: comicId,
-        currentBalance: finalBalance,
-        requiredCoins: 0,
-        vipRequired: true,
-        outOfCoins: false
-      });
-      return {
-        status: 'error',
-        success: false,
-        vipRequired: true,
-        outOfCoins: false,
-        insufficientCoins: false,
-        error: 'ตอน ' + (chapterTitle || comicId) + ' เป็นตอน VIP Early Access (抢先看) ต้องมีสถานะสมาชิก KuaiKan VIP ถึงจะดูได้ (บัญชีปัจจุบันมี ' + finalBalance + ' KK Coins แต่สถานะ VIP หมดอายุ)',
-        comicId: comicId,
-        currentBalance: finalBalance
-      };
-    }
-
-    // ถ้าไม่ใช่เหรียญหมด (เช่น ติด error ระบบ หรือประเภท lock อื่น)
     return {
-      status: 'error',
+      status: 'locked',
       success: false,
-      outOfCoins: false,
-      insufficientCoins: false,
-      vipRequired: false,
-      error: 'ไม่สามารถปลดล็อคตอนได้: ' + (buyError || 'เกิดข้อผิดพลาดในการซื้อตอน'),
+      isLocked: true,
       comicId: comicId,
-      currentBalance: finalBalance
+      message: 'ตอนติดล็อค กรุณาปลดล็อคผ่าน KuaiKan Auto-Purchaser (Playwright Headless)'
     };
   } catch (err) {
-    console.error('purchaseKuaikanChapter fatal error:', err);
+    console.error('purchaseKuaikanChapter error:', err);
     return { status: 'error', success: false, error: err.toString() };
   }
 }
@@ -4408,71 +4140,6 @@ function testKuaikanLatestChapter(comicId, overrideCookie, options) {
 
     // หากระบุ comicId เจาะจง แล้วติดล็อคหรือไม่มีภาพ ให้ลอง Auto Purchase (ถ้ามีสิทธิ์) หรือแจ้งเตือนตามเงื่อนไขจริง
     if (isExplicitId && isLocked) {
-      if (options && options.autoPurchase && !options.skipAutoPurchase) {
-        console.log('Comic ' + targetComicId + ' is locked, attempting auto-purchase...');
-        try {
-          const buyRes = purchaseKuaikanChapter({
-            comicId: targetComicId,
-            topicId: (options && options.topicId) || '',
-            mangaName: thaiMangaName,
-            chapterTitle: title
-          });
-          if (buyRes && buyRes.success && buyRes.test && buyRes.test.imagesCount > 1) {
-            return buyRes.test;
-          }
-          if (buyRes && buyRes.vipRequired) {
-            return {
-              status: 'vip_locked',
-              success: false,
-              isLocked: true,
-              vipRequired: true,
-              outOfCoins: false,
-              insufficientCoins: false,
-              error: buyRes.error || ('ตอนที่ ' + (title || targetComicId) + ' เป็นตอน VIP Early Access ต้องมีสมาชิก KuaiKan VIP'),
-              comicId: targetComicId,
-              mangaId: mangaId,
-              mangaName: thaiMangaName,
-              thaiTitle: thaiMangaName,
-              title: title || '',
-              topicTitle: topicTitle || '',
-              imagesCount: 0,
-              currentBalance: buyRes.currentBalance,
-              isPay: isPay,
-              isLogin: isLogin,
-              sampleImages: [],
-              allImages: [],
-              imageDetails: []
-            };
-          }
-          if (buyRes && buyRes.outOfCoins) {
-            return {
-              status: 'out_of_coins',
-              success: false,
-              isLocked: true,
-              vipRequired: false,
-              outOfCoins: true,
-              insufficientCoins: true,
-              error: buyRes.error || 'เหรียญ KuaiKan หมด กรุณาเติมเหรียญเพื่อปลดล็อคตอน',
-              comicId: targetComicId,
-              mangaId: mangaId,
-              mangaName: thaiMangaName,
-              thaiTitle: thaiMangaName,
-              title: title || '',
-              topicTitle: topicTitle || '',
-              imagesCount: 0,
-              currentBalance: buyRes.currentBalance,
-              isPay: isPay,
-              isLogin: isLogin,
-              sampleImages: [],
-              allImages: [],
-              imageDetails: []
-            };
-          }
-        } catch (buyErr) {
-          console.warn('Auto purchase failed:', buyErr);
-        }
-      }
-
       return {
         status: 'error',
         success: false,

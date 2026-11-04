@@ -134,78 +134,41 @@ def process_single_chapter(task):
     print(f"📖 กำลังประมวลผล: {manga_name} | {chapter_title} (ComicID: {comic_id})")
     print(f"=======================================================")
 
-    # 1. ดึงภาพตอนจาก GAS (เปิด autoPurchase: True)
+    # 1. ดึงข้อมูลภาพของ ComicID (ปิด API autoPurchase เพื่อใช้ Playwright Headless โดยตรง)
     print(f"1. ดึงข้อมูลภาพของ ComicID {comic_id}...")
     res = call_gas("TEST_KUAIKAN_CHAPTER", {
         "comicId": comic_id,
         "topicId": task.get("topicId") or "",
-        "autoPurchase": True
+        "autoPurchase": False
     })
 
     status = res.get("status")
     data = res.get("data") if isinstance(res.get("data"), dict) else {}
-    msg = res.get("message") or data.get("error") or ""
 
-    # ตรวจสอบกรณีติด VIP Early Access (抢先看)
-    if status == "vip_locked" or data.get("vipRequired") or "VIP Early Access" in msg or "VIP 抢先看" in msg:
-        curr_bal = data.get("currentBalance", "12,931")
-        print(f"\n👑 [KUAIKAN VIP REQUIRED] ตอนติด VIP Early Access (抢先看)! (ComicID: {comic_id})")
-        print(f"   ℹ️ ตอนนี้เปิดให้อ่านเฉพาะผู้มีสมาชิก KuaiKan VIP เท่านั้น (เหรียญไม่หมด: บัญชีมี {curr_bal} KK Coins แต่ VIP หมดอายุ)")
-        print(f"   📢 ระบบได้แจ้งเตือนไปยัง Frontend เรียบร้อยแล้ว (จะข้ามไปยังตอนถัดไปอัตโนมัติ)")
-        return False
-
-    # ตรวจสอบกรณีเหรียญหมดจริง
-    if status == "out_of_coins" or data.get("outOfCoins") or data.get("insufficientCoins"):
-        print(f"\n🚨 [KUAIKAN OUT OF COINS] เหรียญ KuaiKan หมดหรือไม่เพียงพอสำหรับการซื้อตอน! (ComicID: {comic_id})")
-        print(f"   📢 ระบบได้บันทึก Flag KUAIKAN_OUT_OF_COINS: true และแจ้งเตือนแถบสีแดงไปยัง Frontend เรียบร้อยแล้ว")
-        return False
-
+    # หากตอนยังติดล็อค ให้ใช้ KuaiKan Auto-Purchaser (Playwright Headless) ปลดล็อคโดยตรงทันที
     if status != "success" or not data or data.get("isLocked") or data.get("imagesCount", 0) <= 1:
-        # ถ้ายังติดล็อคและยังไม่ได้ซื้อ ลองส่งคำสั่งซื้อตอนโดยตรง
-        print(f"\n🔒 ตรวจพบตอนติด Lock (ComicID: {comic_id}) -> กำลังกดซื้อตอนเพื่อปลดล็อคอัตโนมัติ...")
-        buy_res = call_gas("PURCHASE_KUAIKAN_CHAPTER", {
-            "comicId": comic_id,
-            "topicId": task.get("topicId") or "",
-            "mangaName": manga_name,
-            "chapterTitle": chapter_title
-        })
-
-        bdata = buy_res.get("data") if isinstance(buy_res.get("data"), dict) else {}
-        bmsg = buy_res.get("message") or bdata.get("error") or ""
-
-        unlocked_by_playwright = False
-        if buy_res.get("status") == "success" and bdata.get("success"):
-            print(f"🎉 ซื้อตอน {chapter_title} สำเร็จเรียบร้อย! กำลังดึงภาพจริง...")
-            res = call_gas("TEST_KUAIKAN_CHAPTER", {"comicId": comic_id})
-            data = res.get("data") if isinstance(res.get("data"), dict) else res
-            if data.get("isLocked") or not data.get("success", True) or data.get("imagesCount", 0) <= 1:
-                print(f"❌ ยังคงไม่สามารถดึงภาพตอนที่ปลดล็อคแล้วได้: {data.get('error')}")
+        print(f"\n🔒 ตรวจพบตอนติด Lock (ComicID: {comic_id}) -> กำลังปลดล็อคด้วย KuaiKan Auto-Purchaser (Playwright Headless)...")
+        try:
+            from kuaikan_playwright_purchaser import purchase_chapter_playwright
+            pw_res = purchase_chapter_playwright(comic_id=comic_id, topic_id=task.get("topicId") or "")
+            if pw_res.get("success") and pw_res.get("imagesCount", 0) > 1:
+                print(f"   🎉 Playwright ซื้อและปลดล็อคตอน {chapter_title} สำเร็จ! ({pw_res.get('imagesCount')} ภาพ)")
+                res = call_gas("TEST_KUAIKAN_CHAPTER", {"comicId": comic_id, "autoPurchase": False})
+                data = res.get("data") if isinstance(res.get("data"), dict) else res
+            elif pw_res.get("outOfCoins"):
+                print(f"\n🚨 [KUAIKAN OUT OF COINS] ซื้อตอนไม่สำเร็จเนื่องจากเหรียญหมด!")
                 return False
-        else:
-            # หากสั่งซื้อผ่าน GAS API ไม่สำเร็จ ให้ยกระดับด้วย Playwright Headless Purchaser
-            try:
-                from kuaikan_playwright_purchaser import purchase_chapter_playwright
-                print(f"   🚀 ยกระดับการซื้อตอนด้วย Playwright Headless Purchaser (ComicID: {comic_id})...")
-                pw_res = purchase_chapter_playwright(comic_id=comic_id, topic_id=task.get("topicId") or "")
-                if pw_res.get("success") and pw_res.get("imagesCount", 0) > 1:
-                    print(f"   🎉 Playwright ซื้อและปลดล็อคตอน {chapter_title} สำเร็จ! ({pw_res.get('imagesCount')} ภาพ)")
-                    res = call_gas("TEST_KUAIKAN_CHAPTER", {"comicId": comic_id, "skipAutoPurchase": True})
-                    data = res.get("data") if isinstance(res.get("data"), dict) else res
-                    unlocked_by_playwright = not data.get("isLocked") and data.get("imagesCount", 0) > 1
-            except Exception as pw_err:
-                print(f"   ⚠️ Playwright fallback skipped or error: {pw_err}")
-
-            if not unlocked_by_playwright:
-                if bdata.get("vipRequired") or "VIP Early Access" in bmsg or "VIP 抢先看" in bmsg:
-                    curr_bal = bdata.get("currentBalance", "12,931")
-                    print(f"\n👑 [KUAIKAN VIP REQUIRED] ตอนติด VIP Early Access (抢先看)! (ComicID: {comic_id})")
-                    print(f"   ℹ️ ยอดเหรียญมี {curr_bal} KK Coins (เหรียญไม่หมด) แต่ต้องใช้สมาชิก VIP ในการดู")
-                elif bdata.get("outOfCoins") or bdata.get("insufficientCoins"):
-                    print(f"\n🚨 [KUAIKAN OUT OF COINS] ซื้อตอนไม่สำเร็จเนื่องจากเหรียญหมด / ยอดเงินไม่พอ!")
-                    print(f"   📢 ส่งสัญญาณ KUAIKAN_OUT_OF_COINS: true ไปยัง Frontend เรียบร้อยแล้ว")
-                else:
-                    print(f"❌ ซื้อตอนไม่สำเร็จ: {bmsg}")
+            else:
+                pw_msg = pw_res.get("message") or "Playwright purchase failed"
+                print(f"❌ ไม่สามารถปลดล็อคตอนด้วย Playwright: {pw_msg}")
                 return False
+        except Exception as pw_err:
+            print(f"❌ Playwright Purchaser error: {pw_err}")
+            return False
+
+    if data.get("isLocked") or data.get("imagesCount", 0) <= 1:
+        print(f"❌ ตอนยังคงติดล็อคหรือไม่พบภาพที่สมบูรณ์ (ComicID: {comic_id})")
+        return False
 
     urls = data.get("imageDetails") or data.get("allImages") or data.get("sampleImages") or []
     total_images = len(urls)
