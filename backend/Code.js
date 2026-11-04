@@ -16,6 +16,7 @@ const FINANCIAL_PASSCODE = '720102';
 const RAW_TRACKER_SHEET_NAME = 'RawTracker';
 const PAYOUT_CLAIMS_SHEET_NAME = 'PayoutClaims';
 const READREALM_GROWTH_SHEET_NAME = 'ReadRealmGrowth';
+const READREALM_TIMELINE_SHEET_NAME = 'ReadRealm_Timeline_Summary';
 const READREALM_WORKFLOW_FILE = 'readrealm_tracker.yml';
 
 // --- TELEGRAM CONFIGURATION ---
@@ -712,6 +713,14 @@ function getSheet(name = SHEET_NAME) {
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#3b82f6').setFontColor('#ffffff');
+    } else if (name === READREALM_TIMELINE_SHEET_NAME) {
+      const headers = [
+        'RecordedAt', 'Date', 'Time', 'TotalSalesPortfolio', 'TotalViewsPortfolio', 'TotalComics',
+        'LionkingSales', 'LionkingViews', 'AdieuSales', 'AdieuViews',
+        'TopSalesComic', 'TopGrowthComic7d', 'TopGrowthComic30d', 'Note'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#6366f1').setFontColor('#ffffff');
     }
     ensureSheetHeaders(sheet, name);
   }
@@ -5371,12 +5380,22 @@ function saveReadRealmGrowthData(payload) {
       total_comics: payload.total_comics || comics.length,
       total_sales_portfolio: payload.total_sales_portfolio || 0,
       total_views_portfolio: payload.total_views_portfolio || 0,
+      lionking_sales: payload.lionking_sales || 0,
+      lionking_views: payload.lionking_views || 0,
+      adieu_sales: payload.adieu_sales || 0,
+      adieu_views: payload.adieu_views || 0,
+      top_sales_comic: payload.top_sales_comic || '',
+      top_growth_comic_7d: payload.top_growth_comic_7d || '',
+      top_growth_comic_30d: payload.top_growth_comic_30d || '',
       has_7d_baseline: payload.has_7d_baseline || false,
       has_30d_baseline: payload.has_30d_baseline || false,
       updated_at: new Date().toISOString()
     };
     PropertiesService.getScriptProperties().setProperty('READREALM_GROWTH_LATEST_SUMMARY', JSON.stringify(summary));
 
+    // -------------------------------------------------------------
+    // STRATEGY 1: Overwrite Current Snapshot (Max 237 rows - Zero Bloat)
+    // -------------------------------------------------------------
     if (comics.length > 0) {
       const sheet = getSheet(READREALM_GROWTH_SHEET_NAME);
       sheet.clearContents();
@@ -5413,7 +5432,62 @@ function saveReadRealmGrowthData(payload) {
       }
     }
 
-    return { success: true, saved_count: comics.length, summary: summary };
+    // -------------------------------------------------------------
+    // STRATEGY 3: Append 1 Summary Row to Portfolio Timeline Sheet
+    // (~1,460 rows/year - Lightweight & Perfect for Long-term Charts)
+    // -------------------------------------------------------------
+    let timeStr = '';
+    try {
+      const dObj = new Date(recordedAt);
+      timeStr = Utilities.formatDate(dObj, 'Asia/Bangkok', 'HH:mm');
+    } catch (e) {
+      timeStr = '';
+    }
+
+    const timelineSheet = getSheet(READREALM_TIMELINE_SHEET_NAME);
+    const lastRow = timelineSheet.getLastRow();
+
+    const summaryRow = [
+      recordedAt,
+      dateRef,
+      timeStr,
+      payload.total_sales_portfolio || 0,
+      payload.total_views_portfolio || 0,
+      payload.total_comics || comics.length,
+      payload.lionking_sales || 0,
+      payload.lionking_views || 0,
+      payload.adieu_sales || 0,
+      payload.adieu_views || 0,
+      payload.top_sales_comic || '',
+      payload.top_growth_comic_7d || '',
+      payload.top_growth_comic_30d || '',
+      '6H Auto Snapshot'
+    ];
+
+    let shouldUpdateLast = false;
+    if (lastRow > 1) {
+      const lastRecorded = timelineSheet.getRange(lastRow, 1).getValue().toString();
+      if (lastRecorded) {
+        const diffMs = Math.abs(new Date(recordedAt).getTime() - new Date(lastRecorded).getTime());
+        // If re-triggered within 45 minutes, update last row instead of adding duplicate
+        if (diffMs < 45 * 60 * 1000) {
+          shouldUpdateLast = true;
+        }
+      }
+    }
+
+    if (shouldUpdateLast) {
+      timelineSheet.getRange(lastRow, 1, 1, summaryRow.length).setValues([summaryRow]);
+    } else {
+      timelineSheet.appendRow(summaryRow);
+    }
+
+    return {
+      success: true,
+      saved_count: comics.length,
+      timeline_row: shouldUpdateLast ? lastRow : lastRow + 1,
+      summary: summary
+    };
   } catch (err) {
     return { error: 'Save ReadRealm Growth Data Failed: ' + err.toString() };
   } finally {
@@ -5432,7 +5506,7 @@ function getReadRealmGrowthData() {
     const sheet = getSheet(READREALM_GROWTH_SHEET_NAME);
     const data = sheet.getDataRange().getValues();
     if (data.length <= 1) {
-      return { success: true, summary: summary, comics: [] };
+      return { success: true, summary: summary, comics: [], timeline: [] };
     }
 
     const headers = data[0].map(h => h.toString().toLowerCase().trim());
@@ -5463,11 +5537,41 @@ function getReadRealmGrowthData() {
       });
     }
 
+    // Read recent Portfolio Timeline Summary entries
+    let timeline = [];
+    try {
+      const tSheet = getSheet(READREALM_TIMELINE_SHEET_NAME);
+      const tData = tSheet.getDataRange().getValues();
+      if (tData.length > 1) {
+        const tHeaders = tData[0].map(h => h.toString().toLowerCase().trim());
+        const startIdx = Math.max(1, tData.length - 60); // latest 60 records (~15 days)
+        for (let i = startIdx; i < tData.length; i++) {
+          const r = tData[i];
+          timeline.push({
+            recorded_at: r[tHeaders.indexOf('recordedat')],
+            date: r[tHeaders.indexOf('date')],
+            time: r[tHeaders.indexOf('time')],
+            total_sales: r[tHeaders.indexOf('totalsalesportfolio')],
+            total_views: r[tHeaders.indexOf('totalviewsportfolio')],
+            total_comics: r[tHeaders.indexOf('totalcomics')],
+            lionking_sales: r[tHeaders.indexOf('lionkingsales')],
+            lionking_views: r[tHeaders.indexOf('lionkingviews')],
+            adieu_sales: r[tHeaders.indexOf('adieusales')],
+            adieu_views: r[tHeaders.indexOf('adieuviews')],
+            top_sales_comic: r[tHeaders.indexOf('topsalescomic')],
+            top_growth_7d: r[tHeaders.indexOf('topgrowthcomic7d')],
+            top_growth_30d: r[tHeaders.indexOf('topgrowthcomic30d')]
+          });
+        }
+      }
+    } catch (e) {}
+
     return {
       success: true,
       summary: summary,
       total_comics: comics.length,
-      comics: comics
+      comics: comics,
+      timeline: timeline
     };
   } catch (err) {
     return { error: 'Get ReadRealm Growth Data Failed: ' + err.toString() };

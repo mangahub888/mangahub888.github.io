@@ -426,13 +426,42 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # Sort by total sales descending
     growth_results.sort(key=lambda x: x["total_sales"], reverse=True)
 
+    # Calculate portfolio aggregates & highlights (Strategy 3: Portfolio Summary Timeline)
+    lk_comics = [c for c in growth_results if c.get("account_id") == "lionking" or c.get("account") == "แปลจนเมื่อย"]
+    ad_comics = [c for c in growth_results if c.get("account_id") == "adieu" or c.get("account") == "แปลแล้วแปลอีก"]
+
+    lk_sales = round(sum(c["total_sales"] for c in lk_comics), 2)
+    lk_views = sum(c["total_views"] for c in lk_comics)
+    ad_sales = round(sum(c["total_sales"] for c in ad_comics), 2)
+    ad_views = sum(c["total_views"] for c in ad_comics)
+
+    top_sales_comic = growth_results[0]["subject"] if growth_results else ""
+
+    # Sort for top growth highlights
+    with_7d = [c for c in growth_results if c.get("growth_7d", {}).get("sales_growth_pct", 0) > 0]
+    with_7d.sort(key=lambda x: x["growth_7d"]["sales_growth_pct"], reverse=True)
+    top_growth_7d = with_7d[0]["subject"] if with_7d else ""
+
+    with_30d = [c for c in growth_results if c.get("growth_30d", {}).get("sales_growth_pct", 0) > 0]
+    with_30d.sort(key=lambda x: x["growth_30d"]["sales_growth_pct"], reverse=True)
+    top_growth_30d = with_30d[0]["subject"] if with_30d else ""
+
     # 6. Save latest growth report file
     report_output = {
         "pipeline_recorded_at": recorded_at,
         "date_reference": snapshot_date_key,
         "total_comics": len(growth_results),
-        "total_sales_portfolio": sum(x["total_sales"] for x in growth_results),
+        "total_sales_portfolio": round(sum(x["total_sales"] for x in growth_results), 2),
         "total_views_portfolio": sum(x["total_views"] for x in growth_results),
+        "lionking_sales": lk_sales,
+        "lionking_views": lk_views,
+        "lionking_count": len(lk_comics),
+        "adieu_sales": ad_sales,
+        "adieu_views": ad_views,
+        "adieu_count": len(ad_comics),
+        "top_sales_comic": top_sales_comic,
+        "top_growth_comic_7d": top_growth_7d,
+        "top_growth_comic_30d": top_growth_30d,
         "has_7d_baseline": bool(snap_7d),
         "has_30d_baseline": bool(snap_30d),
         "comics": growth_results

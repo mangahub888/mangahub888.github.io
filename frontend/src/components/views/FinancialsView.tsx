@@ -616,7 +616,7 @@ export function FinancialsView({
                     ReadRealm 6-Hour Auto Growth Pipeline
                   </span>
                   <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                    Git Action Active
+                    Git Action Active • Strategy 3+1
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-0.5">
@@ -669,7 +669,9 @@ export function FinancialsView({
                       trackerData?.total_sales_portfolio || 5771265.1
                     ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </p>
-                  <p className="text-[11px] text-slate-500 mt-1">2 บัญชีนักเขียนหลัก</p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    แปลจนเมื่อย ฿{(trackerData?.lionking_sales || 4403430.3).toLocaleString(undefined, { maximumFractionDigits: 0 })} • แปลแล้ว ฿{(trackerData?.adieu_sales || 1367960.8).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </p>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
                   <DollarSign className="h-5 w-5" />
@@ -687,7 +689,9 @@ export function FinancialsView({
                     ).toLocaleString()}{" "}
                     <span className="text-xs font-normal text-slate-400">ครั้ง</span>
                   </p>
-                  <p className="text-[11px] text-slate-500 mt-1">&gt; 20 ล้านวิว</p>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    แปลจนเมื่อย {(trackerData?.lionking_views || 17006920).toLocaleString()} • แปลแล้ว {(trackerData?.adieu_views || 3649492).toLocaleString()}
+                  </p>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
                   <BookOpen className="h-5 w-5" />
