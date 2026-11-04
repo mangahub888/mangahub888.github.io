@@ -1,0 +1,557 @@
+[
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/wallet",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "balance": 1450.01,
+        "pending": 0,
+        "lifetimeEarn": 8684.01,
+        "updatedAt": "2026-11-04T09:09:21.022Z",
+        "nextPayoutDate": "2026-11-25T00:05:00.000Z"
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/permissions/decode",
+    "status": 200,
+    "method": "POST",
+    "data": {
+      "success": true,
+      "message": "Decoded successfully",
+      "data": {
+        "permission": {
+          "P300001": "1111",
+          "P300002": "1111"
+        },
+        "allAccess": false
+      },
+      "errors": []
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-kind",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "LICENSE",
+          "name": "ลิขสิทธิ์"
+        },
+        {
+          "id": "FICTION",
+          "name": "แต่งเอง"
+        },
+        {
+          "id": "FANCLUB",
+          "name": "แฟนคลับ"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/rating",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "NORMAL",
+          "name": "ทั่วไป"
+        },
+        {
+          "id": "ADULT",
+          "name": "ผู้ใหญ่"
+        },
+        {
+          "id": "ADULTPLUS",
+          "name": "18+"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-group-status",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "DRAFT",
+          "name": "ฉบับร่าง"
+        },
+        {
+          "id": "SUSPENDED",
+          "name": "ระงับ"
+        },
+        {
+          "id": "PUBLIC",
+          "name": "เผยแพร่"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/category",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "cmbr83n1200000wgokttfzozm",
+          "name": "โรแมนซ์",
+          "slug": "romance"
+        },
+        {
+          "id": "cmbr83naw00010wgou301mjau",
+          "name": "โรแมนซ์แฟนตาซี",
+          "slug": "romantic-fantasy"
+        },
+        {
+          "id": "cmbr83ngz00020wgo80oz0xnk",
+          "name": "ดราม่า",
+          "slug": "drama"
+        },
+        {
+          "id": "cmbr83nn300030wgo4hkljcns",
+          "name": "แอกชัน",
+          "slug": "action"
+        },
+        {
+          "id": "cmbr83nt700040wgole4l871b",
+          "name": "แฟนตาซี",
+          "slug": "fantasy"
+        },
+        {
+          "id": "cmbr83nze00050wgoespsetmv",
+          "name": "LGBTQ+ / Y",
+          "slug": "bl-gl"
+        },
+        {
+          "id": "cmbr83o5g00060wgo9neq0e2u",
+          "name": "ตลก",
+          "slug": "comedy"
+        },
+        {
+          "id": "cmbr83obn00070wgoodj1rx2a",
+          "name": "ระทึกขวัญ",
+          "slug": "thriller"
+        },
+        {
+          "id": "cmbr83oi200080wgosz8o3ut5",
+          "name": "สยองขวัญ",
+          "slug": "horror"
+        },
+        {
+          "id": "cmbr83oof00090wgo7jjwe7v3",
+          "name": "ชีวิตประจำวัน",
+          "slug": "local"
+        },
+        {
+          "id": "cmbr83oyb000a0wgogc6u8g0n",
+          "name": "อบอุ่นหัวใจ",
+          "slug": "heartwarming"
+        },
+        {
+          "id": "cmbr83p4e000b0wgof9a31gn3",
+          "name": "ย้อนยุค",
+          "slug": "historical"
+        },
+        {
+          "id": "cmbr83paf000c0wgoq474k8xj",
+          "name": "กำลังภายใน",
+          "slug": "martial-arts"
+        },
+        {
+          "id": "cmbr83pgg000d0wgocmer0dzr",
+          "name": "สืบสวน",
+          "slug": "detective"
+        },
+        {
+          "id": "cmbr83pmi000e0wgoto4rtpe5",
+          "name": "ไลท์โนเวล",
+          "slug": "light-novel"
+        },
+        {
+          "id": "cmbr83psm000f0wgovehcyg0k",
+          "name": "กีฬา",
+          "slug": "sports"
+        },
+        {
+          "id": "cmbr83pyo000g0wgoo785pwhl",
+          "name": "เกมส์ออนไลน์",
+          "slug": "online-games"
+        },
+        {
+          "id": "cmbr83q4r000h0wgo4h9kcqi0",
+          "name": "ผจญภัย",
+          "slug": "adventure"
+        },
+        {
+          "id": "cmfcgvwjy000a6kc8npdiseo5",
+          "name": "ชีวิตในโรงเรียน",
+          "slug": "school-life"
+        },
+        {
+          "id": "cmfcgwdea000b6kc8trtnti33",
+          "name": "เกิดใหม่",
+          "slug": "reborn"
+        },
+        {
+          "id": "cmfch9a32000m6kc8xdd9hcwj",
+          "name": "ระบบ",
+          "slug": "system"
+        },
+        {
+          "id": "cminxw41s0hfr6kgkoik3x6lt",
+          "name": "NTR",
+          "slug": "NTR"
+        },
+        {
+          "id": "cminxx5cv0hfw6kgkdf2oplnt",
+          "name": "ร้อนแรง",
+          "slug": "hot"
+        },
+        {
+          "id": "cminxxbaq0hfx6kgkmmyinmab",
+          "name": "Adult",
+          "slug": "Adult"
+        },
+        {
+          "id": "cminxxfqx0hg06kgk8bi0vwo9",
+          "name": "Ecchi",
+          "slug": "Ecchi"
+        },
+        {
+          "id": "cminxxkd60hhd6kgktqyuzihx",
+          "name": "Harem",
+          "slug": "Harem"
+        },
+        {
+          "id": "cminxxp8n0hhg6kgk8pz9oy8d",
+          "name": "NC",
+          "slug": "NC"
+        },
+        {
+          "id": "cminxxskl0hhn6kgkbkmgloxz",
+          "name": "BL",
+          "slug": "BL"
+        },
+        {
+          "id": "cmk4gqpzb00b16k7aewhwidrx",
+          "name": "แก้แค้น",
+          "slug": "revenge"
+        },
+        {
+          "id": "cmk8iwt9t01u06kgze1rfepwy",
+          "name": "มูริม",
+          "slug": "murim"
+        },
+        {
+          "id": "cmrgvnxnt4dvo6kap58v2g74b",
+          "name": "กลับชาติมาเกิด",
+          "slug": "reincarnation"
+        },
+        {
+          "id": "cmrgvoi1h4cme6kaomdgrrzdg",
+          "name": "ย้อนเวลา",
+          "slug": "time-travel"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-type",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "COMICS",
+          "name": "การ์ตูน"
+        },
+        {
+          "id": "NOVEL",
+          "name": "นิยาย"
+        },
+        {
+          "id": "AUDIO",
+          "name": "เสียง"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-status",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "ONGOING",
+          "name": "ดำเนินการ"
+        },
+        {
+          "id": "COMPLETED",
+          "name": "จบแล้ว"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/content-episodes/group/cmu55krov20aa6kdb4kzmjpr9?pageIndex=0&pageSize=10&keyword=&status=&includeSales=true",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "cmu55p69b1xmz6kddqz8a8r27",
+            "title": "ตอนที่ 1",
+            "slug": "ตอนที่-1",
+            "index": 1,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:36:23.663Z",
+            "totalView": "1075",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "1075",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmu55p5ji1y0y6kdcsuwm0bzb",
+            "title": "ตอนที่ 2",
+            "slug": "ตอนที่-2",
+            "index": 2,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:36:22.734Z",
+            "totalView": "602",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "602",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmu55pjz41y126kdchfwthhg3",
+            "title": "ตอนที่ 3",
+            "slug": "ตอนที่-3",
+            "index": 3,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:36:41.440Z",
+            "totalView": "535",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "535",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmu55pjin1vnn6kdhcnywjxjq",
+            "title": "ตอนที่ 4",
+            "slug": "ตอนที่-4",
+            "index": 4,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:36:40.847Z",
+            "totalView": "519",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "519",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmu55pwfi1vnr6kdhzzexwi7g",
+            "title": "ตอนที่ 5",
+            "slug": "ตอนที่-5",
+            "index": 5,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:36:57.582Z",
+            "totalView": "464",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "464",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmu55pwdt1wnr6kdfx16gafgk",
+            "title": "ตอนที่ 6",
+            "slug": "ตอนที่-6",
+            "index": 6,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:36:57.521Z",
+            "totalView": "475",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "475",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmuk05wt30g8bt5ioa8ve3ss8",
+            "title": "ตอนที่ 7",
+            "slug": "ตอนที่-7",
+            "index": 7,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-27T15:57:59.511Z",
+            "totalView": "453",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "453",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmuk05uy90h8dt5ipcmlq4qf3",
+            "title": "ตอนที่ 8",
+            "slug": "ตอนที่-8",
+            "index": 8,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-27T15:57:57.105Z",
+            "totalView": "463",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "463",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmu55qa6w1wnz6kdf21qlrfeh",
+            "title": "ตอนที่ 9",
+            "slug": "ตอนที่-9",
+            "index": 9,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:37:15.416Z",
+            "totalView": "469",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "469",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          },
+          {
+            "id": "cmu55q8uz1vnv6kdhdsgthas4",
+            "title": "ตอนที่ 10",
+            "slug": "ตอนที่-10",
+            "index": 10,
+            "isFree": true,
+            "price": "0",
+            "groupId": "cmu55krov20aa6kdb4kzmjpr9",
+            "status": "PUBLIC",
+            "createdAt": "2026-09-17T06:37:13.691Z",
+            "totalView": "552",
+            "total_purchases": "0",
+            "total_revenue": "0",
+            "last_purchase_at": null,
+            "total_views": "552",
+            "sales_refreshed_at": "2026-11-04T09:00:00.062Z"
+          }
+        ],
+        "pagination": {
+          "totalItems": 26,
+          "pageSize": 10,
+          "pageIndex": 0,
+          "totalPages": 3,
+          "hasNextPage": true,
+          "hasPreviousPage": false
+        }
+      },
+      "message": ""
+    }
+  }
+]

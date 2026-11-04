@@ -1,0 +1,84 @@
+[
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/permissions/decode",
+    "status": 200,
+    "method": "POST",
+    "data": {
+      "success": true,
+      "message": "Decoded successfully",
+      "data": {
+        "permission": {
+          "P300001": "1111",
+          "P300002": "1111"
+        },
+        "allAccess": false
+      },
+      "errors": []
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/wallet",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "balance": 1450.01,
+        "pending": 0,
+        "lifetimeEarn": 8684.01,
+        "updatedAt": "2026-11-04T09:09:21.022Z",
+        "nextPayoutDate": "2026-11-25T00:05:00.000Z"
+      },
+      "message": ""
+    }
+  }
+]

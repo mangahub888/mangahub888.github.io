@@ -1,7 +1,7 @@
 {
   "pipeline_recorded_at": "2026-11-04T14:18:19.901131",
   "date_reference": "2026-11-04",
-  "total_sales_portfolio": 5923228.15,
+  "total_sales_portfolio": 5922836.11,
   "total_views_portfolio": 23265507,
   "total_comics": 382,
   "total_inactive_30d": 238,
@@ -27,7 +27,7 @@
     },
     "chaply": {
       "name": "Chaply",
-      "sales": 8662.95,
+      "sales": 8270.91,
       "views": 91093,
       "comics_count": 67,
       "inactive_30d": 20,
@@ -8866,7 +8866,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 14,
       "total_views": 10360,
-      "total_sales": 0.0,
+      "total_sales": 531.36,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-14 12:20:32",
       "days_inactive": 21,
@@ -8883,8 +8883,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 531.36,
+      "views_7_chapters": 2888,
+      "total_purchases": 328
     },
     {
       "comic_id": "cmu55krov20aa6kdb4kzmjpr9",
@@ -8895,7 +8896,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 26,
       "total_views": 10115,
-      "total_sales": 0.0,
+      "total_sales": 1210.14,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 13:04:53",
       "days_inactive": 7,
@@ -8912,8 +8913,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 246.24,
+      "views_7_chapters": 216,
+      "total_purchases": 747
     },
     {
       "comic_id": "cmuob7ddh15eft5ip2uz7v3i7",
@@ -8924,7 +8926,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 12,
       "total_views": 8687,
-      "total_sales": 0.0,
+      "total_sales": 155.52,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 13:14:30",
       "days_inactive": 7,
@@ -8941,8 +8943,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 155.52,
+      "views_7_chapters": 2217,
+      "total_purchases": 96
     },
     {
       "comic_id": "cmu5aojjy21k26kdbtrqxx43l",
@@ -8953,7 +8956,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 13,
       "total_views": 7734,
-      "total_sales": 0.0,
+      "total_sales": 194.4,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-20 14:26:32",
       "days_inactive": 14,
@@ -8970,8 +8973,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 194.4,
+      "views_7_chapters": 2065,
+      "total_purchases": 120
     },
     {
       "comic_id": "cmuobbvll17smt5invj3xzl8e",
@@ -8982,7 +8986,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 19,
       "total_views": 6051,
-      "total_sales": 0.0,
+      "total_sales": 262.44,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-14 12:31:56",
       "days_inactive": 21,
@@ -8999,8 +9003,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 196.02,
+      "views_7_chapters": 174,
+      "total_purchases": 162
     },
     {
       "comic_id": "cmun1mjxm0yu7t5ioj5wa6031",
@@ -9011,7 +9016,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 73,
       "total_views": 4465,
-      "total_sales": 0.0,
+      "total_sales": 699.84,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-11-02 22:18:47",
       "days_inactive": 1,
@@ -9028,8 +9033,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 204.12,
+      "views_7_chapters": 181,
+      "total_purchases": 432
     },
     {
       "comic_id": "cmu54x6jl1xul6kdc7qbb0we0",
@@ -9040,7 +9046,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 12,
       "total_views": 3475,
-      "total_sales": 0.0,
+      "total_sales": 56.7,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-19 16:21:34",
       "days_inactive": 15,
@@ -9057,8 +9063,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 56.7,
+      "views_7_chapters": 1151,
+      "total_purchases": 35
     },
     {
       "comic_id": "cmub9scyd2qzl6kdax0weqtow",
@@ -9069,7 +9076,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 62,
       "total_views": 2853,
-      "total_sales": 0.0,
+      "total_sales": 355.32,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-20 14:46:06",
       "days_inactive": 14,
@@ -9086,8 +9093,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 90.54,
+      "views_7_chapters": 79,
+      "total_purchases": 222
     },
     {
       "comic_id": "cmujtou700ea2t5iqi3fhllox",
@@ -9096,7 +9104,7 @@
       "platform": "chaply",
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
-      "chapters_count": 123,
+      "chapters_count": 100,
       "total_views": 2078,
       "total_sales": 0.0,
       "recorded_at": "2026-11-04T14:06:53.875941",
@@ -9116,7 +9124,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 92,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmuk6ni1y0g4gt5imnxxmob4z",
@@ -9127,7 +9136,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 63,
       "total_views": 1986,
-      "total_sales": 0.0,
+      "total_sales": 466.56,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-11-02 22:22:46",
       "days_inactive": 1,
@@ -9144,8 +9153,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 264.06,
+      "views_7_chapters": 243,
+      "total_purchases": 288
     },
     {
       "comic_id": "cmu5mrfj01zyt6kden87j1ch7",
@@ -9156,7 +9166,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 25,
       "total_views": 1852,
-      "total_sales": 0.0,
+      "total_sales": 362.34,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 21:37:22",
       "days_inactive": 11,
@@ -9173,8 +9183,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 164.61,
+      "views_7_chapters": 166,
+      "total_purchases": 226
     },
     {
       "comic_id": "cmuua0knr0dggt5h971a8fsib",
@@ -9183,7 +9194,7 @@
       "platform": "chaply",
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
-      "chapters_count": 129,
+      "chapters_count": 100,
       "total_views": 1836,
       "total_sales": 0.0,
       "recorded_at": "2026-11-04T14:06:53.875941",
@@ -9203,7 +9214,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 65,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmuk7y4dr0gcpt5im40yny60d",
@@ -9214,7 +9226,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 53,
       "total_views": 1668,
-      "total_sales": 0.0,
+      "total_sales": 278.64,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 17:01:48",
       "days_inactive": 11,
@@ -9231,8 +9243,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 108.54,
+      "views_7_chapters": 100,
+      "total_purchases": 172
     },
     {
       "comic_id": "cmu5lttk91ygj6kdgu18gt0i5",
@@ -9243,7 +9256,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 29,
       "total_views": 1488,
-      "total_sales": 0.0,
+      "total_sales": 308.88,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 21:31:42",
       "days_inactive": 11,
@@ -9260,8 +9273,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 137.34,
+      "views_7_chapters": 126,
+      "total_purchases": 192
     },
     {
       "comic_id": "cmujt3jjs0ebkt5iohzuzr2fq",
@@ -9270,9 +9284,9 @@
       "platform": "chaply",
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
-      "chapters_count": 102,
+      "chapters_count": 100,
       "total_views": 1441,
-      "total_sales": 0.0,
+      "total_sales": 1.62,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 01:23:36",
       "days_inactive": 7,
@@ -9290,7 +9304,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 6,
+      "total_purchases": 1
     },
     {
       "comic_id": "cmu5lkq6z1zi36kdeaw12cfwi",
@@ -9301,7 +9316,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 32,
       "total_views": 1429,
-      "total_sales": 0.0,
+      "total_sales": 457.2,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 21:36:17",
       "days_inactive": 11,
@@ -9318,8 +9333,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 170.91,
+      "views_7_chapters": 170,
+      "total_purchases": 286
     },
     {
       "comic_id": "cmuk2isn40ff1t5imkxirfqoc",
@@ -9330,7 +9346,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 59,
       "total_views": 1362,
-      "total_sales": 0.0,
+      "total_sales": 293.22,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 13:10:56",
       "days_inactive": 7,
@@ -9347,8 +9363,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 95.58,
+      "views_7_chapters": 86,
+      "total_purchases": 181
     },
     {
       "comic_id": "cmu599yt01yj56kddr5yp4zaz",
@@ -9359,7 +9376,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 18,
       "total_views": 1346,
-      "total_sales": 0.0,
+      "total_sales": 316.53,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 13:07:45",
       "days_inactive": 7,
@@ -9376,8 +9393,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 271.35,
+      "views_7_chapters": 242,
+      "total_purchases": 196
     },
     {
       "comic_id": "cmuzqktr60f70t5kkpqz1btwu",
@@ -9386,9 +9404,9 @@
       "platform": "chaply",
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
-      "chapters_count": 120,
+      "chapters_count": 100,
       "total_views": 1300,
-      "total_sales": 0.0,
+      "total_sales": 48.6,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 00:48:26",
       "days_inactive": 7,
@@ -9405,8 +9423,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 34.02,
+      "views_7_chapters": 23,
+      "total_purchases": 30
     },
     {
       "comic_id": "cmu5hk40d1xsh6kdh2y1fw76m",
@@ -9417,7 +9436,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 20,
       "total_views": 1185,
-      "total_sales": 0.0,
+      "total_sales": 221.22,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 18:28:41",
       "days_inactive": 11,
@@ -9434,8 +9453,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 139.32,
+      "views_7_chapters": 121,
+      "total_purchases": 137
     },
     {
       "comic_id": "cmu5kkh7v23fn6kdb2ccmv103",
@@ -9446,7 +9466,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 31,
       "total_views": 1154,
-      "total_sales": 0.0,
+      "total_sales": 330.57,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 16:25:05",
       "days_inactive": 11,
@@ -9463,8 +9483,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 109.26,
+      "views_7_chapters": 98,
+      "total_purchases": 207
     },
     {
       "comic_id": "cmubpx26j2u1v6kdgil3fq5o8",
@@ -9475,7 +9496,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 70,
       "total_views": 945,
-      "total_sales": 0.0,
+      "total_sales": 201.69,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-27 01:32:15",
       "days_inactive": 8,
@@ -9492,8 +9513,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 105.93,
+      "views_7_chapters": 104,
+      "total_purchases": 127
     },
     {
       "comic_id": "cmu5jeo6p238k6kdbhw868cqm",
@@ -9522,7 +9544,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 545,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmu8mjor52dc36kdg6vlj2zw2",
@@ -9531,7 +9554,7 @@
       "platform": "chaply",
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
-      "chapters_count": 149,
+      "chapters_count": 100,
       "total_views": 867,
       "total_sales": 0.0,
       "recorded_at": "2026-11-04T14:06:53.875941",
@@ -9551,7 +9574,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 25,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmuobh13c158at5ive3im4waa",
@@ -9580,7 +9604,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 458,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmuob2q0t15rht5iwh2m2w0rw",
@@ -9609,7 +9634,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 485,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmua459q82p666kdcoll0jcwa",
@@ -9620,7 +9646,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 43,
       "total_views": 812,
-      "total_sales": 0.0,
+      "total_sales": 63.45,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-11-04 00:59:30",
       "days_inactive": 0,
@@ -9637,8 +9663,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 25.56,
+      "views_7_chapters": 21,
+      "total_purchases": 40
     },
     {
       "comic_id": "cmu5rxd0p25jk6kdbt4wnhweh",
@@ -9649,7 +9676,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 33,
       "total_views": 801,
-      "total_sales": 0.0,
+      "total_sales": 201.06,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 13:32:30",
       "days_inactive": 7,
@@ -9666,8 +9693,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 61.02,
+      "views_7_chapters": 71,
+      "total_purchases": 127
     },
     {
       "comic_id": "cmu5akdig1xmj6kdfkhi81lpw",
@@ -9696,7 +9724,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 443,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmuobknyt1597t5ivrj12kch2",
@@ -9725,7 +9754,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 415,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmu5jxqqr20ss6kddg7es62wu",
@@ -9736,7 +9766,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 28,
       "total_views": 654,
-      "total_sales": 0.0,
+      "total_sales": 216.45,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-11-02 22:24:59",
       "days_inactive": 1,
@@ -9753,8 +9783,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 43.47,
+      "views_7_chapters": 44,
+      "total_purchases": 135
     },
     {
       "comic_id": "cmublli8h2t4o6kda14eepw3r",
@@ -9765,7 +9796,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 50,
       "total_views": 639,
-      "total_sales": 0.0,
+      "total_sales": 62.73,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-22 02:13:01",
       "days_inactive": 43,
@@ -9782,8 +9813,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 44.37,
+      "views_7_chapters": 30,
+      "total_purchases": 41
     },
     {
       "comic_id": "cmu9zzov52m2l6kdfmsxf6jnq",
@@ -9794,7 +9826,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 28,
       "total_views": 634,
-      "total_sales": 0.0,
+      "total_sales": 33.66,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-21 00:24:07",
       "days_inactive": 44,
@@ -9811,8 +9843,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 29.07,
+      "views_7_chapters": 24,
+      "total_purchases": 22
     },
     {
       "comic_id": "cmuu97eqw0d44t5hg6zfwvyf8",
@@ -9823,7 +9856,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 70,
       "total_views": 598,
-      "total_sales": 0.0,
+      "total_sales": 74.52,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 18:18:18",
       "days_inactive": 11,
@@ -9840,8 +9873,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 45.36,
+      "views_7_chapters": 51,
+      "total_purchases": 46
     },
     {
       "comic_id": "cmumgpiis0tmst5itwxnwtwt7",
@@ -9852,7 +9886,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 55,
       "total_views": 495,
-      "total_sales": 0.0,
+      "total_sales": 97.2,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-25 02:05:27",
       "days_inactive": 10,
@@ -9869,8 +9903,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 68.04,
+      "views_7_chapters": 76,
+      "total_purchases": 60
     },
     {
       "comic_id": "cmu6fncvn25g56kdcsltke4aa",
@@ -9881,7 +9916,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 44,
       "total_views": 490,
-      "total_sales": 0.0,
+      "total_sales": 115.74,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 16:58:29",
       "days_inactive": 11,
@@ -9898,8 +9933,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 34.92,
+      "views_7_chapters": 27,
+      "total_purchases": 73
     },
     {
       "comic_id": "cmu5ofcn422d36kdd9ox2ccvd",
@@ -9910,7 +9946,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 24,
       "total_views": 473,
-      "total_sales": 0.0,
+      "total_sales": 101.88,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-29 23:37:36",
       "days_inactive": 5,
@@ -9927,8 +9963,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 49.68,
+      "views_7_chapters": 52,
+      "total_purchases": 64
     },
     {
       "comic_id": "cmv6so0dp107at5ewv8eopw5f",
@@ -9939,7 +9976,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 20,
       "total_views": 472,
-      "total_sales": 0.0,
+      "total_sales": 19.44,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-13 21:57:35",
       "days_inactive": 21,
@@ -9956,8 +9993,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 19.44,
+      "views_7_chapters": 47,
+      "total_purchases": 12
     },
     {
       "comic_id": "cmu54cw331xcm6kddlj7skzbf",
@@ -9968,7 +10006,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 25,
       "total_views": 457,
-      "total_sales": 0.0,
+      "total_sales": 45.36,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-11-02 22:14:01",
       "days_inactive": 1,
@@ -9985,8 +10023,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 11.34,
+      "views_7_chapters": 12,
+      "total_purchases": 28
     },
     {
       "comic_id": "cmu57f4i51wi96kdepjdx8u96",
@@ -9997,7 +10036,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 37,
       "total_views": 425,
-      "total_sales": 0.0,
+      "total_sales": 101.79,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-23 16:29:31",
       "days_inactive": 11,
@@ -10014,8 +10053,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 14.58,
+      "views_7_chapters": 11,
+      "total_purchases": 63
     },
     {
       "comic_id": "cmuvcqpx10k2it5hcsfff2up6",
@@ -10026,7 +10066,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 41,
       "total_views": 390,
-      "total_sales": 0.0,
+      "total_sales": 35.64,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-06 01:49:09",
       "days_inactive": 29,
@@ -10043,8 +10083,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 22.68,
+      "views_7_chapters": 14,
+      "total_purchases": 22
     },
     {
       "comic_id": "cmu9exmzu2nlr6kdbjz8f4p62",
@@ -10055,7 +10096,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 34,
       "total_views": 358,
-      "total_sales": 0.0,
+      "total_sales": 80.37,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-27 01:36:21",
       "days_inactive": 8,
@@ -10072,8 +10113,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 35.64,
+      "views_7_chapters": 34,
+      "total_purchases": 50
     },
     {
       "comic_id": "cmu53j7bu1urc6kdgjv42ackr",
@@ -10084,7 +10126,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 17,
       "total_views": 284,
-      "total_sales": 0.0,
+      "total_sales": 16.2,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-28 13:30:54",
       "days_inactive": 7,
@@ -10101,8 +10143,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 16.2,
+      "views_7_chapters": 18,
+      "total_purchases": 10
     },
     {
       "comic_id": "cmu5jqil320rv6kddszeia5iz",
@@ -10131,7 +10174,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 114,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmulnck7v0pskt5ito6c44uqt",
@@ -10142,7 +10186,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 24,
       "total_views": 267,
-      "total_sales": 0.0,
+      "total_sales": 58.32,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-29 03:05:51",
       "days_inactive": 36,
@@ -10159,8 +10203,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 45.36,
+      "views_7_chapters": 33,
+      "total_purchases": 36
     },
     {
       "comic_id": "cmull5smm0qfdt5ipmerc8kjs",
@@ -10171,7 +10216,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 22,
       "total_views": 218,
-      "total_sales": 0.0,
+      "total_sales": 24.3,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-29 02:28:04",
       "days_inactive": 36,
@@ -10188,8 +10233,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 24.3,
+      "views_7_chapters": 36,
+      "total_purchases": 15
     },
     {
       "comic_id": "cmucaq9nm30dq6kdcwwjkbygk",
@@ -10200,7 +10246,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 11,
       "total_views": 208,
-      "total_sales": 0.0,
+      "total_sales": 17.01,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-22 13:35:52",
       "days_inactive": 43,
@@ -10217,8 +10263,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 17.01,
+      "views_7_chapters": 79,
+      "total_purchases": 11
     },
     {
       "comic_id": "cmub9wokr2r0a6kdap2d91i5q",
@@ -10229,7 +10276,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 44,
       "total_views": 197,
-      "total_sales": 0.0,
+      "total_sales": 35.28,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-22 00:57:44",
       "days_inactive": 43,
@@ -10246,8 +10293,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 30.69,
+      "views_7_chapters": 26,
+      "total_purchases": 23
     },
     {
       "comic_id": "cmu5qaxb320d96kdh0230bmq2",
@@ -10258,7 +10306,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 32,
       "total_views": 190,
-      "total_sales": 0.0,
+      "total_sales": 38.25,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-17 23:28:19",
       "days_inactive": 47,
@@ -10275,8 +10323,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 22.95,
+      "views_7_chapters": 29,
+      "total_purchases": 25
     },
     {
       "comic_id": "cmul5epaz0mipt5ivfqa3ncsk",
@@ -10305,7 +10354,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 58,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmulhvthl0pkjt5ivukga1d8g",
@@ -10334,7 +10384,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmu9qqrcp2plk6kdbaaqa4i6y",
@@ -10345,7 +10396,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 39,
       "total_views": 178,
-      "total_sales": 0.0,
+      "total_sales": 24.48,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-20 20:31:46",
       "days_inactive": 44,
@@ -10362,8 +10413,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 12.24,
+      "views_7_chapters": 9,
+      "total_purchases": 16
     },
     {
       "comic_id": "cmua7lbrv2lx06kdayfm3rhlq",
@@ -10374,7 +10426,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 31,
       "total_views": 175,
-      "total_sales": 0.0,
+      "total_sales": 19.35,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-21 03:03:47",
       "days_inactive": 44,
@@ -10391,8 +10443,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 12.87,
+      "views_7_chapters": 13,
+      "total_purchases": 12
     },
     {
       "comic_id": "cmucb79dt2wea6kdacrxzee3d",
@@ -10403,7 +10456,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 46,
       "total_views": 174,
-      "total_sales": 0.0,
+      "total_sales": 1.62,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-23 03:10:42",
       "days_inactive": 42,
@@ -10421,7 +10474,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 1,
+      "total_purchases": 1
     },
     {
       "comic_id": "cmu7amzv72deg6kdb305cjl4w",
@@ -10450,7 +10504,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 1,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmujz0bib0gjot5iv9qd8586r",
@@ -10461,7 +10516,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 22,
       "total_views": 158,
-      "total_sales": 0.0,
+      "total_sales": 30.78,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-27 23:26:03",
       "days_inactive": 37,
@@ -10478,8 +10533,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 30.78,
+      "views_7_chapters": 28,
+      "total_purchases": 19
     },
     {
       "comic_id": "cmv97ot181cyvt5f0egw3orr2",
@@ -10490,7 +10546,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 44,
       "total_views": 131,
-      "total_sales": 0.0,
+      "total_sales": 1.62,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-17 03:10:41",
       "days_inactive": 18,
@@ -10508,7 +10564,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "total_purchases": 1
     },
     {
       "comic_id": "cmu5mmr5j1zvl6kdejn4p80l8",
@@ -10537,7 +10594,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 66,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmuwogcnt0rx1t5hjln5y8r2f",
@@ -10566,7 +10624,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 36,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmvezsehy25w0t5eupwauchpa",
@@ -10575,7 +10634,7 @@
       "platform": "chaply",
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
-      "chapters_count": 129,
+      "chapters_count": 100,
       "total_views": 111,
       "total_sales": 0.0,
       "recorded_at": "2026-11-04T14:06:53.875941",
@@ -10595,7 +10654,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmulh7a6x0psht5ipr9jz255d",
@@ -10624,7 +10684,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 8,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmulk1lm70nygt5imr1z5d1u6",
@@ -10653,7 +10714,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 9,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmujqbsqt0elot5incscr253v",
@@ -10682,7 +10744,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 5,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmujpmchd0e91t5in51bn944s",
@@ -10711,7 +10774,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmuk5un2u0hubt5ivkc08trrj",
@@ -10722,7 +10786,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 11,
       "total_views": 47,
-      "total_sales": 0.0,
+      "total_sales": 1.62,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-09-28 01:46:57",
       "days_inactive": 37,
@@ -10739,8 +10803,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 1.62,
+      "views_7_chapters": 20,
+      "total_purchases": 1
     },
     {
       "comic_id": "cmu5jkndf1z9l6kdfzd09qnhi",
@@ -10751,7 +10816,7 @@
       "account_id": "chaply_adieu",
       "chapters_count": 0,
       "total_views": 6,
-      "total_sales": 0.0,
+      "total_sales": 0,
       "recorded_at": "2026-11-04T14:06:53.875941",
       "last_chapter_updated_at": "2026-10-14 10:50:00",
       "days_inactive": 21,
@@ -10768,8 +10833,9 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "total_purchases": 0
     },
     {
       "comic_id": "cmvscqbse140ot5i8vfzbibtm",
@@ -10778,7 +10844,7 @@
       "platform": "chaply",
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
-      "chapters_count": 0,
+      "chapters_count": 50,
       "total_views": 1,
       "total_sales": 0.0,
       "recorded_at": "2026-11-04T14:06:53.875941",
@@ -10798,7 +10864,8 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "total_purchases": 0
     }
   ]
 }

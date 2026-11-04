@@ -1,0 +1,456 @@
+[
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/wallet",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "balance": 1450.01,
+        "pending": 0,
+        "lifetimeEarn": 8684.01,
+        "updatedAt": "2026-11-04T09:09:21.022Z",
+        "nextPayoutDate": "2026-11-25T00:05:00.000Z"
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/permissions/decode",
+    "status": 200,
+    "method": "POST",
+    "data": {
+      "success": true,
+      "message": "Decoded successfully",
+      "data": {
+        "permission": {
+          "P300001": "1111",
+          "P300002": "1111"
+        },
+        "allAccess": false
+      },
+      "errors": []
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-status",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "ONGOING",
+          "name": "ดำเนินการ"
+        },
+        {
+          "id": "COMPLETED",
+          "name": "จบแล้ว"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-kind",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "LICENSE",
+          "name": "ลิขสิทธิ์"
+        },
+        {
+          "id": "FICTION",
+          "name": "แต่งเอง"
+        },
+        {
+          "id": "FANCLUB",
+          "name": "แฟนคลับ"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/rating",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "NORMAL",
+          "name": "ทั่วไป"
+        },
+        {
+          "id": "ADULT",
+          "name": "ผู้ใหญ่"
+        },
+        {
+          "id": "ADULTPLUS",
+          "name": "18+"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-type",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "COMICS",
+          "name": "การ์ตูน"
+        },
+        {
+          "id": "NOVEL",
+          "name": "นิยาย"
+        },
+        {
+          "id": "AUDIO",
+          "name": "เสียง"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/category",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "cmbr83n1200000wgokttfzozm",
+          "name": "โรแมนซ์",
+          "slug": "romance"
+        },
+        {
+          "id": "cmbr83naw00010wgou301mjau",
+          "name": "โรแมนซ์แฟนตาซี",
+          "slug": "romantic-fantasy"
+        },
+        {
+          "id": "cmbr83ngz00020wgo80oz0xnk",
+          "name": "ดราม่า",
+          "slug": "drama"
+        },
+        {
+          "id": "cmbr83nn300030wgo4hkljcns",
+          "name": "แอกชัน",
+          "slug": "action"
+        },
+        {
+          "id": "cmbr83nt700040wgole4l871b",
+          "name": "แฟนตาซี",
+          "slug": "fantasy"
+        },
+        {
+          "id": "cmbr83nze00050wgoespsetmv",
+          "name": "LGBTQ+ / Y",
+          "slug": "bl-gl"
+        },
+        {
+          "id": "cmbr83o5g00060wgo9neq0e2u",
+          "name": "ตลก",
+          "slug": "comedy"
+        },
+        {
+          "id": "cmbr83obn00070wgoodj1rx2a",
+          "name": "ระทึกขวัญ",
+          "slug": "thriller"
+        },
+        {
+          "id": "cmbr83oi200080wgosz8o3ut5",
+          "name": "สยองขวัญ",
+          "slug": "horror"
+        },
+        {
+          "id": "cmbr83oof00090wgo7jjwe7v3",
+          "name": "ชีวิตประจำวัน",
+          "slug": "local"
+        },
+        {
+          "id": "cmbr83oyb000a0wgogc6u8g0n",
+          "name": "อบอุ่นหัวใจ",
+          "slug": "heartwarming"
+        },
+        {
+          "id": "cmbr83p4e000b0wgof9a31gn3",
+          "name": "ย้อนยุค",
+          "slug": "historical"
+        },
+        {
+          "id": "cmbr83paf000c0wgoq474k8xj",
+          "name": "กำลังภายใน",
+          "slug": "martial-arts"
+        },
+        {
+          "id": "cmbr83pgg000d0wgocmer0dzr",
+          "name": "สืบสวน",
+          "slug": "detective"
+        },
+        {
+          "id": "cmbr83pmi000e0wgoto4rtpe5",
+          "name": "ไลท์โนเวล",
+          "slug": "light-novel"
+        },
+        {
+          "id": "cmbr83psm000f0wgovehcyg0k",
+          "name": "กีฬา",
+          "slug": "sports"
+        },
+        {
+          "id": "cmbr83pyo000g0wgoo785pwhl",
+          "name": "เกมส์ออนไลน์",
+          "slug": "online-games"
+        },
+        {
+          "id": "cmbr83q4r000h0wgo4h9kcqi0",
+          "name": "ผจญภัย",
+          "slug": "adventure"
+        },
+        {
+          "id": "cmfcgvwjy000a6kc8npdiseo5",
+          "name": "ชีวิตในโรงเรียน",
+          "slug": "school-life"
+        },
+        {
+          "id": "cmfcgwdea000b6kc8trtnti33",
+          "name": "เกิดใหม่",
+          "slug": "reborn"
+        },
+        {
+          "id": "cmfch9a32000m6kc8xdd9hcwj",
+          "name": "ระบบ",
+          "slug": "system"
+        },
+        {
+          "id": "cminxw41s0hfr6kgkoik3x6lt",
+          "name": "NTR",
+          "slug": "NTR"
+        },
+        {
+          "id": "cminxx5cv0hfw6kgkdf2oplnt",
+          "name": "ร้อนแรง",
+          "slug": "hot"
+        },
+        {
+          "id": "cminxxbaq0hfx6kgkmmyinmab",
+          "name": "Adult",
+          "slug": "Adult"
+        },
+        {
+          "id": "cminxxfqx0hg06kgk8bi0vwo9",
+          "name": "Ecchi",
+          "slug": "Ecchi"
+        },
+        {
+          "id": "cminxxkd60hhd6kgktqyuzihx",
+          "name": "Harem",
+          "slug": "Harem"
+        },
+        {
+          "id": "cminxxp8n0hhg6kgk8pz9oy8d",
+          "name": "NC",
+          "slug": "NC"
+        },
+        {
+          "id": "cminxxskl0hhn6kgkbkmgloxz",
+          "name": "BL",
+          "slug": "BL"
+        },
+        {
+          "id": "cmk4gqpzb00b16k7aewhwidrx",
+          "name": "แก้แค้น",
+          "slug": "revenge"
+        },
+        {
+          "id": "cmk8iwt9t01u06kgze1rfepwy",
+          "name": "มูริม",
+          "slug": "murim"
+        },
+        {
+          "id": "cmrgvnxnt4dvo6kap58v2g74b",
+          "name": "กลับชาติมาเกิด",
+          "slug": "reincarnation"
+        },
+        {
+          "id": "cmrgvoi1h4cme6kaomdgrrzdg",
+          "name": "ย้อนเวลา",
+          "slug": "time-travel"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/master/content-group-status",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "id": "DRAFT",
+          "name": "ฉบับร่าง"
+        },
+        {
+          "id": "SUSPENDED",
+          "name": "ระงับ"
+        },
+        {
+          "id": "PUBLIC",
+          "name": "เผยแพร่"
+        }
+      ],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/content-groups/cmu55krov20aa6kdb4kzmjpr9",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu55krov20aa6kdb4kzmjpr9",
+        "title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+        "slug": "global-awakening-the-synthesis-master-starts-with-an-undead",
+        "alterTitle": [],
+        "shortDescription": "",
+        "description": "<p>ยุคแห่งการเปลี่ยนอาชีพถ้วนหน้าอุบัติขึ้น 'เฉินม่อ' ปลุกพลังได้อาชีพลับที่มีเพียงหนึ่งเดียวอย่าง 'ผู้หลอมรวม'<br>ไม่ว่าจะเป็นทหารโครงกระดูกหรือภูตผีวิญญาณร้าย ล้วนสามารถจับมาฟิวชั่นเพื่อวิวัฒนาการ ขัดเกลาและอัปเกรดกองทัพมรณะอันเดดให้แข็งแกร่งขึ้นอย่างไม่หยุดยั้ง!<br>ซากกระดูกขาวโพลนเกลื่อนกลาดทั่วปฐพี ภัยพิบัติแห่งความตายกวาดล้างไปทั่วทั้งทวีป!<br>เขาจะขออาศัยพลังของตนเพียงลำพัง กวาดล้างศัตรูสุดแกร่งจากทั่วทุกสารทิศให้ราบเป็นหน้ากลอง!</p>",
+        "type": "COMICS",
+        "contentStatus": "ONGOING",
+        "contentRating": "NORMAL",
+        "contentKind": "LICENSE",
+        "coverUrl": "https://img2.chaply.net/media/2026/09/17/37e5861f-1e16-4c19-926b-a532df1eccb0_thumbnail.jpg",
+        "language": null,
+        "tags": [],
+        "userId": "cmu3k53qr1pfm6kdfefjli70o",
+        "translateBy": "",
+        "authorBy": "",
+        "totalView": "10130",
+        "totalEpisode": "26",
+        "totalComment": "1",
+        "totalFavorite": "44",
+        "createdAt": "2026-09-17T06:32:58.160Z",
+        "updatedAt": "2026-11-04T09:10:00.190Z",
+        "lastEpisodeId": "cmvrpmkti0xaut5i5ikede0c7",
+        "lastEpisodeAt": "2026-10-28T06:04:53.094Z",
+        "funRatingAvg": 0,
+        "funRatingTotal": 0,
+        "funRatingLow": 0,
+        "funRatingMid": 0,
+        "funRatingHigh": 0,
+        "reviewStatus": "PENDING",
+        "status": "PUBLIC",
+        "isHidden": false,
+        "categories": [
+          {
+            "id": "cmbr83nn300030wgo4hkljcns",
+            "name": "แอกชัน",
+            "slug": "action",
+            "description": null,
+            "imageUrl": null,
+            "color": null,
+            "displayOrder": 0,
+            "createdAt": "2025-06-22T15:01:56.431Z",
+            "updatedAt": "2025-06-22T15:01:56.431Z"
+          },
+          {
+            "id": "cmbr83nt700040wgole4l871b",
+            "name": "แฟนตาซี",
+            "slug": "fantasy",
+            "description": null,
+            "imageUrl": null,
+            "color": null,
+            "displayOrder": 0,
+            "createdAt": "2025-06-22T15:01:56.431Z",
+            "updatedAt": "2025-06-22T15:01:56.431Z"
+          }
+        ],
+        "user": {
+          "id": "cmu3k53qr1pfm6kdfefjli70o",
+          "email": "kuroko11.p.g@gmail.com",
+          "username": "Adieu7452",
+          "password": "$2b$10$0fTu59xTgw0dcw/xfRboWuwY/KUMZoHAuD/AeDzkoGFREKq5jGvaK",
+          "displayName": "แปลจนเมื่อย",
+          "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+          "emailVerified": "2026-09-16T03:45:09.171Z",
+          "verified": true,
+          "verifyCode": null,
+          "verifyCodeExpiresAt": null,
+          "resetPasswordToken": null,
+          "resetPasswordExpiresAt": null,
+          "socialLinks": {},
+          "totalFollowers": 35,
+          "totalFollowing": 0,
+          "isActive": true,
+          "coins": "0",
+          "createdAt": "2026-09-16T03:45:09.172Z",
+          "updatedAt": "2026-11-03T15:20:40.861Z",
+          "readingPreference": null,
+          "creatorTierId": "Beginner"
+        }
+      },
+      "message": ""
+    }
+  }
+]

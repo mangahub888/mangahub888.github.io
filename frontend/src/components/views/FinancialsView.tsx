@@ -367,9 +367,9 @@ export function FinancialsView({
           account: c.account || "",
 
           total_sales: 0,
-
           total_views: 0,
-
+          total_sales_7_chapters: 0,
+          total_views_7_chapters: 0,
           chapters_count: 0,
 
           days_inactive: null as number | null,
@@ -428,60 +428,50 @@ export function FinancialsView({
       g.items.push(c);
 
       const sales = Number(c.total_sales) || 0;
-
       const views = Number(c.total_views) || 0;
-
       const eps = Number(c.chapters_count) || 0;
+      const s7 = Number(c.sales_7_chapters) || 0;
+      const v7 = Number(c.views_7_chapters) || 0;
 
       g.total_sales += sales;
-
       g.total_views += views;
-
+      g.total_sales_7_chapters = (g.total_sales_7_chapters || 0) + s7;
+      g.total_views_7_chapters = (g.total_views_7_chapters || 0) + v7;
       g.chapters_count = Math.max(g.chapters_count, eps);
 
       if (c.days_inactive != null) {
         if (g.days_inactive === null || c.days_inactive < g.days_inactive) {
           g.days_inactive = c.days_inactive;
-
           g.last_chapter_updated_at = c.last_chapter_updated_at;
         }
       }
 
       if (plat === "readrealm") {
         g.readrealm.exists = true;
-
         g.readrealm.sales += sales;
-
+        g.readrealm.sales_7_chapters += s7;
         g.readrealm.views += views;
-
+        g.readrealm.views_7_chapters += v7;
         g.readrealm.chapters = Math.max(g.readrealm.chapters, eps);
-
         g.readrealm.id = String(c.comic_id || "");
-
         g.readrealm.account = c.account || "";
       } else if (plat === "kairew") {
         g.kairew.exists = true;
-
         g.kairew.sales += sales;
-
+        g.kairew.sales_7_chapters += s7;
         g.kairew.views += views;
-
+        g.kairew.views_7_chapters += v7;
         g.kairew.chapters = Math.max(g.kairew.chapters, eps);
-
         g.kairew.id = String(c.comic_id || "");
-
         g.kairew.account = c.account || "";
       } else if (plat === "chaply") {
         g.chaply.exists = true;
-
         g.chaply.sales += sales;
-
+        g.chaply.sales_7_chapters += s7;
         g.chaply.views += views;
-
+        g.chaply.views_7_chapters += v7;
         g.chaply.chapters = Math.max(g.chaply.chapters, eps);
-
         g.chaply.id = String(c.comic_id || "");
-
         g.chaply.account = c.account || "";
       }
 
@@ -716,29 +706,33 @@ export function FinancialsView({
 
       list = list.map((c) => {
         let display_sales = c.total_sales;
-
         let display_views = c.total_views;
+        let display_sales_7_chapters = c.total_sales_7_chapters || 0;
+        let display_views_7_chapters = c.total_views_7_chapters || 0;
 
         if (platformFilter === "readrealm") {
-          display_sales = c.readrealm.sales;
-
-          display_views = c.readrealm.views;
+          display_sales = c.readrealm?.sales || 0;
+          display_views = c.readrealm?.views || 0;
+          display_sales_7_chapters = c.readrealm?.sales_7_chapters || 0;
+          display_views_7_chapters = c.readrealm?.views_7_chapters || 0;
         } else if (platformFilter === "kairew") {
-          display_sales = c.kairew.sales;
-
-          display_views = c.kairew.views;
+          display_sales = c.kairew?.sales || 0;
+          display_views = c.kairew?.views || 0;
+          display_sales_7_chapters = c.kairew?.sales_7_chapters || 0;
+          display_views_7_chapters = c.kairew?.views_7_chapters || 0;
         } else if (platformFilter === "chaply") {
-          display_sales = c.chaply.sales;
-
-          display_views = c.chaply.views;
+          display_sales = c.chaply?.sales || 0;
+          display_views = c.chaply?.views || 0;
+          display_sales_7_chapters = c.chaply?.sales_7_chapters || 0;
+          display_views_7_chapters = c.chaply?.views_7_chapters || 0;
         }
 
         return {
           ...c,
-
           display_sales,
-
           display_views,
+          display_sales_7_chapters,
+          display_views_7_chapters,
         };
       });
 
@@ -841,35 +835,37 @@ export function FinancialsView({
 
     list = list.map((c) => ({
       ...c,
-
       display_sales: c.total_sales || 0,
-
       display_views: c.total_views || 0,
-
+      display_sales_7_chapters: c.sales_7_chapters || 0,
+      display_views_7_chapters: c.views_7_chapters || 0,
       readrealm: {
         exists: c.platform === "readrealm",
         sales: c.total_sales || 0,
+        sales_7_chapters: c.sales_7_chapters || 0,
         views: c.total_views || 0,
+        views_7_chapters: c.views_7_chapters || 0,
         id: c.comic_id,
         account: c.account,
       },
-
       kairew: {
         exists: c.platform === "kairew",
         sales: c.total_sales || 0,
+        sales_7_chapters: c.sales_7_chapters || 0,
         views: c.total_views || 0,
+        views_7_chapters: c.views_7_chapters || 0,
         id: c.comic_id,
         account: c.account,
       },
-
       chaply: {
         exists: c.platform === "chaply",
         sales: c.total_sales || 0,
+        sales_7_chapters: c.sales_7_chapters || 0,
         views: c.total_views || 0,
+        views_7_chapters: c.views_7_chapters || 0,
         id: c.comic_id,
         account: c.account,
       },
-
       platform_count: 1,
     }));
 

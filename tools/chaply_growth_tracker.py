@@ -232,13 +232,35 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
         is_inactive_30d = (days_inactive > 30)
 
+        # Fetch chapter sales and 7-chapter revenue via writer API
+        tot_sales = 0.0
+        s7 = 0.0
+        v7 = 0
+        try:
+            ep_url = f"https://api.chaply.net/api/writer/content-episodes/group/{cid}?pageIndex=0&pageSize=100&includeSales=true"
+            ep_headers = {"Authorization": f"Bearer {token}", "Origin": "https://www.chaply.net"}
+            r_ep = requests.get(ep_url, headers=ep_headers, timeout=12)
+            if r_ep.status_code == 200:
+                ep_items = r_ep.json().get("data", {}).get("items", [])
+                tot_sales = round(sum(float(i.get("total_revenue") or 0) for i in ep_items), 2)
+                ep_sorted = sorted(ep_items, key=lambda x: int(x.get("index") or 0))
+                last_7 = ep_sorted[-7:] if len(ep_sorted) >= 7 else ep_sorted
+                s7 = round(sum(float(i.get("total_revenue") or 0) for i in last_7), 2)
+                v7 = sum(int(i.get("total_views") or i.get("totalView") or 0) for i in last_7)
+                if len(ep_items) > 0:
+                    eps = len(ep_items)
+        except Exception:
+            pass
+
         current_snap_dict[cid] = {
             "subject": title,
             "slug": slug,
             "account": ACCOUNT_INFO["name"],
             "account_id": ACCOUNT_INFO["id"],
             "total_views": views,
-            "total_sales": 0.0,  # Individual sales if not provided per comic
+            "total_sales": tot_sales,
+            "sales_7_chapters": s7,
+            "views_7_chapters": v7,
             "chapters_count": eps,
             "last_chapter_updated_at": last_ep_str,
             "days_inactive": days_inactive,
@@ -337,6 +359,8 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "chapters_count": cur["chapters_count"],
             "total_views": cur_views,
             "total_sales": cur_sales,
+            "sales_7_chapters": cur.get("sales_7_chapters", 0.0),
+            "views_7_chapters": cur.get("views_7_chapters", 0),
             "recorded_at": recorded_at,
             "last_chapter_updated_at": cur["last_chapter_updated_at"],
             "days_inactive": cur["days_inactive"],
