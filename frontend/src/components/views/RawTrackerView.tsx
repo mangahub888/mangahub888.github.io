@@ -59,6 +59,7 @@ import {
   Flame,
   ArrowUpDown,
   QrCode,
+  RotateCcw,
 } from "lucide-react"
 
 export interface RawTrackerItem {
@@ -74,6 +75,7 @@ export interface RawTrackerItem {
   updatedat?: string
   autocheck?: boolean | string
   currentChapter?: string | number
+  currentchapter?: string | number
 }
 
 interface RawTrackerViewProps {
@@ -150,7 +152,9 @@ export function RawTrackerView({
   const [formMangaName, setFormMangaName] = React.useState("")
   const [formUrl, setFormUrl] = React.useState("")
   const [formPattern, setFormPattern] = React.useState("")
+  const [formCurrentChapter, setFormCurrentChapter] = React.useState("")
   const [formAutoCheck, setFormAutoCheck] = React.useState(true)
+  const [syncingTrackerId, setSyncingTrackerId] = React.useState<string | null>(null)
 
   // Test scrape state inside Modal
   const [testingScrape, setTestingScrape] = React.useState(false)
@@ -183,10 +187,12 @@ export function RawTrackerView({
       setFormMangaId(String(manga.mangaid || ""))
       setFormMangaName(manga.manganame || "")
       setFormUrl(manga.originalurl || "")
+      setFormCurrentChapter(manga.lastchapter !== undefined ? String(manga.lastchapter) : "")
     } else {
       setFormMangaId("")
       setFormMangaName("")
       setFormUrl("")
+      setFormCurrentChapter("")
     }
     setFormPattern("")
     setFormAutoCheck(true)
@@ -201,6 +207,7 @@ export function RawTrackerView({
     setFormMangaName(item.manganame || "")
     setFormUrl(item.url || "")
     setFormPattern(item.pattern || "")
+    setFormCurrentChapter(String(item.currentChapter || item.currentchapter || ""))
     setFormAutoCheck(
       item.autocheck !== undefined && String(item.autocheck).toLowerCase() !== "false"
     )
@@ -253,6 +260,21 @@ export function RawTrackerView({
       return
     }
 
+    const curChapStr = formCurrentChapter.trim()
+    const curChapNum = parseChapterNumber(curChapStr)
+    const rawCountNum = editingItem ? parseChapterNumber(editingItem.lastrawcount) : 0
+    let updatedStatus = editingItem?.status || "รอตรวจสอบครั้งแรก"
+    if (rawCountNum > 0 && curChapNum > 0) {
+      if (rawCountNum > curChapNum) {
+        const diff = Math.round((rawCountNum - curChapNum) * 100) / 100
+        updatedStatus = `มีตอนใหม่ (+${diff} ตอน)`
+      } else {
+        updatedStatus = "เป็นปัจจุบัน"
+      }
+    } else if (rawCountNum > 0 && curChapNum === 0) {
+      updatedStatus = `มีตอนใหม่ (+${rawCountNum} ตอน)`
+    }
+
     const payload = {
       mangaid: formMangaId,
       manganame:
@@ -262,6 +284,8 @@ export function RawTrackerView({
       url: formUrl.trim(),
       pattern: formPattern.trim(),
       autocheck: formAutoCheck,
+      currentchapter: curChapStr || "0",
+      ...(editingItem ? { status: sanitizeTrackerStatus(updatedStatus) } : {}),
     }
 
     try {
@@ -303,7 +327,18 @@ export function RawTrackerView({
         pattern: item.pattern,
       })
       if (res && res.success) {
-        const currentNum = parseChapterNumber(item.currentChapter)
+        // Resolve authoritative current chapter from linked manga in mangaMap, or fallback to tracker's value
+        const manga = item.mangaid ? mangaMap.get(String(item.mangaid)) : null
+        let currentNum = 0
+        let currentChapStr = "0"
+        if (manga && manga.lastchapter !== undefined && manga.lastchapter !== null && String(manga.lastchapter).trim() !== "") {
+          currentNum = parseChapterNumber(manga.lastchapter)
+          currentChapStr = String(manga.lastchapter)
+        } else {
+          currentNum = parseChapterNumber(item.currentChapter || item.currentchapter)
+          currentChapStr = String(item.currentChapter || item.currentchapter || "0")
+        }
+
         const oldScrapedNum = parseChapterNumber(item.lastrawcount)
         const newScrapedNum = parseChapterNumber(res.chapterCount)
 
@@ -342,6 +377,7 @@ export function RawTrackerView({
         await callGasApi("UPDATE_RAW_TRACKER", {
           id: item.trackerid,
           data: {
+            currentchapter: currentChapStr,
             lastrawtext: res.rawText || "",
             lastrawcount: newScrapedNum > 0 ? newScrapedNum : 0,
             status: sanitizeTrackerStatus(newStatus, diff),
@@ -413,17 +449,38 @@ export function RawTrackerView({
     }
   }
 
-  // Import from Manga List & Two-way sync (delete orphaned trackers)
+  // Quick Sync Single Tracker with Mangas table
+  const handleSyncSingleTracker = async (item: RawTrackerItem) => {
+    setSyncingTrackerId(item.trackerid)
+    try {
+      const res = await callGasApi("SYNC_SINGLE_RAW_TRACKER", {
+        id: item.trackerid,
+      })
+      if (res && res.success) {
+        toast.success(`ซิงก์เลขตอน "${item.manganame}" เป็นตอนที่ ${res.currentChapter} สำเร็จ (สถานะ: ${res.status})`)
+        refetch()
+      } else {
+        toast.error(res?.error || "ซิงก์เลขตอนไม่สำเร็จ")
+      }
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการซิงก์")
+    } finally {
+      setSyncingTrackerId(null)
+    }
+  }
+
+  // Import from Manga List & Two-way sync (delete orphaned trackers & sync current chapters)
   const handleImportFromManga = async () => {
-    toast.loading("กำลังซิงค์รายการติดตามกับหน้าตั้งค่ามังงะ...", {
+    toast.loading("กำลังซิงค์รายการติดตามและอัปเดตเลขตอนจากหน้าตั้งค่ามังงะ...", {
       id: "import-trackers",
     })
     try {
       const res: any = await callGasApi("IMPORT_FROM_MANGA_LIST")
       const del = res?.deletedCount || 0
       const add = res?.addedCount || 0
+      const syn = res?.syncedCount || 0
       toast.success(
-        `ซิงค์ข้อมูลมังงะเรียบร้อย (เพิ่มใหม่ ${add} เรื่อง, ลบเรื่องที่ยกเลิก ${del} เรื่อง)`,
+        `ซิงค์ข้อมูลมังงะเรียบร้อย (อัปเดตเลขตอน ${syn} เรื่อง, เพิ่มใหม่ ${add} เรื่อง, ลบเรื่องที่ยกเลิก ${del} เรื่อง)`,
         { id: "import-trackers" }
       )
       refetch()
@@ -1532,6 +1589,21 @@ export function RawTrackerView({
                       variant="outline"
                       size="icon"
                       className="h-8 w-8 border-[#26334d] hover:bg-slate-800"
+                      onClick={() => handleSyncSingleTracker(item)}
+                      disabled={syncingTrackerId === item.trackerid}
+                      title="ซิงก์เลขตอนล่าสุดจากตารางมังงะ"
+                    >
+                      <RotateCcw
+                        className={`h-3.5 w-3.5 text-indigo-300 ${
+                          syncingTrackerId === item.trackerid ? "animate-spin text-indigo-400" : ""
+                        }`}
+                      />
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 border-[#26334d] hover:bg-slate-800"
                       onClick={() => handleOpenEditModal(item)}
                       title="แก้ไข"
                     >
@@ -1807,6 +1879,21 @@ export function RawTrackerView({
                             <Button
                               size="icon"
                               variant="ghost"
+                              className="h-8 w-8 text-indigo-400 hover:text-white"
+                              onClick={() => handleSyncSingleTracker(item)}
+                              disabled={syncingTrackerId === item.trackerid}
+                              title="ซิงก์เลขตอนล่าสุดจากตารางมังงะ"
+                            >
+                              <RotateCcw
+                                className={`h-3.5 w-3.5 ${
+                                  syncingTrackerId === item.trackerid ? "animate-spin text-indigo-400" : ""
+                                }`}
+                              />
+                            </Button>
+
+                            <Button
+                              size="icon"
+                              variant="ghost"
                               className="h-8 w-8 text-slate-400 hover:text-white"
                               onClick={() => handleOpenEditModal(item)}
                               title="แก้ไขลิงก์ / รูปแบบ"
@@ -1865,6 +1952,9 @@ export function RawTrackerView({
                     if (m.originalurl && !formUrl) {
                       setFormUrl(m.originalurl)
                     }
+                    if (m.lastchapter !== undefined) {
+                      setFormCurrentChapter(String(m.lastchapter))
+                    }
                   }
                 }}
                 placeholder="เลือกเรื่องมังงะ..."
@@ -1879,6 +1969,37 @@ export function RawTrackerView({
                 value={formMangaName}
                 onChange={(e) => setFormMangaName(e.target.value)}
                 className="bg-[#0b1120] border-[#26334d]"
+              />
+            </div>
+
+            {/* Current Chapter in System */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label>เลขตอนล่าสุดในระบบ (Current Chapter)</Label>
+                {formMangaId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const m = mangaList.find((x) => String(x.mangaid) === formMangaId)
+                      if (m && m.lastchapter !== undefined) {
+                        setFormCurrentChapter(String(m.lastchapter))
+                        toast.info(`ดึงเลขตอนล่าสุด ${m.lastchapter} จากตารางมังงะแล้ว`)
+                      }
+                    }}
+                    className="text-[11px] text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                    ดึงค่าจากตารางมังงะ
+                  </button>
+                )}
+              </div>
+              <Input
+                type="number"
+                step="any"
+                placeholder="เช่น 120"
+                value={formCurrentChapter}
+                onChange={(e) => setFormCurrentChapter(e.target.value)}
+                className="bg-[#0b1120] border-[#26334d] font-mono text-xs"
               />
             </div>
 
