@@ -58,7 +58,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/data/readrealm_history.json tools/data/readrealm_growth_latest.json
+          git add tools/data/readrealm_history.json tools/data/readrealm_growth_latest.json frontend/public/data/readrealm_growth_latest.json frontend/src/data/readrealm_growth_latest.json
           if git diff --staged --quiet; then
             echo "No data changes to commit."
           else

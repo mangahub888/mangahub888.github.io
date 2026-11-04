@@ -35,7 +35,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { SearchableSelect } from "@/components/ui/searchable-select"
-import { THAI_MONTHS, THAI_SHORT_MONTHS, getChapterCount } from "@/lib/utils"
+import { THAI_SHORT_MONTHS, getChapterCount } from "@/lib/utils"
+import initialGrowthData from "@/data/readrealm_growth_latest.json"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
 import {
@@ -97,7 +98,7 @@ export function FinancialsView({
   const [activeTab, setActiveTab] = React.useState<"growth" | "pnl">("growth")
 
   // --- ReadRealm Growth Tracker State ---
-  const [trackerData, setTrackerData] = React.useState<any>(null)
+  const [trackerData, setTrackerData] = React.useState<any>(initialGrowthData)
   const [loadingGrowth, setLoadingGrowth] = React.useState<boolean>(false)
   const [triggeringAction, setTriggeringAction] = React.useState<boolean>(false)
   const [accountFilter, setAccountFilter] = React.useState<string>("all")
@@ -108,7 +109,23 @@ export function FinancialsView({
   const loadGrowthData = React.useCallback(async () => {
     setLoadingGrowth(true)
     try {
-      const res = await fetch("./data/readrealm_growth_latest.json", { cache: "no-store" })
+      // 1. Live raw GitHub content (freshest from 6h action runs)
+      try {
+        const liveRes = await fetch(
+          `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/main/tools/data/readrealm_growth_latest.json?_t=${Date.now()}`
+        )
+        if (liveRes.ok) {
+          const json = await liveRes.json()
+          if (json && json.comics && json.comics.length > 0) {
+            setTrackerData(json)
+            setLoadingGrowth(false)
+            return
+          }
+        }
+      } catch {}
+
+      // 2. Local build public json
+      const res = await fetch(`./data/readrealm_growth_latest.json?_t=${Date.now()}`, { cache: "no-store" })
       if (res.ok) {
         const json = await res.json()
         if (json && json.comics && json.comics.length > 0) {
@@ -190,19 +207,7 @@ export function FinancialsView({
   }, [trackerData, accountFilter, searchQuery, sortBy])
 
   // --- Traditional P&L Manual Ledger State ---
-  // Default to "all" if current month has no data so the user never sees an empty screen
-  const [monthFilter, setMonthFilter] = React.useState<string>(() => {
-    const curM = String(now.getMonth() + 1)
-    if (Array.isArray(salesList) && salesList.length > 0) {
-      const hasCur = salesList.some((s) => {
-        if (!s.date) return false
-        const d = new Date(s.date)
-        return String(d.getMonth() + 1) === curM
-      })
-      return hasCur ? curM : "all"
-    }
-    return "all"
-  })
+  // Month filter removed completely to focus on current totals and historical % growth
   const [yearFilter, setYearFilter] = React.useState("all")
 
   // Add Sale Modal
@@ -236,23 +241,19 @@ export function FinancialsView({
 
   const filteredSales = React.useMemo(() => {
     let list = [...(salesList || [])]
-    if (monthFilter !== "all" || yearFilter !== "all") {
+    if (yearFilter !== "all") {
       list = list.filter((s) => {
         if (!s.date) return false
         const d = new Date(s.date)
         if (isNaN(d.getTime())) return false
-        const mMatch =
-          monthFilter === "all" || String(d.getMonth() + 1) === monthFilter
-        const yMatch =
-          yearFilter === "all" || String(d.getFullYear()) === yearFilter
-        return mMatch && yMatch
+        return String(d.getFullYear()) === yearFilter
       })
     }
     list.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     )
     return list
-  }, [salesList, monthFilter, yearFilter])
+  }, [salesList, yearFilter])
 
   const summary = React.useMemo(() => {
     let totalRev = 0
@@ -1056,18 +1057,7 @@ export function FinancialsView({
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <CardTitle className="text-base">📈 แนวโน้มรายได้รายเดือน</CardTitle>
                 <div className="flex gap-2">
-                  <select
-                    className="h-8 rounded-lg border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
-                    value={monthFilter}
-                    onChange={(e) => setMonthFilter(e.target.value)}
-                  >
-                    <option value="all">เดือน: ทั้งหมด</option>
-                    {THAI_MONTHS.map((m, i) => (
-                      <option key={m} value={String(i + 1)}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
+
                   <select
                     className="h-8 rounded-lg border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
                     value={yearFilter}

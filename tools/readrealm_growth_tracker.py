@@ -441,6 +441,18 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         json.dump(report_output, f, ensure_ascii=False, indent=2)
     print(f"✓ บันทึกผลวิเคราะห์การเติบโตล่าสุด: {LATEST_GROWTH_FILE}")
 
+    # Also save to frontend public and src data directories
+    for sub in [("frontend", "public", "data"), ("frontend", "src", "data")]:
+        front_dir = os.path.join(BASE_DIR, "..", *sub)
+        try:
+            os.makedirs(front_dir, exist_ok=True)
+            out_path = os.path.join(front_dir, "readrealm_growth_latest.json")
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(report_output, f, ensure_ascii=False, indent=2)
+            print(f"✓ คัดลอกไปยัง Frontend: {out_path}")
+        except Exception as e:
+            print(f"⚠️ ไม่สามารถบันทึกไปยัง {front_dir}: {e}")
+
     # 7. Print Console Leaderboard
     print("\n" + "=" * 95)
     print(f"📈 ตารางรายงานสถิติยอดขาย ยอดวิว และอัตราการเติบโต (Top 15)")
