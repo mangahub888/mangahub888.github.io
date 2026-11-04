@@ -343,6 +343,41 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         except Exception as e:
             print(f"❌ Error fetching {acc['name']}: {e}")
 
+    # Fallback to cached stats if live fetch returned 0
+    if not all_current_comics:
+        print("⚠️ Live fetch returned 0 comics. Checking cached stats files...")
+        cached_lk = os.path.join(DATA_DIR, "readrealm_stats_lionking.json")
+        cached_ad = os.path.join(DATA_DIR, "readrealm_stats.json")
+        for path, acc in [(cached_lk, ACCOUNTS[0]), (cached_ad, ACCOUNTS[1])]:
+            if os.path.exists(path):
+                try:
+                    with open(path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    for c in data.get("comics", []):
+                        ch_list = c.get("chapters", [])
+                        last_ep_str = ch_list[-1].get("created_at") if ch_list else None
+                        days_inact = 0
+                        if last_ep_str:
+                            try:
+                                ep_dt = datetime.fromisoformat(last_ep_str.replace("Z", "+00:00"))
+                                days_inact = max(0, (now.replace(tzinfo=timezone.utc) - ep_dt).days)
+                            except Exception:
+                                days_inact = 0
+                        all_current_comics.append({
+                            "comic_id": str(c.get("comic_id")),
+                            "subject": c.get("subject", ""),
+                            "account": acc["name"],
+                            "account_id": acc["id"],
+                            "total_views": int(c.get("total_views") or 0),
+                            "total_sales": float(c.get("total_sales") or 0.0),
+                            "chapters_count": int(c.get("chapters_count") or len(ch_list)),
+                            "last_chapter_updated_at": last_ep_str or "",
+                            "days_inactive": days_inact,
+                            "is_inactive_30d": days_inact > 30
+                        })
+                except Exception as e:
+                    print(f"Error loading cache {path}: {e}")
+
     print(f"\n🎯 รวมการ์ตูนที่ดึงได้ทั้งหมด: {len(all_current_comics)} เรื่อง (2 บัญชี)")
 
     # 2. Build current snapshot dict
