@@ -3230,7 +3230,7 @@ function triggerGitHubRawTrackerPipeline(triggerSource, checkResult) {
 
     const resultStatus = {
       lastTriggeredAt: now,
-      triggerSource: triggerSource || 'manual',
+      triggerSource: (typeof triggerSource === 'string' && triggerSource) ? triggerSource : 'gas_6h_time_trigger',
       statusCode: code,
       success: code === 204 || code === 200,
       response: resp.getContentText()
@@ -5298,7 +5298,7 @@ function triggerGitHubReadRealmTrackerPipeline(triggerSource) {
 
     const resultStatus = {
       lastTriggeredAt: now,
-      triggerSource: triggerSource || 'manual',
+      triggerSource: (typeof triggerSource === 'string' && triggerSource) ? triggerSource : 'gas_6h_time_trigger',
       statusCode: code,
       success: code === 204 || code === 200,
       response: resp.getContentText()

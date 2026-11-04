@@ -1,9 +1,8 @@
 name: ReadRealm 6-Hour Growth Tracker Pipeline
 
 on:
-  schedule:
-    # รันติดตามและอัปเดตสถิติยอดวิว/ยอดขาย ทุกๆ 6 ชั่วโมง (00:00, 06:00, 12:00, 18:00 UTC)
-    - cron: '0 */6 * * *'
+  # สั่งรันตามเวลาจาก Google Apps Script (GAS Time-driven Trigger ทุก 6 ชม.)
+  # ป้องกันปัญหา GitHub Actions cron ดีเลย์หรือโดนแย่งคิว
   workflow_dispatch:
     inputs:
       force_refresh:

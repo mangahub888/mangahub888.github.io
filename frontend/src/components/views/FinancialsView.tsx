@@ -616,7 +616,7 @@ export function FinancialsView({
                     ReadRealm 6-Hour Auto Growth Pipeline
                   </span>
                   <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                    Git Action Active • Strategy 3+1
+                    GAS Trigger Active (ทุก 6 ชม. ตรงเวลา ไม่โดนแย่งคิว)
                   </span>
                 </div>
                 <p className="text-xs text-slate-400 mt-0.5">
