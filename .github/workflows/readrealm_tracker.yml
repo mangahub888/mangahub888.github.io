@@ -1,0 +1,67 @@
+name: ReadRealm 6-Hour Growth Tracker Pipeline
+
+on:
+  schedule:
+    # รันติดตามและอัปเดตสถิติยอดวิว/ยอดขาย ทุกๆ 6 ชั่วโมง (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      force_refresh:
+        description: 'Force refresh token via Playwright (true/false)'
+        required: false
+        default: 'false'
+
+concurrency:
+  group: readrealm-tracker-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  track-readrealm-growth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: Run ReadRealm Growth Tracker Engine
+        env:
+          PYTHONUNBUFFERED: '1'
+          READREALM_USER_1: ${{ secrets.READREALM_USER_1 || 'lionking20130@gmail.com' }}
+          READREALM_PASS_1: ${{ secrets.READREALM_PASS_1 || 'aDOPifen01@' }}
+          READREALM_USER_2: ${{ secrets.READREALM_USER_2 || 'adieu2547' }}
+          READREALM_PASS_2: ${{ secrets.READREALM_PASS_2 || 'alone2548' }}
+          GAS_URL: ${{ secrets.GAS_URL || 'https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec' }}
+          PASSCODE: ${{ secrets.PASSCODE || '10211032' }}
+        run: |
+          python tools/readrealm_growth_tracker.py
+
+      - name: Commit & Push Historical Snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/data/readrealm_history.json tools/data/readrealm_growth_latest.json
+          if git diff --staged --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "chore(tracker): update readrealm sales & views 6h snapshot [skip ci]"
+            git push origin main
+          fi

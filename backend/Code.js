@@ -15,6 +15,8 @@ const ACCESS_PASSCODE = '10211032';
 const FINANCIAL_PASSCODE = '720102';
 const RAW_TRACKER_SHEET_NAME = 'RawTracker';
 const PAYOUT_CLAIMS_SHEET_NAME = 'PayoutClaims';
+const READREALM_GROWTH_SHEET_NAME = 'ReadRealmGrowth';
+const READREALM_WORKFLOW_FILE = 'readrealm_tracker.yml';
 
 // --- TELEGRAM CONFIGURATION ---
 const TELEGRAM_BOT_TOKEN = '7836927758:AAHpsoCToMUxoeAzo5UMtMum3Ix5rIO_VOc';
@@ -312,6 +314,26 @@ function doPost(e) {
         break;
       case 'TRIGGER_RAW_TRACKER_PIPELINE':
         result = triggerGitHubRawTrackerPipeline(payload ? payload.source : 'frontend_ui');
+        break;
+
+      // --- READREALM TRACKER (6-HOUR AUTOMATION) ---
+      case 'TRIGGER_READREALM_TRACKER':
+        result = triggerGitHubReadRealmTrackerPipeline(payload ? payload.source : 'gas_trigger');
+        break;
+      case 'SETUP_READREALM_6H_TRIGGER':
+        result = { message: createReadRealm6HourTrigger() };
+        break;
+      case 'DELETE_READREALM_6H_TRIGGER':
+        result = { message: deleteReadRealm6HourTrigger() };
+        break;
+      case 'GET_READREALM_TRACKER_STATUS':
+        result = getReadRealmTrackerStatus();
+        break;
+      case 'SAVE_READREALM_GROWTH_DATA':
+        result = saveReadRealmGrowthData(payload);
+        break;
+      case 'GET_READREALM_GROWTH_DATA':
+        result = getReadRealmGrowthData();
         break;
       case 'GET_AUTO_TRACKER_STATUS':
         result = getAutoTrackerStatus();
@@ -681,6 +703,15 @@ function getSheet(name = SHEET_NAME) {
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#10b981').setFontColor('#ffffff');
+    } else if (name === READREALM_GROWTH_SHEET_NAME) {
+      const headers = [
+        'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
+        'TotalSales', 'TotalViews', 'ChaptersCount',
+        'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#3b82f6').setFontColor('#ffffff');
     }
     ensureSheetHeaders(sheet, name);
   }
@@ -5216,5 +5247,229 @@ function updatePayoutClaim(claimId, updateData) {
     return { error: err.toString() };
   } finally {
     lock.releaseLock();
+  }
+}
+
+
+// =============================================================================
+// READREALM 6-HOUR GROWTH TRACKER & PIPELINE AUTOMATION
+// =============================================================================
+
+function triggerGitHubReadRealmTrackerPipeline(triggerSource) {
+  try {
+    const token = getGitHubToken();
+    if (!token) {
+      console.warn('triggerGitHubReadRealmTrackerPipeline: GITHUB_TOKEN not available');
+      return { success: false, error: 'GITHUB_TOKEN not available' };
+    }
+
+    const url = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/actions/workflows/' + READREALM_WORKFLOW_FILE + '/dispatches';
+    const payload = {
+      ref: 'main',
+      inputs: {
+        force_refresh: 'false'
+      }
+    };
+
+    const options = {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'MangaHub-GAS-ReadRealmTracker'
+      },
+      muteHttpExceptions: true
+    };
+
+    const resp = UrlFetchApp.fetch(url, options);
+    const code = resp.getResponseCode();
+    const now = new Date().toISOString();
+
+    const resultStatus = {
+      lastTriggeredAt: now,
+      triggerSource: triggerSource || 'manual',
+      statusCode: code,
+      success: code === 204 || code === 200,
+      response: resp.getContentText()
+    };
+
+    try {
+      PropertiesService.getScriptProperties().setProperty('READREALM_LAST_PIPELINE_TRIGGER', JSON.stringify(resultStatus));
+    } catch (e) {}
+
+    console.log('triggerGitHubReadRealmTrackerPipeline status:', code, resultStatus);
+    return resultStatus;
+  } catch (err) {
+    console.error('triggerGitHubReadRealmTrackerPipeline error:', err);
+    return { success: false, error: err.toString() };
+  }
+}
+
+function createReadRealm6HourTrigger() {
+  deleteReadRealm6HourTrigger();
+  const trigger = ScriptApp.newTrigger('triggerGitHubReadRealmTrackerPipeline')
+    .timeBased()
+    .everyHours(6)
+    .create();
+  return '✓ สร้าง Trigger สั่งรัน ReadRealm Tracker บน GitHub Actions ทุกๆ 6 ชั่วโมงเรียบร้อยแล้ว (TriggerID: ' + trigger.getUniqueId() + ')';
+}
+
+function deleteReadRealm6HourTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let deleted = 0;
+  triggers.forEach(t => {
+    if (t.getHandlerFunction() === 'triggerGitHubReadRealmTrackerPipeline') {
+      ScriptApp.deleteTrigger(t);
+      deleted++;
+    }
+  });
+  return '✓ ลบ Trigger เก่าเรียบร้อยแล้ว (' + deleted + ' รายการ)';
+}
+
+function getReadRealmTrackerStatus() {
+  let lastTrigger = null;
+  let is6HourTriggerActive = false;
+  let summary = null;
+
+  try {
+    const rawTrigger = PropertiesService.getScriptProperties().getProperty('READREALM_LAST_PIPELINE_TRIGGER');
+    if (rawTrigger) lastTrigger = JSON.parse(rawTrigger);
+  } catch (e) {}
+
+  try {
+    const triggers = ScriptApp.getProjectTriggers();
+    is6HourTriggerActive = triggers.some(t => t.getHandlerFunction() === 'triggerGitHubReadRealmTrackerPipeline');
+  } catch (e) {}
+
+  try {
+    const sStr = PropertiesService.getScriptProperties().getProperty('READREALM_GROWTH_LATEST_SUMMARY');
+    if (sStr) summary = JSON.parse(sStr);
+  } catch (e) {}
+
+  return {
+    success: true,
+    is6HourTriggerActive: is6HourTriggerActive,
+    lastPipelineTrigger: lastTrigger,
+    latestSummary: summary
+  };
+}
+
+function saveReadRealmGrowthData(payload) {
+  if (!payload) return { error: 'No payload provided' };
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const comics = payload.comics || [];
+    const recordedAt = payload.pipeline_recorded_at || new Date().toISOString();
+    const dateRef = payload.date_reference || recordedAt.substring(0, 10);
+
+    const summary = {
+      pipeline_recorded_at: recordedAt,
+      date_reference: dateRef,
+      total_comics: payload.total_comics || comics.length,
+      total_sales_portfolio: payload.total_sales_portfolio || 0,
+      total_views_portfolio: payload.total_views_portfolio || 0,
+      has_7d_baseline: payload.has_7d_baseline || false,
+      has_30d_baseline: payload.has_30d_baseline || false,
+      updated_at: new Date().toISOString()
+    };
+    PropertiesService.getScriptProperties().setProperty('READREALM_GROWTH_LATEST_SUMMARY', JSON.stringify(summary));
+
+    if (comics.length > 0) {
+      const sheet = getSheet(READREALM_GROWTH_SHEET_NAME);
+      sheet.clearContents();
+      const headers = [
+        'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
+        'TotalSales', 'TotalViews', 'ChaptersCount',
+        'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#3b82f6').setFontColor('#ffffff');
+
+      const rows = comics.map(c => [
+        recordedAt,
+        dateRef,
+        c.comic_id || '',
+        c.subject || '',
+        c.account || '',
+        c.total_sales || 0,
+        c.total_views || 0,
+        c.chapters_count || 0,
+        (c.growth_7d && c.growth_7d.sales_delta) || 0,
+        (c.growth_7d && c.growth_7d.sales_growth_pct) || 0,
+        (c.growth_7d && c.growth_7d.views_delta) || 0,
+        (c.growth_7d && c.growth_7d.views_growth_pct) || 0,
+        (c.growth_30d && c.growth_30d.sales_delta) || 0,
+        (c.growth_30d && c.growth_30d.sales_growth_pct) || 0,
+        (c.growth_30d && c.growth_30d.views_delta) || 0,
+        (c.growth_30d && c.growth_30d.views_growth_pct) || 0
+      ]);
+
+      if (rows.length > 0) {
+        sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+      }
+    }
+
+    return { success: true, saved_count: comics.length, summary: summary };
+  } catch (err) {
+    return { error: 'Save ReadRealm Growth Data Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getReadRealmGrowthData() {
+  try {
+    let summary = null;
+    try {
+      const sStr = PropertiesService.getScriptProperties().getProperty('READREALM_GROWTH_LATEST_SUMMARY');
+      if (sStr) summary = JSON.parse(sStr);
+    } catch (e) {}
+
+    const sheet = getSheet(READREALM_GROWTH_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) {
+      return { success: true, summary: summary, comics: [] };
+    }
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const comics = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      comics.push({
+        recorded_at: row[headers.indexOf('recordedat')],
+        date: row[headers.indexOf('date')],
+        comic_id: row[headers.indexOf('comicid')],
+        subject: row[headers.indexOf('subject')],
+        account: row[headers.indexOf('account')],
+        total_sales: row[headers.indexOf('totalsales')],
+        total_views: row[headers.indexOf('totalviews')],
+        chapters_count: row[headers.indexOf('chapterscount')],
+        growth_7d: {
+          sales_delta: row[headers.indexOf('salesdelta7d')],
+          sales_growth_pct: row[headers.indexOf('salesgrowthpct7d')],
+          views_delta: row[headers.indexOf('viewsdelta7d')],
+          views_growth_pct: row[headers.indexOf('viewsgrowthpct7d')]
+        },
+        growth_30d: {
+          sales_delta: row[headers.indexOf('salesdelta30d')],
+          sales_growth_pct: row[headers.indexOf('salesgrowthpct30d')],
+          views_delta: row[headers.indexOf('viewsdelta30d')],
+          views_growth_pct: row[headers.indexOf('viewsgrowthpct30d')]
+        }
+      });
+    }
+
+    return {
+      success: true,
+      summary: summary,
+      total_comics: comics.length,
+      comics: comics
+    };
+  } catch (err) {
+    return { error: 'Get ReadRealm Growth Data Failed: ' + err.toString() };
   }
 }

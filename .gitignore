@@ -32,4 +32,11 @@ tools/tencent_app_session.json
 storageState.json
 tools/storageState.json
 
+# ReadRealm session caches
+tools/.chrome_readrealm*
+tools/*.png
+tools/readrealm_auth*.json
+tools/readrealm_bearer*.json
+tools/patch_backend.py
+
 test.py
