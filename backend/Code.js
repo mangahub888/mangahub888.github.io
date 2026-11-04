@@ -310,6 +310,15 @@ function doPost(e) {
       case 'SETUP_HOURLY_TRACKER_TRIGGER':
         result = setupHourlyTrackerTrigger();
         break;
+      case 'TRIGGER_RAW_TRACKER_PIPELINE':
+        result = triggerGitHubRawTrackerPipeline(payload ? payload.source : 'frontend_ui');
+        break;
+      case 'GET_AUTO_TRACKER_STATUS':
+        result = getAutoTrackerStatus();
+        break;
+      case 'SET_GITHUB_TOKEN':
+        result = setGitHubToken(payload ? payload.token : '');
+        break;
       case 'GET_RAW_TRACKER_PENDING_CHAPTERS':
         result = getRawTrackerPendingChapters(payload ? payload.trackerId : null);
         break;
@@ -3089,12 +3098,127 @@ function checkAllRawTrackers(notifyTelegram = false) {
     }
   }
 
+  const lastCheckInfo = {
+    checkedAt: now.toISOString(),
+    checkedCount: data.length - 1,
+    newUpdatesCount: newUpdates.length,
+    newUpdates: newUpdates
+  };
+  try {
+    PropertiesService.getScriptProperties().setProperty('RAW_TRACKER_LAST_CHECK', JSON.stringify(lastCheckInfo));
+  } catch (e) {
+    console.warn('Could not save RAW_TRACKER_LAST_CHECK property:', e);
+  }
+
   return {
     success: true,
     checkedAt: now.toISOString(),
     newUpdatesCount: newUpdates.length,
     newUpdates: newUpdates,
+    lastCheck: lastCheckInfo,
     list: getRawTrackerList()
+  };
+}
+
+const GITHUB_REPO_OWNER = 'mangahub888';
+const GITHUB_REPO_NAME = 'mangahub888.github.io';
+const GITHUB_WORKFLOW_FILE = 'auto_raw_tracker.yml';
+const GITHUB_TOKEN_PROP = 'GITHUB_TOKEN';
+// Default token (authorized with workflow scope)
+const DEFAULT_GITHUB_TOKEN = ''; // Injected via ScriptProperties (SET_GITHUB_TOKEN)
+
+function getGitHubToken() {
+  try {
+    const token = PropertiesService.getScriptProperties().getProperty(GITHUB_TOKEN_PROP);
+    if (token && token.trim()) return token.trim();
+  } catch (e) {}
+  return DEFAULT_GITHUB_TOKEN;
+}
+
+function setGitHubToken(token) {
+  if (!token) return { error: 'กรุณาระบุ Token' };
+  PropertiesService.getScriptProperties().setProperty(GITHUB_TOKEN_PROP, token.trim());
+  return { success: true, message: 'บันทึก GitHub Token เรียบร้อยแล้ว' };
+}
+
+function triggerGitHubRawTrackerPipeline(triggerSource, checkResult) {
+  try {
+    const token = getGitHubToken();
+    if (!token) {
+      console.warn('triggerGitHubRawTrackerPipeline: GITHUB_TOKEN not available');
+      return { success: false, error: 'GITHUB_TOKEN not available' };
+    }
+
+    const url = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/actions/workflows/' + GITHUB_WORKFLOW_FILE + '/dispatches';
+    const payload = {
+      ref: 'main',
+      inputs: {
+        cooldown_seconds: '300',
+        max_chapters: '0'
+      }
+    };
+
+    const options = {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'MangaHub-GAS-AutoTracker'
+      },
+      muteHttpExceptions: true
+    };
+
+    const resp = UrlFetchApp.fetch(url, options);
+    const code = resp.getResponseCode();
+    const now = new Date().toISOString();
+
+    const resultStatus = {
+      lastTriggeredAt: now,
+      triggerSource: triggerSource || 'manual',
+      statusCode: code,
+      success: code === 204 || code === 200,
+      response: resp.getContentText()
+    };
+
+    try {
+      PropertiesService.getScriptProperties().setProperty('RAW_TRACKER_LAST_PIPELINE_TRIGGER', JSON.stringify(resultStatus));
+    } catch (e) {}
+
+    console.log('triggerGitHubRawTrackerPipeline status:', code, resultStatus);
+    return resultStatus;
+  } catch (err) {
+    console.error('triggerGitHubRawTrackerPipeline error:', err);
+    return { success: false, error: err.toString() };
+  }
+}
+
+function getAutoTrackerStatus() {
+  let lastCheck = null;
+  let lastPipelineTrigger = null;
+  let isHourlyTriggerActive = false;
+
+  try {
+    const rawCheck = PropertiesService.getScriptProperties().getProperty('RAW_TRACKER_LAST_CHECK');
+    if (rawCheck) lastCheck = JSON.parse(rawCheck);
+  } catch (e) {}
+
+  try {
+    const rawTrigger = PropertiesService.getScriptProperties().getProperty('RAW_TRACKER_LAST_PIPELINE_TRIGGER');
+    if (rawTrigger) lastPipelineTrigger = JSON.parse(rawTrigger);
+  } catch (e) {}
+
+  try {
+    const triggers = ScriptApp.getProjectTriggers();
+    isHourlyTriggerActive = triggers.some(t => t.getHandlerFunction() === 'hourlyRawTrackerJob');
+  } catch (e) {}
+
+  return {
+    success: true,
+    isHourlyTriggerActive: isHourlyTriggerActive,
+    lastCheck: lastCheck,
+    lastPipelineTrigger: lastPipelineTrigger
   };
 }
 
@@ -3115,12 +3239,21 @@ function setupHourlyTrackerTrigger() {
   return {
     success: true,
     triggerId: newTrigger.getUniqueId(),
-    message: 'ตั้งระบบตรวจสอบต้นฉบับอัตโนมัติทุกๆ 1 ชั่วโมงเรียบร้อยแล้ว'
+    message: 'ตั้งระบบตรวจสอบต้นฉบับอัตโนมัติทุกๆ 1 ชั่วโมง (GAS Active) เรียบร้อยแล้ว'
   };
 }
 
 function hourlyRawTrackerJob() {
-  checkAllRawTrackers(true);
+  console.log('hourlyRawTrackerJob started: checking all sources (快看 / QQ / Thunderscans)...');
+  const checkResult = checkAllRawTrackers(true);
+  // เมื่อ GAS เช็คเสร็จแล้ว สั่งรัน GitAction raw tracker pipeline ทันที
+  const triggerResult = triggerGitHubRawTrackerPipeline('hourly_gas_job', checkResult);
+  console.log('hourlyRawTrackerJob finished, pipeline trigger result:', triggerResult);
+  return {
+    success: true,
+    checkResult: checkResult,
+    triggerResult: triggerResult
+  };
 }
 
 /**

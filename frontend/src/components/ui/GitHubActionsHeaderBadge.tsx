@@ -9,6 +9,7 @@ export function GitHubActionsHeaderBadge() {
     activeKuaikanRun,
     latestActiveRun,
     latestKuaikanRun,
+    latestRawTrackerRun,
   } = useGitHubActionsStatus()
 
   // 1. If KuaiKan Auto-Purchaser is currently running
@@ -62,18 +63,33 @@ export function GitHubActionsHeaderBadge() {
   }
 
   // 3. Standby State (Idle)
-  const lastRunInfo = latestKuaikanRun
-    ? `รันล่าสุด: KuaiKan #${latestKuaikanRun.run_number} (${
-        latestKuaikanRun.conclusion === "success"
+  const mostRecentRun = [latestRawTrackerRun, latestKuaikanRun]
+    .filter(Boolean)
+    .sort((a, b) => new Date(b!.created_at).getTime() - new Date(a!.created_at).getTime())[0]
+
+  const formatRelTime = (timeStr?: string) => {
+    if (!timeStr) return ""
+    const d = new Date(timeStr)
+    if (isNaN(d.getTime())) return ""
+    const diffSec = Math.floor((Date.now() - d.getTime()) / 1000)
+    if (diffSec < 60) return "เมื่อสักครู่"
+    if (diffSec < 3600) return `${Math.floor(diffSec / 60)} นาทีที่แล้ว`
+    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} ชม. ที่แล้ว`
+    return `${d.getDate()}/${d.getMonth() + 1}`
+  }
+
+  const lastRunInfo = mostRecentRun
+    ? `รันล่าสุด: ${mostRecentRun.name.includes("Raw") ? "Raw Tracker" : "KuaiKan"} #${mostRecentRun.run_number} (${
+        mostRecentRun.conclusion === "success"
           ? "สำเร็จ ✅"
-          : latestKuaikanRun.conclusion || "-"
-      })`
+          : mostRecentRun.conclusion || "-"
+      }) • ${formatRelTime(mostRecentRun.created_at)}`
     : "ไม่มีข้อมูลประวัติการรันล่าสุด"
 
   return (
     <a
       href={
-        latestKuaikanRun?.html_url ||
+        mostRecentRun?.html_url ||
         "https://github.com/mangahub888/mangahub888.github.io/actions"
       }
       target="_blank"
@@ -82,7 +98,9 @@ export function GitHubActionsHeaderBadge() {
       title={`GitHub Actions: สแตนด์บาย • ${lastRunInfo} (คลิกเพื่อดู Actions Tab)`}
     >
       <span className="h-2 w-2 rounded-full bg-emerald-500/60 inline-block" />
-      <span className="text-slate-300">⚪ GitAction: สแตนด์บาย</span>
+      <span className="text-slate-300">
+        ⚪ GitAction: {mostRecentRun ? `รันล่าสุด ${formatRelTime(mostRecentRun.created_at)}` : "สแตนด์บาย"}
+      </span>
     </a>
   )
 }

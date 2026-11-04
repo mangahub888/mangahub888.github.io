@@ -26,6 +26,7 @@ import { callGasApi } from "@/api/gasClient"
 import { isUrgentManga } from "@/lib/utils"
 import { toast } from "sonner"
 import { AutoRawPipelineModal } from "@/components/modals/AutoRawPipelineModal"
+import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
 import {
   Radio,
   RefreshCw,
@@ -102,6 +103,42 @@ export function RawTrackerView({
   // Auto Raw Pipeline modal state
   const [pipelineModalOpen, setPipelineModalOpen] = React.useState(false)
   const [pipelineTargetTrackerId, setPipelineTargetTrackerId] = React.useState<string | null>(null)
+
+  // Real-time GitHub Actions Status & Auto Tracker Status
+  const {
+    isRawTrackerRunning,
+    activeRawTrackerRun,
+    latestRawTrackerRun,
+    refetch: refetchActions,
+  } = useGitHubActionsStatus()
+
+  const { data: autoTrackerStatus, refetch: refetchAutoStatus } = useQuery<any>({
+    queryKey: ["autoTrackerStatus"],
+    queryFn: () => callGasApi("GET_AUTO_TRACKER_STATUS"),
+    refetchInterval: 60 * 1000,
+    staleTime: 30 * 1000,
+  })
+
+  const [triggeringPipeline, setTriggeringPipeline] = React.useState(false)
+
+  const handleTriggerPipelineNow = async () => {
+    setTriggeringPipeline(true)
+    toast.loading("กำลังสั่งให้ GAS ตรวจสอบและรัน GitAction Pipeline...", { id: "trigger-pipe" })
+    try {
+      const res = await callGasApi("TRIGGER_RAW_TRACKER_PIPELINE", { source: "manual_ui" })
+      if (res && res.success) {
+        toast.success("สั่งรัน GitAction Raw Tracker Pipeline สำเร็จ!", { id: "trigger-pipe" })
+        refetchActions()
+        refetchAutoStatus()
+      } else {
+        toast.error(res?.error || "ไม่สามารถสั่งรัน Pipeline ได้", { id: "trigger-pipe" })
+      }
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการสั่งรัน Pipeline", { id: "trigger-pipe" })
+    } finally {
+      setTriggeringPipeline(false)
+    }
+  }
   const [formMangaId, setFormMangaId] = React.useState("")
   const [formMangaName, setFormMangaName] = React.useState("")
   const [formUrl, setFormUrl] = React.useState("")
@@ -573,6 +610,24 @@ export function RawTrackerView({
   }, [activeTrackers, getTrackerUrgency])
   const newUpdatesCount = newUpdatesItems.length
 
+  // Effective last check & pipeline run times
+  const latestItemCheckTime = React.useMemo(() => {
+    let maxTime = 0
+    activeTrackers.forEach((t) => {
+      if (t.lastchecked) {
+        const d = new Date(t.lastchecked).getTime()
+        if (!isNaN(d) && d > maxTime) maxTime = d
+      }
+    })
+    return maxTime > 0 ? new Date(maxTime).toISOString() : null
+  }, [activeTrackers])
+
+  const effectiveLastCheckTime = autoTrackerStatus?.lastCheck?.checkedAt || latestItemCheckTime
+  const effectiveLastPipelineRunTime =
+    latestRawTrackerRun?.run_started_at ||
+    latestRawTrackerRun?.created_at ||
+    autoTrackerStatus?.lastPipelineTrigger?.lastTriggeredAt
+
   // Total pending chapters across all active trackers
   const totalPendingChapters = React.useMemo(() => {
     return activeTrackers.reduce((sum, t) => {
@@ -704,6 +759,83 @@ export function RawTrackerView({
 
   return (
     <div className="space-y-6">
+      {/* ⏱️ Top Status Banner: ระบบเช็คอัตโนมัติ ทุกๆ 1 ชั่วโมง GAS Active (快看 / QQ / Thunderscans) */}
+      <div className="p-3.5 px-4 rounded-xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/60 via-[#131b2e] to-[#0e1626] shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/40 shrink-0 mt-0.5 sm:mt-0">
+            <Clock className="h-5 w-5 text-indigo-300" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-slate-100 text-sm flex items-center gap-1.5">
+                ⏱️ ระบบเช็คอัตโนมัติ
+              </span>
+              <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-bold text-[11px] px-2 py-0.5">
+                <span className="relative flex h-2 w-2 mr-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                ทุกๆ 1 ชั่วโมง
+              </Badge>
+              <Badge variant="outline" className="border-sky-500/40 bg-sky-500/10 text-sky-300 font-semibold text-[11px] px-2 py-0.5">
+                GAS Active (快看 / QQ / Thunderscans)
+              </Badge>
+            </div>
+            <div className="text-slate-300 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+              <span>
+                🔍 <strong>ตรวจเช็คล่าสุด:</strong>{" "}
+                <span className="text-amber-300 font-medium">
+                  {formatRelativeTime(effectiveLastCheckTime)}
+                  {effectiveLastCheckTime && (
+                    <span className="text-[11px] text-slate-400 ml-1">
+                      ({new Date(effectiveLastCheckTime).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })})
+                    </span>
+                  )}
+                </span>
+              </span>
+              <span className="text-slate-600 hidden sm:inline">•</span>
+              <span>
+                🚀 <strong>รัน GitAction ล่าสุด:</strong>{" "}
+                <span className="text-emerald-400 font-medium">
+                  {effectiveLastPipelineRunTime
+                    ? `${formatRelativeTime(effectiveLastPipelineRunTime)} (${
+                        latestRawTrackerRun
+                          ? `Run #${latestRawTrackerRun.run_number} ${
+                              latestRawTrackerRun.conclusion === "success"
+                                ? "✅ สำเร็จ"
+                                : latestRawTrackerRun.status === "in_progress"
+                                ? "⚡ กำลังทำงาน"
+                                : latestRawTrackerRun.conclusion || ""
+                            }`
+                          : "Pipeline Triggered"
+                      })`
+                    : "ยังไม่มีประวัติการรัน"}
+                </span>
+              </span>
+              {isRawTrackerRunning && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold animate-pulse text-[11px]">
+                  <RefreshCw className="h-3 w-3 animate-spin" /> กำลังรัน Pipeline...
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 self-stretch sm:self-auto justify-end">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={handleTriggerPipelineNow}
+            disabled={triggeringPipeline || isRawTrackerRunning}
+            className="h-8 text-xs border-indigo-500/40 bg-indigo-950/40 hover:bg-indigo-900/50 text-indigo-200 gap-1.5 shadow-sm cursor-pointer"
+            title="สั่งให้ GAS รัน GitAction Raw Tracker Pipeline ทันที"
+          >
+            <Zap className={`h-3.5 w-3.5 text-amber-400 ${triggeringPipeline ? "animate-spin" : ""}`} />
+            {triggeringPipeline ? "กำลังสั่งรัน..." : "สั่งรัน Pipeline ทันที"}
+          </Button>
+        </div>
+      </div>
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#26334d] pb-5">
         <div>
