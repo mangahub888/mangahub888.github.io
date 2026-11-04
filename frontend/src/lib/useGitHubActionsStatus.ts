@@ -80,6 +80,10 @@ export function useGitHubActionsStatus() {
       (r.path && r.path.includes("thunderscans")) ||
       (r.name && r.name.toLowerCase().includes("thunderscans"))
 
+    const isProjectIdeas = (r: GitHubWorkflowRun) =>
+      (r.path && r.path.includes("project_ideas")) ||
+      (r.name && r.name.toLowerCase().includes("project ideas"))
+
     const activeRuns = runs.filter(isWorkflowRunning)
     const isAnyRunning = activeRuns.length > 0
 
@@ -95,9 +99,14 @@ export function useGitHubActionsStatus() {
     const activeThunderScansRun = thunderScansRuns.find(isWorkflowRunning) || null
     const isThunderScansRunning = Boolean(activeThunderScansRun)
 
+    const projectIdeasRuns = runs.filter(isProjectIdeas)
+    const activeProjectIdeasRun = projectIdeasRuns.find(isWorkflowRunning) || null
+    const isProjectIdeasRunning = Boolean(activeProjectIdeasRun)
+
     const latestActiveRun = activeRuns[0] || null
     const latestKuaikanRun = kuaikanRuns[0] || null
     const latestRawTrackerRun = rawTrackerRuns[0] || null
+    const latestProjectIdeasRun = projectIdeasRuns[0] || null
 
     return {
       runs,
@@ -106,12 +115,15 @@ export function useGitHubActionsStatus() {
       isKuaikanRunning,
       isRawTrackerRunning,
       isThunderScansRunning,
+      isProjectIdeasRunning,
       activeKuaikanRun,
       activeRawTrackerRun,
       activeThunderScansRun,
+      activeProjectIdeasRun,
       latestActiveRun,
       latestKuaikanRun,
       latestRawTrackerRun,
+      latestProjectIdeasRun,
     }
   }, [runs])
 

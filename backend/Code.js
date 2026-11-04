@@ -18,6 +18,7 @@ const PAYOUT_CLAIMS_SHEET_NAME = 'PayoutClaims';
 const READREALM_GROWTH_SHEET_NAME = 'ReadRealmGrowth';
 const READREALM_TIMELINE_SHEET_NAME = 'ReadRealm_Timeline_Summary';
 const READREALM_WORKFLOW_FILE = 'readrealm_tracker.yml';
+const PROJECT_IDEAS_WORKFLOW_FILE = 'project_ideas_crawler.yml';
 const KAIREW_GROWTH_SHEET_NAME = 'KairewGrowth';
 const KAIREW_TIMELINE_SHEET_NAME = 'Kairew_Timeline_Summary';
 const CHAPLY_GROWTH_SHEET_NAME = 'ChaplyGrowth';
@@ -331,6 +332,20 @@ function doPost(e) {
       case 'DELETE_READREALM_6H_TRIGGER':
         result = { message: deleteReadRealm6HourTrigger() };
         break;
+      // --- PROJECT IDEAS DISCOVERY (6-HOUR AUTOMATION) ---
+      case 'TRIGGER_PROJECT_IDEAS_PIPELINE':
+        result = triggerGitHubProjectIdeasPipeline(payload ? payload.source : 'frontend_ui');
+        break;
+      case 'CREATE_PROJECT_IDEAS_TRIGGER':
+        result = { message: createProjectIdeas6HourTrigger() };
+        break;
+      case 'DELETE_PROJECT_IDEAS_TRIGGER':
+        result = { message: deleteProjectIdeasTrigger() };
+        break;
+      case 'GET_PROJECT_IDEAS_TRIGGER_STATUS':
+        result = getProjectIdeasTriggerStatus();
+        break;
+
       case 'GET_READREALM_TRACKER_STATUS':
         result = getReadRealmTrackerStatus();
         break;
@@ -6038,4 +6053,104 @@ function getChaplyGrowthData() {
   } catch (err) {
     return { error: 'Get Chaply Growth Data Failed: ' + err.toString() };
   }
+}
+
+
+// =============================================================================
+// PROJECT IDEAS (MGEKO DISCOVERY) 6-HOUR AUTOMATION PIPELINE
+// =============================================================================
+
+function triggerGitHubProjectIdeasPipeline(triggerSource) {
+  try {
+    const token = getGitHubToken();
+    if (!token) {
+      console.warn('triggerGitHubProjectIdeasPipeline: GITHUB_TOKEN not available');
+      return { success: false, error: 'GITHUB_TOKEN not available' };
+    }
+
+    const url = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/actions/workflows/' + PROJECT_IDEAS_WORKFLOW_FILE + '/dispatches';
+    const payload = {
+      ref: 'main',
+      inputs: {
+        pages: '5',
+        max_chapters: '30'
+      }
+    };
+
+    const options = {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'MangaHub-GAS-ProjectIdeasCrawler'
+      },
+      muteHttpExceptions: true
+    };
+
+    const resp = UrlFetchApp.fetch(url, options);
+    const code = resp.getResponseCode();
+    const now = new Date().toISOString();
+
+    const resultStatus = {
+      lastTriggeredAt: now,
+      triggerSource: (typeof triggerSource === 'string' && triggerSource) ? triggerSource : 'gas_6h_time_trigger',
+      statusCode: code,
+      success: code === 204 || code === 200,
+      response: resp.getContentText()
+    };
+
+    try {
+      PropertiesService.getScriptProperties().setProperty('PROJECT_IDEAS_LAST_PIPELINE_TRIGGER', JSON.stringify(resultStatus));
+    } catch (e) {}
+
+    console.log('triggerGitHubProjectIdeasPipeline status:', code, resultStatus);
+    return resultStatus;
+  } catch (err) {
+    console.error('triggerGitHubProjectIdeasPipeline error:', err);
+    return { success: false, error: err.toString() };
+  }
+}
+
+function createProjectIdeas6HourTrigger() {
+  deleteProjectIdeasTrigger();
+  const trigger = ScriptApp.newTrigger('triggerGitHubProjectIdeasPipeline')
+    .timeBased()
+    .everyHours(6)
+    .create();
+  return '✓ สร้าง Trigger สั่งรัน Project Ideas Crawler บน GitHub Actions ทุกๆ 6 ชั่วโมงเรียบร้อยแล้ว (TriggerID: ' + trigger.getUniqueId() + ')';
+}
+
+function deleteProjectIdeasTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let deleted = 0;
+  triggers.forEach(t => {
+    if (t.getHandlerFunction() === 'triggerGitHubProjectIdeasPipeline') {
+      ScriptApp.deleteTrigger(t);
+      deleted++;
+    }
+  });
+  return '✓ ลบ Trigger เก่าเรียบร้อยแล้ว (' + deleted + ' รายการ)';
+}
+
+function getProjectIdeasTriggerStatus() {
+  let lastTrigger = null;
+  let is6HourTriggerActive = false;
+
+  try {
+    const rawTrigger = PropertiesService.getScriptProperties().getProperty('PROJECT_IDEAS_LAST_PIPELINE_TRIGGER');
+    if (rawTrigger) lastTrigger = JSON.parse(rawTrigger);
+  } catch (e) {}
+
+  try {
+    const triggers = ScriptApp.getProjectTriggers();
+    is6HourTriggerActive = triggers.some(t => t.getHandlerFunction() === 'triggerGitHubProjectIdeasPipeline');
+  } catch (e) {}
+
+  return {
+    success: true,
+    is6HourTriggerActive: is6HourTriggerActive,
+    lastPipelineTrigger: lastTrigger
+  };
 }

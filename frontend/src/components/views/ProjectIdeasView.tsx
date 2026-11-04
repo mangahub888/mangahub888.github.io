@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table"
 import initialIdeasData from "@/data/project_ideas_latest.json"
 import { callGasApi } from "@/api/gasClient"
+import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
 import { toast } from "sonner"
 import {
   Lightbulb,
@@ -33,7 +34,21 @@ import {
   ArrowUpDown,
   Filter,
   Check,
+  Power,
+  PowerOff,
+  Loader2,
 } from "lucide-react"
+
+interface TriggerStatusData {
+  is6HourTriggerActive: boolean
+  lastPipelineTrigger?: {
+    lastTriggeredAt?: string
+    triggerSource?: string
+    statusCode?: number
+    success?: boolean
+    response?: string
+  } | null
+}
 
 interface ProjectIdeasViewProps {
   onOpenAddManga?: (prefilled: any) => void
@@ -44,12 +59,20 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
   const [loading, setLoading] = React.useState<boolean>(false)
   const [triggering, setTriggering] = React.useState<boolean>(false)
 
+  // 6-Hour Automation Trigger Status
+  const [triggerStatus, setTriggerStatus] = React.useState<TriggerStatusData | null>(null)
+  const [loadingTriggerStatus, setLoadingTriggerStatus] = React.useState<boolean>(false)
+  const [togglingTrigger, setTogglingTrigger] = React.useState<boolean>(false)
+
+  // GitHub Actions Workflow Status
+  const { isProjectIdeasRunning, refetch: refetchActions } = useGitHubActionsStatus()
+
   // Filters
   const [searchQuery, setSearchQuery] = React.useState<string>("")
   const [originFilter, setOriginFilter] = React.useState<string>("all")
   const [chapterRange, setChapterRange] = React.useState<"all" | "1-5" | "6-15" | "16-30">("all")
   const [selectedGenre, setSelectedGenre] = React.useState<string>("all")
-  const [sortBy, setSortBy] = React.useState<"chap_asc" | "chap_desc" | "score_desc" | "recent">("chap_asc")
+  const [sortBy, setSortBy] = React.useState<"views_desc" | "chap_asc" | "chap_desc" | "score_desc" | "recent">("views_desc")
   const [viewMode, setViewMode] = React.useState<"grid" | "table">("grid")
   const [expandedSummaries, setExpandedSummaries] = React.useState<Record<string, boolean>>({})
 
@@ -89,17 +112,68 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
     }
   }, [])
 
+  // Fetch 6-Hour Trigger Status from GAS
+  const loadTriggerStatus = React.useCallback(async () => {
+    try {
+      setLoadingTriggerStatus(true)
+      const res = await callGasApi<TriggerStatusData>("GET_PROJECT_IDEAS_TRIGGER_STATUS")
+      if (res && typeof res.is6HourTriggerActive === "boolean") {
+        setTriggerStatus(res)
+      }
+    } catch (e) {
+      console.warn("Could not fetch project ideas trigger status", e)
+    } finally {
+      setLoadingTriggerStatus(false)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    loadTriggerStatus()
+  }, [loadTriggerStatus])
+
+  // Toggle 6-Hour Trigger (Enable / Disable)
+  const handleToggleTrigger = async () => {
+    if (togglingTrigger) return
+    setTogglingTrigger(true)
+    const isCurrentlyActive = Boolean(triggerStatus?.is6HourTriggerActive)
+    const action = isCurrentlyActive ? "DELETE_PROJECT_IDEAS_TRIGGER" : "CREATE_PROJECT_IDEAS_TRIGGER"
+    const toastId = toast.loading(
+      isCurrentlyActive
+        ? "กำลังปิดระบบ Trigger 6 ชั่วโมงใน GAS..."
+        : "กำลังสร้าง Trigger สั่งรันอัตโนมัติทุก 6 ชั่วโมงใน GAS..."
+    )
+
+    try {
+      const res: any = await callGasApi(action)
+      toast.success(
+        res?.message ||
+          (isCurrentlyActive
+            ? "ปิดระบบ Trigger อัตโนมัติทุก 6 ชั่วโมงเรียบร้อยแล้ว"
+            : "เปิดใช้งาน Trigger อัตโนมัติทุก 6 ชั่วโมงเรียบร้อยแล้ว"),
+        { id: toastId }
+      )
+      await loadTriggerStatus()
+    } catch (e: any) {
+      toast.error(e.message || "เกิดข้อผิดพลาดในการเปลี่ยนสถานะ Trigger", { id: toastId })
+    } finally {
+      setTogglingTrigger(false)
+    }
+  }
+
+  // Manually Trigger Project Ideas Workflow Pipeline
   const handleTriggerAction = async () => {
     setTriggering(true)
+    const toastId = toast.loading("กำลังส่งสัญญาณรัน Mgeko Discovery บน GitHub Actions...")
     try {
-      // Trigger via GAS or notify
-      await callGasApi("TRIGGER_RAW_TRACKER_PIPELINE", { source: "project_ideas_ui" })
-      toast.success("🚀 ส่งสัญญาณให้ระบบอัปเดตสแกนไอเดียมังงะใหม่เรียบร้อยแล้ว!")
+      await callGasApi("TRIGGER_PROJECT_IDEAS_PIPELINE", { source: "project_ideas_ui" })
+      toast.success("🚀 ส่งสัญญาณให้ระบบสแกนหาไอเดียมังงะใหม่เรียบร้อยแล้ว!", { id: toastId })
+      if (refetchActions) refetchActions()
       setTimeout(() => {
         loadLatestIdeas()
+        loadTriggerStatus()
       }, 4000)
     } catch (e: any) {
-      toast.error(e.message || "ไม่สามารถสั่งรันได้")
+      toast.error(e.message || "ไม่สามารถสั่งรันได้", { id: toastId })
     } finally {
       setTriggering(false)
     }
@@ -157,6 +231,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
 
     // Sort
     list.sort((a, b) => {
+      if (sortBy === "views_desc") return (b.views_count || 0) - (a.views_count || 0)
       if (sortBy === "chap_asc") return (a.chapter_count || 0) - (b.chapter_count || 0)
       if (sortBy === "chap_desc") return (b.chapter_count || 0) - (a.chapter_count || 0)
       if (sortBy === "score_desc") return parseFloat(b.score || 0) - parseFloat(a.score || 0)
@@ -228,6 +303,101 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
           >
             <Sparkles className={`h-3.5 w-3.5 mr-1.5 ${triggering ? "animate-bounce" : ""}`} />
             {triggering ? "กำลังสั่งรัน..." : "สั่งสแกนอัปเดตสด"}
+          </Button>
+        </div>
+      </div>
+
+      {/* 6-Hour Automation Trigger Status & Control Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 rounded-xl bg-[#0f172a]/90 border border-slate-800 backdrop-blur-xs text-xs">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-amber-400" />
+            <span className="font-semibold text-slate-200">ระบบอัปเดตอัตโนมัติ (6-Hour Trigger):</span>
+          </div>
+
+          {loadingTriggerStatus ? (
+            <Badge variant="outline" className="bg-slate-800/60 text-slate-400 border-slate-700 animate-pulse text-[11px]">
+              <Loader2 className="h-3 w-3 mr-1 animate-spin" /> กำลังตรวจสอบสถานะ...
+            </Badge>
+          ) : triggerStatus?.is6HourTriggerActive ? (
+            <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 gap-1.5 font-medium px-2.5 py-0.5 text-[11px]">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              เปิดทำงานทุก 6 ชม. (Active)
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="bg-rose-500/10 text-rose-400 border-rose-500/30 gap-1.5 font-medium px-2.5 py-0.5 text-[11px]">
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+              ปิดการทำงาน (Inactive)
+            </Badge>
+          )}
+
+          {isProjectIdeasRunning && (
+            <Badge className="bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse text-[11px]">
+              <Sparkles className="h-3 w-3 mr-1 animate-spin" />
+              GitHub Actions กำลังสแกนอยู่...
+            </Badge>
+          )}
+
+          {triggerStatus?.lastPipelineTrigger?.lastTriggeredAt && (
+            <span className="text-slate-400 flex items-center gap-1.5 text-[11px]">
+              <span>รันล่าสุด:</span>
+              <span className="text-slate-300 font-mono">
+                {new Date(triggerStatus.lastPipelineTrigger.lastTriggeredAt).toLocaleString("th-TH")}
+              </span>
+              <span
+                className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
+                  triggerStatus.lastPipelineTrigger.success
+                    ? "text-emerald-400 bg-emerald-950/40 border border-emerald-800/40"
+                    : "text-rose-400 bg-rose-950/40 border border-rose-800/40"
+                }`}
+              >
+                {triggerStatus.lastPipelineTrigger.success ? "สำเร็จ (204/200)" : "ล้มเหลว"}
+              </span>
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              loadTriggerStatus()
+              if (refetchActions) refetchActions()
+            }}
+            disabled={loadingTriggerStatus}
+            className="h-7 px-2 text-[11px] text-slate-400 hover:text-slate-200"
+            title="รีเฟรชสถานะ Trigger"
+          >
+            <RefreshCw className={`h-3 w-3 ${loadingTriggerStatus ? "animate-spin" : ""}`} />
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={handleToggleTrigger}
+            disabled={togglingTrigger || loadingTriggerStatus}
+            className={`h-7 px-3 text-xs font-medium transition-all ${
+              triggerStatus?.is6HourTriggerActive
+                ? "bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-700/50 hover:border-rose-600"
+                : "bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-700/50 hover:border-emerald-600"
+            }`}
+          >
+            {togglingTrigger ? (
+              <>
+                <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
+                กำลังสลับสถานะ...
+              </>
+            ) : triggerStatus?.is6HourTriggerActive ? (
+              <>
+                <PowerOff className="h-3 w-3 mr-1.5 text-rose-400" />
+                ปิด Trigger 6 ชม.
+              </>
+            ) : (
+              <>
+                <Power className="h-3 w-3 mr-1.5 text-emerald-400" />
+                เปิด Trigger 6 ชม.
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -330,6 +500,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
               value={sortBy}
               onChange={(e: any) => setSortBy(e.target.value)}
             >
+              <option value="views_desc">ยอดวิวสูงสุด 🔥</option>
               <option value="chap_asc">ตอนน้อยสุดไปมาก (1 → 30)</option>
               <option value="chap_desc">ตอนมากสุดไปน้อย (30 → 1)</option>
               <option value="score_desc">คะแนนรีวิวสูงสุด ⭐</option>
@@ -524,13 +695,18 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                         </div>
                       )}
 
-                      {/* Score Badge */}
-                      {item.score && (
+                      {/* Views / Score Badge */}
+                      {item.views_text || item.views_count ? (
+                        <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-[10px] font-mono text-amber-400 flex items-center gap-1 font-bold border border-amber-500/20">
+                          <Flame className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
+                          {item.views_text || `${(item.views_count || 0).toLocaleString()} วิว`}
+                        </span>
+                      ) : item.score ? (
                         <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-[10px] font-mono text-amber-400 flex items-center gap-0.5 font-bold">
                           <Star className="h-2.5 w-2.5 fill-amber-400" />
                           {item.score}
                         </span>
-                      )}
+                      ) : null}
 
                       {/* Chapter Pill Badge */}
                       <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-indigo-600/90 text-white text-[10px] font-mono font-bold shadow-sm">
@@ -590,9 +766,16 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                         <span className="font-mono text-emerald-400 font-semibold">
                           {item.latest_chapter_text || `Chapter ${item.chapter_count}`}
                         </span>
-                        <span className="text-[10px] text-slate-500">
-                          (เหลือที่ให้แปลตามอีกเยอะ)
-                        </span>
+                        {item.views_text ? (
+                          <span className="text-[11px] text-amber-400 font-mono flex items-center gap-1 font-semibold">
+                            <Flame className="h-3 w-3 fill-amber-400 text-amber-400" />
+                            {item.views_text} วิว
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-500">
+                            (เหลือที่ให้แปลตามอีกเยอะ)
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -676,7 +859,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                   <TableHead className="min-w-[200px]">ชื่อเรื่องมังงะ</TableHead>
                   <TableHead className="text-center min-w-[90px]">สัญชาติ</TableHead>
                   <TableHead className="text-center min-w-[100px]">ตอนล่าสุด</TableHead>
-                  <TableHead className="text-center min-w-[70px]">คะแนน</TableHead>
+                  <TableHead className="text-center min-w-[90px]">ยอดวิว</TableHead>
                   <TableHead className="min-w-[180px]">หมวดหมู่</TableHead>
                   <TableHead className="text-center min-w-[120px]">อัปเดตเมื่อ</TableHead>
                   <TableHead className="text-right min-w-[140px]">การจัดการ</TableHead>
@@ -743,7 +926,16 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                       </TableCell>
 
                       <TableCell className="text-center font-mono text-xs text-amber-400 font-semibold">
-                        {item.score ? `⭐ ${item.score}` : "-"}
+                        {item.views_text || item.views_count ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold shadow-xs">
+                            <Flame className="h-3 w-3 text-amber-400 fill-amber-400 shrink-0" />
+                            {item.views_text || `${item.views_count?.toLocaleString()} วิว`}
+                          </span>
+                        ) : item.score ? (
+                          <span>⭐ {item.score}</span>
+                        ) : (
+                          <span className="text-slate-500 font-normal">-</span>
+                        )}
                       </TableCell>
 
                       <TableCell>

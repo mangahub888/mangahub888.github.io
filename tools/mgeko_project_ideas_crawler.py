@@ -39,6 +39,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 FRONTEND_SRC_DIR = os.path.join(BASE_DIR, "..", "frontend", "src", "data")
 FRONTEND_PUB_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "data")
+FRONTEND_DIST_DIR = os.path.join(BASE_DIR, "..", "frontend", "dist", "data")
 
 OUTPUT_FILE = os.path.join(DATA_DIR, "project_ideas_latest.json")
 
@@ -357,7 +358,7 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 30) -> Dic
         json.dump(output_payload, f, ensure_ascii=False, indent=2)
     print(f"✓ บันทึกผลลัพธ์ลงใน: {OUTPUT_FILE}")
 
-    for out_dir in [FRONTEND_SRC_DIR, FRONTEND_PUB_DIR]:
+    for out_dir in [FRONTEND_SRC_DIR, FRONTEND_PUB_DIR, FRONTEND_DIST_DIR]:
         if os.path.exists(out_dir):
             target = os.path.join(out_dir, "project_ideas_latest.json")
             try:
