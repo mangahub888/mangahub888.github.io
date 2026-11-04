@@ -23,7 +23,14 @@ import {
 } from "@/components/ui/dialog"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { callGasApi } from "@/api/gasClient"
-import { isUrgentManga } from "@/lib/utils"
+import {
+  isUrgentManga,
+  parseChapterNumber,
+  formatChapterDisplay,
+  sanitizeTrackerStatus,
+} from "@/lib/utils"
+
+export { parseChapterNumber, formatChapterDisplay, sanitizeTrackerStatus }
 import { toast } from "sonner"
 import { AutoRawPipelineModal } from "@/components/modals/AutoRawPipelineModal"
 import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
@@ -296,9 +303,9 @@ export function RawTrackerView({
         pattern: item.pattern,
       })
       if (res && res.success) {
-        const currentNum = Number(item.currentChapter || 0)
-        const oldScrapedNum = Number(item.lastrawcount || 0)
-        const newScrapedNum = Number(res.chapterCount || 0)
+        const currentNum = parseChapterNumber(item.currentChapter)
+        const oldScrapedNum = parseChapterNumber(item.lastrawcount)
+        const newScrapedNum = parseChapterNumber(res.chapterCount)
 
         // Strict calculation: A new chapter exists ONLY if newScrapedNum > currentNum
         let isChanged = false
@@ -306,7 +313,7 @@ export function RawTrackerView({
         if (newScrapedNum > 0 && currentNum > 0) {
           if (newScrapedNum > currentNum) {
             isChanged = true
-            diff = newScrapedNum - currentNum
+            diff = Math.round((newScrapedNum - currentNum) * 100) / 100
           } else {
             isChanged = false
             diff = 0
@@ -314,7 +321,7 @@ export function RawTrackerView({
         } else if (newScrapedNum > 0 && currentNum === 0) {
           if (oldScrapedNum > 0 && newScrapedNum > oldScrapedNum) {
             isChanged = true
-            diff = newScrapedNum - oldScrapedNum
+            diff = Math.round((newScrapedNum - oldScrapedNum) * 100) / 100
           } else if (oldScrapedNum === 0) {
             isChanged = true
             diff = newScrapedNum
@@ -324,6 +331,10 @@ export function RawTrackerView({
           diff = 1
         }
 
+        if (isNaN(diff) || !isFinite(diff) || diff < 0) {
+          diff = isChanged ? 1 : 0
+        }
+
         const newStatus = isChanged && diff > 0
           ? `มีตอนใหม่ (+${diff} ตอน)`
           : "เป็นปัจจุบัน"
@@ -331,9 +342,9 @@ export function RawTrackerView({
         await callGasApi("UPDATE_RAW_TRACKER", {
           id: item.trackerid,
           data: {
-            lastrawtext: res.rawText,
-            lastrawcount: res.chapterCount,
-            status: newStatus,
+            lastrawtext: res.rawText || "",
+            lastrawcount: newScrapedNum > 0 ? newScrapedNum : 0,
+            status: sanitizeTrackerStatus(newStatus, diff),
             lastchecked: new Date().toISOString(),
             ...(isChanged ? { updatedat: new Date().toISOString() } : {}),
           },
@@ -342,7 +353,7 @@ export function RawTrackerView({
         if (isChanged && diff > 0) {
           toast.success(`🎉 ${item.manganame}: ตรวจพบตอนใหม่! (+${diff} ตอน)`)
         } else {
-          toast.info(`${item.manganame}: ตอนเป็นปัจจุบันแล้ว (${res.rawText})`)
+          toast.info(`${item.manganame}: ตอนเป็นปัจจุบันแล้ว (${res.rawText || "เป็นปัจจุบัน"})`)
         }
         refetch()
       } else {
@@ -366,9 +377,10 @@ export function RawTrackerView({
         notifyTelegram: true,
       })
       if (res && res.success) {
-        if (res.newUpdatesCount > 0) {
+        const updatesNum = parseChapterNumber(res.newUpdatesCount)
+        if (updatesNum > 0) {
           toast.success(
-            `🎉 ตรวจเช็คเสร็จสิ้น! พบตอนใหม่ทั้งหมด ${res.newUpdatesCount} เรื่อง`,
+            `🎉 ตรวจเช็คเสร็จสิ้น! พบตอนใหม่ทั้งหมด ${updatesNum} เรื่อง`,
             { id: "check-all-trackers", duration: 5000 }
           )
         } else {
@@ -378,7 +390,7 @@ export function RawTrackerView({
         }
         refetch()
       } else {
-        toast.error("ตรวจสอบไม่สำเร็จ", { id: "check-all-trackers" })
+        toast.error(res?.error || "ตรวจสอบไม่สำเร็จ", { id: "check-all-trackers" })
       }
     } catch (err: any) {
       toast.error(err.message || "เกิดข้อผิดพลาดในการตรวจสอบ", {
@@ -427,11 +439,10 @@ export function RawTrackerView({
       return
     }
     let nextChap = ""
-    if (item.currentChapter) {
-      const cur = parseFloat(String(item.currentChapter))
-      if (!isNaN(cur)) {
-        nextChap = String(cur + 1)
-      }
+    const cur = parseChapterNumber(item.currentChapter)
+    if (cur > 0) {
+      const nextVal = cur + 1
+      nextChap = String(Number.isInteger(nextVal) ? nextVal : Math.round(nextVal * 100) / 100)
     }
     onOpenAddQueueWithManga(String(item.mangaid), nextChap)
   }
@@ -457,8 +468,8 @@ export function RawTrackerView({
             m.manganame.trim().toLowerCase() === item.manganame.trim().toLowerCase()
         )
       const isUrgent = isUrgentManga(manga)
-      const currentChap = parseFloat(String(item.currentChapter || "0")) || 0
-      const rawChap = parseFloat(String(item.lastrawcount || "0")) || 0
+      const currentChap = parseChapterNumber(item.currentChapter)
+      const rawChap = parseChapterNumber(item.lastrawcount)
 
       // Strict calculation: A manga has a new chapter ONLY if rawChap > currentChap
       let hasNew = false
@@ -466,7 +477,7 @@ export function RawTrackerView({
       if (rawChap > 0 && currentChap > 0) {
         if (rawChap > currentChap) {
           hasNew = true
-          diff = rawChap - currentChap
+          diff = Math.round((rawChap - currentChap) * 100) / 100
         } else {
           hasNew = false
           diff = 0
@@ -476,6 +487,15 @@ export function RawTrackerView({
         diff = rawChap
       } else {
         hasNew = String(item.status || "").includes("มีตอนใหม่")
+        if (hasNew) {
+          const match = String(item.status || "").match(/\+(\d+(?:\.\d+)?)/)
+          diff = match ? parseChapterNumber(match[1]) : 1
+        } else {
+          diff = 0
+        }
+      }
+
+      if (isNaN(diff) || !isFinite(diff) || diff < 0) {
         diff = hasNew ? 1 : 0
       }
 
@@ -632,7 +652,9 @@ export function RawTrackerView({
   const totalPendingChapters = React.useMemo(() => {
     return activeTrackers.reduce((sum, t) => {
       const u = getTrackerUrgency(t)
-      return sum + (u.hasNew ? Math.max(1, u.diff) : 0)
+      const diffVal = u.diff && !isNaN(u.diff) && isFinite(u.diff) ? u.diff : 1
+      const count = u.hasNew ? Math.max(1, diffVal) : 0
+      return sum + (isNaN(count) || !isFinite(count) ? 0 : count)
     }, 0)
   }, [activeTrackers, getTrackerUrgency])
 
@@ -1395,9 +1417,9 @@ export function RawTrackerView({
                     <div className="rounded-lg bg-[#0b1120] border border-[#26334d] p-2 space-y-1">
                       <div className="flex items-center justify-between text-[11px] text-slate-400">
                         <span>ข้อความล่าสุดที่ตรวจพบ:</span>
-                        {item.lastrawcount && (
+                        {parseChapterNumber(item.lastrawcount) > 0 && (
                           <span className="font-semibold text-slate-300 font-mono">
-                            {item.lastrawcount} ตอน
+                            {formatChapterDisplay(item.lastrawcount)} ตอน
                           </span>
                         )}
                       </div>
@@ -1416,7 +1438,7 @@ export function RawTrackerView({
                           ในระบบ
                         </span>
                         <span className="font-mono text-xs font-bold text-slate-200">
-                          {item.currentChapter || "-"}
+                          {formatChapterDisplay(item.currentChapter)}
                         </span>
                       </div>
                       <div>
@@ -1424,7 +1446,7 @@ export function RawTrackerView({
                           ต้นฉบับ
                         </span>
                         <span className="font-mono text-xs font-bold text-pink-300">
-                          {item.lastrawcount || "-"}
+                          {formatChapterDisplay(item.lastrawcount)}
                         </span>
                       </div>
                       <div>
@@ -1440,7 +1462,7 @@ export function RawTrackerView({
                               : "text-slate-500"
                           }`}
                         >
-                          {u.hasNew ? `+${u.diff}` : "0"}
+                          {u.hasNew && u.diff > 0 ? `+${u.diff}` : "0"}
                         </span>
                       </div>
                     </div>
@@ -1673,9 +1695,9 @@ export function RawTrackerView({
                               >
                                 {item.lastrawtext}
                               </span>
-                              {item.lastrawcount && (
+                              {parseChapterNumber(item.lastrawcount) > 0 && (
                                 <span className="text-[10px] text-slate-400 mt-0.5">
-                                  ({item.lastrawcount} ตอน)
+                                  ({formatChapterDisplay(item.lastrawcount)} ตอน)
                                 </span>
                               )}
                             </div>
@@ -1689,7 +1711,7 @@ export function RawTrackerView({
                         {/* Current Chapter in System */}
                         <TableCell className="text-center">
                           <span className="font-mono text-xs text-slate-300 font-semibold">
-                            ตอนที่ {item.currentChapter || "-"}
+                            ตอนที่ {formatChapterDisplay(item.currentChapter)}
                           </span>
                         </TableCell>
 
@@ -1711,7 +1733,7 @@ export function RawTrackerView({
                               className="text-[11px] px-2 py-0.5"
                             >
                               <AlertCircle className="h-3 w-3 mr-1" />
-                              {item.status}
+                              {sanitizeTrackerStatus(item.status)}
                             </Badge>
                           ) : (
                             <Badge
@@ -1719,7 +1741,7 @@ export function RawTrackerView({
                               className="bg-[#151d2f] text-slate-300 border-[#26334d] text-xs"
                             >
                               <Check className="h-3 w-3 mr-1 text-emerald-400" />
-                              {item.status || "เป็นปัจจุบัน"}
+                              {sanitizeTrackerStatus(item.status, u.diff)}
                             </Badge>
                           )}
                         </TableCell>
@@ -1965,7 +1987,7 @@ export function RawTrackerView({
                           {testScrapeResult.rawText}
                         </code>
                         <span className="ml-1 text-slate-300">
-                          (ตีความได้: {testScrapeResult.chapterCount} ตอน)
+                          (ตีความได้: {parseChapterNumber(testScrapeResult.chapterCount)} ตอน)
                         </span>
                       </div>
                     </div>

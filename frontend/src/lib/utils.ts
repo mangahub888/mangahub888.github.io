@@ -164,3 +164,65 @@ export function extractStepLinks(worklink: string | undefined, stepLabel: string
 
   return matched
 }
+
+/**
+ * Safely parse a chapter number or count from any input:
+ * - handles numbers, strings, Thai/Chinese/English text (e.g. "ตอนที่ 120", "Chapter 73", "共366篇正文", "第277话")
+ * - guarantees NEVER returning NaN (returns 0 on failure or invalid input)
+ */
+export function parseChapterNumber(val: any): number {
+  if (val == null) return 0
+  if (typeof val === "number") {
+    return isNaN(val) || !isFinite(val) ? 0 : val
+  }
+  const str = String(val).trim()
+  if (!str || str.toLowerCase() === "nan" || str === "-" || str === "null" || str === "undefined") {
+    return 0
+  }
+  // Direct parseFloat first
+  const direct = parseFloat(str)
+  if (!isNaN(direct) && isFinite(direct)) {
+    return direct
+  }
+  // Regex extraction for strings like "ตอนที่ 120", "Chapter 73", "共366篇正文", "第277话"
+  const match = str.match(/(\d+(?:\.\d+)?)/)
+  if (match) {
+    const num = parseFloat(match[1])
+    return isNaN(num) || !isFinite(num) ? 0 : num
+  }
+  return 0
+}
+
+/**
+ * Format chapter number or count for clean UI display
+ * - If value is invalid, NaN, "NaN", null, undefined or <= 0 -> returns fallback (default "-")
+ */
+export function formatChapterDisplay(val: any, fallback: string = "-"): string {
+  if (val == null) return fallback
+  const str = String(val).trim()
+  if (!str || str.toLowerCase() === "nan" || str === "-" || str === "null" || str === "undefined") {
+    return fallback
+  }
+  if (str === "0") return "0"
+  const num = parseChapterNumber(val)
+  if (num > 0) {
+    return Number.isInteger(num) ? String(num) : String(Math.round(num * 100) / 100)
+  }
+  if (!str.toLowerCase().includes("nan")) {
+    return str
+  }
+  return fallback
+}
+
+/**
+ * Sanitize status string to guarantee it NEVER displays "(+NaN ตอน)" or "NaN"
+ */
+export function sanitizeTrackerStatus(status?: string, safeDiff: number = 0): string {
+  if (!status) return "เป็นปัจจุบัน"
+  const s = String(status).trim()
+  if (!s || s.toLowerCase() === "nan") return "เป็นปัจจุบัน"
+  if (s.includes("NaN") || s.includes("nan")) {
+    return safeDiff > 0 ? `มีตอนใหม่ (+${safeDiff} ตอน)` : "มีตอนใหม่"
+  }
+  return s
+}

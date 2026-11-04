@@ -1,5 +1,6 @@
 import * as React from "react"
 import { callGasApi } from "@/api/gasClient"
+import { parseChapterNumber } from "@/lib/utils"
 import { loadImageElement, normalizeKuaikanImageUrl } from "./KuaiKanLoginModal"
 import { notifyCoinAlertChange } from "@/lib/kuaikanCoinAlert"
 import { KuaikanCoinWarningBanner } from "@/components/ui/KuaikanCoinWarningBanner"
@@ -96,7 +97,7 @@ export function AutoRawPipelineModal({
           mangaId: t.mangaId,
           mangaName: t.mangaName,
           comicId: t.comicId,
-          chapterNum: t.chapterNum,
+          chapterNum: parseChapterNumber(t.chapterNum),
           chapterTitle: t.chapterTitle,
           sourceUrl: t.sourceUrl,
           connector: t.connector || "kuaikan",
