@@ -102,8 +102,9 @@ export function FinancialsView({
   const [loadingGrowth, setLoadingGrowth] = React.useState<boolean>(false)
   const [triggeringAction, setTriggeringAction] = React.useState<boolean>(false)
   const [accountFilter, setAccountFilter] = React.useState<string>("all")
+  const [statusFilter, setStatusFilter] = React.useState<"all" | "inactive30" | "active30" | "inactive90">("all")
   const [searchQuery, setSearchQuery] = React.useState<string>("")
-  const [sortBy, setSortBy] = React.useState<"sales" | "views" | "growth7d" | "growth30d">("sales")
+  const [sortBy, setSortBy] = React.useState<"sales" | "views" | "inactive_desc" | "inactive_asc" | "growth7d" | "growth30d">("sales")
 
   // Load latest ReadRealm 6h growth data
   const loadGrowthData = React.useCallback(async () => {
@@ -169,13 +170,22 @@ export function FinancialsView({
     }
   }
 
-  // Filtered & Sorted Comics for Growth Table
+  // Filtered & Sorted Comics for Growth Table (with Inactivity > 30d Filter)
   const filteredComics = React.useMemo(() => {
     if (!trackerData || !Array.isArray(trackerData.comics)) return []
     let list = [...trackerData.comics]
 
     if (accountFilter !== "all") {
       list = list.filter((c) => c.account_id === accountFilter || c.account === accountFilter)
+    }
+
+    // Filter by inactivity (no new chapter > 30 days, <= 30 days, or > 90 days)
+    if (statusFilter === "inactive30") {
+      list = list.filter((c) => (c.days_inactive != null ? c.days_inactive : 0) > 30)
+    } else if (statusFilter === "active30") {
+      list = list.filter((c) => (c.days_inactive != null ? c.days_inactive : 0) <= 30)
+    } else if (statusFilter === "inactive90") {
+      list = list.filter((c) => (c.days_inactive != null ? c.days_inactive : 0) > 90)
     }
 
     if (searchQuery.trim()) {
@@ -190,6 +200,12 @@ export function FinancialsView({
     list.sort((a, b) => {
       if (sortBy === "sales") return (b.total_sales || 0) - (a.total_sales || 0)
       if (sortBy === "views") return (b.total_views || 0) - (a.total_views || 0)
+      if (sortBy === "inactive_desc") {
+        return (b.days_inactive != null ? b.days_inactive : 0) - (a.days_inactive != null ? a.days_inactive : 0)
+      }
+      if (sortBy === "inactive_asc") {
+        return (a.days_inactive != null ? a.days_inactive : 0) - (b.days_inactive != null ? b.days_inactive : 0)
+      }
       if (sortBy === "growth7d") {
         const gA = a.growth_7d?.sales_growth_pct || 0
         const gB = b.growth_7d?.sales_growth_pct || 0
@@ -204,7 +220,7 @@ export function FinancialsView({
     })
 
     return list
-  }, [trackerData, accountFilter, searchQuery, sortBy])
+  }, [trackerData, accountFilter, statusFilter, searchQuery, sortBy])
 
   // --- Traditional P&L Manual Ledger State ---
   // Month filter removed completely to focus on current totals and historical % growth
@@ -737,64 +753,120 @@ export function FinancialsView({
             </Card>
           </div>
 
-          {/* Controls: Account Filter, Search, Sort */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-3 rounded-xl border border-slate-800 bg-[#0b1120]/80">
-            {/* Account Filter Pills */}
-            <div className="flex items-center gap-1.5 flex-wrap">
+          {/* Controls: Account Filter, Inactivity Filter, Search, Sort */}
+          <div className="flex flex-col gap-3 p-3 rounded-xl border border-slate-800 bg-[#0b1120]/80">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+              {/* Account Filter Pills */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] text-slate-400 mr-1 font-medium">บัญชี:</span>
+                <button
+                  onClick={() => setAccountFilter("all")}
+                  className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                    accountFilter === "all"
+                      ? "bg-slate-700 text-white border-slate-600"
+                      : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                  }`}
+                >
+                  ทั้งหมด (236)
+                </button>
+                <button
+                  onClick={() => setAccountFilter("แปลจนเมื่อย")}
+                  className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                    accountFilter === "แปลจนเมื่อย" || accountFilter === "lionking"
+                      ? "bg-indigo-600/30 text-indigo-300 border-indigo-500/50"
+                      : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                  }`}
+                >
+                  แปลจนเมื่อย (155)
+                </button>
+                <button
+                  onClick={() => setAccountFilter("แปลแล้วแปลอีก")}
+                  className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                    accountFilter === "แปลแล้วแปลอีก" || accountFilter === "adieu"
+                      ? "bg-purple-600/30 text-purple-300 border-purple-500/50"
+                      : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                  }`}
+                >
+                  แปลแล้วแปลอีก (81)
+                </button>
+              </div>
+
+              {/* Search & Sort */}
+              <div className="flex items-center gap-2 flex-1 max-w-md">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <Input
+                    placeholder="ค้นหาชื่อเรื่องมังงะ..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="h-8 pl-8 text-xs bg-[#0f172a] border-slate-800"
+                  />
+                </div>
+
+                <select
+                  className="h-8 rounded-lg border border-slate-800 bg-[#0f172a] px-2.5 text-xs text-slate-200"
+                  value={sortBy}
+                  onChange={(e: any) => setSortBy(e.target.value)}
+                >
+                  <option value="sales">ยอดขายสูงสุด</option>
+                  <option value="views">ยอดวิวสูงสุด</option>
+                  <option value="inactive_desc">ขาดตอนใหม่นานสุด (&gt; 30d)</option>
+                  <option value="inactive_asc">อัปเดตตอนใหม่ล่าสุด</option>
+                  <option value="growth7d">อัตราโต 7 วัน</option>
+                  <option value="growth30d">อัตราโต 30 วัน</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Inactivity Filter Pills (ตัวกรองเรื่องที่ไม่มีตอนใหม่มานาน > 30 วัน) */}
+            <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-800/60">
+              <span className="text-[11px] text-slate-400 mr-1 font-medium">ตอนใหม่ล่าสุด:</span>
               <button
-                onClick={() => setAccountFilter("all")}
-                className={`px-3 py-1 text-xs font-medium rounded-lg border transition-all ${
-                  accountFilter === "all"
+                onClick={() => setStatusFilter("all")}
+                className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  statusFilter === "all"
                     ? "bg-slate-700 text-white border-slate-600"
                     : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
                 }`}
               >
-                ทั้งหมด (236)
+                ทุกสถานะ (236)
               </button>
               <button
-                onClick={() => setAccountFilter("แปลจนเมื่อย")}
-                className={`px-3 py-1 text-xs font-medium rounded-lg border transition-all ${
-                  accountFilter === "แปลจนเมื่อย" || accountFilter === "lionking"
-                    ? "bg-indigo-600/30 text-indigo-300 border-indigo-500/50"
-                    : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                onClick={() => setStatusFilter("inactive30")}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  statusFilter === "inactive30"
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-sm shadow-amber-500/10 font-semibold"
+                    : "bg-[#0f172a] text-amber-400/80 border-slate-800 hover:text-amber-300"
                 }`}
               >
-                แปลจนเมื่อย (155)
+                <span>⚠️ ไม่มีตอนใหม่ &gt; 30 วัน</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-[10px] font-mono">
+                  {trackerData?.total_inactive_30d || 188}
+                </span>
               </button>
               <button
-                onClick={() => setAccountFilter("แปลแล้วแปลอีก")}
-                className={`px-3 py-1 text-xs font-medium rounded-lg border transition-all ${
-                  accountFilter === "แปลแล้วแปลอีก" || accountFilter === "adieu"
-                    ? "bg-purple-600/30 text-purple-300 border-purple-500/50"
-                    : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                onClick={() => setStatusFilter("active30")}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  statusFilter === "active30"
+                    ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/60 shadow-sm shadow-emerald-500/10 font-semibold"
+                    : "bg-[#0f172a] text-emerald-400/80 border-slate-800 hover:text-emerald-300"
                 }`}
               >
-                แปลแล้วแปลอีก (81)
+                <span>⚡ มีตอนใหม่ใน 30 วัน</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-[10px] font-mono">
+                  {trackerData?.total_active_30d || 48}
+                </span>
               </button>
-            </div>
-
-            {/* Search & Sort */}
-            <div className="flex items-center gap-2 flex-1 max-w-md">
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
-                <Input
-                  placeholder="ค้นหาชื่อเรื่องมังงะ..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-8 pl-8 text-xs bg-[#0f172a] border-slate-800"
-                />
-              </div>
-
-              <select
-                className="h-8 rounded-lg border border-slate-800 bg-[#0f172a] px-2.5 text-xs text-slate-200"
-                value={sortBy}
-                onChange={(e: any) => setSortBy(e.target.value)}
+              <button
+                onClick={() => setStatusFilter("inactive90")}
+                className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  statusFilter === "inactive90"
+                    ? "bg-rose-500/20 text-rose-300 border-rose-500/60 font-semibold"
+                    : "bg-[#0f172a] text-rose-400/80 border-slate-800 hover:text-rose-300"
+                }`}
               >
-                <option value="sales">ยอดขายสูงสุด</option>
-                <option value="views">ยอดวิวสูงสุด</option>
-                <option value="growth7d">อัตราโต 7 วัน</option>
-                <option value="growth30d">อัตราโต 30 วัน</option>
-              </select>
+                🛑 ขาดอัปเดต &gt; 90 วัน
+              </button>
             </div>
           </div>
 
@@ -820,6 +892,7 @@ export function FinancialsView({
                     <TableHead className="text-right">ยอดขายรวม</TableHead>
                     <TableHead className="text-right">ยอดวิวรวม</TableHead>
                     <TableHead className="text-center">ตอน</TableHead>
+                    <TableHead className="text-center min-w-[125px]">อัปเดตตอนล่าสุด</TableHead>
                     <TableHead className="text-right min-w-[130px]">
                       อัตราเติบโต 7 วัน
                     </TableHead>
@@ -834,7 +907,7 @@ export function FinancialsView({
                 <TableBody>
                   {filteredComics.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-12 text-slate-500">
+                      <TableCell colSpan={10} className="text-center py-12 text-slate-500">
                         {loadingGrowth ? (
                           <div className="flex flex-col items-center gap-2">
                             <RefreshCw className="h-6 w-6 animate-spin text-indigo-400" />
@@ -911,6 +984,38 @@ export function FinancialsView({
 
                           <TableCell className="text-center font-mono text-xs text-slate-300">
                             {c.chapters_count || 0}
+                          </TableCell>
+
+                          {/* Last Chapter Update / Inactivity Badge */}
+                          <TableCell className="text-center">
+                            {c.days_inactive != null ? (
+                              <div className="flex flex-col items-center">
+                                <Badge
+                                  className={`text-[10px] font-mono px-2 py-0.5 border ${
+                                    c.days_inactive > 90
+                                      ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                      : c.days_inactive > 30
+                                      ? "bg-amber-500/10 text-amber-400 border-amber-500/30 font-medium"
+                                      : c.days_inactive <= 7
+                                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-medium"
+                                      : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
+                                  }`}
+                                >
+                                  {c.days_inactive === 0
+                                    ? "วันนี้"
+                                    : c.days_inactive > 365
+                                    ? `> 1 ปี (${c.days_inactive}d)`
+                                    : `${c.days_inactive} วันก่อน`}
+                                </Badge>
+                                {c.last_chapter_updated_at && (
+                                  <span className="text-[10px] text-slate-500 font-mono mt-0.5">
+                                    {c.last_chapter_updated_at.substring(0, 10)}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-500 font-mono">-</span>
+                            )}
                           </TableCell>
 
                           {/* 7-Day Growth */}
@@ -1222,7 +1327,7 @@ export function FinancialsView({
                 <TableBody>
                   {filteredSales.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center py-8 text-slate-500">
+                      <TableCell colSpan={10} className="text-center py-8 text-slate-500">
                         ไม่พบข้อมูลในรอบที่เลือก
                       </TableCell>
                     </TableRow>

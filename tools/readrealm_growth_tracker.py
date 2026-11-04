@@ -20,7 +20,7 @@ import json
 import argparse
 import urllib.request
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 from playwright.sync_api import sync_playwright
 
@@ -191,6 +191,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
     comics_list = []
     page = 1
     per_page = 50
+    now_utc = datetime.now(timezone.utc)
 
     print(f"\n=======================================================")
     print(f"📚 [{acc['name']}] กำลังดึงรายชื่อการ์ตูนและสถิติล่าสุด...")
@@ -210,6 +211,15 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
             views = int(item.get("comic_views") or 0)
             sales = float(item.get("comic_total_sales") or 0.0)
             ch_count = int(item.get("comic_chapter_publish_count") or item.get("comic_total_chapter") or 0)
+            last_ch_updated = item.get("comic_chapter_updated_at")
+
+            days_inactive = 9999
+            if last_ch_updated:
+                try:
+                    dt = datetime.fromisoformat(last_ch_updated.replace("Z", "+00:00"))
+                    days_inactive = max(0, (now_utc - dt).days)
+                except Exception:
+                    pass
 
             comics_list.append({
                 "comic_id": cid,
@@ -218,7 +228,10 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
                 "account_id": acc["id"],
                 "total_views": views,
                 "total_sales": sales,
-                "chapters_count": ch_count
+                "chapters_count": ch_count,
+                "last_chapter_updated_at": last_ch_updated,
+                "days_inactive": days_inactive,
+                "is_inactive_30d": days_inactive > 30
             })
 
         print(f"  [{acc['name']}] โหลดหน้า {page}: สะสม {len(comics_list)} / {total} เรื่อง")
@@ -434,6 +447,9 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "total_views": cur_v,
             "total_sales": cur_s,
             "recorded_at": recorded_at,
+            "last_chapter_updated_at": c.get("last_chapter_updated_at"),
+            "days_inactive": c.get("days_inactive", 0),
+            "is_inactive_30d": c.get("is_inactive_30d", False),
             "growth_7d": {
                 "views_delta": d_v_7d,
                 "views_growth_pct": round(pct_v_7d, 2),
@@ -487,6 +503,8 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         "top_sales_comic": top_sales_comic,
         "top_growth_comic_7d": top_growth_7d,
         "top_growth_comic_30d": top_growth_30d,
+        "total_inactive_30d": sum(1 for c in growth_results if c.get("days_inactive", 0) > 30),
+        "total_active_30d": sum(1 for c in growth_results if c.get("days_inactive", 0) <= 30),
         "has_7d_baseline": bool(snap_7d),
         "has_30d_baseline": bool(snap_30d),
         "comics": growth_results

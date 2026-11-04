@@ -707,7 +707,7 @@ function getSheet(name = SHEET_NAME) {
     } else if (name === READREALM_GROWTH_SHEET_NAME) {
       const headers = [
         'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
-        'TotalSales', 'TotalViews', 'ChaptersCount',
+        'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
         'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
         'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
       ];
@@ -5401,7 +5401,7 @@ function saveReadRealmGrowthData(payload) {
       sheet.clearContents();
       const headers = [
         'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
-        'TotalSales', 'TotalViews', 'ChaptersCount',
+        'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
         'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
         'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
       ];
@@ -5417,6 +5417,8 @@ function saveReadRealmGrowthData(payload) {
         c.total_sales || 0,
         c.total_views || 0,
         c.chapters_count || 0,
+        c.last_chapter_updated_at || '',
+        c.days_inactive != null ? c.days_inactive : 0,
         (c.growth_7d && c.growth_7d.sales_delta) || 0,
         (c.growth_7d && c.growth_7d.sales_growth_pct) || 0,
         (c.growth_7d && c.growth_7d.views_delta) || 0,
@@ -5522,6 +5524,9 @@ function getReadRealmGrowthData() {
         total_sales: row[headers.indexOf('totalsales')],
         total_views: row[headers.indexOf('totalviews')],
         chapters_count: row[headers.indexOf('chapterscount')],
+        last_chapter_updated_at: headers.indexOf('lastchapterupdate') !== -1 ? row[headers.indexOf('lastchapterupdate')] : '',
+        days_inactive: headers.indexOf('daysinactive') !== -1 ? row[headers.indexOf('daysinactive')] : 0,
+        is_inactive_30d: (headers.indexOf('daysinactive') !== -1 ? row[headers.indexOf('daysinactive')] : 0) > 30,
         growth_7d: {
           sales_delta: row[headers.indexOf('salesdelta7d')],
           sales_growth_pct: row[headers.indexOf('salesgrowthpct7d')],
