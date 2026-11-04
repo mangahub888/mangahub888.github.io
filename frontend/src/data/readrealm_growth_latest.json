@@ -1,11 +1,11 @@
 {
-  "pipeline_recorded_at": "2026-11-04T12:03:24.339382",
+  "pipeline_recorded_at": "2026-11-04T12:12:50.957668",
   "date_reference": "2026-11-04",
   "total_comics": 236,
-  "total_sales_portfolio": 5771391.1,
-  "total_views_portfolio": 20656412,
-  "lionking_sales": 4403430.3,
-  "lionking_views": 17006920,
+  "total_sales_portfolio": 5771410.9,
+  "total_views_portfolio": 20656472,
+  "lionking_sales": 4403450.1,
+  "lionking_views": 17006980,
   "lionking_count": 155,
   "adieu_sales": 1367960.8,
   "adieu_views": 3649492,
@@ -22,9 +22,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 211,
-      "total_views": 1338076,
-      "total_sales": 496394.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "total_views": 1338077,
+      "total_sales": 496395.8,
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -44,9 +44,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 368,
-      "total_views": 1248846,
-      "total_sales": 460593.3,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "total_views": 1248856,
+      "total_sales": 460600.5,
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -68,7 +68,7 @@
       "chapters_count": 323,
       "total_views": 1786267,
       "total_sales": 425740.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -90,7 +90,7 @@
       "chapters_count": 274,
       "total_views": 1858341,
       "total_sales": 328532.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -112,7 +112,7 @@
       "chapters_count": 81,
       "total_views": 419271,
       "total_sales": 225506.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -132,9 +132,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 141,
-      "total_views": 956299,
+      "total_views": 956300,
       "total_sales": 224061.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -154,9 +154,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 151,
-      "total_views": 446556,
+      "total_views": 446558,
       "total_sales": 153950.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -178,7 +178,7 @@
       "chapters_count": 130,
       "total_views": 516598,
       "total_sales": 149171.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -200,7 +200,7 @@
       "chapters_count": 125,
       "total_views": 376713,
       "total_sales": 130215.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -220,9 +220,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 238,
-      "total_views": 638283,
+      "total_views": 638284,
       "total_sales": 127528.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -244,7 +244,7 @@
       "chapters_count": 128,
       "total_views": 530721,
       "total_sales": 121627.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -266,7 +266,7 @@
       "chapters_count": 89,
       "total_views": 349442,
       "total_sales": 120824.35,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -288,7 +288,7 @@
       "chapters_count": 89,
       "total_views": 239246,
       "total_sales": 107115.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -310,7 +310,7 @@
       "chapters_count": 117,
       "total_views": 358729,
       "total_sales": 106049.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -332,7 +332,7 @@
       "chapters_count": 102,
       "total_views": 237726,
       "total_sales": 104023.85,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -354,7 +354,7 @@
       "chapters_count": 101,
       "total_views": 493193,
       "total_sales": 102101.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -374,9 +374,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 62,
-      "total_views": 303280,
-      "total_sales": 101415.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "total_views": 303288,
+      "total_sales": 101418.6,
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -398,7 +398,7 @@
       "chapters_count": 68,
       "total_views": 353619,
       "total_sales": 100815.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -420,7 +420,7 @@
       "chapters_count": 59,
       "total_views": 270735,
       "total_sales": 96786.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -440,9 +440,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 113,
-      "total_views": 370108,
-      "total_sales": 94399.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "total_views": 370111,
+      "total_sales": 94404.6,
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -464,7 +464,7 @@
       "chapters_count": 72,
       "total_views": 215417,
       "total_sales": 93554.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -484,9 +484,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 72,
-      "total_views": 274408,
+      "total_views": 274419,
       "total_sales": 81977.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -508,7 +508,7 @@
       "chapters_count": 80,
       "total_views": 227700,
       "total_sales": 74937.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -530,7 +530,7 @@
       "chapters_count": 38,
       "total_views": 136223,
       "total_sales": 69676.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -552,7 +552,7 @@
       "chapters_count": 94,
       "total_views": 200683,
       "total_sales": 66135.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -574,7 +574,7 @@
       "chapters_count": 122,
       "total_views": 260129,
       "total_sales": 58887.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -594,9 +594,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 128,
-      "total_views": 302539,
+      "total_views": 302541,
       "total_sales": 58838.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -618,7 +618,7 @@
       "chapters_count": 50,
       "total_views": 134204,
       "total_sales": 51473.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -640,7 +640,7 @@
       "chapters_count": 114,
       "total_views": 192991,
       "total_sales": 50160.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -662,7 +662,7 @@
       "chapters_count": 58,
       "total_views": 95207,
       "total_sales": 49752.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -684,7 +684,7 @@
       "chapters_count": 158,
       "total_views": 219003,
       "total_sales": 39000.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -706,7 +706,7 @@
       "chapters_count": 67,
       "total_views": 126255,
       "total_sales": 38898.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -728,7 +728,7 @@
       "chapters_count": 33,
       "total_views": 66332,
       "total_sales": 36828.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -750,7 +750,7 @@
       "chapters_count": 81,
       "total_views": 141951,
       "total_sales": 35917.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -770,9 +770,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 102,
-      "total_views": 164692,
+      "total_views": 164694,
       "total_sales": 33350.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -794,7 +794,7 @@
       "chapters_count": 160,
       "total_views": 110666,
       "total_sales": 33266.35,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -816,7 +816,7 @@
       "chapters_count": 76,
       "total_views": 182148,
       "total_sales": 32294.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -838,7 +838,7 @@
       "chapters_count": 49,
       "total_views": 72965,
       "total_sales": 31048.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -860,7 +860,7 @@
       "chapters_count": 55,
       "total_views": 139917,
       "total_sales": 29800.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -882,7 +882,7 @@
       "chapters_count": 107,
       "total_views": 137777,
       "total_sales": 29557.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -904,7 +904,7 @@
       "chapters_count": 57,
       "total_views": 79812,
       "total_sales": 29536.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -926,7 +926,7 @@
       "chapters_count": 67,
       "total_views": 69018,
       "total_sales": 29299.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -948,7 +948,7 @@
       "chapters_count": 92,
       "total_views": 115723,
       "total_sales": 28648.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -968,9 +968,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 70,
-      "total_views": 81605,
+      "total_views": 81606,
       "total_sales": 27939.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -992,7 +992,7 @@
       "chapters_count": 69,
       "total_views": 84946,
       "total_sales": 26919.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1014,7 +1014,7 @@
       "chapters_count": 51,
       "total_views": 43906,
       "total_sales": 26856.7,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1036,7 +1036,7 @@
       "chapters_count": 120,
       "total_views": 154762,
       "total_sales": 26449.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1056,9 +1056,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 62,
-      "total_views": 117740,
+      "total_views": 117742,
       "total_sales": 25522.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1080,7 +1080,7 @@
       "chapters_count": 64,
       "total_views": 83068,
       "total_sales": 24940.95,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1102,7 +1102,7 @@
       "chapters_count": 45,
       "total_views": 61881,
       "total_sales": 24864.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1124,7 +1124,7 @@
       "chapters_count": 34,
       "total_views": 46031,
       "total_sales": 23683.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1146,7 +1146,7 @@
       "chapters_count": 43,
       "total_views": 90014,
       "total_sales": 23475.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1168,7 +1168,7 @@
       "chapters_count": 66,
       "total_views": 69554,
       "total_sales": 20991.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1190,7 +1190,7 @@
       "chapters_count": 45,
       "total_views": 53693,
       "total_sales": 20469.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1212,7 +1212,7 @@
       "chapters_count": 48,
       "total_views": 43805,
       "total_sales": 19511.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1234,7 +1234,7 @@
       "chapters_count": 59,
       "total_views": 76001,
       "total_sales": 19369.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1256,7 +1256,7 @@
       "chapters_count": 37,
       "total_views": 45464,
       "total_sales": 18854.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1278,7 +1278,7 @@
       "chapters_count": 39,
       "total_views": 42213,
       "total_sales": 18229.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1300,7 +1300,7 @@
       "chapters_count": 30,
       "total_views": 37844,
       "total_sales": 17742.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1322,7 +1322,7 @@
       "chapters_count": 25,
       "total_views": 39909,
       "total_sales": 17108.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1344,7 +1344,7 @@
       "chapters_count": 49,
       "total_views": 66964,
       "total_sales": 16649.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1366,7 +1366,7 @@
       "chapters_count": 68,
       "total_views": 81778,
       "total_sales": 16210.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1388,7 +1388,7 @@
       "chapters_count": 56,
       "total_views": 35686,
       "total_sales": 15740.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1410,7 +1410,7 @@
       "chapters_count": 40,
       "total_views": 57190,
       "total_sales": 14434.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1432,7 +1432,7 @@
       "chapters_count": 31,
       "total_views": 37537,
       "total_sales": 12775.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1452,9 +1452,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 52,
-      "total_views": 44956,
+      "total_views": 44957,
       "total_sales": 12763.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1476,7 +1476,7 @@
       "chapters_count": 15,
       "total_views": 33235,
       "total_sales": 12628.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1498,7 +1498,7 @@
       "chapters_count": 70,
       "total_views": 60121,
       "total_sales": 11867.1,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1520,7 +1520,7 @@
       "chapters_count": 45,
       "total_views": 39824,
       "total_sales": 11114.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1542,7 +1542,7 @@
       "chapters_count": 39,
       "total_views": 62193,
       "total_sales": 11070.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1564,7 +1564,7 @@
       "chapters_count": 41,
       "total_views": 34557,
       "total_sales": 10956.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1586,7 +1586,7 @@
       "chapters_count": 43,
       "total_views": 32485,
       "total_sales": 9424.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1608,7 +1608,7 @@
       "chapters_count": 34,
       "total_views": 17748,
       "total_sales": 9334.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1630,7 +1630,7 @@
       "chapters_count": 23,
       "total_views": 24480,
       "total_sales": 8945.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1652,7 +1652,7 @@
       "chapters_count": 44,
       "total_views": 24239,
       "total_sales": 8575.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1674,7 +1674,7 @@
       "chapters_count": 48,
       "total_views": 58989,
       "total_sales": 8497.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1696,7 +1696,7 @@
       "chapters_count": 42,
       "total_views": 47581,
       "total_sales": 8463.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1718,7 +1718,7 @@
       "chapters_count": 24,
       "total_views": 33417,
       "total_sales": 8380.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1740,7 +1740,7 @@
       "chapters_count": 40,
       "total_views": 65539,
       "total_sales": 8179.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1760,9 +1760,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 28,
-      "total_views": 20326,
+      "total_views": 20327,
       "total_sales": 7626.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1784,7 +1784,7 @@
       "chapters_count": 25,
       "total_views": 19037,
       "total_sales": 7436.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1806,7 +1806,7 @@
       "chapters_count": 23,
       "total_views": 43464,
       "total_sales": 7406.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1828,7 +1828,7 @@
       "chapters_count": 32,
       "total_views": 17694,
       "total_sales": 7366.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1850,7 +1850,7 @@
       "chapters_count": 28,
       "total_views": 15654,
       "total_sales": 7326.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1872,7 +1872,7 @@
       "chapters_count": 29,
       "total_views": 44125,
       "total_sales": 7307.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1894,7 +1894,7 @@
       "chapters_count": 32,
       "total_views": 20881,
       "total_sales": 7243.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1916,7 +1916,7 @@
       "chapters_count": 21,
       "total_views": 31629,
       "total_sales": 7137.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1938,7 +1938,7 @@
       "chapters_count": 22,
       "total_views": 19609,
       "total_sales": 6923.3,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1960,7 +1960,7 @@
       "chapters_count": 61,
       "total_views": 72488,
       "total_sales": 6646.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1982,7 +1982,7 @@
       "chapters_count": 46,
       "total_views": 14468,
       "total_sales": 6626.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2004,7 +2004,7 @@
       "chapters_count": 18,
       "total_views": 29382,
       "total_sales": 6452.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2026,7 +2026,7 @@
       "chapters_count": 33,
       "total_views": 41402,
       "total_sales": 6305.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2048,7 +2048,7 @@
       "chapters_count": 12,
       "total_views": 24113,
       "total_sales": 6244.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2070,7 +2070,7 @@
       "chapters_count": 24,
       "total_views": 19938,
       "total_sales": 5924.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2092,7 +2092,7 @@
       "chapters_count": 32,
       "total_views": 21918,
       "total_sales": 5907.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2114,7 +2114,7 @@
       "chapters_count": 16,
       "total_views": 12196,
       "total_sales": 5647.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2136,7 +2136,7 @@
       "chapters_count": 46,
       "total_views": 21491,
       "total_sales": 5560.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2158,7 +2158,7 @@
       "chapters_count": 22,
       "total_views": 41986,
       "total_sales": 5516.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2180,7 +2180,7 @@
       "chapters_count": 48,
       "total_views": 35130,
       "total_sales": 5454.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2200,9 +2200,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 45,
-      "total_views": 37032,
+      "total_views": 37039,
       "total_sales": 5435.65,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2224,7 +2224,7 @@
       "chapters_count": 226,
       "total_views": 23451,
       "total_sales": 5418.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2246,7 +2246,7 @@
       "chapters_count": 168,
       "total_views": 19713,
       "total_sales": 5259.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2268,7 +2268,7 @@
       "chapters_count": 38,
       "total_views": 30432,
       "total_sales": 5238.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2290,7 +2290,7 @@
       "chapters_count": 45,
       "total_views": 35815,
       "total_sales": 5231.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2312,7 +2312,7 @@
       "chapters_count": 21,
       "total_views": 29108,
       "total_sales": 5153.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2334,7 +2334,7 @@
       "chapters_count": 17,
       "total_views": 35107,
       "total_sales": 5140.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2356,7 +2356,7 @@
       "chapters_count": 32,
       "total_views": 37097,
       "total_sales": 5137.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2378,7 +2378,7 @@
       "chapters_count": 30,
       "total_views": 11273,
       "total_sales": 4972.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2400,7 +2400,7 @@
       "chapters_count": 23,
       "total_views": 36754,
       "total_sales": 4969.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2422,7 +2422,7 @@
       "chapters_count": 27,
       "total_views": 19866,
       "total_sales": 4887.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2444,7 +2444,7 @@
       "chapters_count": 44,
       "total_views": 37160,
       "total_sales": 4778.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2466,7 +2466,7 @@
       "chapters_count": 28,
       "total_views": 15396,
       "total_sales": 4573.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2488,7 +2488,7 @@
       "chapters_count": 44,
       "total_views": 26660,
       "total_sales": 4512.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2510,7 +2510,7 @@
       "chapters_count": 51,
       "total_views": 19473,
       "total_sales": 4015.9,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2532,7 +2532,7 @@
       "chapters_count": 30,
       "total_views": 19909,
       "total_sales": 3976.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2554,7 +2554,7 @@
       "chapters_count": 18,
       "total_views": 7760,
       "total_sales": 3622.25,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2576,7 +2576,7 @@
       "chapters_count": 39,
       "total_views": 15357,
       "total_sales": 3619.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2598,7 +2598,7 @@
       "chapters_count": 33,
       "total_views": 39143,
       "total_sales": 3583.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2620,7 +2620,7 @@
       "chapters_count": 37,
       "total_views": 19255,
       "total_sales": 3501.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2642,7 +2642,7 @@
       "chapters_count": 27,
       "total_views": 20377,
       "total_sales": 3473.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2662,9 +2662,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 43,
-      "total_views": 12653,
+      "total_views": 12655,
       "total_sales": 3376.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2684,9 +2684,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 25,
-      "total_views": 6513,
+      "total_views": 6514,
       "total_sales": 2966.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2708,7 +2708,7 @@
       "chapters_count": 47,
       "total_views": 13487,
       "total_sales": 2768.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2730,7 +2730,7 @@
       "chapters_count": 31,
       "total_views": 13608,
       "total_sales": 2625.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2752,7 +2752,7 @@
       "chapters_count": 24,
       "total_views": 5364,
       "total_sales": 2620.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2774,7 +2774,7 @@
       "chapters_count": 38,
       "total_views": 11875,
       "total_sales": 2565.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2796,7 +2796,7 @@
       "chapters_count": 31,
       "total_views": 10029,
       "total_sales": 2478.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2818,7 +2818,7 @@
       "chapters_count": 18,
       "total_views": 34442,
       "total_sales": 2444.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2840,7 +2840,7 @@
       "chapters_count": 24,
       "total_views": 12325,
       "total_sales": 2345.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2862,7 +2862,7 @@
       "chapters_count": 21,
       "total_views": 18551,
       "total_sales": 2334.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2884,7 +2884,7 @@
       "chapters_count": 20,
       "total_views": 36880,
       "total_sales": 2331.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2906,7 +2906,7 @@
       "chapters_count": 37,
       "total_views": 12106,
       "total_sales": 2139.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2928,7 +2928,7 @@
       "chapters_count": 22,
       "total_views": 10871,
       "total_sales": 2046.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2950,7 +2950,7 @@
       "chapters_count": 26,
       "total_views": 11910,
       "total_sales": 2017.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2972,7 +2972,7 @@
       "chapters_count": 23,
       "total_views": 26527,
       "total_sales": 1952.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2994,7 +2994,7 @@
       "chapters_count": 20,
       "total_views": 13897,
       "total_sales": 1950.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3016,7 +3016,7 @@
       "chapters_count": 24,
       "total_views": 13781,
       "total_sales": 1773.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3038,7 +3038,7 @@
       "chapters_count": 12,
       "total_views": 7362,
       "total_sales": 1750.45,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3060,7 +3060,7 @@
       "chapters_count": 31,
       "total_views": 21788,
       "total_sales": 1736.15,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3082,7 +3082,7 @@
       "chapters_count": 35,
       "total_views": 9175,
       "total_sales": 1735.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3104,7 +3104,7 @@
       "chapters_count": 28,
       "total_views": 11238,
       "total_sales": 1597.55,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3126,7 +3126,7 @@
       "chapters_count": 19,
       "total_views": 8507,
       "total_sales": 1524.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3148,7 +3148,7 @@
       "chapters_count": 37,
       "total_views": 6082,
       "total_sales": 1510.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3170,7 +3170,7 @@
       "chapters_count": 31,
       "total_views": 5046,
       "total_sales": 1495.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3190,9 +3190,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 27,
-      "total_views": 5756,
-      "total_sales": 1414.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "total_views": 5759,
+      "total_sales": 1416.6,
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3214,7 +3214,7 @@
       "chapters_count": 12,
       "total_views": 6701,
       "total_sales": 1362.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3236,7 +3236,7 @@
       "chapters_count": 17,
       "total_views": 9836,
       "total_sales": 1308.95,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3258,7 +3258,7 @@
       "chapters_count": 24,
       "total_views": 5058,
       "total_sales": 1234.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3280,7 +3280,7 @@
       "chapters_count": 20,
       "total_views": 5238,
       "total_sales": 1225.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3302,7 +3302,7 @@
       "chapters_count": 20,
       "total_views": 6860,
       "total_sales": 1191.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3324,7 +3324,7 @@
       "chapters_count": 0,
       "total_views": 10838,
       "total_sales": 1155.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3346,7 +3346,7 @@
       "chapters_count": 30,
       "total_views": 12156,
       "total_sales": 1152.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3368,7 +3368,7 @@
       "chapters_count": 14,
       "total_views": 4022,
       "total_sales": 1105.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3390,7 +3390,7 @@
       "chapters_count": 19,
       "total_views": 3760,
       "total_sales": 1092.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3412,7 +3412,7 @@
       "chapters_count": 21,
       "total_views": 8574,
       "total_sales": 1092.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3434,7 +3434,7 @@
       "chapters_count": 17,
       "total_views": 7652,
       "total_sales": 1069.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3456,7 +3456,7 @@
       "chapters_count": 26,
       "total_views": 6530,
       "total_sales": 990.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3478,7 +3478,7 @@
       "chapters_count": 24,
       "total_views": 6660,
       "total_sales": 981.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3500,7 +3500,7 @@
       "chapters_count": 14,
       "total_views": 8118,
       "total_sales": 930.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3522,7 +3522,7 @@
       "chapters_count": 26,
       "total_views": 6958,
       "total_sales": 919.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3544,7 +3544,7 @@
       "chapters_count": 24,
       "total_views": 16707,
       "total_sales": 916.7,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3566,7 +3566,7 @@
       "chapters_count": 22,
       "total_views": 11626,
       "total_sales": 867.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3588,7 +3588,7 @@
       "chapters_count": 16,
       "total_views": 5165,
       "total_sales": 722.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3610,7 +3610,7 @@
       "chapters_count": 20,
       "total_views": 5944,
       "total_sales": 709.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3632,7 +3632,7 @@
       "chapters_count": 13,
       "total_views": 8430,
       "total_sales": 669.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3654,7 +3654,7 @@
       "chapters_count": 9,
       "total_views": 10425,
       "total_sales": 620.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3676,7 +3676,7 @@
       "chapters_count": 16,
       "total_views": 3839,
       "total_sales": 610.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3698,7 +3698,7 @@
       "chapters_count": 12,
       "total_views": 4259,
       "total_sales": 572.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3720,7 +3720,7 @@
       "chapters_count": 12,
       "total_views": 5600,
       "total_sales": 523.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3742,7 +3742,7 @@
       "chapters_count": 12,
       "total_views": 6564,
       "total_sales": 523.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3764,7 +3764,7 @@
       "chapters_count": 23,
       "total_views": 7306,
       "total_sales": 493.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3784,9 +3784,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 12,
-      "total_views": 4452,
+      "total_views": 4453,
       "total_sales": 482.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3808,7 +3808,7 @@
       "chapters_count": 21,
       "total_views": 9185,
       "total_sales": 457.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3830,7 +3830,7 @@
       "chapters_count": 14,
       "total_views": 4804,
       "total_sales": 421.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3852,7 +3852,7 @@
       "chapters_count": 11,
       "total_views": 2795,
       "total_sales": 404.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3874,7 +3874,7 @@
       "chapters_count": 7,
       "total_views": 2298,
       "total_sales": 402.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3896,7 +3896,7 @@
       "chapters_count": 9,
       "total_views": 4168,
       "total_sales": 384.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3918,7 +3918,7 @@
       "chapters_count": 5,
       "total_views": 3025,
       "total_sales": 364.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3940,7 +3940,7 @@
       "chapters_count": 38,
       "total_views": 7066,
       "total_sales": 352.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3962,7 +3962,7 @@
       "chapters_count": 16,
       "total_views": 2462,
       "total_sales": 307.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -3984,7 +3984,7 @@
       "chapters_count": 7,
       "total_views": 3520,
       "total_sales": 275.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4006,7 +4006,7 @@
       "chapters_count": 16,
       "total_views": 4790,
       "total_sales": 260.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4028,7 +4028,7 @@
       "chapters_count": 16,
       "total_views": 5141,
       "total_sales": 259.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4050,7 +4050,7 @@
       "chapters_count": 12,
       "total_views": 3077,
       "total_sales": 257.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4072,7 +4072,7 @@
       "chapters_count": 8,
       "total_views": 2609,
       "total_sales": 236.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4094,7 +4094,7 @@
       "chapters_count": 8,
       "total_views": 2253,
       "total_sales": 214.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4116,7 +4116,7 @@
       "chapters_count": 7,
       "total_views": 28272,
       "total_sales": 198.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4138,7 +4138,7 @@
       "chapters_count": 6,
       "total_views": 17255,
       "total_sales": 182.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4160,7 +4160,7 @@
       "chapters_count": 4,
       "total_views": 4721,
       "total_sales": 168.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4182,7 +4182,7 @@
       "chapters_count": 11,
       "total_views": 1975,
       "total_sales": 162.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4204,7 +4204,7 @@
       "chapters_count": 8,
       "total_views": 8876,
       "total_sales": 157.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4226,7 +4226,7 @@
       "chapters_count": 41,
       "total_views": 9937,
       "total_sales": 149.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4248,7 +4248,7 @@
       "chapters_count": 6,
       "total_views": 3268,
       "total_sales": 110.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4270,7 +4270,7 @@
       "chapters_count": 7,
       "total_views": 1047,
       "total_sales": 106.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4292,7 +4292,7 @@
       "chapters_count": 26,
       "total_views": 1416,
       "total_sales": 82.8,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4314,7 +4314,7 @@
       "chapters_count": 10,
       "total_views": 3647,
       "total_sales": 75.6,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4336,7 +4336,7 @@
       "chapters_count": 10,
       "total_views": 3173,
       "total_sales": 72.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4358,7 +4358,7 @@
       "chapters_count": 6,
       "total_views": 3742,
       "total_sales": 42.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4380,7 +4380,7 @@
       "chapters_count": 8,
       "total_views": 331,
       "total_sales": 32.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4402,7 +4402,7 @@
       "chapters_count": 9,
       "total_views": 403,
       "total_sales": 18.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4424,7 +4424,7 @@
       "chapters_count": 17,
       "total_views": 2564,
       "total_sales": 14.4,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4446,7 +4446,7 @@
       "chapters_count": 11,
       "total_views": 924,
       "total_sales": 11.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4468,7 +4468,7 @@
       "chapters_count": 8,
       "total_views": 3401,
       "total_sales": 7.2,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4490,7 +4490,7 @@
       "chapters_count": 5,
       "total_views": 181,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4512,7 +4512,7 @@
       "chapters_count": 6,
       "total_views": 273,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4534,7 +4534,7 @@
       "chapters_count": 4,
       "total_views": 366,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4556,7 +4556,7 @@
       "chapters_count": 6,
       "total_views": 284,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4578,7 +4578,7 @@
       "chapters_count": 5,
       "total_views": 450,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4600,7 +4600,7 @@
       "chapters_count": 0,
       "total_views": 11,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4622,7 +4622,7 @@
       "chapters_count": 2,
       "total_views": 109,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4644,7 +4644,7 @@
       "chapters_count": 4,
       "total_views": 530,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4666,7 +4666,7 @@
       "chapters_count": 5,
       "total_views": 3575,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4688,7 +4688,7 @@
       "chapters_count": 7,
       "total_views": 2399,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4710,7 +4710,7 @@
       "chapters_count": 0,
       "total_views": 112,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4732,7 +4732,7 @@
       "chapters_count": 10,
       "total_views": 2296,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4754,7 +4754,7 @@
       "chapters_count": 5,
       "total_views": 1469,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4776,7 +4776,7 @@
       "chapters_count": 14,
       "total_views": 9166,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4798,7 +4798,7 @@
       "chapters_count": 10,
       "total_views": 4327,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4820,7 +4820,7 @@
       "chapters_count": 9,
       "total_views": 6483,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4842,7 +4842,7 @@
       "chapters_count": 3,
       "total_views": 2871,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4864,7 +4864,7 @@
       "chapters_count": 4,
       "total_views": 1521,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4886,7 +4886,7 @@
       "chapters_count": 3,
       "total_views": 3372,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4908,7 +4908,7 @@
       "chapters_count": 4,
       "total_views": 2277,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4930,7 +4930,7 @@
       "chapters_count": 8,
       "total_views": 3654,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4952,7 +4952,7 @@
       "chapters_count": 8,
       "total_views": 10268,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4974,7 +4974,7 @@
       "chapters_count": 3,
       "total_views": 197,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -4996,7 +4996,7 @@
       "chapters_count": 5,
       "total_views": 873,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5018,7 +5018,7 @@
       "chapters_count": 10,
       "total_views": 4184,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5040,7 +5040,7 @@
       "chapters_count": 0,
       "total_views": 77,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5062,7 +5062,7 @@
       "chapters_count": 7,
       "total_views": 1188,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5084,7 +5084,7 @@
       "chapters_count": 10,
       "total_views": 3682,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5106,7 +5106,7 @@
       "chapters_count": 2,
       "total_views": 783,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5128,7 +5128,7 @@
       "chapters_count": 3,
       "total_views": 1703,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5150,7 +5150,7 @@
       "chapters_count": 3,
       "total_views": 2413,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5172,7 +5172,7 @@
       "chapters_count": 2,
       "total_views": 665,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -5194,7 +5194,7 @@
       "chapters_count": 6,
       "total_views": 1624,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T12:03:24.339382",
+      "recorded_at": "2026-11-04T12:12:50.957668",
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,

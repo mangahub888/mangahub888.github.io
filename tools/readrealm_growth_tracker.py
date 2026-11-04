@@ -358,6 +358,31 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     }
     history["snapshots"] = snapshots
     history["last_updated"] = recorded_at
+
+    # Maintain timeline of 6-hour snapshots in Git JSON (Old/Historical Data into Git JSON)
+    timeline = history.get("timeline", [])
+    t_entry = {
+        "recorded_at": recorded_at,
+        "date": snapshot_date_key,
+        "total_sales": round(sum(c["total_sales"] for c in all_current_comics), 2),
+        "total_views": sum(c["total_views"] for c in all_current_comics),
+        "total_comics": len(all_current_comics)
+    }
+    if not timeline:
+        timeline.append(t_entry)
+    else:
+        try:
+            last_dt = datetime.fromisoformat(timeline[-1]["recorded_at"])
+            cur_dt = datetime.fromisoformat(recorded_at)
+            # Update last entry if within 45 minutes, else append new
+            if abs((cur_dt - last_dt).total_seconds()) < 2700:
+                timeline[-1] = t_entry
+            else:
+                timeline.append(t_entry)
+        except Exception:
+            timeline.append(t_entry)
+    history["timeline"] = timeline
+
     save_history(history)
 
     # 4. Find past reference snapshots: 7 days ago & 30 days ago
