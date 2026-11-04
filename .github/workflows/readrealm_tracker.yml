@@ -1,24 +1,24 @@
-name: ReadRealm 6-Hour Growth Tracker Pipeline
+name: Multi-Platform 6-Hour Growth Tracker Pipeline (ReadRealm + Kairew + Chaply)
 
 on:
   # สั่งรันตามเวลาจาก Google Apps Script (GAS Time-driven Trigger ทุก 6 ชม.)
   # ป้องกันปัญหา GitHub Actions cron ดีเลย์หรือโดนแย่งคิว
   workflow_dispatch:
     inputs:
-      force_refresh:
-        description: 'Force refresh token via Playwright (true/false)'
+      platform:
+        description: 'Target platform (all, readrealm, kairew, chaply)'
         required: false
-        default: 'false'
+        default: 'all'
 
 concurrency:
-  group: readrealm-tracker-pipeline
+  group: multi-platform-growth-tracker-pipeline
   cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
-  track-readrealm-growth:
+  track-growth:
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -41,26 +41,30 @@ jobs:
           pip install -r requirements.txt
           playwright install --with-deps chromium
 
-      - name: Run ReadRealm Growth Tracker Engine
+      - name: Run Multi-Platform Growth Tracker Engine
         env:
           PYTHONUNBUFFERED: '1'
           READREALM_USER_1: ${{ secrets.READREALM_USER_1 || 'lionking20130@gmail.com' }}
           READREALM_PASS_1: ${{ secrets.READREALM_PASS_1 || 'aDOPifen01@' }}
           READREALM_USER_2: ${{ secrets.READREALM_USER_2 || 'adieu2547' }}
           READREALM_PASS_2: ${{ secrets.READREALM_PASS_2 || 'alone2548' }}
+          KAIREW_USER: ${{ secrets.KAIREW_USER || '0886172880' }}
+          KAIREW_PASS: ${{ secrets.KAIREW_PASS || 'poom112345ad' }}
+          CHAPLY_USER: ${{ secrets.CHAPLY_USER || 'kuroko11.p.g@gmail.com' }}
+          CHAPLY_PASS: ${{ secrets.CHAPLY_PASS || '@Poom112345ad' }}
           GAS_URL: ${{ secrets.GAS_URL || 'https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec' }}
           PASSCODE: ${{ secrets.PASSCODE || '10211032' }}
         run: |
-          python tools/readrealm_growth_tracker.py
+          python tools/multi_platform_tracker.py --platform "${{ github.event.inputs.platform || 'all' }}" --send-gas
 
       - name: Commit & Push Historical Snapshots
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/data/readrealm_history.json tools/data/readrealm_growth_latest.json frontend/public/data/readrealm_growth_latest.json frontend/src/data/readrealm_growth_latest.json
+          git add tools/data/*_history.json tools/data/*_growth_latest.json frontend/public/data/*_growth_latest.json frontend/src/data/*_growth_latest.json
           if git diff --staged --quiet; then
             echo "No data changes to commit."
           else
-            git commit -m "chore(tracker): update readrealm sales & views 6h snapshot [skip ci]"
+            git commit -m "chore(tracker): update multi-platform 6h sales & views snapshots [skip ci]"
             git push origin main
           fi

@@ -1,0 +1,860 @@
+[
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer-application/me",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu3k6ccb1nuu6kdez13bhdf3",
+        "userId": "cmu3k53qr1pfm6kdfefjli70o",
+        "type": "PERSONAL",
+        "firstName": "ภาคนิพนธ์",
+        "lastName": "ธุระตา",
+        "email": "kuroko11.p.g@gmail.com",
+        "phone": "0886172880",
+        "bankCode": "002",
+        "bankAccount": "9590137262",
+        "fullName": "ภาคนิพนธ์ ธุระตา",
+        "companyName": null,
+        "taxId": null,
+        "documentUrl": null,
+        "idCardUrl": null,
+        "bankBookUrl": null,
+        "bankName": null,
+        "address": null,
+        "currentAddress": null,
+        "companyId": null,
+        "companyAddress": null,
+        "status": "APPROVED",
+        "reason": null,
+        "createdAt": "2026-09-16T03:46:06.971Z",
+        "updatedAt": "2026-09-16T08:35:51.020Z",
+        "approvedAt": "2026-09-16T08:35:51.019Z",
+        "approvedBy": "cmcajb1zc000e0wt7hydbhp5x",
+        "lastProfileEditAt": null,
+        "cooldownEndsAt": null,
+        "canEditProfile": true
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/wallet",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "balance": 1428.95,
+        "pending": 0,
+        "lifetimeEarn": 8662.95,
+        "updatedAt": "2026-11-04T06:02:56.919Z",
+        "nextPayoutDate": "2026-11-25T00:05:00.000Z"
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/permissions/decode",
+    "status": 200,
+    "method": "POST",
+    "data": {
+      "success": true,
+      "message": "Decoded successfully",
+      "data": {
+        "permission": {
+          "P300001": "1111",
+          "P300002": "1111"
+        },
+        "allAccess": false
+      },
+      "errors": []
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/dashboard/activities?limit=10",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "recentEpisodes": [
+          {
+            "id": "cmw10ofh02bvzt5i4h3cu2gj5",
+            "title": "ตอนที่ 7",
+            "slug": "ตอนที่-7",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T18:24:10.837Z",
+            "group": {
+              "title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+              "slug": "ซัมมอนเนอร์ภัยพิบัติ-ขอบัญชาการอภิมหาบอสล้างโลก",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw10noyh2drbt5i5m682paql",
+            "title": "ตอนที่ 5",
+            "slug": "ตอนที่-5",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T18:23:36.473Z",
+            "group": {
+              "title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+              "slug": "ซัมมอนเนอร์ภัยพิบัติ-ขอบัญชาการอภิมหาบอสล้างโลก",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw10nm322dqtt5i5gj87azqg",
+            "title": "ตอนที่ 6",
+            "slug": "ตอนที่-6",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T18:23:32.750Z",
+            "group": {
+              "title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+              "slug": "ซัมมอนเนอร์ภัยพิบัติ-ขอบัญชาการอภิมหาบอสล้างโลก",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw108ek92bunt5i4ayx8mj2w",
+            "title": "ตอนที่ 129",
+            "slug": "ตอนที่-129",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T18:11:43.162Z",
+            "group": {
+              "title": "อิสระทางทรัพย์ พันธะทางใจ",
+              "slug": "อิสระทางทรัพย์-พันธะทางใจ",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw107u9x2b4vt5i3029d11ch",
+            "title": "ตอนที่ 128",
+            "slug": "ตอนที่-128",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T18:11:16.870Z",
+            "group": {
+              "title": "อิสระทางทรัพย์ พันธะทางใจ",
+              "slug": "อิสระทางทรัพย์-พันธะทางใจ",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw107tci2envt5i8gd69drcn",
+            "title": "ตอนที่ 121",
+            "slug": "ตอนที่-121",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T18:11:15.666Z",
+            "group": {
+              "title": "อิสระทางทรัพย์ พันธะทางใจ",
+              "slug": "อิสระทางทรัพย์-พันธะทางใจ",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw0zsp5u2dmnt5i56ucjmfeh",
+            "title": "ตอนที่ 42",
+            "slug": "ตอนที่-42",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T17:59:30.402Z",
+            "group": {
+              "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+              "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw0zsoqs2bsnt5i4zmbr8msk",
+            "title": "ตอนที่ 43",
+            "slug": "ตอนที่-43",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T17:59:29.860Z",
+            "group": {
+              "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+              "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmw0au7l8297it5i58i8p99af",
+            "title": "ตอนที่ 129",
+            "slug": "ตอนที่-129",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-03T06:20:50.541Z",
+            "group": {
+              "title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+              "slug": "หลังจากโดนดาวโรงเรียนทิ้ง-ฉันก็ได้บรรลุวิถียุทธ์",
+              "type": "COMICS"
+            }
+          },
+          {
+            "id": "cmvzeu55d25n4t5i8044wt1yf",
+            "title": "ตอนที่ 28",
+            "slug": "ตอนที่-28",
+            "status": "PUBLIC",
+            "createdAt": "2026-11-02T15:24:59.665Z",
+            "group": {
+              "title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+              "slug": "the-strongest-swordsman-rising-from-a-bottom-tier-job",
+              "type": "COMICS"
+            }
+          }
+        ],
+        "recentComments": [
+          {
+            "id": "cmu5pky7720qn6kde32x8vudu",
+            "content": "เรื่องนี้มีต่อมั้ยครับ เห็นหลายคนที่แปลค้างไว้ตอนที่4 นานแล้ว",
+            "createdAt": "2026-09-17T15:52:58.916Z",
+            "user": {
+              "displayName": "Pkung",
+              "image": null
+            },
+            "group": {
+              "title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ | I Became the Supreme Martial God Through Dream Reincarnation",
+              "slug": "วังวนแห่งความฝัน-ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์-i-became-the-supreme-martial-god-through-dream-reincarnation"
+            },
+            "episode": null
+          }
+        ],
+        "recentUnlocks": [
+          {
+            "id": "cmw1pn1u62huct5iajbbaucko",
+            "method": "COIN",
+            "createdAt": "2026-11-04T06:02:56.911Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 43",
+              "slug": "ตอนที่-43",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1pih5m2dynt5i4r4sw1042",
+            "method": "COIN",
+            "createdAt": "2026-11-04T05:59:23.482Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 42",
+              "slug": "ตอนที่-42",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1pf87q2dy3t5i4k50huw5w",
+            "method": "COIN",
+            "createdAt": "2026-11-04T05:56:51.926Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 41",
+              "slug": "ตอนที่-41",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1pauvy2hs4t5iagjiovmw4",
+            "method": "COIN",
+            "createdAt": "2026-11-04T05:53:28.030Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 40",
+              "slug": "ตอนที่-40",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1p6pvw2d4yt5i3haholanv",
+            "method": "COIN",
+            "createdAt": "2026-11-04T05:50:14.924Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 39",
+              "slug": "ตอนที่-39",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1mi4ct2gi4t5i89aktv11o",
+            "method": "COIN",
+            "createdAt": "2026-11-04T04:35:08.045Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 38",
+              "slug": "ตอนที่-38",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1mbpk62hbbt5iawlpa525p",
+            "method": "COIN",
+            "createdAt": "2026-11-04T04:30:08.935Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 37",
+              "slug": "ตอนที่-37",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1m7x9d2cp3t5i3ch3lrhil",
+            "method": "COIN",
+            "createdAt": "2026-11-04T04:27:12.290Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 36",
+              "slug": "ตอนที่-36",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1m3bql2gfpt5i8repnr9e6",
+            "method": "COIN",
+            "createdAt": "2026-11-04T04:23:37.774Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 35",
+              "slug": "ตอนที่-35",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          },
+          {
+            "id": "cmw1lo7hd2hfat5i7xpfq4n7y",
+            "method": "COIN",
+            "createdAt": "2026-11-04T04:11:52.418Z",
+            "user": {
+              "displayName": "Non5566"
+            },
+            "episode": {
+              "title": "ตอนที่ 34",
+              "slug": "ตอนที่-34",
+              "price": "1.8",
+              "group": {
+                "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+                "slug": "ระบบคืนผลหมื่นเท่า-ชะตานี้ข้าขอกำหนดเอง-ten-thousandfold-return-senior-sister-please-behave"
+              }
+            }
+          }
+        ],
+        "recentRevenue": [
+          {
+            "id": "cmw1pn1ub2huft5iacuejwym4",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T06:02:56.915Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1pih5p2dyqt5i4mdm7ur3x",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T05:59:23.486Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1pf87u2dy6t5i4ruo8bi50",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T05:56:51.930Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1pauw32hs7t5iakenq0p9z",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T05:53:28.035Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1p6pvz2d51t5i38y0zma2v",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T05:50:14.928Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1mi4cx2gi7t5i86pwsep63",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T04:35:08.049Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1mbpkb2hbet5ian1sj8c3o",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T04:30:08.939Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1m7x9j2cp6t5i3lrndyajf",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T04:27:12.295Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1m3bqp2gfst5i8vg68l3ul",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T04:23:37.778Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          },
+          {
+            "id": "cmw1lo7hi2hfdt5i7iowna5b9",
+            "amount": 1.62,
+            "sourceType": "CONTENT_SALE",
+            "createdAt": "2026-11-04T04:11:52.423Z",
+            "payer": {
+              "displayName": "Non5566"
+            }
+          }
+        ]
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/dashboard/stats",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "user": {
+          "creatorTier": {
+            "id": "Beginner",
+            "name": "Beginner",
+            "description": "ผู้เริ่มต้น",
+            "percent": 10,
+            "giftFeePercent": 5,
+            "minEarning": 0,
+            "tierIcon": ""
+          }
+        },
+        "content": {
+          "total": 67,
+          "published": 67,
+          "draft": 0,
+          "suspended": 0
+        },
+        "episodes": {
+          "total": 2538,
+          "published": 2492,
+          "today": 0
+        },
+        "engagement": {
+          "totalViews": 91093,
+          "totalComments": 10,
+          "totalFavorites": 559,
+          "todayViews": 479,
+          "todayComments": 0
+        },
+        "revenue": {
+          "balance": 1428.95,
+          "pending": 0,
+          "lifetimeEarn": 8662.95,
+          "today": 63.18,
+          "week": 524.88,
+          "month": 524.88,
+          "totalUnlocks": 5380,
+          "totalPlatformFees": 1021.05,
+          "totalGrossSales": 9684,
+          "totalGrossDonations": 0
+        },
+        "performance": {
+          "avgRating": 0.04970149253731344,
+          "topContent": [
+            {
+              "id": "cmu55dp6m1xyq6kdc3hxp43hz",
+              "title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+              "slug": "with-a-no-cooldown-cheat-i-can-transform-into-an-undead-calamity",
+              "type": "COMICS",
+              "totalView": "10357",
+              "totalComment": "1",
+              "funRatingAvg": 3.33
+            },
+            {
+              "id": "cmu55krov20aa6kdb4kzmjpr9",
+              "title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+              "slug": "global-awakening-the-synthesis-master-starts-with-an-undead",
+              "type": "COMICS",
+              "totalView": "10114",
+              "totalComment": "1",
+              "funRatingAvg": 0
+            },
+            {
+              "id": "cmuob7ddh15eft5ip2uz7v3i7",
+              "title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+              "slug": "มหาสงครามสัตว์อสูร-เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ-sss",
+              "type": "COMICS",
+              "totalView": "8683",
+              "totalComment": "0",
+              "funRatingAvg": 0
+            },
+            {
+              "id": "cmu5aojjy21k26kdbtrqxx43l",
+              "title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+              "slug": "two-realms-i-have-an-ancient-martial-arts-world",
+              "type": "COMICS",
+              "totalView": "7732",
+              "totalComment": "0",
+              "funRatingAvg": 0
+            },
+            {
+              "id": "cmuobbvll17smt5invj3xzl8e",
+              "title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+              "slug": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด-ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท",
+              "type": "COMICS",
+              "totalView": "6049",
+              "totalComment": "0",
+              "funRatingAvg": 0
+            }
+          ]
+        }
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/dashboard/trends",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [
+        {
+          "date": "2026-10-06",
+          "views": 1818,
+          "comments": 0,
+          "unlocks": 113,
+          "revenue": 183.06
+        },
+        {
+          "date": "2026-10-07",
+          "views": 2048,
+          "comments": 0,
+          "unlocks": 47,
+          "revenue": 76.14
+        },
+        {
+          "date": "2026-10-08",
+          "views": 3695,
+          "comments": 0,
+          "unlocks": 112,
+          "revenue": 181.44
+        },
+        {
+          "date": "2026-10-09",
+          "views": 3320,
+          "comments": 0,
+          "unlocks": 81,
+          "revenue": 131.22
+        },
+        {
+          "date": "2026-10-10",
+          "views": 1795,
+          "comments": 0,
+          "unlocks": 51,
+          "revenue": 82.62
+        },
+        {
+          "date": "2026-10-11",
+          "views": 1568,
+          "comments": 0,
+          "unlocks": 124,
+          "revenue": 200.88
+        },
+        {
+          "date": "2026-10-12",
+          "views": 2243,
+          "comments": 0,
+          "unlocks": 90,
+          "revenue": 145.8
+        },
+        {
+          "date": "2026-10-13",
+          "views": 2259,
+          "comments": 0,
+          "unlocks": 115,
+          "revenue": 186.3
+        },
+        {
+          "date": "2026-10-14",
+          "views": 4326,
+          "comments": 0,
+          "unlocks": 144,
+          "revenue": 233.28
+        },
+        {
+          "date": "2026-10-15",
+          "views": 3523,
+          "comments": 0,
+          "unlocks": 187,
+          "revenue": 302.94
+        },
+        {
+          "date": "2026-10-16",
+          "views": 2511,
+          "comments": 0,
+          "unlocks": 125,
+          "revenue": 202.5
+        },
+        {
+          "date": "2026-10-17",
+          "views": 2072,
+          "comments": 0,
+          "unlocks": 93,
+          "revenue": 150.66
+        },
+        {
+          "date": "2026-10-18",
+          "views": 1851,
+          "comments": 0,
+          "unlocks": 101,
+          "revenue": 163.62
+        },
+        {
+          "date": "2026-10-19",
+          "views": 2092,
+          "comments": 0,
+          "unlocks": 108,
+          "revenue": 174.96
+        },
+        {
+          "date": "2026-10-20",
+          "views": 2136,
+          "comments": 0,
+          "unlocks": 179,
+          "revenue": 289.98
+        },
+        {
+          "date": "2026-10-21",
+          "views": 1696,
+          "comments": 0,
+          "unlocks": 122,
+          "revenue": 197.64
+        },
+        {
+          "date": "2026-10-22",
+          "views": 2159,
+          "comments": 0,
+          "unlocks": 81,
+          "revenue": 131.22
+        },
+        {
+          "date": "2026-10-23",
+          "views": 4010,
+          "comments": 0,
+          "unlocks": 187,
+          "revenue": 302.94
+        },
+        {
+          "date": "2026-10-24",
+          "views": 1567,
+          "comments": 0,
+          "unlocks": 111,
+          "revenue": 179.82
+        },
+        {
+          "date": "2026-10-25",
+          "views": 784,
+          "comments": 0,
+          "unlocks": 82,
+          "revenue": 132.84
+        },
+        {
+          "date": "2026-10-26",
+          "views": 562,
+          "comments": 0,
+          "unlocks": 12,
+          "revenue": 19.44
+        },
+        {
+          "date": "2026-10-27",
+          "views": 767,
+          "comments": 0,
+          "unlocks": 47,
+          "revenue": 76.14
+        },
+        {
+          "date": "2026-10-28",
+          "views": 1809,
+          "comments": 0,
+          "unlocks": 219,
+          "revenue": 354.78
+        },
+        {
+          "date": "2026-10-29",
+          "views": 1200,
+          "comments": 0,
+          "unlocks": 142,
+          "revenue": 230.04
+        },
+        {
+          "date": "2026-10-30",
+          "views": 1155,
+          "comments": 0,
+          "unlocks": 66,
+          "revenue": 106.92
+        },
+        {
+          "date": "2026-10-31",
+          "views": 2078,
+          "comments": 0,
+          "unlocks": 72,
+          "revenue": 116.64
+        },
+        {
+          "date": "2026-11-01",
+          "views": 1143,
+          "comments": 0,
+          "unlocks": 121,
+          "revenue": 196.02
+        },
+        {
+          "date": "2026-11-02",
+          "views": 903,
+          "comments": 0,
+          "unlocks": 62,
+          "revenue": 100.44
+        },
+        {
+          "date": "2026-11-03",
+          "views": 1108,
+          "comments": 0,
+          "unlocks": 102,
+          "revenue": 165.24
+        },
+        {
+          "date": "2026-11-04",
+          "views": 479,
+          "comments": 0,
+          "unlocks": 39,
+          "revenue": 63.18
+        }
+      ],
+      "message": ""
+    }
+  }
+]

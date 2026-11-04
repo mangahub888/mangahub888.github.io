@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/table"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { THAI_SHORT_MONTHS, getChapterCount } from "@/lib/utils"
-import initialGrowthData from "@/data/readrealm_growth_latest.json"
+import initialGrowthData from "@/data/multi_platform_growth_latest.json"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
 import {
@@ -97,23 +97,24 @@ export function FinancialsView({
   // Top Tab Switcher
   const [activeTab, setActiveTab] = React.useState<"growth" | "pnl">("growth")
 
-  // --- ReadRealm Growth Tracker State ---
+  // --- Multi-Platform Growth Tracker State (ReadRealm + Kairew + Chaply) ---
   const [trackerData, setTrackerData] = React.useState<any>(initialGrowthData)
   const [loadingGrowth, setLoadingGrowth] = React.useState<boolean>(false)
   const [triggeringAction, setTriggeringAction] = React.useState<boolean>(false)
+  const [platformFilter, setPlatformFilter] = React.useState<"all" | "readrealm" | "kairew" | "chaply">("all")
   const [accountFilter, setAccountFilter] = React.useState<string>("all")
   const [statusFilter, setStatusFilter] = React.useState<"all" | "inactive30" | "active30" | "inactive90">("all")
   const [searchQuery, setSearchQuery] = React.useState<string>("")
   const [sortBy, setSortBy] = React.useState<"sales" | "views" | "inactive_desc" | "inactive_asc" | "growth7d" | "growth30d">("sales")
 
-  // Load latest ReadRealm 6h growth data
+  // Load latest Multi-Platform 6h growth data
   const loadGrowthData = React.useCallback(async () => {
     setLoadingGrowth(true)
     try {
       // 1. Live raw GitHub content (freshest from 6h action runs)
       try {
         const liveRes = await fetch(
-          `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/main/tools/data/readrealm_growth_latest.json?_t=${Date.now()}`
+          `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/main/tools/data/multi_platform_growth_latest.json?_t=${Date.now()}`
         )
         if (liveRes.ok) {
           const json = await liveRes.json()
@@ -126,7 +127,7 @@ export function FinancialsView({
       } catch {}
 
       // 2. Local build public json
-      const res = await fetch(`./data/readrealm_growth_latest.json?_t=${Date.now()}`, { cache: "no-store" })
+      const res = await fetch(`./data/multi_platform_growth_latest.json?_t=${Date.now()}`, { cache: "no-store" })
       if (res.ok) {
         const json = await res.json()
         if (json && json.comics && json.comics.length > 0) {
@@ -159,7 +160,7 @@ export function FinancialsView({
     setTriggeringAction(true)
     try {
       await callGasApi("TRIGGER_READREALM_TRACKER", { source: "frontend_ui" })
-      toast.success("🚀 สั่งรัน GitHub Action (ReadRealm 6H Tracker Pipeline) เรียบร้อยแล้ว!")
+      toast.success("🚀 สั่งรัน GitHub Action (Multi-Platform 6H Tracker Pipeline) เรียบร้อยแล้ว!")
       setTimeout(() => {
         loadGrowthData()
       }, 5000)
@@ -170,11 +171,63 @@ export function FinancialsView({
     }
   }
 
-  // Filtered & Sorted Comics for Growth Table (with Inactivity > 30d Filter)
+  // Dynamic KPI Aggregations based on platform filter
+  const kpiStats = React.useMemo(() => {
+    if (!trackerData) {
+      return {
+        sales: 0,
+        views: 0,
+        comics: 0,
+        inactive30: 0,
+        active30: 0,
+        breakdown: {} as any
+      }
+    }
+    const breakdown = trackerData.platforms_breakdown || {}
+    if (platformFilter === "all") {
+      return {
+        sales: trackerData.total_sales_portfolio || 0,
+        views: trackerData.total_views_portfolio || 0,
+        comics: trackerData.total_comics || (trackerData.comics || []).length,
+        inactive30: trackerData.total_inactive_30d || 0,
+        active30: trackerData.total_active_30d || 0,
+        breakdown
+      }
+    }
+    const pData = breakdown[platformFilter]
+    if (pData) {
+      return {
+        sales: pData.sales || 0,
+        views: pData.views || 0,
+        comics: pData.comics_count || 0,
+        inactive30: pData.inactive_30d || 0,
+        active30: pData.active_30d || 0,
+        breakdown
+      }
+    }
+    const pComics = (trackerData.comics || []).filter((c: any) => c.platform === platformFilter)
+    const inact = pComics.filter((c: any) => (c.days_inactive != null ? c.days_inactive : 0) > 30).length
+    return {
+      sales: pComics.reduce((sum: number, c: any) => sum + (c.total_sales || 0), 0),
+      views: pComics.reduce((sum: number, c: any) => sum + (c.total_views || 0), 0),
+      comics: pComics.length,
+      inactive30: inact,
+      active30: pComics.length - inact,
+      breakdown
+    }
+  }, [trackerData, platformFilter])
+
+  // Filtered & Sorted Comics for Growth Table (with Platform & Inactivity Filters)
   const filteredComics = React.useMemo(() => {
     if (!trackerData || !Array.isArray(trackerData.comics)) return []
     let list = [...trackerData.comics]
 
+    // Platform Filter
+    if (platformFilter !== "all") {
+      list = list.filter((c) => c.platform === platformFilter)
+    }
+
+    // Account Filter
     if (accountFilter !== "all") {
       list = list.filter((c) => c.account_id === accountFilter || c.account === accountFilter)
     }
@@ -193,7 +246,7 @@ export function FinancialsView({
       list = list.filter(
         (c) =>
           (c.subject && c.subject.toLowerCase().includes(q)) ||
-          (c.comic_id && c.comic_id.toLowerCase().includes(q))
+          (c.comic_id && String(c.comic_id).toLowerCase().includes(q))
       )
     }
 
@@ -220,7 +273,7 @@ export function FinancialsView({
     })
 
     return list
-  }, [trackerData, accountFilter, statusFilter, searchQuery, sortBy])
+  }, [trackerData, platformFilter, accountFilter, statusFilter, searchQuery, sortBy])
 
   // --- Traditional P&L Manual Ledger State ---
   // Month filter removed completely to focus on current totals and historical % growth
@@ -599,7 +652,7 @@ export function FinancialsView({
             }`}
           >
             <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-            สถิติยอดขาย & อัตราเติบโต ReadRealm
+            สถิติยอดขาย & อัตราเติบโต Multi-Platform
           </button>
           <button
             onClick={() => setActiveTab("pnl")}
@@ -629,7 +682,7 @@ export function FinancialsView({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-white">
-                    ReadRealm 6-Hour Auto Growth Pipeline
+                    Multi-Platform 6-Hour Growth Pipeline (ReadRealm • Kairew • Chaply)
                   </span>
                   <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                     GAS Trigger Active (ทุก 6 ชม. ตรงเวลา ไม่โดนแย่งคิว)
@@ -673,20 +726,27 @@ export function FinancialsView({
             </div>
           </div>
 
-          {/* 4 KPI Cards */}
+          {/* 4 KPI Cards (Dynamic according to Platform selection) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400">💰 ยอดขายรวมทั้งพอร์ต</p>
+                  <p className="text-xs text-slate-400">
+                    💰 ยอดขายสะสม{platformFilter === "all" ? " (รวมทุกแพลตฟอร์ม)" : ` (${platformFilter.toUpperCase()})`}
+                  </p>
                   <p className="text-xl font-bold font-mono text-emerald-400 mt-1">
-                    ฿
-                    {(
-                      trackerData?.total_sales_portfolio || 5771265.1
-                    ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    ฿{kpiStats.sales.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </p>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    แปลจนเมื่อย ฿{(trackerData?.lionking_sales || 4403430.3).toLocaleString(undefined, { maximumFractionDigits: 0 })} • แปลแล้ว ฿{(trackerData?.adieu_sales || 1367960.8).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {platformFilter === "all" ? (
+                      <>ReadRealm ฿5.77M • Kairew ฿142.8K • Chaply ฿8.66K</>
+                    ) : platformFilter === "readrealm" ? (
+                      <>แปลจนเมื่อย ฿4.40M • แปลแล้วแปลอีก ฿1.36M</>
+                    ) : platformFilter === "kairew" ? (
+                      <>นักเขียน แปลจนเมื่อย • 79 เรื่อง</>
+                    ) : (
+                      <>ครีเอเตอร์ แปลจนเมื่อย • 67 เรื่อง</>
+                    )}
                   </p>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
@@ -698,15 +758,23 @@ export function FinancialsView({
             <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400">👁️ ยอดคนอ่านสะสมรวม</p>
+                  <p className="text-xs text-slate-400">
+                    👁️ ยอดคนอ่านสะสม{platformFilter === "all" ? " (รวมทุกแพลตฟอร์ม)" : ` (${platformFilter.toUpperCase()})`}
+                  </p>
                   <p className="text-xl font-bold font-mono text-cyan-400 mt-1">
-                    {(
-                      trackerData?.total_views_portfolio || 20656006
-                    ).toLocaleString()}{" "}
+                    {kpiStats.views.toLocaleString()}{" "}
                     <span className="text-xs font-normal text-slate-400">ครั้ง</span>
                   </p>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    แปลจนเมื่อย {(trackerData?.lionking_views || 17006920).toLocaleString()} • แปลแล้ว {(trackerData?.adieu_views || 3649492).toLocaleString()}
+                    {platformFilter === "all" ? (
+                      <>ReadRealm 20.6M • Kairew 2.51M • Chaply 91.0K</>
+                    ) : platformFilter === "readrealm" ? (
+                      <>แปลจนเมื่อย 17.0M • แปลแล้ว 3.6M</>
+                    ) : platformFilter === "kairew" ? (
+                      <>เฉลี่ย 31,859 วิว/เรื่อง</>
+                    ) : (
+                      <>เฉลี่ย 1,359 วิว/เรื่อง</>
+                    )}
                   </p>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
@@ -718,13 +786,13 @@ export function FinancialsView({
             <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400">📚 มังงะที่ติดตามทั้งหมด</p>
+                  <p className="text-xs text-slate-400">📚 มังงะที่ติดตาม</p>
                   <p className="text-xl font-bold font-mono text-indigo-400 mt-1">
-                    {trackerData?.total_comics || 236}{" "}
+                    {kpiStats.comics}{" "}
                     <span className="text-xs font-normal text-slate-400">เรื่อง</span>
                   </p>
-                  <p className="text-[11px] text-slate-500 mt-1">
-                    แปลจนเมื่อย (155) • แปลแล้วแปลอีก (81)
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    มีตอนใหม่ 30d: <span className="text-emerald-400 font-medium">{kpiStats.active30}</span> • ขาดอัปเดต: <span className="text-amber-400 font-medium">{kpiStats.inactive30}</span>
                   </p>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
@@ -740,10 +808,8 @@ export function FinancialsView({
                   <p className="text-sm font-semibold text-amber-300 mt-1">
                     7 วัน &amp; 30 วันย้อนหลัง
                   </p>
-                  <p className="text-[11px] text-slate-500 mt-1">
-                    {trackerData?.has_7d_baseline
-                      ? "✓ คำนวณเทียบ Snapshot ก่อนหน้า"
-                      : "เริ่มเก็บประวัติ Snapshot รอบแรก"}
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    คำนวณตามรอบวันที่จดเอง (Git JSON Timeline)
                   </p>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
@@ -753,8 +819,55 @@ export function FinancialsView({
             </Card>
           </div>
 
-          {/* Controls: Account Filter, Inactivity Filter, Search, Sort */}
-          <div className="flex flex-col gap-3 p-3 rounded-xl border border-slate-800 bg-[#0b1120]/80">
+          {/* Controls: Platform Switcher, Account Filter, Inactivity Filter, Search, Sort */}
+          <div className="flex flex-col gap-3 p-3.5 rounded-xl border border-slate-800 bg-[#0b1120]/80">
+            {/* 1. Platform Switcher Row */}
+            <div className="flex items-center gap-1.5 flex-wrap pb-3 border-b border-slate-800/60">
+              <span className="text-xs text-slate-300 mr-1.5 font-semibold flex items-center gap-1">
+                <span>🌐 แพลตฟอร์ม:</span>
+              </span>
+              <button
+                onClick={() => { setPlatformFilter("all"); setAccountFilter("all"); }}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                  platformFilter === "all"
+                    ? "bg-indigo-600 text-white border-indigo-500 shadow-sm shadow-indigo-500/30"
+                    : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                }`}
+              >
+                🌟 รวมทุกแพลตฟอร์ม ({trackerData?.total_comics || 382})
+              </button>
+              <button
+                onClick={() => { setPlatformFilter("readrealm"); setAccountFilter("all"); }}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                  platformFilter === "readrealm"
+                    ? "bg-blue-600 text-white border-blue-500 shadow-sm shadow-blue-500/30"
+                    : "bg-[#0f172a] text-blue-400 border-slate-800 hover:text-blue-300"
+                }`}
+              >
+                📘 ReadRealm (236)
+              </button>
+              <button
+                onClick={() => { setPlatformFilter("kairew"); setAccountFilter("all"); }}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                  platformFilter === "kairew"
+                    ? "bg-emerald-600 text-white border-emerald-500 shadow-sm shadow-emerald-500/30"
+                    : "bg-[#0f172a] text-emerald-400 border-slate-800 hover:text-emerald-300"
+                }`}
+              >
+                📗 Kairew (79)
+              </button>
+              <button
+                onClick={() => { setPlatformFilter("chaply"); setAccountFilter("all"); }}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                  platformFilter === "chaply"
+                    ? "bg-amber-600 text-white border-amber-500 shadow-sm shadow-amber-500/30"
+                    : "bg-[#0f172a] text-amber-400 border-slate-800 hover:text-amber-300"
+                }`}
+              >
+                📙 Chaply (67)
+              </button>
+            </div>
+
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
               {/* Account Filter Pills */}
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -767,28 +880,32 @@ export function FinancialsView({
                       : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
                   }`}
                 >
-                  ทั้งหมด (236)
+                  ทั้งหมด ({kpiStats.comics})
                 </button>
-                <button
-                  onClick={() => setAccountFilter("แปลจนเมื่อย")}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
-                    accountFilter === "แปลจนเมื่อย" || accountFilter === "lionking"
-                      ? "bg-indigo-600/30 text-indigo-300 border-indigo-500/50"
-                      : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
-                  }`}
-                >
-                  แปลจนเมื่อย (155)
-                </button>
-                <button
-                  onClick={() => setAccountFilter("แปลแล้วแปลอีก")}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
-                    accountFilter === "แปลแล้วแปลอีก" || accountFilter === "adieu"
-                      ? "bg-purple-600/30 text-purple-300 border-purple-500/50"
-                      : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
-                  }`}
-                >
-                  แปลแล้วแปลอีก (81)
-                </button>
+                {(platformFilter === "all" || platformFilter === "readrealm" || platformFilter === "kairew" || platformFilter === "chaply") && (
+                  <button
+                    onClick={() => setAccountFilter("แปลจนเมื่อย")}
+                    className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                      accountFilter === "แปลจนเมื่อย" || accountFilter === "lionking"
+                        ? "bg-indigo-600/30 text-indigo-300 border-indigo-500/50"
+                        : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                    }`}
+                  >
+                    แปลจนเมื่อย
+                  </button>
+                )}
+                {(platformFilter === "all" || platformFilter === "readrealm") && (
+                  <button
+                    onClick={() => setAccountFilter("แปลแล้วแปลอีก")}
+                    className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                      accountFilter === "แปลแล้วแปลอีก" || accountFilter === "adieu"
+                        ? "bg-purple-600/30 text-purple-300 border-purple-500/50"
+                        : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                    }`}
+                  >
+                    แปลแล้วแปลอีก
+                  </button>
+                )}
               </div>
 
               {/* Search & Sort */}
@@ -829,7 +946,7 @@ export function FinancialsView({
                     : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
                 }`}
               >
-                ทุกสถานะ (236)
+                ทุกสถานะ ({kpiStats.comics})
               </button>
               <button
                 onClick={() => setStatusFilter("inactive30")}
@@ -841,7 +958,7 @@ export function FinancialsView({
               >
                 <span>⚠️ ไม่มีตอนใหม่ &gt; 30 วัน</span>
                 <span className="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-[10px] font-mono">
-                  {trackerData?.total_inactive_30d || 188}
+                  {kpiStats.inactive30}
                 </span>
               </button>
               <button
@@ -854,7 +971,7 @@ export function FinancialsView({
               >
                 <span>⚡ มีตอนใหม่ใน 30 วัน</span>
                 <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-[10px] font-mono">
-                  {trackerData?.total_active_30d || 48}
+                  {kpiStats.active30}
                 </span>
               </button>
               <button
@@ -887,7 +1004,8 @@ export function FinancialsView({
                 <TableHeader className="bg-[#0b1120] sticky top-0 z-10">
                   <TableRow className="border-slate-800">
                     <TableHead className="w-12 text-center">#</TableHead>
-                    <TableHead className="min-w-[240px]">ชื่อเรื่องมังงะ</TableHead>
+                    <TableHead className="text-center min-w-[95px]">แพลตฟอร์ม</TableHead>
+                    <TableHead className="min-w-[220px]">ชื่อเรื่องมังงะ</TableHead>
                     <TableHead className="text-center">บัญชี</TableHead>
                     <TableHead className="text-right">ยอดขายรวม</TableHead>
                     <TableHead className="text-right">ยอดวิวรวม</TableHead>
@@ -907,7 +1025,7 @@ export function FinancialsView({
                 <TableBody>
                   {filteredComics.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-12 text-slate-500">
+                      <TableCell colSpan={11} className="text-center py-12 text-slate-500">
                         {loadingGrowth ? (
                           <div className="flex flex-col items-center gap-2">
                             <RefreshCw className="h-6 w-6 animate-spin text-indigo-400" />
@@ -946,6 +1064,21 @@ export function FinancialsView({
                             ) : (
                               <span className="text-slate-400">{rankBadge}</span>
                             )}
+                          </TableCell>
+
+                          {/* Platform Badge */}
+                          <TableCell className="text-center">
+                            <Badge
+                              className={`text-[10px] font-semibold border ${
+                                c.platform === "kairew"
+                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                  : c.platform === "chaply"
+                                  ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                  : "bg-blue-500/10 text-blue-400 border-blue-500/30"
+                              }`}
+                            >
+                              {c.platform === "kairew" ? "Kairew" : c.platform === "chaply" ? "Chaply" : "ReadRealm"}
+                            </Badge>
                           </TableCell>
 
                           <TableCell>
@@ -1327,7 +1460,7 @@ export function FinancialsView({
                 <TableBody>
                   {filteredSales.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-8 text-slate-500">
+                      <TableCell colSpan={11} className="text-center py-8 text-slate-500">
                         ไม่พบข้อมูลในรอบที่เลือก
                       </TableCell>
                     </TableRow>

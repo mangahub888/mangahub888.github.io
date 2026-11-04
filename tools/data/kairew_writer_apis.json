@@ -1,0 +1,36 @@
+[
+  {
+    "url": "https://kairew.com/",
+    "status": 403,
+    "method": "GET",
+    "data": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
+  },
+  {
+    "url": "https://kairew.com/cdn-cgi/speculation",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "tag": "cf-speed-brain",
+      "prefetch": [
+        {
+          "eagerness": "conservative",
+          "source": "document",
+          "where": {
+            "and": [
+              {
+                "href_matches": "/*",
+                "relative_to": "document"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "url": "https://kairew.com/cdn-cgi/rum?",
+    "status": 204,
+    "method": "POST",
+    "data": ""
+  }
+]

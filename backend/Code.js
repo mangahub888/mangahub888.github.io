@@ -18,6 +18,10 @@ const PAYOUT_CLAIMS_SHEET_NAME = 'PayoutClaims';
 const READREALM_GROWTH_SHEET_NAME = 'ReadRealmGrowth';
 const READREALM_TIMELINE_SHEET_NAME = 'ReadRealm_Timeline_Summary';
 const READREALM_WORKFLOW_FILE = 'readrealm_tracker.yml';
+const KAIREW_GROWTH_SHEET_NAME = 'KairewGrowth';
+const KAIREW_TIMELINE_SHEET_NAME = 'Kairew_Timeline_Summary';
+const CHAPLY_GROWTH_SHEET_NAME = 'ChaplyGrowth';
+const CHAPLY_TIMELINE_SHEET_NAME = 'Chaply_Timeline_Summary';
 
 // --- TELEGRAM CONFIGURATION ---
 const TELEGRAM_BOT_TOKEN = '7836927758:AAHpsoCToMUxoeAzo5UMtMum3Ix5rIO_VOc';
@@ -329,6 +333,18 @@ function doPost(e) {
         break;
       case 'GET_READREALM_TRACKER_STATUS':
         result = getReadRealmTrackerStatus();
+        break;
+      case 'SAVE_KAIREW_GROWTH_DATA':
+        result = saveKairewGrowthData(payload);
+        break;
+      case 'GET_KAIREW_GROWTH_DATA':
+        result = getKairewGrowthData();
+        break;
+      case 'SAVE_CHAPLY_GROWTH_DATA':
+        result = saveChaplyGrowthData(payload);
+        break;
+      case 'GET_CHAPLY_GROWTH_DATA':
+        result = getChaplyGrowthData();
         break;
       case 'SAVE_READREALM_GROWTH_DATA':
         result = saveReadRealmGrowthData(payload);
@@ -713,6 +729,38 @@ function getSheet(name = SHEET_NAME) {
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#3b82f6').setFontColor('#ffffff');
+    } else if (name === KAIREW_GROWTH_SHEET_NAME) {
+      const headers = [
+        'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
+        'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
+        'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#059669').setFontColor('#ffffff');
+    } else if (name === KAIREW_TIMELINE_SHEET_NAME) {
+      const headers = [
+        'RecordedAt', 'Date', 'Time', 'TotalSalesPortfolio', 'TotalViewsPortfolio', 'TotalComics',
+        'TopSalesComic', 'InactiveCount30d', 'ActiveCount30d', 'Note'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#10b981').setFontColor('#ffffff');
+    } else if (name === CHAPLY_GROWTH_SHEET_NAME) {
+      const headers = [
+        'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
+        'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
+        'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#ea580c').setFontColor('#ffffff');
+    } else if (name === CHAPLY_TIMELINE_SHEET_NAME) {
+      const headers = [
+        'RecordedAt', 'Date', 'Time', 'TotalSalesPortfolio', 'TotalViewsPortfolio', 'TotalComics',
+        'TopSalesComic', 'InactiveCount30d', 'ActiveCount30d', 'Note'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#f97316').setFontColor('#ffffff');
     } else if (name === READREALM_TIMELINE_SHEET_NAME) {
       const headers = [
         'RecordedAt', 'Date', 'Time', 'TotalSalesPortfolio', 'TotalViewsPortfolio', 'TotalComics',
@@ -5580,5 +5628,414 @@ function getReadRealmGrowthData() {
     };
   } catch (err) {
     return { error: 'Get ReadRealm Growth Data Failed: ' + err.toString() };
+  }
+}
+
+
+// =========================================================================
+// KAIREW GROWTH TRACKER FUNCTIONS
+// =========================================================================
+
+function saveKairewGrowthData(payload) {
+  if (!payload) return { error: 'No payload provided' };
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const comics = payload.comics || [];
+    const recordedAt = payload.pipeline_recorded_at || new Date().toISOString();
+    const dateRef = payload.date_reference || recordedAt.substring(0, 10);
+
+    const summary = {
+      pipeline_recorded_at: recordedAt,
+      date_reference: dateRef,
+      total_comics: payload.total_comics || comics.length,
+      total_sales_portfolio: payload.total_sales_portfolio || 0,
+      total_views_portfolio: payload.total_views_portfolio || 0,
+      top_sales_comic: payload.top_sales_comic || '',
+      total_inactive_30d: payload.total_inactive_30d || 0,
+      total_active_30d: payload.total_active_30d || 0,
+      has_7d_baseline: payload.has_7d_baseline || false,
+      has_30d_baseline: payload.has_30d_baseline || false,
+      updated_at: new Date().toISOString()
+    };
+    PropertiesService.getScriptProperties().setProperty('KAIREW_GROWTH_LATEST_SUMMARY', JSON.stringify(summary));
+
+    // STRATEGY 1: Overwrite Current Snapshot (Max 80 rows - Zero Bloat)
+    if (comics.length > 0) {
+      const sheet = getSheet(KAIREW_GROWTH_SHEET_NAME);
+      sheet.clearContents();
+      const headers = [
+        'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
+        'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
+        'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#059669').setFontColor('#ffffff');
+
+      const rows = comics.map(c => [
+        recordedAt,
+        dateRef,
+        c.comic_id || '',
+        c.subject || '',
+        c.account || '',
+        c.total_sales || 0,
+        c.total_views || 0,
+        c.chapters_count || 0,
+        c.last_chapter_updated_at || '',
+        c.days_inactive != null ? c.days_inactive : 0,
+        (c.growth_7d && c.growth_7d.sales_delta) || 0,
+        (c.growth_7d && c.growth_7d.sales_growth_pct) || 0,
+        (c.growth_7d && c.growth_7d.views_delta) || 0,
+        (c.growth_7d && c.growth_7d.views_growth_pct) || 0,
+        (c.growth_30d && c.growth_30d.sales_delta) || 0,
+        (c.growth_30d && c.growth_30d.sales_growth_pct) || 0,
+        (c.growth_30d && c.growth_30d.views_delta) || 0,
+        (c.growth_30d && c.growth_30d.views_growth_pct) || 0
+      ]);
+
+      if (rows.length > 0) {
+        sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+      }
+    }
+
+    // STRATEGY 3: Append 1 Summary Row to Timeline Sheet
+    let timeStr = '';
+    try {
+      const dObj = new Date(recordedAt);
+      timeStr = Utilities.formatDate(dObj, 'Asia/Bangkok', 'HH:mm');
+    } catch (e) {
+      timeStr = '';
+    }
+
+    const timelineSheet = getSheet(KAIREW_TIMELINE_SHEET_NAME);
+    const lastRow = timelineSheet.getLastRow();
+
+    const summaryRow = [
+      recordedAt,
+      dateRef,
+      timeStr,
+      payload.total_sales_portfolio || 0,
+      payload.total_views_portfolio || 0,
+      payload.total_comics || comics.length,
+      payload.top_sales_comic || '',
+      payload.total_inactive_30d || 0,
+      payload.total_active_30d || 0,
+      '6H Auto Snapshot'
+    ];
+
+    let shouldUpdateLast = false;
+    if (lastRow > 1) {
+      const lastRecorded = timelineSheet.getRange(lastRow, 1).getValue().toString();
+      if (lastRecorded) {
+        const diffMs = Math.abs(new Date(recordedAt).getTime() - new Date(lastRecorded).getTime());
+        if (diffMs < 45 * 60 * 1000) {
+          shouldUpdateLast = true;
+        }
+      }
+    }
+
+    if (shouldUpdateLast) {
+      timelineSheet.getRange(lastRow, 1, 1, summaryRow.length).setValues([summaryRow]);
+    } else {
+      timelineSheet.appendRow(summaryRow);
+    }
+
+    return {
+      success: true,
+      saved_count: comics.length,
+      timeline_row: shouldUpdateLast ? lastRow : lastRow + 1,
+      summary: summary
+    };
+  } catch (err) {
+    return { error: 'Save Kairew Growth Data Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getKairewGrowthData() {
+  try {
+    let summary = null;
+    try {
+      const sStr = PropertiesService.getScriptProperties().getProperty('KAIREW_GROWTH_LATEST_SUMMARY');
+      if (sStr) summary = JSON.parse(sStr);
+    } catch (e) {}
+
+    const sheet = getSheet(KAIREW_GROWTH_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) {
+      return { success: true, summary: summary, comics: [], timeline: [] };
+    }
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const comics = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      comics.push({
+        recorded_at: row[headers.indexOf('recordedat')],
+        date: row[headers.indexOf('date')],
+        comic_id: row[headers.indexOf('comicid')],
+        subject: row[headers.indexOf('subject')],
+        platform: 'kairew',
+        account: row[headers.indexOf('account')],
+        total_sales: row[headers.indexOf('totalsales')],
+        total_views: row[headers.indexOf('totalviews')],
+        chapters_count: row[headers.indexOf('chapterscount')],
+        last_chapter_updated_at: headers.indexOf('lastchapterupdate') !== -1 ? row[headers.indexOf('lastchapterupdate')] : '',
+        days_inactive: headers.indexOf('daysinactive') !== -1 ? row[headers.indexOf('daysinactive')] : 0,
+        is_inactive_30d: (headers.indexOf('daysinactive') !== -1 ? row[headers.indexOf('daysinactive')] : 0) > 30,
+        growth_7d: {
+          sales_delta: row[headers.indexOf('salesdelta7d')],
+          sales_growth_pct: row[headers.indexOf('salesgrowthpct7d')],
+          views_delta: row[headers.indexOf('viewsdelta7d')],
+          views_growth_pct: row[headers.indexOf('viewsgrowthpct7d')]
+        },
+        growth_30d: {
+          sales_delta: row[headers.indexOf('salesdelta30d')],
+          sales_growth_pct: row[headers.indexOf('salesgrowthpct30d')],
+          views_delta: row[headers.indexOf('viewsdelta30d')],
+          views_growth_pct: row[headers.indexOf('viewsgrowthpct30d')]
+        }
+      });
+    }
+
+    let timeline = [];
+    try {
+      const tSheet = getSheet(KAIREW_TIMELINE_SHEET_NAME);
+      const tData = tSheet.getDataRange().getValues();
+      if (tData.length > 1) {
+        const tHeaders = tData[0].map(h => h.toString().toLowerCase().trim());
+        const startIdx = Math.max(1, tData.length - 60);
+        for (let i = startIdx; i < tData.length; i++) {
+          const r = tData[i];
+          timeline.push({
+            recorded_at: r[tHeaders.indexOf('recordedat')],
+            date: r[tHeaders.indexOf('date')],
+            time: r[tHeaders.indexOf('time')],
+            total_sales: r[tHeaders.indexOf('totalsalesportfolio')],
+            total_views: r[tHeaders.indexOf('totalviewsportfolio')],
+            total_comics: r[tHeaders.indexOf('totalcomics')],
+            top_sales_comic: r[tHeaders.indexOf('topsalescomic')],
+            total_inactive_30d: r[tHeaders.indexOf('inactivecount30d')],
+            total_active_30d: r[tHeaders.indexOf('activecount30d')]
+          });
+        }
+      }
+    } catch (e) {}
+
+    return {
+      success: true,
+      summary: summary,
+      total_comics: comics.length,
+      comics: comics,
+      timeline: timeline
+    };
+  } catch (err) {
+    return { error: 'Get Kairew Growth Data Failed: ' + err.toString() };
+  }
+}
+
+// =========================================================================
+// CHAPLY GROWTH TRACKER FUNCTIONS
+// =========================================================================
+
+function saveChaplyGrowthData(payload) {
+  if (!payload) return { error: 'No payload provided' };
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const comics = payload.comics || [];
+    const recordedAt = payload.pipeline_recorded_at || new Date().toISOString();
+    const dateRef = payload.date_reference || recordedAt.substring(0, 10);
+
+    const summary = {
+      pipeline_recorded_at: recordedAt,
+      date_reference: dateRef,
+      total_comics: payload.total_comics || comics.length,
+      total_sales_portfolio: payload.total_sales_portfolio || 0,
+      total_views_portfolio: payload.total_views_portfolio || 0,
+      top_sales_comic: payload.top_sales_comic || '',
+      total_inactive_30d: payload.total_inactive_30d || 0,
+      total_active_30d: payload.total_active_30d || 0,
+      has_7d_baseline: payload.has_7d_baseline || false,
+      has_30d_baseline: payload.has_30d_baseline || false,
+      updated_at: new Date().toISOString()
+    };
+    PropertiesService.getScriptProperties().setProperty('CHAPLY_GROWTH_LATEST_SUMMARY', JSON.stringify(summary));
+
+    // STRATEGY 1: Overwrite Current Snapshot (Max 68 rows - Zero Bloat)
+    if (comics.length > 0) {
+      const sheet = getSheet(CHAPLY_GROWTH_SHEET_NAME);
+      sheet.clearContents();
+      const headers = [
+        'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
+        'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
+        'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#ea580c').setFontColor('#ffffff');
+
+      const rows = comics.map(c => [
+        recordedAt,
+        dateRef,
+        c.comic_id || '',
+        c.subject || '',
+        c.account || '',
+        c.total_sales || 0,
+        c.total_views || 0,
+        c.chapters_count || 0,
+        c.last_chapter_updated_at || '',
+        c.days_inactive != null ? c.days_inactive : 0,
+        (c.growth_7d && c.growth_7d.sales_delta) || 0,
+        (c.growth_7d && c.growth_7d.sales_growth_pct) || 0,
+        (c.growth_7d && c.growth_7d.views_delta) || 0,
+        (c.growth_7d && c.growth_7d.views_growth_pct) || 0,
+        (c.growth_30d && c.growth_30d.sales_delta) || 0,
+        (c.growth_30d && c.growth_30d.sales_growth_pct) || 0,
+        (c.growth_30d && c.growth_30d.views_delta) || 0,
+        (c.growth_30d && c.growth_30d.views_growth_pct) || 0
+      ]);
+
+      if (rows.length > 0) {
+        sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+      }
+    }
+
+    // STRATEGY 3: Append 1 Summary Row to Timeline Sheet
+    let timeStr = '';
+    try {
+      const dObj = new Date(recordedAt);
+      timeStr = Utilities.formatDate(dObj, 'Asia/Bangkok', 'HH:mm');
+    } catch (e) {
+      timeStr = '';
+    }
+
+    const timelineSheet = getSheet(CHAPLY_TIMELINE_SHEET_NAME);
+    const lastRow = timelineSheet.getLastRow();
+
+    const summaryRow = [
+      recordedAt,
+      dateRef,
+      timeStr,
+      payload.total_sales_portfolio || 0,
+      payload.total_views_portfolio || 0,
+      payload.total_comics || comics.length,
+      payload.top_sales_comic || '',
+      payload.total_inactive_30d || 0,
+      payload.total_active_30d || 0,
+      '6H Auto Snapshot'
+    ];
+
+    let shouldUpdateLast = false;
+    if (lastRow > 1) {
+      const lastRecorded = timelineSheet.getRange(lastRow, 1).getValue().toString();
+      if (lastRecorded) {
+        const diffMs = Math.abs(new Date(recordedAt).getTime() - new Date(lastRecorded).getTime());
+        if (diffMs < 45 * 60 * 1000) {
+          shouldUpdateLast = true;
+        }
+      }
+    }
+
+    if (shouldUpdateLast) {
+      timelineSheet.getRange(lastRow, 1, 1, summaryRow.length).setValues([summaryRow]);
+    } else {
+      timelineSheet.appendRow(summaryRow);
+    }
+
+    return {
+      success: true,
+      saved_count: comics.length,
+      timeline_row: shouldUpdateLast ? lastRow : lastRow + 1,
+      summary: summary
+    };
+  } catch (err) {
+    return { error: 'Save Chaply Growth Data Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getChaplyGrowthData() {
+  try {
+    let summary = null;
+    try {
+      const sStr = PropertiesService.getScriptProperties().getProperty('CHAPLY_GROWTH_LATEST_SUMMARY');
+      if (sStr) summary = JSON.parse(sStr);
+    } catch (e) {}
+
+    const sheet = getSheet(CHAPLY_GROWTH_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) {
+      return { success: true, summary: summary, comics: [], timeline: [] };
+    }
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const comics = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      comics.push({
+        recorded_at: row[headers.indexOf('recordedat')],
+        date: row[headers.indexOf('date')],
+        comic_id: row[headers.indexOf('comicid')],
+        subject: row[headers.indexOf('subject')],
+        platform: 'chaply',
+        account: row[headers.indexOf('account')],
+        total_sales: row[headers.indexOf('totalsales')],
+        total_views: row[headers.indexOf('totalviews')],
+        chapters_count: row[headers.indexOf('chapterscount')],
+        last_chapter_updated_at: headers.indexOf('lastchapterupdate') !== -1 ? row[headers.indexOf('lastchapterupdate')] : '',
+        days_inactive: headers.indexOf('daysinactive') !== -1 ? row[headers.indexOf('daysinactive')] : 0,
+        is_inactive_30d: (headers.indexOf('daysinactive') !== -1 ? row[headers.indexOf('daysinactive')] : 0) > 30,
+        growth_7d: {
+          sales_delta: row[headers.indexOf('salesdelta7d')],
+          sales_growth_pct: row[headers.indexOf('salesgrowthpct7d')],
+          views_delta: row[headers.indexOf('viewsdelta7d')],
+          views_growth_pct: row[headers.indexOf('viewsgrowthpct7d')]
+        },
+        growth_30d: {
+          sales_delta: row[headers.indexOf('salesdelta30d')],
+          sales_growth_pct: row[headers.indexOf('salesgrowthpct30d')],
+          views_delta: row[headers.indexOf('viewsdelta30d')],
+          views_growth_pct: row[headers.indexOf('viewsgrowthpct30d')]
+        }
+      });
+    }
+
+    let timeline = [];
+    try {
+      const tSheet = getSheet(CHAPLY_TIMELINE_SHEET_NAME);
+      const tData = tSheet.getDataRange().getValues();
+      if (tData.length > 1) {
+        const tHeaders = tData[0].map(h => h.toString().toLowerCase().trim());
+        const startIdx = Math.max(1, tData.length - 60);
+        for (let i = startIdx; i < tData.length; i++) {
+          const r = tData[i];
+          timeline.push({
+            recorded_at: r[tHeaders.indexOf('recordedat')],
+            date: r[tHeaders.indexOf('date')],
+            time: r[tHeaders.indexOf('time')],
+            total_sales: r[tHeaders.indexOf('totalsalesportfolio')],
+            total_views: r[tHeaders.indexOf('totalviewsportfolio')],
+            total_comics: r[tHeaders.indexOf('totalcomics')],
+            top_sales_comic: r[tHeaders.indexOf('topsalescomic')],
+            total_inactive_30d: r[tHeaders.indexOf('inactivecount30d')],
+            total_active_30d: r[tHeaders.indexOf('activecount30d')]
+          });
+        }
+      }
+    } catch (e) {}
+
+    return {
+      success: true,
+      summary: summary,
+      total_comics: comics.length,
+      comics: comics,
+      timeline: timeline
+    };
+  } catch (err) {
+    return { error: 'Get Chaply Growth Data Failed: ' + err.toString() };
   }
 }

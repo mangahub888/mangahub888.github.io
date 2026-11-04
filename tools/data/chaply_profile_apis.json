@@ -1,0 +1,548 @@
+[
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/auth/session",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "user": {
+        "name": "แปลจนเมื่อย",
+        "email": "kuroko11.p.g@gmail.com",
+        "image": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "displayName": "แปลจนเมื่อย",
+        "username": "Adieu7452",
+        "roles": [
+          "CREATOR",
+          "USER"
+        ],
+        "verified": true,
+        "coins": "0"
+      },
+      "expires": "2026-11-05T06:29:48.496Z",
+      "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJlbWFpbCI6Imt1cm9rbzExLnAuZ0BnbWFpbC5jb20iLCJ1c2VybmFtZSI6IkFkaWV1NzQ1MiIsInJvbGVzIjoiQ1JFQVRPUixVU0VSIiwicGVybWlzc2lvbiI6Ill5NGVidjgrLzJncElPOE9KVkd4ZS9PLzNRNlBaL0Z1L0lqQ0ZXNTZqSUJQa3NYZjEvZlR0T2ZQdDRubm1RbGpycHNuTjRlV0N4NHdoV3NqZFFmSFpBPT0iLCJleHAiOjE3OTM4NjAxODg0OTZ9.2NyndwmA-DO8t6ZSLsMgvNbcv8ozMRJKOqwVG1OukMg",
+      "refreshToken": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtdTNrNTNxcjFwZm02a2RmZWZqbGk3MG8iLCJleHAiOjE3OTQzNzg1ODg0OTZ9.gBqbomishD5vGBx9Rb_rLftduaANzUemjROq7JQT8w8"
+    }
+  },
+  {
+    "url": "https://www.chaply.net/api/permissions/decode",
+    "status": 200,
+    "method": "POST",
+    "data": {
+      "success": true,
+      "message": "Decoded successfully",
+      "data": {
+        "permission": {
+          "P300001": "1111",
+          "P300002": "1111"
+        },
+        "allAccess": false
+      },
+      "errors": []
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/popups/active?",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": [],
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/user/Adieu7452/followers",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "userId": "cmu3k53qr1pfm6kdfefjli70o",
+        "username": "Adieu7452",
+        "totalFollowers": 35,
+        "totalFollowing": 0
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/search",
+    "status": 200,
+    "method": "POST",
+    "data": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "alterTitle": [],
+            "authorBy": "",
+            "categories": [
+              "action",
+              "fantasy"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img1.chaply.net/media/2026/09/17/e614ff23-79db-4487-8bd2-acb4dd643bfd_thumbnail.jpg",
+            "createdAt": 1789626448,
+            "description": "<p>สกิลไม่มีคูลดาวน์งั้นเหรอ? นั่นคือความเป็นไปได้ที่ไร้ขีดจำกัด! สกิลไร้คูลดาวน์รึ? นี่แหละคือความเป็นไปได้ที่ไร้ขีดจำกัด!</p>",
+            "funRatingAvg": 3.33,
+            "funRatingMid": 1,
+            "funRatingTotal": 1,
+            "id": "cmu55dp6m1xyq6kdc3hxp43hz",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1791955232,
+            "rating": "NORMAL",
+            "slug": "with-a-no-cooldown-cheat-i-can-transform-into-an-undead-calamity",
+            "status": "PUBLIC",
+            "tags": [
+              "ระบบ",
+              "เลือดเดือด"
+            ],
+            "title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+            "totalComment": 1,
+            "totalEpisode": 14,
+            "totalFavorite": 40,
+            "totalView": 10357,
+            "translateBy": "",
+            "type": "COMICS",
+            "updatedAt": 1793774101,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [],
+            "authorBy": "",
+            "categories": [
+              "action",
+              "fantasy"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img2.chaply.net/media/2026/09/17/37e5861f-1e16-4c19-926b-a532df1eccb0_thumbnail.jpg",
+            "createdAt": 1789626778,
+            "description": "<p>ยุคแห่งการเปลี่ยนอาชีพถ้วนหน้าอุบัติขึ้น 'เฉินม่อ' ปลุกพลังได้อาชีพลับที่มีเพียงหนึ่งเดียวอย่าง 'ผู้หลอมรวม'<br>ไม่ว่าจะเป็นทหารโครงกระดูกหรือภูตผีวิญญาณร้าย ล้วนสามารถจับมาฟิวชั่นเพื่อวิวัฒนาการ ขัดเกลาและอัปเกรดกองทัพมรณะอันเดดให้แข็งแกร่งขึ้นอย่างไม่หยุดยั้ง!<br>ซากกระดูกขาวโพลนเกลื่อนกลาดทั่วปฐพี ภัยพิบัติแห่งความตายกวาดล้างไปทั่วทั้งทวีป!<br>เขาจะขออาศัยพลังของตนเพียงลำพัง กวาดล้างศัตรูสุดแกร่งจากทั่วทุกสารทิศให้ราบเป็นหน้ากลอง!</p>",
+            "id": "cmu55krov20aa6kdb4kzmjpr9",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1793167493,
+            "rating": "NORMAL",
+            "slug": "global-awakening-the-synthesis-master-starts-with-an-undead",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+            "totalComment": 1,
+            "totalEpisode": 26,
+            "totalFavorite": 44,
+            "totalView": 10114,
+            "translateBy": "",
+            "type": "COMICS",
+            "updatedAt": 1793769300,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [],
+            "categories": [
+              "fantasy",
+              "adventure"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img1.chaply.net/media/2026/09/30/77677a29-91a2-4cad-9280-26b6b0cd27b9_thumbnail.png",
+            "createdAt": 1790785088,
+            "description": "<p>ในยุคสมัยที่ทั่วทั้งโลกต้องห้ำหั่นและตัดสินชะตากรรมกันด้วยการต่อสู้ของ 'สัตว์อสูรพิทักษ์'<br>เปิดฉากก้าวแรกมา... ข้ากลับปลุกพรสวรรค์ระดับ SSS ขึ้นมาได้สำเร็จ!<br>เตรียมตัวจับตาดูข้าบดขยี้ทุกขีดจำกัด แล้วก้าวขึ้นเป็น 'พระเจ้า' องค์ใหม่แห่งยุคสมัยนี้ซะ!</p>",
+            "id": "cmuob7ddh15eft5ip2uz7v3i7",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1793168070,
+            "rating": "NORMAL",
+            "slug": "มหาสงครามสัตว์อสูร-เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ-sss",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+            "totalComment": 0,
+            "totalEpisode": 12,
+            "totalFavorite": 39,
+            "totalView": 8683,
+            "type": "COMICS",
+            "updatedAt": 1793773801,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [],
+            "authorBy": "",
+            "categories": [
+              "martial-arts",
+              "adventure"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img1.chaply.net/media/2026/09/17/dd5041d8-e114-4aaa-8e38-fa9fe3945300_thumbnail.webp",
+            "createdAt": 1789635352,
+            "description": "<p>ยุคฟื้นฟูพลังปราณ สัตว์อสูรออกอาละวาด สภาพแวดล้อมของมนุษยชาติเลวร้ายลงถึงขีดสุดจนทำได้เพียงหลบซ่อนตัวอยู่ตามเมืองป้อมปราการ; 'หานหลิน' นักเรียนม.ปลายปี 3 แห่งเมืองป้อมปราการ กำลังมุ่งมั่นฝึกฝนอย่างหนักเพื่อเตรียมสอบเข้ามหาวิทยาลัย; อันดับหนึ่งสำนักเซียน อันดับสองนิกายเทพ อันดับสามวิทยาลัยเต๋า เป้าหมายเดิมของหานหลินมีเพียงการสอบเข้า 1 ใน 36 มหาวิทยาลัยนิกายเทพระดับสองเท่านั้น ทว่าเมื่อเขาสามารถทะลุมิติข้ามไปยัง 'โลกวิทยายุทธ์ขั้นสูง' อีกใบได้... เป้าหมายการสอบเข้าของเขาก็พลิกผันไปตลอดกาล!</p>",
+            "id": "cmu5aojjy21k26kdbtrqxx43l",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1792481192,
+            "rating": "NORMAL",
+            "slug": "two-realms-i-have-an-ancient-martial-arts-world",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+            "totalComment": 0,
+            "totalEpisode": 13,
+            "totalFavorite": 42,
+            "totalView": 7732,
+            "translateBy": "",
+            "type": "COMICS",
+            "updatedAt": 1793774101,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [],
+            "categories": [
+              "fantasy",
+              "adventure"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img1.chaply.net/media/2026/09/30/c0dae83e-d2f1-429d-9267-886f65083c15_thumbnail.png",
+            "createdAt": 1790785298,
+            "description": "<p>หลังจากมนุษยชาติต้องเผชิญกับวิกฤตเกือบสูญพันธุ์จากการกวาดล้างของ 'ผู้รุกราน' ปริศนา ยอดนักดาบระดับตำนานอย่าง 'ซีนอน กลอเรียส' ได้ถูกส่งย้อนเวลากลับไปในอดีต... ทว่าเขาดันมาจุติในร่างของ 'โนอาห์' คุณชายคนเล็กสุดห่วยแตกผู้เป็นความอัปยศแห่งตระกูลดาสกัลอันทรงอำนาจ!<br>แต่ในเมื่อกำความรู้จากอนาคตไว้ในมือ พร้อมกับครอบครอง 'พลังต้องห้าม' ที่หลอมรวมเวทมนตร์เข้ากับพลังศักดิ์สิทธิ์ได้อย่างสมบูรณ์แบบ เขาจะขอผงาดขึ้นจากจุดที่อ่อนแอที่สุด ทะยานสู่ความแข็งแกร่งอันไร้เทียมทาน!<br>เพื่อพลิกชะตากรรมการล่มสลายของมนุษยชาติ... การต่อสู้สุดเดือดครั้งใหม่ได้เริ่มต้นขึ้นแล้ว!</p>",
+            "id": "cmuobbvll17smt5invj3xzl8e",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1791955916,
+            "rating": "NORMAL",
+            "slug": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด-ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+            "totalComment": 0,
+            "totalEpisode": 19,
+            "totalFavorite": 24,
+            "totalView": 6049,
+            "type": "COMICS",
+            "updatedAt": 1793774101,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [
+              "重生后我用镜面反转复仇"
+            ],
+            "categories": [
+              "action",
+              "fantasy"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img2.chaply.net/media/2026/09/29/2af9553e-673e-4fd5-ae87-445885b36fa3_thumbnail.webp",
+            "createdAt": 1790708534,
+            "description": "<p>“ห้าสิบปีหลังจากโลกแห่งเกมหลอมรวมเข้ากับความเป็นจริง…”</p><p>โลกใบใหม่ได้ถือกำเนิดขึ้น พร้อมกับยอดนักรบผู้แบกรับภาระปกป้องมนุษยชาติ เขาทุ่มเททั้งชีวิตเพื่อสันติ… แต่สุดท้ายกลับถูกหักหลัง! ผู้มีอำนาจสูงสุด หวาดกลัวในพลังของเขา จึงสั่งฆ่าเขาอย่างเลือดเย็น</p><p>ก่อนตาย…เขาปลดปล่อยพลังลับสุดท้าย — “กระจกสะท้อนวิญญาณ” — และผนึกจิตวิญญาณตัวเองไว้ใต้ผืนน้ำของทะเลสาบเงียบงัน</p><p>ราชาสั่งลบชื่อเขาออกจากหน้าประวัติศาสตร์…บิดเบือนทุกเรื่องราว และตราเขาให้กลายเป็น “ผู้ทรยศ”</p><p>แต่เรื่องราวยังไม่จบ…</p><p>หลายสิบปีผ่านไป ในร่างของชายใกล้ตาย นักรบผู้นั้นได้ “ตื่นขึ้น” อีกครั้ง พร้อมพลังแห่งกระจกสะท้อน และความแค้นที่ไม่มีวันจาง…</p><p>เกมแห่งการล้างแค้นจึงเริ่มต้นขึ้น —</p><p>เมื่อเงาสะท้อนจากอดีต กลับมาทวงคืนทุกอย่างที่ถูกขโมยไป!</p>",
+            "id": "cmun1mjxm0yu7t5ioj5wa6031",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1793632727,
+            "rating": "NORMAL",
+            "slug": "rebirth-my-vengeance-through-the-mirror",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+            "totalComment": 0,
+            "totalEpisode": 73,
+            "totalFavorite": 26,
+            "totalView": 4458,
+            "type": "COMICS",
+            "updatedAt": 1793774101,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [],
+            "authorBy": "",
+            "categories": [
+              "action",
+              "fantasy"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img1.chaply.net/media/2026/09/17/8892a02b-79fa-4b45-b916-594b7d586739_thumbnail.jpg",
+            "createdAt": 1789625677,
+            "description": "<p>ดาวบลูสตาร์ถูกเผ่ามารอาละวาดกวาดล้าง 'กู้ชิง' เด็กกำพร้าผู้เข้าร่วมพิธีเปลี่ยนอาชีพ ได้บังเอิญปลุกพลังอาชีพหายาก 【ราชันย์แห่งยมโลก】 พร้อมกุมขุมพลังวิญญาณอันไร้เทียมทาน! เขาฟาดฟันอสูรร้าย บุกเบิกดินแดนเร้นลับ และรวบรวมเหล่าวิญญาณมรณะ ทะยานสู่ความยิ่งใหญ่อย่างดุดัน บดขยี้แผนการร้ายของเผ่ามารที่หมายรุกรานครั้งแล้วครั้งเล่า ฝ่าฟันม่านหมอกแห่งปริศนาเพื่อเปิดโปงความลับชาติกำเนิดที่ถูกผนึกมาเนิ่นนาน ท่ามกลางกลียุคนี้... เขาจะขอใช้เลือดเบิกทาง สังหารล้างบางจนไร้ผู้ต่อต้าน!</p>",
+            "id": "cmu54x6jl1xul6kdc7qbb0we0",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1792401694,
+            "rating": "NORMAL",
+            "slug": "underworld-monarch-i-am-the-abyss",
+            "status": "PUBLIC",
+            "tags": [
+              "ต่อสู้",
+              "เลือดเดือด"
+            ],
+            "title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+            "totalComment": 0,
+            "totalEpisode": 12,
+            "totalFavorite": 23,
+            "totalView": 3474,
+            "translateBy": "แปลจนเมื่อย",
+            "type": "COMICS",
+            "updatedAt": 1793774101,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [],
+            "categories": [
+              "action",
+              "fantasy"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img1.chaply.net/media/2026/09/21/d128206f-579e-42c2-aa90-23b6ae5da78b_thumbnail.webp",
+            "createdAt": 1789996647,
+            "description": "<p><strong>“ที่นี่... มันขุมนรกงั้นเรอะ?”</strong></p><p><strong>'ยาเคโมริ บาคุโตะ' ชายผู้ครั้งหนึ่งเคยถูกขนานนามว่าแข็งแกร่งที่สุดในทวีป กลับต้องจบชีวิตลงอย่างน่าเวทนาด้วยการถูกสหายที่ไว้ใจที่สุดทรยศหักหลัง ทว่าเมื่อเขาลืมตาตื่นขึ้นมาอีกครั้ง สิ่งแรกที่เห็นคือสายตาดูแคลนของกลุ่มคนที่จ้องมองมาอย่างงุนงง... บาคุโตะได้กลับมาเกิดใหม่ในร่างของนักศึกษาหนุ่มผู้คาบช้อนเงินช้อนทองมาจากตระกูลดัง</strong></p><p><strong>แต่ร่างใหม่นี้กลับอ่อนแอจนถึงขีดสุด เขาถูกคนในตระกูลตราหน้าว่าเป็นขยะ และตกเป็นเป้าหมายของการกลั่นแกล้งอย่างทารุณในรั้วมหาลัย... ด้วยศักดิ์ศรีของนักรบผู้เคยอยู่เหนือทุกสรรพสิ่ง บาคุโตะจึงเริ่มขัดเกลาจิตวิญญาณและฝึกฝนใหม่อีกครั้งเพื่อทวงคืนบัลลังก์แห่งอำนาจ พร้อมกับคำสาบานว่าจะลากไอ้พวกที่ทรยศเขาลงมาลงทัณฑ์ให้ดิ้นพล่าน!</strong></p><p><strong>ท่ามกลางมรสุมปัญหาที่โถมเข้าใส่ไม่หยุดหย่อน... มหากาพย์การแก้แค้นสุดระทึกของนักรบผู้ไร้เทียมทานในร่างที่ห่วยแตกที่สุด ได้เปิดฉากขึ้นแล้ว!</strong></p>",
+            "id": "cmub9scyd2qzl6kdax0weqtow",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1792482366,
+            "rating": "NORMAL",
+            "slug": "the-clans-failure-is-a-former-continental-champion",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+            "totalComment": 0,
+            "totalEpisode": 62,
+            "totalFavorite": 8,
+            "totalView": 2850,
+            "type": "COMICS",
+            "updatedAt": 1793774101,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [],
+            "categories": [
+              "action",
+              "fantasy"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img1.chaply.net/media/2026/09/27/e7f3bdbb-78d2-4447-b19e-5b97a6390eed_thumbnail.webp",
+            "createdAt": 1790513805,
+            "description": "<p>“ชูอิจิ” เป็นเพียงเด็กม.ปลายธรรมดาคนหนึ่งในญี่ปุ่นยุคปัจจุบัน</p><p>หลังจากสูญเสียพ่อไป เขาก็ต้องกัดฟันต่อสู้เพื่อปกป้องแม่กับน้องสาว ทว่า…สิ่งที่ได้รับกลับมีแค่การกลั่นแกล้งซ้ำแล้วซ้ำเล่า</p><p>จนกระทั่งอุบัติเหตุอันโหดร้ายได้พรากชีวิตเขาไปก่อนเวลาอันควร</p><p>…แต่เมื่อเขาลืมตาขึ้นอีกครั้ง</p><p>เขากลับพบว่าตัวเองได้เกิดใหม่ในร่างของ “ลูคัส ไรอัน”—บุตรชายขุนนางแห่งต่างโลก</p><p>ลูคัสเคยล่วงเกินเทพแห่งเวทมนตร์ จึงถูกสาปให้ไร้พลังเวทไปตลอดชีวิต และสุดท้ายก็ต้องจบชีวิตลงอย่างน่าอนาถ</p><p>แต่ในตอนนี้ วิญญาณของชูอิจิได้เข้ามาแทนที่ พร้อมพรจาก “มาร์ส” เทพแห่งสงคราม</p><p>โชคชะตาใหม่ของเขาได้เริ่มต้นขึ้นแล้ว…</p><p>ในโลกที่เวทมนตร์คือทุกสิ่ง และนักรบผู้ใช้พลังร่างกายถูกเหยียดหยาม</p><p>เขาจะไม่มีวันยอมถูกเหยียบย่ำอีกต่อไป</p><p>ในนามของลูคัส—เขาจะฝึกฝนศาสตร์แห่งการต่อสู้ และใช้กำปั้นลิขิตชะตาของตนเอง!</p>",
+            "id": "cmujtou700ea2t5iqi3fhllox",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1792674830,
+            "rating": "NORMAL",
+            "slug": "i-became-a-genius-at-the-academy-in-a-world-where-magic-reign",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign",
+            "totalComment": 0,
+            "totalEpisode": 123,
+            "totalFavorite": 4,
+            "totalView": 2078,
+            "type": "COMICS",
+            "updatedAt": 1793773201,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          },
+          {
+            "alterTitle": [
+              "Return of the First Generation: The Strongest in History Reincarnates as His Descendant 1000 Years Later",
+              "初代様の帰還～史上最強が1000年後の子孫に転生する～"
+            ],
+            "authorBy": "",
+            "categories": [
+              "action",
+              "fantasy"
+            ],
+            "contentRating": "NORMAL",
+            "contentStatus": "ONGOING",
+            "coverUrl": "https://img2.chaply.net/media/2026/09/27/a1982eb2-be15-4c6a-ab3d-16d41797a4a7_thumbnail.webp",
+            "createdAt": 1790535577,
+            "description": "<p><strong>กิลฟาส เอล์ดราก้อน</strong></p><p>หัวหน้าตระกูลคนแรกแห่งเอล์ดราก้อน—ชายผู้แสวงหาความแข็งแกร่งจนกลายเป็น “ผู้แข็งแกร่งที่สุดในโลก” ด้วยสองมือของตนเอง</p><p>ในเส้นทางแห่งการฝึกยุทธ์อันไร้ที่สิ้นสุดนั้น เขาได้กิน “ผลไม้ต้องห้าม” ที่ร่ำลือกันว่ามอบพลังอมตะ และถูกปกปักโดย “เทพมังกรศักดิ์สิทธิ์” เพื่อจะได้ฝึกวิชายุทธ์ไปชั่วนิรันดร์</p><p>แต่ทว่าความจริงกลับตรงกันข้าม—ร่างกายของกิลฟาสกลับเริ่มร่วงโรย ดั่งพลังชีวิตถูกกลืนกินทีละน้อย…</p><p>จนในที่สุด เขาก็สิ้นลมหายใจ ท่ามกลางสายตาของบุตรชาย</p><p>——หรืออย่างที่ “คิดว่า” เป็นเช่นนั้น</p><p>เมื่อลืมตาขึ้นอีกครั้ง…</p><p>กิลฟาสกลับพบว่าตนเองได้ “เกิดใหม่” ในร่างทารกของตระกูลเอล์ดราก้อนอีกครั้ง—ในโลกอนาคตกว่าพันปีให้หลัง</p><p>ชื่อใหม่ของเขาคือ ซีค เอล์ดราก้อน</p><p>แต่โลกใบนี้ไม่เหมือนเดิมอีกต่อไป—</p><p>ศัตรูลึกลับจากต่างโลกที่ถูกเรียกว่า “คาออส (Chaos)” ปรากฏขึ้น</p><p>และตระกูลเอล์ดราก้อนในยุคนี้… กลับปกครองด้วย “กฎแห่งป่า” — ผู้แข็งแกร่งเท่านั้นจึงจะอยู่รอด</p><p>ในโลกที่ทุกสิ่งแปรเปลี่ยนไป ซีคกลับยิ้มด้วยดวงตาเป็นประกาย</p><p>“คราวนี้… ข้าจะได้เห็นด้วยตาตัวเอง—จุดสิ้นสุดของศิลปะแห่งการต่อสู้!”</p>",
+            "id": "cmuk6ni1y0g4gt5imnxxmob4z",
+            "isHidden": false,
+            "kind": "LICENSE",
+            "lastEpisodeAt": 1793632966,
+            "rating": "NORMAL",
+            "slug": "return-of-the-first-generation",
+            "status": "PUBLIC",
+            "tags": [],
+            "title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+            "totalComment": 1,
+            "totalEpisode": 63,
+            "totalFavorite": 8,
+            "totalView": 1983,
+            "translateBy": "",
+            "type": "COMICS",
+            "updatedAt": 1793774101,
+            "userAvatar": "https://img1.chaply.net/media/2026/09/17/09f5c015-1e87-44ff-acaf-72709f18dfd1.jpg",
+            "userDisplayName": "แปลจนเมื่อย",
+            "userId": "cmu3k53qr1pfm6kdfefjli70o",
+            "userName": "Adieu7452"
+          }
+        ],
+        "pagination": {
+          "totalItems": 67,
+          "pageSize": 10,
+          "pageIndex": 0,
+          "totalPages": 7,
+          "hasNextPage": true,
+          "hasPreviousPage": false
+        }
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/search",
+    "status": 200,
+    "method": "POST",
+    "data": {
+      "success": true,
+      "data": {
+        "items": [],
+        "pagination": {
+          "totalItems": 0,
+          "pageSize": 10,
+          "pageIndex": 0,
+          "totalPages": 0,
+          "hasNextPage": false,
+          "hasPreviousPage": false
+        }
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer/wallet",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu3k53qr1pfm6kdfefjli70o",
+        "balance": 1428.95,
+        "pending": 0,
+        "lifetimeEarn": 8662.95,
+        "updatedAt": "2026-11-04T06:02:56.919Z",
+        "nextPayoutDate": "2026-11-25T00:05:00.000Z"
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/notifications/unread-count",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "count": 0
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/follow/cmu3k53qr1pfm6kdfefjli70o/my",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "isFollowing": false
+      },
+      "message": ""
+    }
+  },
+  {
+    "url": "https://api.chaply.net/api/writer-application/me",
+    "status": 200,
+    "method": "GET",
+    "data": {
+      "success": true,
+      "data": {
+        "id": "cmu3k6ccb1nuu6kdez13bhdf3",
+        "userId": "cmu3k53qr1pfm6kdfefjli70o",
+        "type": "PERSONAL",
+        "firstName": "ภาคนิพนธ์",
+        "lastName": "ธุระตา",
+        "email": "kuroko11.p.g@gmail.com",
+        "phone": "0886172880",
+        "bankCode": "002",
+        "bankAccount": "9590137262",
+        "fullName": "ภาคนิพนธ์ ธุระตา",
+        "companyName": null,
+        "taxId": null,
+        "documentUrl": null,
+        "idCardUrl": null,
+        "bankBookUrl": null,
+        "bankName": null,
+        "address": null,
+        "currentAddress": null,
+        "companyId": null,
+        "companyAddress": null,
+        "status": "APPROVED",
+        "reason": null,
+        "createdAt": "2026-09-16T03:46:06.971Z",
+        "updatedAt": "2026-09-16T08:35:51.020Z",
+        "approvedAt": "2026-09-16T08:35:51.019Z",
+        "approvedBy": "cmcajb1zc000e0wt7hydbhp5x",
+        "lastProfileEditAt": null,
+        "cooldownEndsAt": null,
+        "canEditProfile": true
+      },
+      "message": ""
+    }
+  }
+]

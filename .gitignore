@@ -33,7 +33,7 @@ storageState.json
 tools/storageState.json
 
 # ReadRealm session caches
-tools/.chrome_readrealm*
+tools/.chrome_*
 tools/*.png
 tools/readrealm_auth*.json
 tools/readrealm_bearer*.json
