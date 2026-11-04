@@ -239,7 +239,7 @@ export function FinancialsView({
   const [accountFilter, setAccountFilter] = React.useState<string>("all");
 
   const [statusFilter, setStatusFilter] = React.useState<
-    "all" | "inactive30" | "active30" | "inactive90"
+    "all" | "inactive30" | "active30" | "inactive90" | "mismatch"
   >("all");
 
   const [searchQuery, setSearchQuery] = React.useState<string>("");
@@ -533,6 +533,21 @@ export function FinancialsView({
     });
   }, [trackerData]);
 
+  // Count titles with mismatched chapters across platforms
+  const mismatchCount = React.useMemo(() => {
+    return unifiedComics.filter((c) => {
+      const activePlatformChapters: number[] = [];
+      if (c.readrealm?.exists)
+        activePlatformChapters.push(c.readrealm.chapters || 0);
+      if (c.kairew?.exists) activePlatformChapters.push(c.kairew.chapters || 0);
+      if (c.chaply?.exists) activePlatformChapters.push(c.chaply.chapters || 0);
+      return (
+        activePlatformChapters.length > 1 &&
+        !activePlatformChapters.every((ch) => ch === activePlatformChapters[0])
+      );
+    }).length;
+  }, [unifiedComics]);
+
   // Dynamic KPI Aggregations based on platform filter
 
   const kpiStats = React.useMemo(() => {
@@ -617,7 +632,7 @@ export function FinancialsView({
 
       breakdown,
     };
-  }, [trackerData, platformFilter]);
+  }, [trackerData, platformFilter, groupUnified, unifiedComics]);
 
   // Filtered & Sorted Comics for Growth Table (Unified + Flat)
 
@@ -665,6 +680,22 @@ export function FinancialsView({
         list = list.filter(
           (c) => (c.days_inactive != null ? c.days_inactive : 0) > 90,
         );
+      } else if (statusFilter === "mismatch") {
+        list = list.filter((c) => {
+          const activePlatformChapters: number[] = [];
+          if (c.readrealm?.exists)
+            activePlatformChapters.push(c.readrealm.chapters || 0);
+          if (c.kairew?.exists)
+            activePlatformChapters.push(c.kairew.chapters || 0);
+          if (c.chaply?.exists)
+            activePlatformChapters.push(c.chaply.chapters || 0);
+          return (
+            activePlatformChapters.length > 1 &&
+            !activePlatformChapters.every(
+              (ch) => ch === activePlatformChapters[0],
+            )
+          );
+        });
       }
 
       // Search query
@@ -1951,6 +1982,21 @@ export function FinancialsView({
               >
                 🛑 ขาดอัปเดต &gt; 90 วัน
               </button>
+
+              <button
+                onClick={() => setStatusFilter("mismatch")}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  statusFilter === "mismatch"
+                    ? "bg-rose-500/25 text-rose-300 border-rose-500/70 shadow-sm shadow-rose-500/10 font-semibold"
+                    : "bg-[#0f172a] text-rose-400/80 border-slate-800 hover:text-rose-300"
+                }`}
+                title="แสดงเฉพาะมังงะที่จำนวนตอนแต่ละแพลตฟอร์มไม่เท่ากัน เพื่อให้สะดวกต่อการตรวจสอบและอัปเดตให้เท่ากัน"
+              >
+                <span>⚠️ ตอนไม่เท่ากัน</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-rose-500/20 text-[10px] font-mono">
+                  {mismatchCount}
+                </span>
+              </button>
             </div>
           </div>
 
@@ -1996,7 +2042,9 @@ export function FinancialsView({
                       </div>
                     </TableHead>
 
-                    <TableHead className="text-center">ตอน</TableHead>
+                    <TableHead className="text-center min-w-[95px]">
+                      ตอน
+                    </TableHead>
 
                     <TableHead className="text-center min-w-[125px]">
                       อัปเดตตอนล่าสุด
@@ -2302,24 +2350,80 @@ export function FinancialsView({
                             </div>
                           </TableCell>
 
-                          <TableCell className="text-center font-mono text-xs text-slate-300">
-                            <div>{c.chapters_count || 0}</div>
+                          <TableCell className="text-center">
+                            {(() => {
+                              const activePlatformChapters: {
+                                platform: string;
+                                count: number;
+                              }[] = [];
+                              if (c.readrealm?.exists) {
+                                activePlatformChapters.push({
+                                  platform: "RR",
+                                  count: c.readrealm.chapters || 0,
+                                });
+                              }
+                              if (c.kairew?.exists) {
+                                activePlatformChapters.push({
+                                  platform: "KW",
+                                  count: c.kairew.chapters || 0,
+                                });
+                              }
+                              if (c.chaply?.exists) {
+                                activePlatformChapters.push({
+                                  platform: "CH",
+                                  count: c.chaply.chapters || 0,
+                                });
+                              }
 
-                            {c.platform_count > 1 && (
-                              <div className="text-[9px] text-slate-500 mt-0.5 space-x-1">
-                                {c.readrealm?.exists && (
-                                  <span>RR:{c.readrealm.chapters}</span>
-                                )}
+                              const hasMismatch =
+                                activePlatformChapters.length > 1 &&
+                                !activePlatformChapters.every(
+                                  (ch) =>
+                                    ch.count ===
+                                    activePlatformChapters[0].count,
+                                );
 
-                                {c.kairew?.exists && (
-                                  <span>KW:{c.kairew.chapters}</span>
-                                )}
-
-                                {c.chaply?.exists && (
-                                  <span>CH:{c.chaply.chapters}</span>
-                                )}
-                              </div>
-                            )}
+                              return (
+                                <div className="flex flex-col items-center justify-center">
+                                  {hasMismatch ? (
+                                    <>
+                                      <Badge
+                                        variant="outline"
+                                        className="bg-rose-500/20 text-rose-300 border-rose-500/50 font-mono font-bold text-xs px-2 py-0.5 shadow-xs flex items-center gap-1"
+                                        title="จำนวนตอนไม่เท่ากันข้ามแพลตฟอร์ม! ต้องอัปเดตตอนให้ตรงกัน"
+                                      >
+                                        <span>⚠️</span>
+                                        <span>{c.chapters_count || 0} ตอน</span>
+                                      </Badge>
+                                      <div className="mt-1 flex items-center gap-1 text-[10px] font-mono text-rose-300 flex-wrap justify-center">
+                                        {activePlatformChapters.map((ap) => (
+                                          <span
+                                            key={ap.platform}
+                                            className="px-1 py-0.2 rounded bg-rose-950/70 border border-rose-800/50 font-medium"
+                                          >
+                                            {ap.platform}:{ap.count}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Badge
+                                        variant="outline"
+                                        className="bg-slate-800/60 text-slate-300 border-slate-700/60 font-mono text-xs px-2 py-0.5"
+                                      >
+                                        {c.chapters_count || 0} ตอน
+                                      </Badge>
+                                      {activePlatformChapters.length > 1 && (
+                                        <span className="mt-0.5 text-[9px] font-mono text-emerald-400/80">
+                                          ✓ เท่ากันทุกเว็บ
+                                        </span>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              );
+                            })()}
                           </TableCell>
 
                           {/* Last Chapter Update / Inactivity Badge */}
