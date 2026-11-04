@@ -1965,7 +1965,21 @@ function syncPaidClaimsToBudget(payload) {
     const now = new Date();
     claimsToImport.forEach((c, index) => {
       const transId = 'TR' + (now.getTime() + index);
-      let transDate = c.paidat ? new Date(c.paidat) : (c.createdat ? new Date(c.createdat) : now);
+      let transDate = null;
+      if (c.enddate) {
+        const d = new Date(c.enddate);
+        if (!isNaN(d.getTime())) transDate = d;
+      }
+      if (!transDate && c.daterange && c.daterange.indexOf('ถึง') !== -1) {
+        const parts = c.daterange.split('ถึง');
+        if (parts.length > 1) {
+          const d = new Date(parts[1].trim());
+          if (!isNaN(d.getTime())) transDate = d;
+        }
+      }
+      if (!transDate) {
+        transDate = c.paidat ? new Date(c.paidat) : (c.createdat ? new Date(c.createdat) : now);
+      }
       if (isNaN(transDate.getTime())) transDate = now;
 
       const staff = c.staffname || '';

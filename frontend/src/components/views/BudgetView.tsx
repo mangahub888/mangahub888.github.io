@@ -48,6 +48,14 @@ const DEFAULT_WEBSITES = [
   "chaply",
 ]
 
+function getLastDayOfMonth(year: number, month: number): string {
+  const lastDay = new Date(year, month, 0).getDate()
+  const yStr = String(year)
+  const mStr = String(month).padStart(2, "0")
+  const dStr = String(lastDay).padStart(2, "0")
+  return `${yStr}-${mStr}-${dStr}`
+}
+
 interface BudgetViewProps {
   payeeList: any[]
   transactionList: any[]
@@ -73,6 +81,12 @@ export function BudgetView({
   // Transaction Modal
   const [transOpen, setTransOpen] = React.useState(false)
   const [editTransId, setEditTransId] = React.useState<string | null>(null)
+  const [transMonth, setTransMonth] = React.useState<string>(() => {
+    return monthFilter !== "all" ? monthFilter : String(now.getMonth() + 1)
+  })
+  const [transYear, setTransYear] = React.useState<string>(() => {
+    return yearFilter !== "all" ? yearFilter : String(now.getFullYear())
+  })
   const [transDate, setTransDate] = React.useState(
     now.toISOString().split("T")[0]
   )
@@ -250,7 +264,9 @@ export function BudgetView({
   // 3. เพิ่มปุ่มแอดภาษี เพื่อสะดวกอัตโนมัติ
   const handleOpenTaxModal = (mode: "tax3" | "central10" = "tax3") => {
     setTaxMode(mode)
-    const d = now.toISOString().split("T")[0]
+    const currentM = monthFilter !== "all" ? Number(monthFilter) : (now.getMonth() + 1)
+    const currentY = yearFilter !== "all" ? Number(yearFilter) : now.getFullYear()
+    const d = getLastDayOfMonth(currentY, currentM)
     setTaxDate(d)
     const monthLabel = monthFilter === "all" ? "ทั้งหมด" : (THAI_MONTHS[Number(monthFilter) - 1] || monthFilter)
 
@@ -318,9 +334,32 @@ export function BudgetView({
     }
   }
 
+  const handleSelectTransMonth = (m: string, y?: string) => {
+    const targetMonth = Number(m)
+    const targetYear = Number(y || transYear)
+    setTransMonth(m)
+    if (y) setTransYear(y)
+    if (targetMonth >= 1 && targetMonth <= 12 && targetYear > 2000) {
+      setTransDate(getLastDayOfMonth(targetYear, targetMonth))
+    }
+  }
+
+  const handleSelectTransYear = (y: string) => {
+    const targetYear = Number(y)
+    const targetMonth = Number(transMonth)
+    setTransYear(y)
+    if (targetMonth >= 1 && targetMonth <= 12 && targetYear > 2000) {
+      setTransDate(getLastDayOfMonth(targetYear, targetMonth))
+    }
+  }
+
   const handleOpenAddTrans = () => {
     setEditTransId(null)
-    setTransDate(new Date().toISOString().split("T")[0])
+    const currentM = monthFilter !== "all" ? Number(monthFilter) : (now.getMonth() + 1)
+    const currentY = yearFilter !== "all" ? Number(yearFilter) : now.getFullYear()
+    setTransMonth(String(currentM))
+    setTransYear(String(currentY))
+    setTransDate(getLastDayOfMonth(currentY, currentM))
     setTransType("Income")
     setTransCategory("")
     setTransReference("")
@@ -334,7 +373,10 @@ export function BudgetView({
     let formattedDate = new Date().toISOString().split("T")[0]
     if (t.date) {
       try {
-        formattedDate = new Date(t.date).toISOString().split("T")[0]
+        const d = new Date(t.date)
+        formattedDate = d.toISOString().split("T")[0]
+        setTransMonth(String(d.getMonth() + 1))
+        setTransYear(String(d.getFullYear()))
       } catch {}
     }
     setTransDate(formattedDate)
@@ -788,14 +830,52 @@ export function BudgetView({
             <DialogTitle>{editTransId ? "แก้ไขรายการบัญชี" : "บันทึกรายการบัญชี"}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSaveTransaction} className="space-y-4 mt-2">
-            <div className="space-y-1.5">
-              <Label>วันที่ *</Label>
-              <Input
-                type="date"
-                value={transDate}
-                onChange={(e) => setTransDate(e.target.value)}
-                required
-              />
+            {/* Quick Month & Year Picker that auto-fills to the last day of the month */}
+            <div className="space-y-2 p-3 rounded-lg border border-[#26334d] bg-[#0b1120]/70">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs text-slate-300 font-semibold">
+                  🗓️ เลือกรอบเดือน (ลงวันสุดท้ายของเดือนอัตโนมัติ):
+                </Label>
+                <span className="text-[11px] text-emerald-400 font-mono font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+                  {transDate}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  className="h-9 w-full rounded-md border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
+                  value={transMonth}
+                  onChange={(e) => handleSelectTransMonth(e.target.value)}
+                >
+                  {THAI_MONTHS.map((m, i) => (
+                    <option key={m} value={String(i + 1)}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  className="h-9 w-full rounded-md border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
+                  value={transYear}
+                  onChange={(e) => handleSelectTransYear(e.target.value)}
+                >
+                  {years.map((y) => (
+                    <option key={y} value={String(y)}>
+                      {y + 543} ({y})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800">
+                <span>วันที่บันทึก (ระบุเองได้):</span>
+                <Input
+                  type="date"
+                  value={transDate}
+                  onChange={(e) => setTransDate(e.target.value)}
+                  required
+                  className="h-8 w-40 text-xs bg-[#0b1120] border-[#26334d] font-mono text-slate-200"
+                />
+              </div>
             </div>
 
             <div className="space-y-1.5">
