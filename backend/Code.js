@@ -2681,13 +2681,21 @@ function getRawTrackerList() {
         continue;
       }
 
+      // Authoritative current chapter from Mangas sheet (falling back to obj.currentchapter)
       let currentChap = 0;
-      if (manga && manga.lastchapter) {
+      if (manga && manga.lastchapter !== undefined && manga.lastchapter !== null && String(manga.lastchapter).trim() !== '') {
         const mMatch = String(manga.lastchapter).match(/(\d+(?:\.\d+)?)/);
         currentChap = mMatch ? parseFloat(mMatch[1]) : (parseFloat(manga.lastchapter) || 0);
         if (isNaN(currentChap) || !isFinite(currentChap) || currentChap < 0) currentChap = 0;
+      } else if (obj.currentchapter !== undefined && obj.currentchapter !== null && String(obj.currentchapter).trim() !== '') {
+        const cMatch = String(obj.currentchapter).match(/(\d+(?:\.\d+)?)/);
+        currentChap = cMatch ? parseFloat(cMatch[1]) : (parseFloat(obj.currentchapter) || 0);
+        if (isNaN(currentChap) || !isFinite(currentChap) || currentChap < 0) currentChap = 0;
       }
-      obj.currentChapter = currentChap > 0 ? String(currentChap) : (manga ? (manga.lastchapter || '0') : '0');
+
+      const currentChapStr = currentChap > 0 ? String(currentChap) : (manga ? String(manga.lastchapter || '0') : String(obj.currentchapter || '0'));
+      obj.currentChapter = currentChapStr;
+      obj.currentchapter = currentChapStr; // Ensure lowercase consistency across scripts/UI
       if (!obj.manganame && manga) obj.manganame = manga.manganame;
 
       // Ensure status is 100% accurate & NEVER contains NaN:
@@ -2711,6 +2719,8 @@ function getRawTrackerList() {
           const diff = Math.round((rawCount - currentChap) * 100) / 100;
           obj.status = 'มีตอนใหม่ (+' + diff + ' ตอน)';
         }
+      } else if (rawCount > 0 && currentChap === 0) {
+        obj.status = 'มีตอนใหม่ (+' + rawCount + ' ตอน)';
       }
       results.push(obj);
     }
@@ -2895,6 +2905,15 @@ function addRawTracker(item) {
     const id = 'TRK' + new Date().getTime();
     const now = new Date();
     
+    // Resolve current chapter
+    let currentChapVal = item.currentchapter !== undefined ? item.currentchapter : (item.currentChapter !== undefined ? item.currentChapter : '');
+    if (!currentChapVal && item.mangaid) {
+      const mList = getMangaList();
+      const mMatch = mList.find(m => String(m.mangaid) === String(item.mangaid));
+      if (mMatch && mMatch.lastchapter) currentChapVal = String(mMatch.lastchapter);
+    }
+    const currentChapNum = parseFloat(currentChapVal) || 0;
+
     // Test scrape initial
     let initialText = '';
     let initialCount = 0;
@@ -2904,7 +2923,16 @@ function addRawTracker(item) {
       if (sc.success) {
         initialText = sc.rawText;
         initialCount = sc.chapterCount;
-        initialStatus = 'เป็นปัจจุบัน';
+        if (initialCount > 0 && currentChapNum > 0) {
+          if (initialCount > currentChapNum) {
+            const diff = Math.round((initialCount - currentChapNum) * 100) / 100;
+            initialStatus = 'มีตอนใหม่ (+' + diff + ' ตอน)';
+          } else {
+            initialStatus = 'เป็นปัจจุบัน';
+          }
+        } else {
+          initialStatus = 'เป็นปัจจุบัน';
+        }
       }
     }
 
@@ -2920,6 +2948,7 @@ function addRawTracker(item) {
       if (header === 'lastchecked') return now;
       if (header === 'updatedat') return now;
       if (header === 'autocheck') return item.autocheck !== undefined ? item.autocheck : true;
+      if (header === 'currentchapter') return String(currentChapVal || '0');
       return '';
     });
 
@@ -2950,6 +2979,29 @@ function updateRawTracker(trackerId, updateData) {
             sheet.getRange(rowNum, colIndex + 1).setValue(updateData[key]);
           }
         });
+
+        // If currentchapter was updated, recalculate status if not explicitly given
+        const updatedChapVal = updateData.currentchapter !== undefined ? updateData.currentchapter : updateData.currentChapter;
+        if (updatedChapVal !== undefined && updateData.status === undefined) {
+          const chapNum = parseFloat(updatedChapVal) || 0;
+          const countCol = headers.indexOf('lastrawcount');
+          const statusCol = headers.indexOf('status');
+          const rawCount = updateData.lastrawcount !== undefined ? (parseFloat(updateData.lastrawcount) || 0) : (countCol !== -1 ? (parseFloat(data[i][countCol]) || 0) : 0);
+          let newStatus = 'เป็นปัจจุบัน';
+          if (rawCount > 0 && chapNum > 0) {
+            if (rawCount > chapNum) {
+              const diff = Math.round((rawCount - chapNum) * 100) / 100;
+              newStatus = 'มีตอนใหม่ (+' + diff + ' ตอน)';
+            } else {
+              newStatus = 'เป็นปัจจุบัน';
+            }
+          } else if (rawCount > 0 && chapNum === 0) {
+            newStatus = 'มีตอนใหม่ (+' + rawCount + ' ตอน)';
+          }
+          if (statusCol !== -1) {
+            sheet.getRange(rowNum, statusCol + 1).setValue(newStatus);
+          }
+        }
         break;
       }
     }
@@ -3156,18 +3208,25 @@ function importTrackersFromMangaList() {
   mangaList.forEach(m => { mangaMap[String(m.mangaid).trim()] = m; });
 
   const sheet = getSheet(RAW_TRACKER_SHEET_NAME);
+  ensureSheetHeaders(sheet, RAW_TRACKER_SHEET_NAME);
   const data = sheet.getDataRange().getValues();
   const headers = data[0].map(h => h.toString().toLowerCase().trim());
   
   const mIdCol = headers.indexOf('mangaid');
   const nameCol = headers.indexOf('manganame');
   const urlCol = headers.indexOf('url');
+  const chapCol = headers.indexOf('currentchapter');
+  const countCol = headers.indexOf('lastrawcount');
+  const statusCol = headers.indexOf('status');
+  const updatedCol = headers.indexOf('updatedat');
   
   const existingMangaIds = new Set();
   const existingUrls = new Set();
   let deletedCount = 0;
+  let syncedCount = 0;
 
   // 1. ตรวจสอบแถวเดิมใน RawTracker: ถ้าเรื่องถูกลบออกจาก Mangas แล้ว หรือมีแถวซ้ำ ให้ลบแถวออกจาก RawTracker
+  //    และอัปเดตข้อมูลมังงะ (ชื่อ, originalurl, และ currentChapter ล่าสุดจากตาราง Mangas พร้อมคำนวณ status ใหม่)
   if (data.length > 1) {
     for (let i = data.length - 1; i >= 1; i--) {
       const rowMangaId = mIdCol !== -1 ? String(data[i][mIdCol] || '').trim() : '';
@@ -3194,15 +3253,55 @@ function importTrackersFromMangaList() {
       } else {
         if (rowMangaId) {
           existingMangaIds.add(rowMangaId);
-          // อัปเดตข้อมูลมังงะ (ชื่อ และ originalurl) ให้ตรงกับหน้าตั้งค่ามังงะ
+          // อัปเดตข้อมูลมังงะ (ชื่อ, originalurl, และ currentchapter) ให้ตรงกับหน้าตั้งค่ามังงะเสมอ
           const m = mangaMap[rowMangaId];
           if (m) {
+            const rowNum = i + 1;
             if (nameCol !== -1 && m.manganame && data[i][nameCol] !== m.manganame) {
-              sheet.getRange(i + 1, nameCol + 1).setValue(m.manganame);
+              sheet.getRange(rowNum, nameCol + 1).setValue(m.manganame);
             }
             if (urlCol !== -1 && m.originalurl && m.originalurl.trim().startsWith('http') && data[i][urlCol] !== m.originalurl.trim()) {
-              sheet.getRange(i + 1, urlCol + 1).setValue(m.originalurl.trim());
+              sheet.getRange(rowNum, urlCol + 1).setValue(m.originalurl.trim());
             }
+
+            // Sync currentChapter from Mangas
+            let mChapNum = 0;
+            if (m.lastchapter !== undefined && m.lastchapter !== null && String(m.lastchapter).trim() !== '') {
+              const mMatch = String(m.lastchapter).match(/(\d+(?:\.\d+)?)/);
+              mChapNum = mMatch ? parseFloat(mMatch[1]) : (parseFloat(m.lastchapter) || 0);
+              if (isNaN(mChapNum) || !isFinite(mChapNum) || mChapNum < 0) mChapNum = 0;
+            }
+            const mChapStr = mChapNum > 0 ? String(mChapNum) : String(m.lastchapter || '0');
+
+            if (chapCol !== -1 && String(data[i][chapCol]).trim() !== mChapStr) {
+              sheet.getRange(rowNum, chapCol + 1).setValue(mChapStr);
+            }
+
+            // Recalculate status and diff based on updated currentChapter
+            const rawCount = countCol !== -1 ? (parseFloat(data[i][countCol]) || 0) : 0;
+            let newStatus = 'เป็นปัจจุบัน';
+            if (rawCount > 0 && mChapNum > 0) {
+              if (rawCount > mChapNum) {
+                const diff = Math.round((rawCount - mChapNum) * 100) / 100;
+                newStatus = 'มีตอนใหม่ (+' + diff + ' ตอน)';
+              } else {
+                newStatus = 'เป็นปัจจุบัน';
+              }
+            } else if (rawCount > 0 && mChapNum === 0) {
+              newStatus = 'มีตอนใหม่ (+' + rawCount + ' ตอน)';
+            } else if (!data[i][statusCol] || String(data[i][statusCol]).trim() === '') {
+              newStatus = 'รอตรวจสอบครั้งแรก';
+            } else {
+              newStatus = data[i][statusCol];
+            }
+
+            if (statusCol !== -1 && data[i][statusCol] !== newStatus) {
+              sheet.getRange(rowNum, statusCol + 1).setValue(newStatus);
+            }
+            if (updatedCol !== -1) {
+              sheet.getRange(rowNum, updatedCol + 1).setValue(new Date());
+            }
+            syncedCount++;
           }
         }
         if (rowUrl) {
@@ -3219,6 +3318,13 @@ function importTrackersFromMangaList() {
     const mIdStr = String(m.mangaid).trim();
     if (m.originalurl && m.originalurl.trim().startsWith('http') && !existingMangaIds.has(mIdStr)) {
       const id = 'TRK' + new Date().getTime() + '_' + m.mangaid;
+      let mChapNum = 0;
+      if (m.lastchapter !== undefined && m.lastchapter !== null && String(m.lastchapter).trim() !== '') {
+        const mMatch = String(m.lastchapter).match(/(\d+(?:\.\d+)?)/);
+        mChapNum = mMatch ? parseFloat(mMatch[1]) : (parseFloat(m.lastchapter) || 0);
+      }
+      const mChapStr = mChapNum > 0 ? String(mChapNum) : String(m.lastchapter || '0');
+
       const row = headers.map(header => {
         if (header === 'trackerid') return id;
         if (header === 'mangaid') return m.mangaid;
@@ -3231,6 +3337,7 @@ function importTrackersFromMangaList() {
         if (header === 'lastchecked') return now;
         if (header === 'updatedat') return now;
         if (header === 'autocheck') return true;
+        if (header === 'currentchapter') return mChapStr;
         return '';
       });
       rowsToAdd.push(row);
@@ -3245,6 +3352,7 @@ function importTrackersFromMangaList() {
   return {
     deletedCount: deletedCount,
     addedCount: rowsToAdd.length,
+    syncedCount: syncedCount,
     list: getRawTrackerList()
   };
 }
@@ -3266,6 +3374,7 @@ function checkAllRawTrackers(notifyTelegram = false) {
   const lastCheckedCol = headers.indexOf('lastchecked') + 1;
   const updatedAtCol = headers.indexOf('updatedat') + 1;
   const autoCheckCol = headers.indexOf('autocheck') + 1;
+  const currentChapCol = headers.indexOf('currentchapter') + 1;
 
   const mangaList = getMangaList();
   const mangaMap = {};
@@ -3347,6 +3456,8 @@ function checkAllRawTrackers(notifyTelegram = false) {
         if (updatedAtCol > 0) sheet.getRange(rowNum, updatedAtCol).setValue(now);
       }
 
+      const systemChapStr = systemChap > 0 ? String(systemChap) : (manga ? String(manga.lastchapter || '0') : '0');
+      if (currentChapCol > 0) sheet.getRange(rowNum, currentChapCol).setValue(systemChapStr);
       if (lastTextCol > 0) sheet.getRange(rowNum, lastTextCol).setValue(newText);
       if (lastCountCol > 0) sheet.getRange(rowNum, lastCountCol).setValue(newCount);
       if (statusCol > 0) sheet.getRange(rowNum, statusCol).setValue(status);
@@ -3689,23 +3800,28 @@ function completeRawTrackerChapter(payload) {
 
     // 2. Update RawTracker sheet
     const rtSheet = getSheet(RAW_TRACKER_SHEET_NAME);
+    ensureSheetHeaders(rtSheet, RAW_TRACKER_SHEET_NAME);
     const rtData = rtSheet.getDataRange().getValues();
     const rtHeaders = rtData[0].map(h => h.toString().toLowerCase().trim());
     const rtMangaIdCol = rtHeaders.indexOf('mangaid') + 1;
     const rtLastCountCol = rtHeaders.indexOf('lastrawcount') + 1;
+    const rtCurrentChapCol = rtHeaders.indexOf('currentchapter') + 1;
     const rtStatusCol = rtHeaders.indexOf('status') + 1;
     const rtCheckedCol = rtHeaders.indexOf('lastchecked') + 1;
+    const rtUpdatedCol = rtHeaders.indexOf('updatedat') + 1;
 
     for (let j = 1; j < rtData.length; j++) {
       if (String(rtData[j][rtMangaIdCol - 1]) === mangaId) {
         const rawCount = parseFloat(rtData[j][rtLastCountCol - 1]) || 0;
         let newStatus = 'เป็นปัจจุบัน';
         if (rawCount > chapterNum) {
-          const diff = rawCount - chapterNum;
+          const diff = Math.round((rawCount - chapterNum) * 100) / 100;
           newStatus = 'มีตอนใหม่ (+' + diff + ' ตอน)';
         }
+        if (rtCurrentChapCol > 0) rtSheet.getRange(j + 1, rtCurrentChapCol).setValue(chapterStr);
         if (rtStatusCol > 0) rtSheet.getRange(j + 1, rtStatusCol).setValue(newStatus);
         if (rtCheckedCol > 0) rtSheet.getRange(j + 1, rtCheckedCol).setValue(new Date());
+        if (rtUpdatedCol > 0) rtSheet.getRange(j + 1, rtUpdatedCol).setValue(new Date());
         break;
       }
     }
