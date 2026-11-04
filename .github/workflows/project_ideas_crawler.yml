@@ -1,0 +1,57 @@
+name: Mgeko New Project Ideas Crawler (<= 30 Chapters)
+
+on:
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: 'Number of pages to scan (1-10)'
+        required: false
+        default: '5'
+      max_chapters:
+        description: 'Maximum chapter count threshold'
+        required: false
+        default: '30'
+
+concurrency:
+  group: mgeko-project-ideas-crawler
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  crawl-ideas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests lxml
+
+      - name: Run Mgeko Project Ideas Crawler
+        run: |
+          python tools/mgeko_project_ideas_crawler.py --pages "${{ github.event.inputs.pages || '5' }}" --max-chapters "${{ github.event.inputs.max_chapters || '30' }}"
+
+      - name: Commit & Push New Project Ideas
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/data/project_ideas_latest.json frontend/public/data/project_ideas_latest.json frontend/src/data/project_ideas_latest.json
+          if git diff --staged --quiet; then
+            echo "No new project ideas changes to commit."
+          else
+            git commit -m "chore(ideas): update mgeko <= 30 chapters project ideas [skip ci]"
+            git push origin main
+          fi

@@ -16,6 +16,7 @@ import { FinancialsView } from "@/components/views/FinancialsView"
 import { BudgetView } from "@/components/views/BudgetView"
 import { MangaSettingsView } from "@/components/views/MangaSettingsView"
 import { ConnectorsView } from "@/components/views/ConnectorsView"
+import { ProjectIdeasView } from "@/components/views/ProjectIdeasView"
 import { KuaikanCoinWarningBanner } from "@/components/ui/KuaikanCoinWarningBanner"
 import { KuaikanCoinHeaderBadge } from "@/components/ui/KuaikanCoinHeaderBadge"
 import { GitHubActionsHeaderBadge } from "@/components/ui/GitHubActionsHeaderBadge"
@@ -53,6 +54,7 @@ import {
   QrCode,
   Plug,
   Sparkles,
+  Lightbulb,
 } from "lucide-react"
 import {
   useVersionWatcher,
@@ -65,6 +67,7 @@ import {
 type ViewKey =
   | "dashboard"
   | "queue"
+  | "ideas"
   | "tracker"
   | "connectors"
   | "expenses"
@@ -78,6 +81,7 @@ function getViewFromLocation(): ViewKey {
   const validViews: ViewKey[] = [
     "dashboard",
     "queue",
+    "ideas",
     "tracker",
     "connectors",
     "expenses",
@@ -456,6 +460,7 @@ export default function App() {
   const navItems: Array<{ id: ViewKey; label: string; icon: any }> = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "queue", label: "จัดการคิวงาน", icon: ClipboardList },
+    { id: "ideas", label: "หาไอเดียโปรเจคใหม่", icon: Lightbulb },
     { id: "tracker", label: "ติดตามต้นฉบับ", icon: Radio },
     { id: "connectors", label: "จัดการตัวเชื่อมต่อ", icon: Plug },
     { id: "expenses", label: "สรุปรายจ่ายรายเดือน", icon: Receipt },
@@ -675,6 +680,16 @@ export default function App() {
                 setUpdateQueueOpen(true)
               }}
               onQueueChange={updateQueueCache}
+            />
+          )}
+
+          {activeView === "ideas" && (
+            <ProjectIdeasView
+              onOpenAddManga={(prefill) => {
+                setEditingManga(prefill)
+                setReturnToAddQueue(false)
+                setMangaModalOpen(true)
+              }}
             />
           )}
 
