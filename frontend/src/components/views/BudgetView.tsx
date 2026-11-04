@@ -96,6 +96,19 @@ export function BudgetView({
   const [payeeNote, setPayeeNote] = React.useState("")
   const [submittingPayee, setSubmittingPayee] = React.useState(false)
 
+  // Auto Tax & Central Fund Modal state
+  const [taxModalOpen, setTaxModalOpen] = React.useState(false)
+  const [taxMode, setTaxMode] = React.useState<"tax3" | "central10">("tax3")
+  const [taxDate, setTaxDate] = React.useState(now.toISOString().split("T")[0])
+  const [taxAmount, setTaxAmount] = React.useState("")
+  const [taxNote, setTaxNote] = React.useState("")
+  const [submittingTax, setSubmittingTax] = React.useState(false)
+
+  // Pending Paid Claims state
+  const [pendingClaims, setPendingClaims] = React.useState<any[]>([])
+  const [loadingPendingClaims, setLoadingPendingClaims] = React.useState(false)
+  const [syncingClaims, setSyncingClaims] = React.useState(false)
+
   const combinedWebsites = React.useMemo(() => {
     const list = [...DEFAULT_WEBSITES]
     ;(websiteList || []).forEach((w) => {
@@ -113,11 +126,11 @@ export function BudgetView({
     return list
   }, [websiteList, transactionList])
 
-  const filteredTransactions = React.useMemo(() => {
-    let list = [...(transactionList || [])]
+  // Transactions filtered by period (Month & Year) for stats calculation
+  const periodTransactions = React.useMemo(() => {
+    let list = [...transactionList]
     if (monthFilter !== "all" || yearFilter !== "all") {
       list = list.filter((t) => {
-        if (!t.date) return false
         const d = new Date(t.date)
         if (isNaN(d.getTime())) return false
         const mMatch =
@@ -127,6 +140,12 @@ export function BudgetView({
         return mMatch && yMatch
       })
     }
+    return list
+  }, [transactionList, monthFilter, yearFilter])
+
+  // Transactions filtered by period AND type for table view
+  const filteredTransactions = React.useMemo(() => {
+    let list = [...periodTransactions]
     if (typeFilter !== "all") {
       list = list.filter((t) => t.type === typeFilter)
     }
@@ -134,24 +153,169 @@ export function BudgetView({
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     )
     return list
-  }, [transactionList, monthFilter, yearFilter, typeFilter])
+  }, [periodTransactions, typeFilter])
 
+  // Stats: 2. ไม่ต้องออโต้ภาษี 3% 10% คำนวณจากยอดรายจ่ายและรายรับจริงในระบบ
   const stats = React.useMemo(() => {
     let income = 0
     let expenses = 0
-    filteredTransactions.forEach((t) => {
-      if (t.type === "Income") income += parseFloat(t.amount) || 0
-      else expenses += parseFloat(t.amount) || 0
+    let recordedTax = 0
+    let recordedCentralFund = 0
+
+    periodTransactions.forEach((t) => {
+      const amount = parseFloat(t.amount) || 0
+      if (t.type === "Income") {
+        income += amount
+      } else {
+        expenses += amount
+        const cat = String(t.category || "").toLowerCase()
+        const note = String(t.note || "").toLowerCase()
+        if (cat.includes("ภาษี") || cat.includes("tax") || cat.includes("3%") || note.includes("ภาษี")) {
+          recordedTax += amount
+        }
+        if (cat.includes("กองกลาง") || cat.includes("central") || cat.includes("10%") || note.includes("กองกลาง")) {
+          recordedCentralFund += amount
+        }
+      }
     })
 
-    // 3% WHT from expenses
-    const tax3 = expenses * 0.03
-    const remainingBeforeFund = income - expenses - tax3
-    const centralFund = remainingBeforeFund > 0 ? remainingBeforeFund * 0.1 : 0
-    const netProfit = remainingBeforeFund - centralFund
+    // กำไรสุทธิ = รายได้รวม - รายจ่ายรวมจริงทั้งหมด (ไม่คำนวณหัก 3% หรือ 10% ออโต้ซ้ำซ้อน)
+    const netProfit = income - expenses
+    const suggestedTax3 = Number((expenses * 0.03).toFixed(2))
+    const suggestedCentralFund10 = Number((Math.max(0, netProfit) * 0.1).toFixed(2))
 
-    return { income, expenses, tax3, netProfit }
-  }, [filteredTransactions])
+    return {
+      income,
+      expenses,
+      recordedTax,
+      recordedCentralFund,
+      netProfit,
+      suggestedTax3,
+      suggestedCentralFund10,
+    }
+  }, [periodTransactions])
+
+  // Load pending paid claims that haven't been imported as expenses
+  const fetchPendingClaims = React.useCallback(async () => {
+    try {
+      setLoadingPendingClaims(true)
+      const res = await callGasApi<{ success: boolean; claims?: any[] }>(
+        "GET_PENDING_PAID_CLAIMS_FOR_BUDGET",
+        {
+          month: monthFilter,
+          year: yearFilter,
+        }
+      )
+      if (res && res.claims) {
+        setPendingClaims(res.claims.filter((c: any) => !c.alreadyImported))
+      }
+    } catch (e) {
+      console.warn("fetchPendingClaims error:", e)
+    } finally {
+      setLoadingPendingClaims(false)
+    }
+  }, [monthFilter, yearFilter])
+
+  React.useEffect(() => {
+    fetchPendingClaims()
+  }, [fetchPendingClaims, transactionList])
+
+  const handleSyncPaidClaims = async () => {
+    if (pendingClaims.length === 0) {
+      toast.info("ไม่มีรายการค่าแรงค้างนำเข้า")
+      return
+    }
+    setSyncingClaims(true)
+    try {
+      const claimIds = pendingClaims.map((c) => c.claimid)
+      const res = await callGasApi<{ success: boolean; transactions?: any[]; importedCount?: number }>(
+        "SYNC_PAID_CLAIMS_TO_BUDGET",
+        { claimIds }
+      )
+      if (res && res.success) {
+        toast.success(`นำเข้ารายจ่ายค่าแรงสำเร็จ ${res.importedCount || claimIds.length} รายการ`)
+        if (res.transactions) onTransactionsChange(res.transactions)
+        fetchPendingClaims()
+      } else {
+        toast.error("นำเข้ารายจ่ายไม่สำเร็จ")
+      }
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการนำเข้า")
+    } finally {
+      setSyncingClaims(false)
+    }
+  }
+
+  // 3. เพิ่มปุ่มแอดภาษี เพื่อสะดวกอัตโนมัติ
+  const handleOpenTaxModal = (mode: "tax3" | "central10" = "tax3") => {
+    setTaxMode(mode)
+    const d = now.toISOString().split("T")[0]
+    setTaxDate(d)
+    const monthLabel = monthFilter === "all" ? "ทั้งหมด" : (THAI_MONTHS[Number(monthFilter) - 1] || monthFilter)
+
+    if (mode === "tax3") {
+      const calculated = (stats.expenses * 0.03).toFixed(2)
+      setTaxAmount(calculated)
+      setTaxNote(`ภาษีหัก ณ ที่จ่าย 3% คำนวณจากยอดรายจ่ายรวม ฿${stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+    } else {
+      const profit = Math.max(0, stats.netProfit)
+      const calculated = (profit * 0.1).toFixed(2)
+      setTaxAmount(calculated)
+      setTaxNote(`หักเข้ากองกลาง 10% คำนวณจากกำไรคงเหลือ ฿${profit.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+    }
+    setTaxModalOpen(true)
+  }
+
+  const handleSwitchTaxMode = (mode: "tax3" | "central10") => {
+    setTaxMode(mode)
+    const monthLabel = monthFilter === "all" ? "ทั้งหมด" : (THAI_MONTHS[Number(monthFilter) - 1] || monthFilter)
+    if (mode === "tax3") {
+      const calculated = (stats.expenses * 0.03).toFixed(2)
+      setTaxAmount(calculated)
+      setTaxNote(`ภาษีหัก ณ ที่จ่าย 3% คำนวณจากยอดรายจ่ายรวม ฿${stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+    } else {
+      const profit = Math.max(0, stats.netProfit)
+      const calculated = (profit * 0.1).toFixed(2)
+      setTaxAmount(calculated)
+      setTaxNote(`หักเข้ากองกลาง 10% คำนวณจากกำไรคงเหลือ ฿${profit.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+    }
+  }
+
+  const handleSaveTax = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const amt = parseFloat(taxAmount)
+    if (isNaN(amt) || amt <= 0) {
+      toast.warning("กรุณาระบุจำนวนเงินภาษี/กองกลางที่ถูกต้อง")
+      return
+    }
+
+    setSubmittingTax(true)
+    try {
+      const isTax = taxMode === "tax3"
+      const payload = {
+        date: taxDate,
+        type: "Expense",
+        category: isTax ? "ภาษีหัก ณ ที่จ่าย (3%)" : "หักเข้ากองกลาง (10%)",
+        reference: isTax ? "ภ.ง.ด.3/53" : "กองกลาง 10%",
+        amount: String(amt),
+        note: taxNote.trim(),
+      }
+
+      const res = await callGasApi<{ success: boolean; transactions?: any[] }>(
+        "ADD_BUDGET_TRANSACTION",
+        payload
+      )
+      toast.success(isTax ? "บันทึกรายการภาษี 3% เรียบร้อยแล้ว" : "บันทึกรายการหักเข้ากองกลาง 10% เรียบร้อยแล้ว")
+      if (res && res.transactions) {
+        onTransactionsChange(res.transactions)
+      }
+      setTaxModalOpen(false)
+    } catch (err: any) {
+      toast.error(err.message || "บันทึกรายการไม่สำเร็จ")
+    } finally {
+      setSubmittingTax(false)
+    }
+  }
 
   const handleOpenAddTrans = () => {
     setEditTransId(null)
@@ -306,11 +470,48 @@ export function BudgetView({
           >
             <Users className="h-4 w-4" /> จัดการรายชื่อผู้รับเงิน
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleOpenTaxModal("tax3")}
+            className="border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 gap-1.5 font-semibold cursor-pointer"
+          >
+            <Receipt className="h-4 w-4 text-amber-400" /> แอดภาษี (3%)
+          </Button>
           <Button variant="emerald" onClick={handleOpenAddTrans}>
             <Plus className="h-4 w-4" /> เพิ่มรายการ
           </Button>
         </div>
       </div>
+
+      {/* Pending Paid Claims Sync Banner */}
+      {pendingClaims.length > 0 && (
+        <div className="p-3.5 rounded-xl border border-indigo-500/40 bg-indigo-950/30 text-xs flex flex-wrap items-center justify-between gap-3 shadow-md">
+          <div className="flex items-center gap-2">
+            <ArrowDownToLine className="h-4 w-4 text-indigo-400 shrink-0" />
+            <span className="text-slate-200">
+              พบยอดจ่ายค่าแรงทีมงานที่ตัดจ่ายแล้ว{" "}
+              <strong className="text-white font-bold">{pendingClaims.length} รายการ</strong>{" "}
+              (รวม{" "}
+              <strong className="text-emerald-400 font-mono font-bold">
+                ฿
+                {pendingClaims
+                  .reduce((sum, c) => sum + (parseFloat(c.totalamount) || 0), 0)
+                  .toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </strong>{" "}
+              บาท) ยังไม่ได้นำเข้าเป็นรายจ่ายในบัญชี
+            </span>
+          </div>
+          <Button
+            size="sm"
+            onClick={handleSyncPaidClaims}
+            disabled={syncingClaims}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-7 px-3 text-xs gap-1.5 cursor-pointer shadow-sm"
+          >
+            <RefreshCw className={`h-3 w-3 ${syncingClaims ? "animate-spin" : ""}`} />
+            {syncingClaims ? "กำลังนำเข้า..." : "📥 นำเข้าบัญชีทันที"}
+          </Button>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -346,13 +547,18 @@ export function BudgetView({
 
         <Card className="p-5 flex items-center justify-between">
           <div>
-            <p className="text-xs text-slate-400">กำไรสุทธิ (หัก 10%)</p>
-            <p className="text-2xl font-bold text-indigo-400 mt-1">
+            <p className="text-xs text-slate-400">กำไรสุทธิ</p>
+            <p className={`text-2xl font-bold mt-1 ${stats.netProfit >= 0 ? "text-indigo-400" : "text-rose-400"}`}>
               {stats.netProfit.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
               })}{" "}
               ฿
             </p>
+            {stats.recordedCentralFund > 0 && (
+              <p className="text-[10px] text-indigo-300/80 mt-0.5">
+                (หักกองกลาง ฿{stats.recordedCentralFund.toLocaleString(undefined, { minimumFractionDigits: 2 })})
+              </p>
+            )}
           </div>
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400">
             <Wallet className="h-6 w-6" />
@@ -361,17 +567,33 @@ export function BudgetView({
 
         <Card className="p-5 flex items-center justify-between border-amber-500/40 bg-amber-500/10">
           <div>
-            <p className="text-xs text-amber-300 font-medium">
-              ภาษีนำส่ง (3%)
-            </p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-xs text-amber-300 font-semibold">
+                ภาษีนำส่ง (3%)
+              </p>
+              {stats.expenses > 0 && stats.recordedTax === 0 && (
+                <span className="text-[10px] text-amber-400/90 bg-amber-500/20 px-1.5 py-0.5 rounded font-mono">
+                  แนะนำ: ฿{stats.suggestedTax3.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+              )}
+            </div>
             <p className="text-2xl font-bold text-amber-300 mt-1">
-              {stats.tax3.toLocaleString(undefined, {
+              {stats.recordedTax.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
               })}{" "}
               ฿
             </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => handleOpenTaxModal("tax3")}
+              className="h-6 px-2 text-[11px] border-amber-500/60 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 mt-1.5 gap-1 font-semibold cursor-pointer"
+            >
+              <Plus className="h-3 w-3" /> แอดภาษี 3%
+            </Button>
           </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300 shrink-0">
             <Landmark className="h-6 w-6" />
           </div>
         </Card>
@@ -454,9 +676,19 @@ export function BudgetView({
                         : "-"}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={isIncome ? "success" : "destructive"}>
-                        {isIncome ? "รายรับ" : "รายจ่าย"}
-                      </Badge>
+                      {String(t.category || "").includes("ภาษี") ? (
+                        <Badge className="border-amber-500/40 bg-amber-500/20 text-amber-300 text-[11px]">
+                          ภาษี (3%)
+                        </Badge>
+                      ) : String(t.category || "").includes("กองกลาง") ? (
+                        <Badge className="border-indigo-500/40 bg-indigo-500/20 text-indigo-300 text-[11px]">
+                          กองกลาง (10%)
+                        </Badge>
+                      ) : (
+                        <Badge variant={isIncome ? "success" : "destructive"}>
+                          {isIncome ? "รายรับ" : "รายจ่าย"}
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell className="font-medium">{t.category}</TableCell>
                     <TableCell className="text-slate-300">
@@ -631,6 +863,138 @@ export function BudgetView({
               </Button>
               <Button type="submit" disabled={submittingTrans}>
                 {submittingTrans ? "กำลังบันทึก..." : editTransId ? "บันทึกการแก้ไข" : "บันทึกรายการ"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Auto Tax & Central Fund Modal */}
+      <Dialog open={taxModalOpen} onOpenChange={(v) => !v && setTaxModalOpen(false)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base text-slate-100">
+              <Receipt className="h-5 w-5 text-amber-400" />
+              แอดรายการภาษี / หักเข้ากองกลาง (อัตโนมัติ)
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveTax} className="space-y-4 mt-2">
+            {/* Mode Selector */}
+            <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-[#0b1120] border border-[#26334d]">
+              <button
+                type="button"
+                onClick={() => handleSwitchTaxMode("tax3")}
+                className={`py-2 px-3 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                  taxMode === "tax3"
+                    ? "bg-amber-600 text-white shadow-xs"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                🏷️ ภาษีหัก ณ ที่จ่าย (3%)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSwitchTaxMode("central10")}
+                className={`py-2 px-3 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                  taxMode === "central10"
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                🏛️ หักเข้ากองกลาง (10%)
+              </button>
+            </div>
+
+            {/* Formula calculation explanation card */}
+            <div className="p-3 rounded-lg border border-[#26334d] bg-[#0b1120]/60 space-y-1.5 text-xs">
+              <div className="flex items-center justify-between text-slate-400">
+                <span>
+                  {taxMode === "tax3"
+                    ? "ยอดรายจ่ายรวม (เต็ม):"
+                    : "กำไรสุทธิคงเหลือ:"}
+                </span>
+                <span className="font-mono text-slate-200">
+                  ฿
+                  {taxMode === "tax3"
+                    ? stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })
+                    : Math.max(0, stats.netProfit).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-slate-400">
+                <span>อัตราคำนวณ:</span>
+                <span className="font-mono text-amber-300 font-bold">
+                  {taxMode === "tax3" ? "x 3%" : "x 10%"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between pt-1.5 border-t border-slate-700/60 font-semibold">
+                <span className="text-slate-200">
+                  {taxMode === "tax3" ? "ยอดภาษีนำส่ง:" : "ยอดหักเข้ากองกลาง:"}
+                </span>
+                <span className="font-mono text-emerald-400 text-sm font-bold">
+                  ฿
+                  {taxMode === "tax3"
+                    ? (stats.expenses * 0.03).toLocaleString(undefined, { minimumFractionDigits: 2 })
+                    : (Math.max(0, stats.netProfit) * 0.1).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">วันที่ทำรายการ *</Label>
+              <Input
+                type="date"
+                value={taxDate}
+                onChange={(e) => setTaxDate(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">จำนวนเงิน (บาท) * (แก้ไขได้)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={taxAmount}
+                onChange={(e) => setTaxAmount(e.target.value)}
+                required
+                className="font-mono font-bold text-base text-emerald-400"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">หมายเหตุ / บันทึกช่วยจำ</Label>
+              <Textarea
+                rows={2}
+                value={taxNote}
+                onChange={(e) => setTaxNote(e.target.value)}
+                className="text-xs"
+              />
+            </div>
+
+            <DialogFooter className="gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setTaxModalOpen(false)}
+                disabled={submittingTax}
+              >
+                ยกเลิก
+              </Button>
+              <Button
+                type="submit"
+                disabled={submittingTax}
+                className={
+                  taxMode === "tax3"
+                    ? "bg-amber-600 hover:bg-amber-700 text-white font-bold cursor-pointer"
+                    : "bg-indigo-600 hover:bg-indigo-700 text-white font-bold cursor-pointer"
+                }
+              >
+                {submittingTax
+                  ? "กำลังบันทึก..."
+                  : taxMode === "tax3"
+                  ? "ยืนยันบันทึกภาษี (3%)"
+                  : "ยืนยันบันทึกกองกลาง (10%)"}
               </Button>
             </DialogFooter>
           </form>

@@ -5458,6 +5458,11 @@ function updatePayoutClaimStatus(claimId, status, note) {
       if (paidAtCol !== -1) {
         sheet.getRange(foundRow, paidAtCol + 1).setValue(now);
       }
+      try {
+        syncPaidClaimsToBudget({ claimIds: [claimId] });
+      } catch (errSync) {
+        console.warn('Auto sync paid claim to budget error:', errSync);
+      }
     }
 
     if (note && noteCol !== -1) {
