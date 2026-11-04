@@ -1908,6 +1908,13 @@
       "total_sales": 5771457.7,
       "total_views": 20656612,
       "total_comics": 236
+    },
+    {
+      "recorded_at": "2026-11-04T05:21:40.485310",
+      "date": "2026-11-04",
+      "total_sales": 0,
+      "total_views": 0,
+      "total_comics": 0
     }
   ]
 }
