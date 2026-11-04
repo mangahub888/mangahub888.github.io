@@ -503,6 +503,7 @@ export function ExpensesView({
       typesetChinaCost: number
       typesetKoreaCount: number
       typesetKoreaCost: number
+      supportCost: number
       totalChapters: number
       totalAmount: number
       tasks: Array<{
@@ -542,6 +543,7 @@ export function ExpensesView({
           typesetChinaCost: 0,
           typesetKoreaCount: 0,
           typesetKoreaCost: 0,
+          supportCost: 0,
           totalChapters: 0,
           totalAmount: 0,
           tasks: [],
@@ -716,10 +718,53 @@ export function ExpensesView({
       }
     })
 
+    // Initialize support payee (e.g. KIKKUK 1,500 บาท)
+    const supportName = (rates.supportName || "KIKKUK").trim()
+    const supportAmount = Number(rates.supportAmount) || 1500
+
+    if (supportName && supportAmount > 0) {
+      const cleanSupportName = supportName.toLowerCase()
+      const supportPeriodKey = claimStartDate ? claimStartDate.substring(0, 7) : `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`
+      const supportKey = `support_${cleanSupportName}_${supportPeriodKey}`
+
+      // Check if support has already been claimed in a non-rejected claim in this date range
+      const isSupportClaimed = (payoutClaims || []).some((c) => {
+        if (c.status === "Rejected") return false
+        if ((c.staffname || "").trim().toLowerCase() !== cleanSupportName) return false
+        const p = getClaimPeriod(c)
+        if (!p.start || !p.end) return false
+        const startBoundary = claimStartDate ? new Date(claimStartDate + "T00:00:00").getTime() : null
+        const endBoundary = claimEndDate ? new Date(claimEndDate + "T23:59:59.999").getTime() : null
+        if (startBoundary && endBoundary) {
+          return startBoundary <= p.end.getTime() && endBoundary >= p.start.getTime()
+        }
+        return false
+      }) || claimedTaskKeys.has(supportKey) || claimedTaskKeys.has(`${supportKey}_support`)
+
+      if (!isSupportClaimed) {
+        const member = (teamList || []).find((m) => (m.name || "").trim().toLowerCase() === cleanSupportName)
+        const officialName = member?.name || supportName
+        const s = getOrCreateStaff(officialName)
+        s.supportCost += supportAmount
+        s.totalAmount += supportAmount
+        s.tasks.push({
+          queueid: supportKey,
+          chapter: "-",
+          mangaName: "ค่า Support ดูแลระบบ",
+          step: "support",
+          stepLabel: "Support",
+          date: claimStartDate || new Date().toISOString(),
+          rate: supportAmount,
+          count: 0,
+          cost: supportAmount,
+        })
+      }
+    }
+
     const list = Array.from(staffMap.values())
     list.sort((a, b) => b.totalAmount - a.totalAmount)
     return list
-  }, [queueItems, claimedTaskKeys, claimStartDate, claimEndDate, mangaList, rates, teamList])
+  }, [queueItems, claimedTaskKeys, claimStartDate, claimEndDate, mangaList, rates, teamList, payoutClaims, getClaimPeriod])
 
   // Selected staff summary
   const selectedStaffSummary = React.useMemo(() => {
@@ -758,6 +803,7 @@ export function ExpensesView({
         acc.typesetChinaCost += s.typesetChinaCost
         acc.typesetKoreaCount += s.typesetKoreaCount
         acc.typesetKoreaCost += s.typesetKoreaCost
+        acc.supportCost += s.supportCost
         acc.totalChapters += s.totalChapters
         acc.totalAmount += s.totalAmount
         acc.totalTasks += s.tasks.length
@@ -776,6 +822,7 @@ export function ExpensesView({
         typesetChinaCost: 0,
         typesetKoreaCount: 0,
         typesetKoreaCost: 0,
+        supportCost: 0,
         totalChapters: 0,
         totalAmount: 0,
         totalTasks: 0,
@@ -2143,9 +2190,9 @@ export function ExpensesView({
                     เลือกชื่อพนักงานเพื่อดึงงานที่ทำเสร็จแต่ยังไม่ได้ตัดยอดขอเบิกเงิน (ป้องกันการเบิกซ้ำ 100%)
                   </p>
                 </div>
-                {claimStaffName && unclaimedTotals.chapters > 0 && (
+                {claimStaffName && (unclaimedTotals.chapters > 0 || unclaimedTotals.amount > 0) && (
                   <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-bold px-3 py-1 text-sm">
-                    ยอดขอเบิก: ฿{unclaimedTotals.amount.toLocaleString()} ({unclaimedTotals.chapters} ตอน)
+                    ยอดขอเบิก: ฿{unclaimedTotals.amount.toLocaleString()} {unclaimedTotals.chapters > 0 ? `(${unclaimedTotals.chapters} ตอน)` : `(Support)`}
                   </Badge>
                 )}
               </div>
@@ -2331,6 +2378,7 @@ export function ExpensesView({
                               <TableHead className="text-xs text-slate-300 text-center">แปล</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">ลงคำ (จีน)</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">ลงคำ (เกาหลี)</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">Support</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">รวมตอน</TableHead>
                               <TableHead className="text-xs text-slate-300 text-right">ยอดค้างเบิก (฿)</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">จัดการ</TableHead>
@@ -2421,6 +2469,18 @@ export function ExpensesView({
                                       )}
                                     </TableCell>
 
+                                    {/* Support */}
+                                    <TableCell className="text-center text-slate-300 font-mono">
+                                      {s.supportCost > 0 ? (
+                                        <div>
+                                          <span className="font-semibold text-emerald-400">฿{s.supportCost.toLocaleString()}</span>
+                                          <span className="block text-[10px] text-emerald-500/80">Support</span>
+                                        </div>
+                                      ) : (
+                                        <span className="text-slate-600">-</span>
+                                      )}
+                                    </TableCell>
+
                                     <TableCell className="text-center">
                                       <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-300 font-bold text-xs">
                                         {s.totalChapters} ตอน
@@ -2472,7 +2532,7 @@ export function ExpensesView({
                                   {/* Inline Expanded Chapters Table */}
                                   {isExpanded && (
                                     <TableRow className="bg-[#0b0f19] border-[#26334d]/60">
-                                      <TableCell colSpan={9} className="p-3">
+                                      <TableCell colSpan={10} className="p-3">
                                         <div className="rounded-md border border-[#26334d]/80 bg-[#0d1322] p-2.5 space-y-2">
                                           <div className="flex items-center justify-between text-xs text-slate-300">
                                             <span className="font-semibold text-slate-200">
@@ -2559,6 +2619,16 @@ export function ExpensesView({
                                   <span className="block text-[10px] text-sky-300/80">฿{grandTotalsAllStaff.typesetKoreaCost.toLocaleString()}</span>
                                 </div>
                               </TableCell>
+                              <TableCell className="text-center text-slate-300 font-mono">
+                                {grandTotalsAllStaff.supportCost > 0 ? (
+                                  <div>
+                                    <span className="text-emerald-400 font-semibold">฿{grandTotalsAllStaff.supportCost.toLocaleString()}</span>
+                                    <span className="block text-[10px] text-emerald-500/80">Support</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-slate-600">-</span>
+                                )}
+                              </TableCell>
                               <TableCell className="text-center text-amber-300 font-bold">
                                 {grandTotalsAllStaff.totalChapters} ตอน
                               </TableCell>
@@ -2615,9 +2685,9 @@ export function ExpensesView({
                       <div className="text-xs">
                         <span className="text-slate-300">👤 กำลังทำรายการเบิกให้: </span>
                         <strong className="text-slate-100 text-sm">{claimStaffName}</strong>
-                        {unclaimedTotals.chapters > 0 ? (
+                        {unclaimedTotals.chapters > 0 || unclaimedTotals.amount > 0 ? (
                           <span className="text-emerald-400 font-bold ml-2">
-                            (รวม {unclaimedTotals.chapters} ตอน = ฿{unclaimedTotals.amount.toLocaleString()} บาท)
+                            (รวม {unclaimedTotals.chapters > 0 ? `${unclaimedTotals.chapters} ตอน ` : ""}= ฿{unclaimedTotals.amount.toLocaleString()} บาท)
                           </span>
                         ) : (
                           <span className="text-amber-300 ml-2">(ไม่มีงานค้างเบิกในช่วงนี้)</span>
