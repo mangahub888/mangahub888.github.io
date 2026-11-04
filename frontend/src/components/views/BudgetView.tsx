@@ -44,6 +44,8 @@ const DEFAULT_WEBSITES = [
   "ReadRealm น้องแมวส้ม",
   "ReadRealm แปลแล้วแปลอีก",
   "ReadRealm แปลจนแขนหัก",
+  "kairew",
+  "chaply",
 ]
 
 interface BudgetViewProps {
@@ -70,6 +72,7 @@ export function BudgetView({
 
   // Transaction Modal
   const [transOpen, setTransOpen] = React.useState(false)
+  const [editTransId, setEditTransId] = React.useState<string | null>(null)
   const [transDate, setTransDate] = React.useState(
     now.toISOString().split("T")[0]
   )
@@ -102,8 +105,13 @@ export function BudgetView({
         list.push(w)
       }
     })
+    ;(transactionList || []).forEach((t) => {
+      if (t.type === "Income" && t.category && !list.includes(t.category)) {
+        list.push(t.category)
+      }
+    })
     return list
-  }, [websiteList])
+  }, [websiteList, transactionList])
 
   const filteredTransactions = React.useMemo(() => {
     let list = [...(transactionList || [])]
@@ -146,6 +154,7 @@ export function BudgetView({
   }, [filteredTransactions])
 
   const handleOpenAddTrans = () => {
+    setEditTransId(null)
     setTransDate(new Date().toISOString().split("T")[0])
     setTransType("Income")
     setTransCategory("")
@@ -155,7 +164,24 @@ export function BudgetView({
     setTransOpen(true)
   }
 
-  const handleAddTransaction = async (e: React.FormEvent) => {
+  const handleOpenEditTrans = (t: any) => {
+    setEditTransId(String(t.transactionid))
+    let formattedDate = new Date().toISOString().split("T")[0]
+    if (t.date) {
+      try {
+        formattedDate = new Date(t.date).toISOString().split("T")[0]
+      } catch {}
+    }
+    setTransDate(formattedDate)
+    setTransType(t.type || "Income")
+    setTransCategory(t.category || "")
+    setTransReference(t.reference || "")
+    setTransAmount(String(t.amount || ""))
+    setTransNote(t.note || "")
+    setTransOpen(true)
+  }
+
+  const handleSaveTransaction = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!transCategory || !transAmount) {
       toast.warning("กรุณากรอกหมวดหมู่และจำนวนเงิน")
@@ -163,17 +189,39 @@ export function BudgetView({
     }
     setSubmittingTrans(true)
     try {
-      const res = await callGasApi("ADD_BUDGET_TRANSACTION", {
+      const payload = {
         date: transDate,
         type: transType,
         category: transCategory,
         reference: transReference,
         amount: transAmount,
         note: transNote,
-      })
-      toast.success("บันทึกรายการบัญชีเรียบร้อย")
-      onTransactionsChange(res.transactions || [])
-      setTransOpen(false)
+      }
+      if (editTransId) {
+        try {
+          const res = await callGasApi("UPDATE_BUDGET_TRANSACTION", {
+            id: editTransId,
+            data: payload,
+          })
+          toast.success("อัปเดตรายการบัญชีเรียบร้อย")
+          onTransactionsChange(res.transactions || [])
+          setTransOpen(false)
+          return
+        } catch {
+          // Fallback if UPDATE_BUDGET_TRANSACTION endpoint is older: delete and re-add
+          await callGasApi("DELETE_BUDGET_TRANSACTION", { id: editTransId })
+          const res = await callGasApi("ADD_BUDGET_TRANSACTION", payload)
+          toast.success("อัปเดตรายการบัญชีเรียบร้อย")
+          onTransactionsChange(res.transactions || [])
+          setTransOpen(false)
+          return
+        }
+      } else {
+        const res = await callGasApi("ADD_BUDGET_TRANSACTION", payload)
+        toast.success("บันทึกรายการบัญชีเรียบร้อย")
+        onTransactionsChange(res.transactions || [])
+        setTransOpen(false)
+      }
     } catch (err: any) {
       toast.error(err.message || "บันทึกรายการไม่สำเร็จ")
     } finally {
@@ -429,16 +477,28 @@ export function BudgetView({
                       {t.note || "-"}
                     </TableCell>
                     <TableCell className="text-center">
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() =>
-                          handleDeleteTransaction(String(t.transactionid))
-                        }
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
+                      <div className="flex items-center justify-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-slate-300 hover:text-white hover:bg-slate-800"
+                          title="แก้ไขรายการนี้"
+                          onClick={() => handleOpenEditTrans(t)}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="h-8 w-8"
+                          title="ลบรายการนี้"
+                          onClick={() =>
+                            handleDeleteTransaction(String(t.transactionid))
+                          }
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )
@@ -448,13 +508,13 @@ export function BudgetView({
         </Table>
       </Card>
 
-      {/* Add Transaction Modal */}
+      {/* Add / Edit Transaction Modal */}
       <Dialog open={transOpen} onOpenChange={(v) => !v && setTransOpen(false)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>บันทึกรายการบัญชี</DialogTitle>
+            <DialogTitle>{editTransId ? "แก้ไขรายการบัญชี" : "บันทึกรายการบัญชี"}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleAddTransaction} className="space-y-4 mt-2">
+          <form onSubmit={handleSaveTransaction} className="space-y-4 mt-2">
             <div className="space-y-1.5">
               <Label>วันที่ *</Label>
               <Input
@@ -484,19 +544,26 @@ export function BudgetView({
             <div className="space-y-1.5">
               <Label>
                 {transType === "Income"
-                  ? "ช่องทางรายรับ (ReadRealm) *"
+                  ? "ประเภท / ช่องทางรายรับ *"
                   : "หมวดหมู่ (เช่น ค่าแปล, ค่าคลีน) *"}
               </Label>
               {transType === "Income" ? (
-                <SearchableSelect
-                  options={combinedWebsites.map((w) => ({
-                    value: w,
-                    label: w,
-                  }))}
-                  value={transCategory}
-                  onChange={setTransCategory}
-                  placeholder="-- เลือกช่องทาง --"
-                />
+                <div className="space-y-2">
+                  <SearchableSelect
+                    options={combinedWebsites.map((w) => ({
+                      value: w,
+                      label: w,
+                    }))}
+                    value={combinedWebsites.includes(transCategory) ? transCategory : ""}
+                    onChange={setTransCategory}
+                    placeholder="-- เลือกช่องทางรายรับ --"
+                  />
+                  <Input
+                    placeholder="หรือระบุประเภทรายรับเอง เช่น kairew, chaply"
+                    value={transCategory}
+                    onChange={(e) => setTransCategory(e.target.value)}
+                  />
+                </div>
               ) : (
                 <Input
                   placeholder="เช่น ค่าแปล, ค่าลงคำ"
@@ -563,7 +630,7 @@ export function BudgetView({
                 ยกเลิก
               </Button>
               <Button type="submit" disabled={submittingTrans}>
-                {submittingTrans ? "กำลังบันทึก..." : "บันทึกรายการ"}
+                {submittingTrans ? "กำลังบันทึก..." : editTransId ? "บันทึกการแก้ไข" : "บันทึกรายการ"}
               </Button>
             </DialogFooter>
           </form>

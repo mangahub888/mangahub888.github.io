@@ -223,6 +223,9 @@ function doPost(e) {
       case 'ADD_BUDGET_TRANSACTION':
         result = addBudgetTransaction(payload);
         break;
+      case 'UPDATE_BUDGET_TRANSACTION':
+        result = updateBudgetTransaction(payload.id, payload.data || payload);
+        break;
       case 'DELETE_BUDGET_TRANSACTION':
         result = deleteBudgetTransaction(payload.id);
         break;
@@ -1793,6 +1796,46 @@ function addBudgetTransaction(trans) {
     return { success: true, transactions: getBudgetTransactions() };
   } catch (err) {
     return { error: 'Add Transaction Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function updateBudgetTransaction(id, trans) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(BUDGET_TRANSACTION_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { error: 'No data' };
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][0].toString() === id.toString()) {
+        if (trans.date !== undefined && headers.indexOf('date') !== -1) {
+          sheet.getRange(i + 1, headers.indexOf('date') + 1).setValue(new Date(trans.date));
+        }
+        if (trans.type !== undefined && headers.indexOf('type') !== -1) {
+          sheet.getRange(i + 1, headers.indexOf('type') + 1).setValue(trans.type);
+        }
+        if (trans.amount !== undefined && headers.indexOf('amount') !== -1) {
+          sheet.getRange(i + 1, headers.indexOf('amount') + 1).setValue(parseFloat(trans.amount) || 0);
+        }
+        if (trans.category !== undefined && headers.indexOf('category') !== -1) {
+          sheet.getRange(i + 1, headers.indexOf('category') + 1).setValue(trans.category);
+        }
+        if (trans.reference !== undefined && headers.indexOf('reference') !== -1) {
+          sheet.getRange(i + 1, headers.indexOf('reference') + 1).setValue(trans.reference);
+        }
+        if (trans.note !== undefined && headers.indexOf('note') !== -1) {
+          sheet.getRange(i + 1, headers.indexOf('note') + 1).setValue(trans.note);
+        }
+        invalidateCache('budget_transactions');
+        return { success: true, transactions: getBudgetTransactions() };
+      }
+    }
+    return { error: 'Transaction not found' };
+  } catch (err) {
+    return { error: 'Update Transaction Failed: ' + err.toString() };
   } finally {
     lock.releaseLock();
   }

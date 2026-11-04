@@ -499,6 +499,10 @@ export function ExpensesView({
       translateCost: number
       typesetCount: number
       typesetCost: number
+      typesetChinaCount: number
+      typesetChinaCost: number
+      typesetKoreaCount: number
+      typesetKoreaCost: number
       totalChapters: number
       totalAmount: number
       tasks: Array<{
@@ -534,6 +538,10 @@ export function ExpensesView({
           translateCost: 0,
           typesetCount: 0,
           typesetCost: 0,
+          typesetChinaCount: 0,
+          typesetChinaCost: 0,
+          typesetKoreaCount: 0,
+          typesetKoreaCost: 0,
           totalChapters: 0,
           totalAmount: 0,
           tasks: [],
@@ -668,7 +676,7 @@ export function ExpensesView({
             const isSpecial = cleanName.includes(rates.typesetSpecialName.toLowerCase())
             const parsedDate = parseQueueDate(taskDate)
             const isNov2026OrLater = parsedDate ? parsedDate.getTime() >= new Date("2026-11-01T00:00:00").getTime() : false
-            const isKorean = isNov2026OrLater && (q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี")
+            const isKorean = (q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี")
 
             let rate = 40
             if (isNov2026OrLater) {
@@ -676,13 +684,20 @@ export function ExpensesView({
               rate = isKorean ? (rates.typesetKoreanRate || 50) : (rates.typesetNormalRate || 45)
             } else {
               // ก่อน พฤศจิกายน 2569: ประวัติเดิม Tilly 45 บาท, พนักงานทั่วไป 40 บาท
-              rate = isSpecial ? (rates.typesetSpecialRate || 45) : 40
+              rate = isKorean ? (rates.typesetKoreanRate || 50) : (isSpecial ? (rates.typesetSpecialRate || 45) : 40)
             }
 
             const cost = count * rate
             const s = getOrCreateStaff(q.typesettername)
             s.typesetCount += count
             s.typesetCost += cost
+            if (isKorean) {
+              s.typesetKoreaCount += count
+              s.typesetKoreaCost += cost
+            } else {
+              s.typesetChinaCount += count
+              s.typesetChinaCost += cost
+            }
             s.totalChapters += count
             s.totalAmount += cost
             s.tasks.push({
@@ -690,7 +705,7 @@ export function ExpensesView({
               chapter: String(q.chapter),
               mangaName,
               step: "typeset",
-              stepLabel: isKorean ? "ลงคำ (เกาหลี)" : "ลงคำ",
+              stepLabel: isKorean ? "ลงคำ (เกาหลี)" : "ลงคำ (จีน)",
               date: taskDate,
               rate,
               count,
@@ -739,6 +754,10 @@ export function ExpensesView({
         acc.translateCost += s.translateCost
         acc.typesetCount += s.typesetCount
         acc.typesetCost += s.typesetCost
+        acc.typesetChinaCount += s.typesetChinaCount
+        acc.typesetChinaCost += s.typesetChinaCost
+        acc.typesetKoreaCount += s.typesetKoreaCount
+        acc.typesetKoreaCost += s.typesetKoreaCost
         acc.totalChapters += s.totalChapters
         acc.totalAmount += s.totalAmount
         acc.totalTasks += s.tasks.length
@@ -753,6 +772,10 @@ export function ExpensesView({
         translateCost: 0,
         typesetCount: 0,
         typesetCost: 0,
+        typesetChinaCount: 0,
+        typesetChinaCost: 0,
+        typesetKoreaCount: 0,
+        typesetKoreaCost: 0,
         totalChapters: 0,
         totalAmount: 0,
         totalTasks: 0,
@@ -789,9 +812,11 @@ export function ExpensesView({
           queueItemIds: unclaimedWork.map((t) => ({
             queueId: t.queueid,
             step: t.step,
+            stepLabel: t.stepLabel,
             chapter: t.chapter,
             mangaName: t.mangaName,
             amount: t.cost,
+            rate: t.rate,
           })),
           note: claimNote.trim(),
         }
@@ -2304,7 +2329,8 @@ export function ExpensesView({
                               <TableHead className="text-xs text-slate-300 text-center">อัป Raw</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">ดึงคำ</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">แปล</TableHead>
-                              <TableHead className="text-xs text-slate-300 text-center">ลงคำ</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">ลงคำ (จีน)</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">ลงคำ (เกาหลี)</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">รวมตอน</TableHead>
                               <TableHead className="text-xs text-slate-300 text-right">ยอดค้างเบิก (฿)</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">จัดการ</TableHead>
@@ -2371,11 +2397,24 @@ export function ExpensesView({
                                       )}
                                     </TableCell>
 
+                                    {/* ลงคำ (จีน) */}
                                     <TableCell className="text-center text-slate-300 font-mono">
-                                      {s.typesetCount > 0 ? (
+                                      {s.typesetChinaCount > 0 ? (
                                         <div>
-                                          <span className="font-semibold text-amber-300">{s.typesetCount} ตอน</span>
-                                          <span className="block text-[10px] text-amber-300/80">฿{s.typesetCost.toLocaleString()}</span>
+                                          <span className="font-semibold text-amber-300">{s.typesetChinaCount} ตอน</span>
+                                          <span className="block text-[10px] text-amber-300/80">฿{s.typesetChinaCost.toLocaleString()}</span>
+                                        </div>
+                                      ) : (
+                                        <span className="text-slate-600">-</span>
+                                      )}
+                                    </TableCell>
+
+                                    {/* ลงคำ (เกาหลี) */}
+                                    <TableCell className="text-center text-slate-300 font-mono">
+                                      {s.typesetKoreaCount > 0 ? (
+                                        <div>
+                                          <span className="font-semibold text-sky-300">{s.typesetKoreaCount} ตอน</span>
+                                          <span className="block text-[10px] text-sky-300/80">฿{s.typesetKoreaCost.toLocaleString()}</span>
                                         </div>
                                       ) : (
                                         <span className="text-slate-600">-</span>
@@ -2433,7 +2472,7 @@ export function ExpensesView({
                                   {/* Inline Expanded Chapters Table */}
                                   {isExpanded && (
                                     <TableRow className="bg-[#0b0f19] border-[#26334d]/60">
-                                      <TableCell colSpan={8} className="p-3">
+                                      <TableCell colSpan={9} className="p-3">
                                         <div className="rounded-md border border-[#26334d]/80 bg-[#0d1322] p-2.5 space-y-2">
                                           <div className="flex items-center justify-between text-xs text-slate-300">
                                             <span className="font-semibold text-slate-200">
@@ -2510,8 +2549,14 @@ export function ExpensesView({
                               </TableCell>
                               <TableCell className="text-center text-slate-300 font-mono">
                                 <div>
-                                  <span className="text-amber-300">{grandTotalsAllStaff.typesetCount} ตอน</span>
-                                  <span className="block text-[10px] text-amber-300/80">฿{grandTotalsAllStaff.typesetCost.toLocaleString()}</span>
+                                  <span className="text-amber-300">{grandTotalsAllStaff.typesetChinaCount} ตอน</span>
+                                  <span className="block text-[10px] text-amber-300/80">฿{grandTotalsAllStaff.typesetChinaCost.toLocaleString()}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-center text-slate-300 font-mono">
+                                <div>
+                                  <span className="text-sky-300">{grandTotalsAllStaff.typesetKoreaCount} ตอน</span>
+                                  <span className="block text-[10px] text-sky-300/80">฿{grandTotalsAllStaff.typesetKoreaCost.toLocaleString()}</span>
                                 </div>
                               </TableCell>
                               <TableCell className="text-center text-amber-300 font-bold">
@@ -2860,7 +2905,7 @@ export function ExpensesView({
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline" className="text-[10px] border-slate-700">
-                                {item.step}
+                                {item.stepLabel || (item.step === "typeset" ? "ลงคำ" : item.step)}
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right font-bold text-emerald-400">

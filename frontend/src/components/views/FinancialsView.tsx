@@ -66,6 +66,8 @@ const DEFAULT_WEBSITES = [
   "ReadRealm น้องแมวส้ม",
   "ReadRealm แปลแล้วแปลอีก",
   "ReadRealm แปลจนแขนหัก",
+  "kairew",
+  "chaply",
 ]
 
 interface FinancialsViewProps {
