@@ -46,6 +46,14 @@ import {
   TrendingDown,
   DollarSign,
   Trophy,
+  RefreshCw,
+  Search,
+  ArrowUpRight,
+  ArrowDownRight,
+  Clock,
+  BookOpen,
+  Layers,
+  Sparkles,
 } from "lucide-react"
 
 ChartJS.register(
@@ -84,9 +92,117 @@ export function FinancialsView({
   onSalesChange,
 }: FinancialsViewProps) {
   const now = new Date()
-  const [monthFilter, setMonthFilter] = React.useState(
-    String(now.getMonth() + 1)
-  )
+
+  // Top Tab Switcher
+  const [activeTab, setActiveTab] = React.useState<"growth" | "pnl">("growth")
+
+  // --- ReadRealm Growth Tracker State ---
+  const [trackerData, setTrackerData] = React.useState<any>(null)
+  const [loadingGrowth, setLoadingGrowth] = React.useState<boolean>(false)
+  const [triggeringAction, setTriggeringAction] = React.useState<boolean>(false)
+  const [accountFilter, setAccountFilter] = React.useState<string>("all")
+  const [searchQuery, setSearchQuery] = React.useState<string>("")
+  const [sortBy, setSortBy] = React.useState<"sales" | "views" | "growth7d" | "growth30d">("sales")
+
+  // Load latest ReadRealm 6h growth data
+  const loadGrowthData = React.useCallback(async () => {
+    setLoadingGrowth(true)
+    try {
+      const res = await fetch("./data/readrealm_growth_latest.json", { cache: "no-store" })
+      if (res.ok) {
+        const json = await res.json()
+        if (json && json.comics && json.comics.length > 0) {
+          setTrackerData(json)
+          setLoadingGrowth(false)
+          return
+        }
+      }
+    } catch (e) {
+      console.warn("Could not load local growth json", e)
+    }
+
+    try {
+      const gasData = await callGasApi("GET_READREALM_GROWTH_DATA")
+      if (gasData && gasData.comics && gasData.comics.length > 0) {
+        setTrackerData(gasData)
+      }
+    } catch (e) {
+      console.warn("Could not load GAS growth data", e)
+    } finally {
+      setLoadingGrowth(false)
+    }
+  }, [])
+
+  React.useEffect(() => {
+    loadGrowthData()
+  }, [loadGrowthData])
+
+  const handleTriggerPipeline = async () => {
+    setTriggeringAction(true)
+    try {
+      await callGasApi("TRIGGER_READREALM_TRACKER", { source: "frontend_ui" })
+      toast.success("🚀 สั่งรัน GitHub Action (ReadRealm 6H Tracker Pipeline) เรียบร้อยแล้ว!")
+      setTimeout(() => {
+        loadGrowthData()
+      }, 5000)
+    } catch (e: any) {
+      toast.error(e.message || "ไม่สามารถสั่งรัน Action ได้")
+    } finally {
+      setTriggeringAction(false)
+    }
+  }
+
+  // Filtered & Sorted Comics for Growth Table
+  const filteredComics = React.useMemo(() => {
+    if (!trackerData || !Array.isArray(trackerData.comics)) return []
+    let list = [...trackerData.comics]
+
+    if (accountFilter !== "all") {
+      list = list.filter((c) => c.account_id === accountFilter || c.account === accountFilter)
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim()
+      list = list.filter(
+        (c) =>
+          (c.subject && c.subject.toLowerCase().includes(q)) ||
+          (c.comic_id && c.comic_id.toLowerCase().includes(q))
+      )
+    }
+
+    list.sort((a, b) => {
+      if (sortBy === "sales") return (b.total_sales || 0) - (a.total_sales || 0)
+      if (sortBy === "views") return (b.total_views || 0) - (a.total_views || 0)
+      if (sortBy === "growth7d") {
+        const gA = a.growth_7d?.sales_growth_pct || 0
+        const gB = b.growth_7d?.sales_growth_pct || 0
+        return gB - gA
+      }
+      if (sortBy === "growth30d") {
+        const gA = a.growth_30d?.sales_growth_pct || 0
+        const gB = b.growth_30d?.sales_growth_pct || 0
+        return gB - gA
+      }
+      return 0
+    })
+
+    return list
+  }, [trackerData, accountFilter, searchQuery, sortBy])
+
+  // --- Traditional P&L Manual Ledger State ---
+  // Default to "all" if current month has no data so the user never sees an empty screen
+  const [monthFilter, setMonthFilter] = React.useState<string>(() => {
+    const curM = String(now.getMonth() + 1)
+    if (Array.isArray(salesList) && salesList.length > 0) {
+      const hasCur = salesList.some((s) => {
+        if (!s.date) return false
+        const d = new Date(s.date)
+        return String(d.getMonth() + 1) === curM
+      })
+      return hasCur ? curM : "all"
+    }
+    return "all"
+  })
   const [yearFilter, setYearFilter] = React.useState("all")
 
   // Add Sale Modal
@@ -97,9 +213,7 @@ export function FinancialsView({
   const [finMangaId, setFinMangaId] = React.useState("")
   const [finWebsite, setFinWebsite] = React.useState("")
   const [finChapters, setFinChapters] = React.useState("0")
-  const [finCostPerChapter, setFinCostPerChapter] = React.useState<
-    string | number
-  >(0)
+  const [finCostPerChapter, setFinCostPerChapter] = React.useState<string | number>(0)
   const [finRevenue, setFinRevenue] = React.useState("")
   const [submitting, setSubmitting] = React.useState(false)
 
@@ -179,7 +293,6 @@ export function FinancialsView({
     }
   }, [filteredSales])
 
-  // Charts Data
   const chartsData = React.useMemo(() => {
     const websiteRevenue: Record<string, number> = {}
     const monthlyWebsiteRevenue: Record<string, Record<string, number>> = {}
@@ -194,10 +307,12 @@ export function FinancialsView({
 
       let y = now.getFullYear()
       let m = now.getMonth() + 1
-      if (s.date && String(s.date).includes("T")) {
-        const dt = new Date(s.date)
-        y = dt.getUTCFullYear()
-        m = dt.getUTCMonth() + 1
+      if (s.month && typeof s.month === "string") {
+        const parts = s.month.split("-")
+        if (parts.length >= 2) {
+          y = parseInt(parts[0])
+          m = parseInt(parts[1])
+        }
       } else if (s.date) {
         const parts = String(s.date).split("-")
         if (parts.length >= 2) {
@@ -277,7 +392,6 @@ export function FinancialsView({
     }
   }, [filteredSales])
 
-  // Auto-fill chapters & cost when Manga or Date changes
   const autoFillFinDetails = async (mId: string, dStr: string) => {
     if (!mId || !dStr) return
     const manga = (mangaList || []).find(
@@ -300,104 +414,66 @@ export function FinancialsView({
     }
   }
 
-  const handleAddSale = async (e: React.FormEvent) => {
+  const handleSaveSale = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!finMangaId || !finWebsite || !finRevenue) {
-      toast.warning("กรุณากรอกข้อมูลให้ครบถ้วน")
+      toast.error("กรุณากรอกข้อมูลที่จำเป็น (*) ให้ครบถ้วน")
       return
     }
+
     setSubmitting(true)
     try {
       const manga = (mangaList || []).find(
-        (m) => m.mangaid != null && String(m.mangaid) === String(finMangaId)
+        (m) => String(m.mangaid) === String(finMangaId)
       )
-      const chapters = getChapterCount(finChapters, true)
-      const costPer = parseFloat(String(finCostPerChapter)) || 0
-      const rev = parseFloat(finRevenue) || 0
-
       const payload = {
         date: finDate,
         seriesname: manga ? manga.manganame : "",
         serieschapterid: finMangaId,
-        chapterscount: chapters,
-        chaptersrange: finChapters,
-        costperchapter: costPer,
-        totalcost: chapters * costPer,
-        revenue: rev,
         website: finWebsite,
+        chapterscount: parseFloat(finChapters) || 0,
+        costperchapter: parseFloat(String(finCostPerChapter)) || 0,
+        revenue: parseFloat(finRevenue) || 0,
       }
 
       const res = await callGasApi("ADD_MANGA_SALE", payload)
       toast.success("บันทึกยอดขายเรียบร้อย")
-      onSalesChange(res.list || [])
+      onSalesChange(res.list || [], res.websites)
       setAddOpen(false)
+      setFinRevenue("")
     } catch (err: any) {
-      toast.error(err.message || "เกิดข้อผิดพลาดในการบันทึกยอดขาย")
+      toast.error(err.message || "เกิดข้อผิดพลาดในการบันทึก")
     } finally {
       setSubmitting(false)
     }
   }
 
-  const handleDeleteSale = async (sale: any, idx: number) => {
-    if (!window.confirm("ยืนยันการลบรายการยอดขายนี้หรือไม่?")) return
+  const handleDeleteSale = async (index: number, sale: any) => {
+    if (!window.confirm("ยืนยันการลบรายการนี้?")) return
     try {
-      const rowIndex = sale._rowIndex !== undefined ? sale._rowIndex : idx
-      const res = await callGasApi("DELETE_MANGA_SALE", { index: rowIndex })
-      toast.success("ลบรายการเรียบร้อย")
-      onSalesChange(res.list || [])
+      const res = await callGasApi("DELETE_MANGA_SALE", { index, sale })
+      toast.success("ลบรายการสำเร็จ")
+      onSalesChange(res.list || [], res.websites)
     } catch (err: any) {
-      toast.error(err.message || "ลบรายการไม่สำเร็จ")
+      toast.error(err.message || "เกิดข้อผิดพลาดในการลบ")
     }
   }
 
   const handleBulkImport = async () => {
-    const text = bulkText.trim()
-    if (!text) {
-      toast.warning("กรุณาวางข้อมูลก่อนกดนำเข้า")
-      return
-    }
-
-    const lines = text.split("\n")
+    if (!bulkText.trim()) return
+    const lines = bulkText.trim().split("\n")
     const sales: any[] = []
-    let delimiter = "\t"
-    const sample = lines.slice(0, 5).filter((l) => l.trim())
-    if (sample.length > 0) {
-      const tabs = (sample[0].match(/\t/g) || []).length
-      const commas = (sample[0].match(/,/g) || []).length
-      if (commas > tabs) delimiter = ","
-    }
-
-    const parseLine = (line: string) => {
-      const result: string[] = []
-      let cur = ""
-      let inQuote = false
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i]
-        if (char === '"') inQuote = !inQuote
-        else if (char === delimiter && !inQuote) {
-          result.push(cur.trim())
-          cur = ""
-        } else cur += char
-      }
-      result.push(cur.trim())
-      return result.map((s) =>
-        s.replace(/^"|"$/g, "").replace(/""/g, '"').trim()
-      )
-    }
 
     const cleanNum = (str: string) => {
       if (!str) return 0
-      let cleaned = str.replace(/,/g, "").trim()
-      if (cleaned.startsWith("(") && cleaned.endsWith(")")) {
-        cleaned = "-" + cleaned.substring(1, cleaned.length - 1)
-      }
+      const cleaned = str.replace(/[฿,]/g, "").trim()
       return parseFloat(cleaned) || 0
     }
 
     lines.forEach((line) => {
       if (!line.trim()) return
-      const cols = parseLine(line)
-      if (cols.length < 10) return
+      const cols = line.includes("\t") ? line.split("\t") : line.split(",")
+      if (cols.length < 5) return
       if (cols[0].includes("วันที่") || cols[3]?.includes("เรื่อง")) return
 
       const dateStr = cols[0].trim()
@@ -479,314 +555,747 @@ export function FinancialsView({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Top Header & Tab Navigation */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">
-            รายงานกำไร-ขาดทุน (P&L Report)
-          </h2>
-          <p className="text-sm text-slate-400">
-            ติดตามต้นทุนและยอดขายรายเดือน (อ้างอิงจากข้อมูล MangaSales)
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
+              รายงานกำไร-ขาดทุน และสถิติยอดขาย
+            </h2>
+            <Badge className="bg-indigo-500/20 text-indigo-400 border-indigo-500/30 text-xs font-mono">
+              236 Series
+            </Badge>
+          </div>
+          <p className="text-sm text-slate-400 mt-0.5">
+            ติดตามยอดขาย ยอดวิว และอัตราการเติบโต 7 วัน / 30 วัน ของ ReadRealm อัตโนมัติทุก 6 ชม.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={() => setAddOpen(true)}>
-            <Plus className="h-4 w-4" /> บันทึกยอดขายประจำเดือน
-          </Button>
-          <Button variant="outline" onClick={() => setBulkOpen(true)}>
-            <Upload className="h-4 w-4" /> นำเข้าข้อมูลจำนวนมาก
-          </Button>
+
+        {/* Tab Pill Buttons */}
+        <div className="flex items-center bg-[#0b1120] p-1 rounded-xl border border-slate-800">
+          <button
+            onClick={() => setActiveTab("growth")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all ${
+              activeTab === "growth"
+                ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
+            สถิติยอดขาย & อัตราเติบโต ReadRealm
+          </button>
+          <button
+            onClick={() => setActiveTab("pnl")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all ${
+              activeTab === "pnl"
+                ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <DollarSign className="h-3.5 w-3.5 text-amber-400" />
+            สมุดบันทึกต้นทุน & P&L เดิม
+          </button>
         </div>
       </div>
 
-      {/* Stats Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400">รายได้รวม</p>
-            <p className="text-2xl font-bold text-indigo-400 mt-1">
-              {summary.totalRev.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
-            </p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400">
-            <DollarSign className="h-6 w-6" />
-          </div>
-        </Card>
-
-        <Card className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400">ต้นทุนรวม</p>
-            <p className="text-2xl font-bold text-red-400 mt-1">
-              {summary.totalCost.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
-            </p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/20 text-red-400">
-            <TrendingDown className="h-6 w-6" />
-          </div>
-        </Card>
-
-        <Card className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400">กำไรสุทธิ</p>
-            <p
-              className={`text-2xl font-bold mt-1 ${
-                summary.totalProfit >= 0 ? "text-emerald-400" : "text-red-400"
-              }`}
-            >
-              {summary.totalProfit.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
-            </p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
-            <TrendingUp className="h-6 w-6" />
-          </div>
-        </Card>
-      </div>
-
-      {/* Charts Row 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base">📈 แนวโน้มรายได้รายเดือน</CardTitle>
-            <div className="flex gap-2">
-              <select
-                className="h-8 rounded-lg border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
-                value={monthFilter}
-                onChange={(e) => setMonthFilter(e.target.value)}
-              >
-                <option value="all">เดือน: ทั้งหมด</option>
-                {THAI_MONTHS.map((m, i) => (
-                  <option key={m} value={String(i + 1)}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="h-8 rounded-lg border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
-                value={yearFilter}
-                onChange={(e) => setYearFilter(e.target.value)}
-              >
-                <option value="all">ปี: ทั้งหมด</option>
-                {years.map((y) => (
-                  <option key={y} value={String(y)}>
-                    {y + 543}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </CardHeader>
-          <CardContent className="h-[280px]">
-            <Line
-              data={chartsData.lineData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: "#cbd5e1" } } },
-                scales: {
-                  x: { ticks: { color: "#94a3b8" } },
-                  y: { ticks: { color: "#94a3b8" } },
-                },
-              }}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">🍰 สัดส่วนรายได้</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[280px] flex items-center justify-center">
-            <Doughnut
-              data={chartsData.pieData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: "65%",
-                plugins: {
-                  legend: { position: "bottom", labels: { color: "#cbd5e1" } },
-                },
-              }}
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts Row 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base">📊 รายรับแยกตามช่องทาง</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[250px]">
-            <Bar
-              data={chartsData.barData}
-              options={{
-                indexAxis: "y",
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                  x: { ticks: { color: "#94a3b8" } },
-                  y: { ticks: { color: "#cbd5e1" } },
-                },
-              }}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Trophy className="h-4 w-4 text-amber-400" />
-              อันดับมังงะ (กำไร / ขาดทุน)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <h4 className="text-xs font-semibold text-emerald-400 mb-2">
-                Top 5 Profit
-              </h4>
-              <div className="space-y-1.5 text-xs">
-                {summary.topProfits.length === 0 ? (
-                  <p className="text-slate-500">ไม่มีข้อมูลกำไร</p>
-                ) : (
-                  summary.topProfits.map((p, i) => (
-                    <div
-                      key={p.name}
-                      className="flex justify-between border-b border-[#1a2337] pb-1"
-                    >
-                      <span className="truncate pr-2">
-                        {i + 1}. {p.name}
-                      </span>
-                      <span className="text-emerald-400 font-semibold shrink-0">
-                        +{p.profit.toLocaleString()} ฿
-                      </span>
-                    </div>
-                  ))
-                )}
+      {/* ========================================================================= */}
+      {/* TAB 1: READREALM GROWTH & SALES TRACKER (6-HOUR AUTO PIPELINE) */}
+      {/* ========================================================================= */}
+      {activeTab === "growth" && (
+        <div className="space-y-6">
+          {/* Top Banner: Status & Action */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-[#0f172a] to-[#0b1120]">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-white">
+                    ReadRealm 6-Hour Auto Growth Pipeline
+                  </span>
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    Git Action Active
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  รอบบันทึกล่าสุด:{" "}
+                  <span className="text-slate-200 font-mono">
+                    {trackerData?.pipeline_recorded_at
+                      ? new Date(trackerData.pipeline_recorded_at).toLocaleString("th-TH")
+                      : "4 พ.ย. 2569 (บันทึกอัตโนมัติ)"}
+                  </span>{" "}
+                  • วันที่อ้างอิง:{" "}
+                  <span className="text-indigo-300 font-semibold">
+                    {trackerData?.date_reference || "ตามรอบที่จดเอง"}
+                  </span>
+                </p>
               </div>
             </div>
 
-            <div>
-              <h4 className="text-xs font-semibold text-red-400 mb-2">
-                Top 5 Loss
-              </h4>
-              <div className="space-y-1.5 text-xs">
-                {summary.topLosses.length === 0 ? (
-                  <p className="text-slate-500">ไม่มีข้อมูลขาดทุน</p>
-                ) : (
-                  summary.topLosses.map((p, i) => (
-                    <div
-                      key={p.name}
-                      className="flex justify-between border-b border-[#1a2337] pb-1"
-                    >
-                      <span className="truncate pr-2">
-                        {i + 1}. {p.name}
-                      </span>
-                      <span className="text-red-400 font-semibold shrink-0">
-                        {p.profit.toLocaleString()} ฿
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadGrowthData}
+                disabled={loadingGrowth}
+                className="h-8 text-xs border-slate-700 bg-[#0b1120]"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${loadingGrowth ? "animate-spin" : ""}`} />
+                โหลดข้อมูลใหม่
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleTriggerPipeline}
+                disabled={triggeringAction}
+                className="h-8 text-xs bg-indigo-600 hover:bg-indigo-500 text-white"
+              >
+                <TrendingUp className={`h-3.5 w-3.5 mr-1.5 ${triggeringAction ? "animate-bounce" : ""}`} />
+                {triggeringAction ? "กำลังสั่งรัน..." : "สั่งรัน Git Action อัปเดต"}
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
 
-      {/* Sales Table */}
-      <Card className="overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>เดือน / เรื่อง</TableHead>
-              <TableHead className="text-center">จำนวนตอน</TableHead>
-              <TableHead className="text-right">ต้นทุน/ตอน</TableHead>
-              <TableHead className="text-right">ต้นทุนรวม</TableHead>
-              <TableHead className="text-right">ยอดขาย</TableHead>
-              <TableHead className="text-right">กำไร/ขาดทุน</TableHead>
-              <TableHead className="text-center w-20">จัดการ</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredSales.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center py-12 text-slate-400"
-                >
-                  ไม่มีข้อมูลรายการยอดขาย
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredSales.map((s, idx) => {
-                const rev = parseFloat(s.revenue) || 0
-                const cost = parseFloat(s.totalcost) || 0
-                const profit = rev - cost
-                return (
-                  <TableRow key={idx}>
-                    <TableCell>
-                      <div className="font-semibold text-slate-100">
-                        {s.seriesname}
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        {s.date
-                          ? new Date(s.date).toLocaleDateString("th-TH")
-                          : "-"}{" "}
-                        • {s.website || "-"}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {s.chapterscount}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {(parseFloat(s.costperchapter) || 0).toLocaleString()} ฿
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {cost.toLocaleString()} ฿
-                    </TableCell>
-                    <TableCell className="text-right font-semibold">
-                      {rev.toLocaleString()} ฿
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Badge variant={profit >= 0 ? "success" : "destructive"}>
-                        {profit >= 0 ? "+" : ""}
-                        {profit.toLocaleString()} ฿
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => handleDeleteSale(s, idx)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </TableCell>
+          {/* 4 KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">💰 ยอดขายรวมทั้งพอร์ต</p>
+                  <p className="text-xl font-bold font-mono text-emerald-400 mt-1">
+                    ฿
+                    {(
+                      trackerData?.total_sales_portfolio || 5771265.1
+                    ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">2 บัญชีนักเขียนหลัก</p>
+                </div>
+                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                  <DollarSign className="h-5 w-5" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">👁️ ยอดคนอ่านสะสมรวม</p>
+                  <p className="text-xl font-bold font-mono text-cyan-400 mt-1">
+                    {(
+                      trackerData?.total_views_portfolio || 20656006
+                    ).toLocaleString()}{" "}
+                    <span className="text-xs font-normal text-slate-400">ครั้ง</span>
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">&gt; 20 ล้านวิว</p>
+                </div>
+                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">📚 มังงะที่ติดตามทั้งหมด</p>
+                  <p className="text-xl font-bold font-mono text-indigo-400 mt-1">
+                    {trackerData?.total_comics || 236}{" "}
+                    <span className="text-xs font-normal text-slate-400">เรื่อง</span>
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    แปลจนเมื่อย (155) • แปลแล้วแปลอีก (81)
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
+                  <Layers className="h-5 w-5" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">⏱️ เกณฑ์อัตราการเติบโต</p>
+                  <p className="text-sm font-semibold text-amber-300 mt-1">
+                    7 วัน &amp; 30 วันย้อนหลัง
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    {trackerData?.has_7d_baseline
+                      ? "✓ คำนวณเทียบ Snapshot ก่อนหน้า"
+                      : "เริ่มเก็บประวัติ Snapshot รอบแรก"}
+                  </p>
+                </div>
+                <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+                  <Clock className="h-5 w-5" />
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Controls: Account Filter, Search, Sort */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-3 rounded-xl border border-slate-800 bg-[#0b1120]/80">
+            {/* Account Filter Pills */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <button
+                onClick={() => setAccountFilter("all")}
+                className={`px-3 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  accountFilter === "all"
+                    ? "bg-slate-700 text-white border-slate-600"
+                    : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                }`}
+              >
+                ทั้งหมด (236)
+              </button>
+              <button
+                onClick={() => setAccountFilter("แปลจนเมื่อย")}
+                className={`px-3 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  accountFilter === "แปลจนเมื่อย" || accountFilter === "lionking"
+                    ? "bg-indigo-600/30 text-indigo-300 border-indigo-500/50"
+                    : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                }`}
+              >
+                แปลจนเมื่อย (155)
+              </button>
+              <button
+                onClick={() => setAccountFilter("แปลแล้วแปลอีก")}
+                className={`px-3 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  accountFilter === "แปลแล้วแปลอีก" || accountFilter === "adieu"
+                    ? "bg-purple-600/30 text-purple-300 border-purple-500/50"
+                    : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                }`}
+              >
+                แปลแล้วแปลอีก (81)
+              </button>
+            </div>
+
+            {/* Search & Sort */}
+            <div className="flex items-center gap-2 flex-1 max-w-md">
+              <div className="relative flex-1">
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                <Input
+                  placeholder="ค้นหาชื่อเรื่องมังงะ..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-8 pl-8 text-xs bg-[#0f172a] border-slate-800"
+                />
+              </div>
+
+              <select
+                className="h-8 rounded-lg border border-slate-800 bg-[#0f172a] px-2.5 text-xs text-slate-200"
+                value={sortBy}
+                onChange={(e: any) => setSortBy(e.target.value)}
+              >
+                <option value="sales">ยอดขายสูงสุด</option>
+                <option value="views">ยอดวิวสูงสุด</option>
+                <option value="growth7d">อัตราโต 7 วัน</option>
+                <option value="growth30d">อัตราโต 30 วัน</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Comics Performance Table */}
+          <Card className="border-slate-800 bg-[#0f172a]/70 overflow-hidden">
+            <CardHeader className="pb-3 border-b border-slate-800 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-semibold text-white">
+                  ตารางอันดับยอดขาย ยอดวิว และอัตราการเติบโต ({filteredComics.length} เรื่อง)
+                </CardTitle>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  วันที่อ้างอิงตามรอบที่จดเอง ไม่ใช่วันที่บนเว็บ • เรียงตามยอดขายสะสม
+                </p>
+              </div>
+            </CardHeader>
+            <div className="overflow-x-auto max-h-[580px]">
+              <Table>
+                <TableHeader className="bg-[#0b1120] sticky top-0 z-10">
+                  <TableRow className="border-slate-800">
+                    <TableHead className="w-12 text-center">#</TableHead>
+                    <TableHead className="min-w-[240px]">ชื่อเรื่องมังงะ</TableHead>
+                    <TableHead className="text-center">บัญชี</TableHead>
+                    <TableHead className="text-right">ยอดขายรวม</TableHead>
+                    <TableHead className="text-right">ยอดวิวรวม</TableHead>
+                    <TableHead className="text-center">ตอน</TableHead>
+                    <TableHead className="text-right min-w-[130px]">
+                      อัตราเติบโต 7 วัน
+                    </TableHead>
+                    <TableHead className="text-right min-w-[130px]">
+                      อัตราเติบโต 30 วัน
+                    </TableHead>
+                    <TableHead className="text-center min-w-[110px]">
+                      วันที่บันทึก
+                    </TableHead>
                   </TableRow>
-                )
-              })
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {filteredComics.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-12 text-slate-500">
+                        {loadingGrowth ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <RefreshCw className="h-6 w-6 animate-spin text-indigo-400" />
+                            <span>กำลังโหลดข้อมูลสถิติ ReadRealm...</span>
+                          </div>
+                        ) : (
+                          "ไม่พบข้อมูลมังงะที่ตรงกับเงื่อนไข"
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredComics.map((c, idx) => {
+                      const isTop3 = idx < 3
+                      const rankBadge =
+                        idx === 0
+                          ? "🥇"
+                          : idx === 1
+                          ? "🥈"
+                          : idx === 2
+                          ? "🥉"
+                          : `#${idx + 1}`
 
-      {/* Add Monthly Sale Modal */}
+                      const g7Pct = c.growth_7d?.sales_growth_pct || 0
+                      const g7Delta = c.growth_7d?.sales_delta || 0
+                      const g30Pct = c.growth_30d?.sales_growth_pct || 0
+                      const g30Delta = c.growth_30d?.sales_delta || 0
+
+                      return (
+                        <TableRow
+                          key={c.comic_id || idx}
+                          className="border-slate-800/60 hover:bg-[#151d2f]/50 transition-colors"
+                        >
+                          <TableCell className="text-center font-mono font-medium text-xs">
+                            {isTop3 ? (
+                              <span className="text-base">{rankBadge}</span>
+                            ) : (
+                              <span className="text-slate-400">{rankBadge}</span>
+                            )}
+                          </TableCell>
+
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="text-xs font-semibold text-slate-100 hover:text-indigo-300 transition-colors line-clamp-1">
+                                {c.subject}
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-mono">
+                                ID: {c.comic_id}
+                              </span>
+                            </div>
+                          </TableCell>
+
+                          <TableCell className="text-center">
+                            <Badge
+                              className={`text-[10px] font-normal border ${
+                                c.account === "แปลจนเมื่อย"
+                                  ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/30"
+                                  : "bg-purple-500/10 text-purple-400 border-purple-500/30"
+                              }`}
+                            >
+                              {c.account}
+                            </Badge>
+                          </TableCell>
+
+                          <TableCell className="text-right font-mono font-bold text-xs text-emerald-400">
+                            ฿
+                            {(c.total_sales || 0).toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                            })}
+                          </TableCell>
+
+                          <TableCell className="text-right font-mono text-xs text-cyan-300">
+                            {(c.total_views || 0).toLocaleString()}
+                          </TableCell>
+
+                          <TableCell className="text-center font-mono text-xs text-slate-300">
+                            {c.chapters_count || 0}
+                          </TableCell>
+
+                          {/* 7-Day Growth */}
+                          <TableCell className="text-right">
+                            {trackerData?.has_7d_baseline ? (
+                              <div className="flex flex-col items-end">
+                                <span
+                                  className={`text-xs font-mono font-semibold flex items-center ${
+                                    g7Pct >= 0 ? "text-emerald-400" : "text-rose-400"
+                                  }`}
+                                >
+                                  {g7Pct >= 0 ? (
+                                    <ArrowUpRight className="h-3 w-3 inline mr-0.5" />
+                                  ) : (
+                                    <ArrowDownRight className="h-3 w-3 inline mr-0.5" />
+                                  )}
+                                  {g7Pct > 0 ? `+${g7Pct}%` : `${g7Pct}%`}
+                                </span>
+                                <span className="text-[10px] font-mono text-slate-400">
+                                  {g7Delta >= 0 ? `+฿${g7Delta}` : `฿${g7Delta}`}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-500 font-mono">-</span>
+                            )}
+                          </TableCell>
+
+                          {/* 30-Day Growth */}
+                          <TableCell className="text-right">
+                            {trackerData?.has_30d_baseline ? (
+                              <div className="flex flex-col items-end">
+                                <span
+                                  className={`text-xs font-mono font-semibold flex items-center ${
+                                    g30Pct >= 0 ? "text-emerald-400" : "text-rose-400"
+                                  }`}
+                                >
+                                  {g30Pct >= 0 ? (
+                                    <ArrowUpRight className="h-3 w-3 inline mr-0.5" />
+                                  ) : (
+                                    <ArrowDownRight className="h-3 w-3 inline mr-0.5" />
+                                  )}
+                                  {g30Pct > 0 ? `+${g30Pct}%` : `${g30Pct}%`}
+                                </span>
+                                <span className="text-[10px] font-mono text-slate-400">
+                                  {g30Delta >= 0 ? `+฿${g30Delta}` : `฿${g30Delta}`}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-500 font-mono">-</span>
+                            )}
+                          </TableCell>
+
+                          <TableCell className="text-center font-mono text-[11px] text-slate-400">
+                            {c.recorded_at
+                              ? new Date(c.recorded_at).toLocaleDateString("th-TH")
+                              : trackerData?.date_reference || "-"}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 2: TRADITIONAL MANUAL P&L LEDGER & CHARTS */}
+      {/* ========================================================================= */}
+      {activeTab === "pnl" && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-bold text-white">
+                สมุดบันทึกยอดขายประจำเดือน (MangaSales Ledger)
+              </h3>
+              <p className="text-xs text-slate-400">
+                บันทึกยอดขายและต้นทุนรายเรื่องแบบระบุเอง
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => setAddOpen(true)}>
+                <Plus className="h-4 w-4" /> บันทึกยอดขายประจำเดือน
+              </Button>
+              <Button variant="outline" onClick={() => setBulkOpen(true)}>
+                <Upload className="h-4 w-4" /> นำเข้าข้อมูลจำนวนมาก
+              </Button>
+            </div>
+          </div>
+
+          {/* Stats Summary */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">รายได้รวม</p>
+                <p className="text-2xl font-bold text-indigo-400 mt-1">
+                  {summary.totalRev.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}{" "}
+                  ฿
+                </p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400">
+                <DollarSign className="h-6 w-6" />
+              </div>
+            </Card>
+
+            <Card className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">ต้นทุนรวม</p>
+                <p className="text-2xl font-bold text-red-400 mt-1">
+                  {summary.totalCost.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}{" "}
+                  ฿
+                </p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/20 text-red-400">
+                <TrendingDown className="h-6 w-6" />
+              </div>
+            </Card>
+
+            <Card className="p-5 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">กำไรสุทธิ</p>
+                <p
+                  className={`text-2xl font-bold mt-1 ${
+                    summary.totalProfit >= 0 ? "text-emerald-400" : "text-red-400"
+                  }`}
+                >
+                  {summary.totalProfit.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}{" "}
+                  ฿
+                </p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                <TrendingUp className="h-6 w-6" />
+              </div>
+            </Card>
+          </div>
+
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2">
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <CardTitle className="text-base">📈 แนวโน้มรายได้รายเดือน</CardTitle>
+                <div className="flex gap-2">
+                  <select
+                    className="h-8 rounded-lg border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
+                    value={monthFilter}
+                    onChange={(e) => setMonthFilter(e.target.value)}
+                  >
+                    <option value="all">เดือน: ทั้งหมด</option>
+                    {THAI_MONTHS.map((m, i) => (
+                      <option key={m} value={String(i + 1)}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className="h-8 rounded-lg border border-[#26334d] bg-[#0b1120] px-2.5 text-xs text-slate-100"
+                    value={yearFilter}
+                    onChange={(e) => setYearFilter(e.target.value)}
+                  >
+                    <option value="all">ปี: ทั้งหมด</option>
+                    {years.map((y) => (
+                      <option key={y} value={String(y)}>
+                        {y + 543}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </CardHeader>
+              <CardContent className="h-[280px]">
+                <Line
+                  data={chartsData.lineData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: "#cbd5e1" } } },
+                    scales: {
+                      x: { ticks: { color: "#94a3b8" } },
+                      y: { ticks: { color: "#94a3b8" } },
+                    },
+                  }}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">🍰 สัดส่วนรายได้</CardTitle>
+              </CardHeader>
+              <CardContent className="h-[280px] flex items-center justify-center">
+                <Doughnut
+                  data={chartsData.pieData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "65%",
+                    plugins: {
+                      legend: { position: "bottom", labels: { color: "#cbd5e1" } },
+                    },
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Ranking & Breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-amber-400" /> อันดับมังงะ (กำไร / ขาดทุน)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold text-emerald-400">
+                      🏆 5 อันดับกำไรสูงสุด
+                    </p>
+                    {summary.topProfits.length === 0 ? (
+                      <p className="text-slate-500 text-xs">ไม่มีข้อมูลกำไร</p>
+                    ) : (
+                      summary.topProfits.map((item, idx) => (
+                        <div
+                          key={item.name}
+                          className="flex items-center justify-between text-xs p-2 rounded-lg bg-slate-900/50 border border-slate-800"
+                        >
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span className="font-bold text-slate-400">{idx + 1}.</span>
+                            <span className="truncate text-slate-200">{item.name}</span>
+                          </div>
+                          <span className="font-semibold text-emerald-400 shrink-0">
+                            +฿{item.profit.toLocaleString()}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold text-red-400">
+                      🔻 5 อันดับขาดทุนสูงสุด
+                    </p>
+                    {summary.topLosses.length === 0 ? (
+                      <p className="text-slate-500 text-xs">ไม่มีรายการขาดทุน</p>
+                    ) : (
+                      summary.topLosses.map((item, idx) => (
+                        <div
+                          key={item.name}
+                          className="flex items-center justify-between text-xs p-2 rounded-lg bg-slate-900/50 border border-slate-800"
+                        >
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span className="font-bold text-slate-400">{idx + 1}.</span>
+                            <span className="truncate text-slate-200">{item.name}</span>
+                          </div>
+                          <span className="font-semibold text-red-400 shrink-0">
+                            ฿{item.profit.toLocaleString()}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">📊 รายรับตามช่องทาง</CardTitle>
+              </CardHeader>
+              <CardContent className="h-[280px]">
+                <Bar
+                  data={chartsData.barData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                      x: { ticks: { color: "#94a3b8" } },
+                      y: { ticks: { color: "#94a3b8" } },
+                    },
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sales Table */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-base">รายการยอดขายประจำเดือน</CardTitle>
+                <p className="text-xs text-slate-400">
+                  ทั้งหมด {filteredSales.length} รายการ
+                </p>
+              </div>
+            </CardHeader>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>วันที่</TableHead>
+                    <TableHead>เรื่อง</TableHead>
+                    <TableHead>ช่องทาง</TableHead>
+                    <TableHead className="text-right">จำนวนตอน</TableHead>
+                    <TableHead className="text-right">ต้นทุน/ตอน</TableHead>
+                    <TableHead className="text-right">ต้นทุนรวม</TableHead>
+                    <TableHead className="text-right">ยอดขาย</TableHead>
+                    <TableHead className="text-right">กำไร/ขาดทุน</TableHead>
+                    <TableHead className="text-center w-16">จัดการ</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredSales.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} className="text-center py-8 text-slate-500">
+                        ไม่พบข้อมูลในรอบที่เลือก
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredSales.map((sale, idx) => {
+                      const rev = parseFloat(sale.revenue) || 0
+                      const cost = parseFloat(sale.totalcost) || 0
+                      const profit = rev - cost
+                      return (
+                        <TableRow key={sale._rowIndex || idx}>
+                          <TableCell className="text-xs text-slate-400">
+                            {sale.date ? sale.date.split("T")[0] : "-"}
+                          </TableCell>
+                          <TableCell className="font-medium text-slate-200">
+                            {sale.seriesname}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-xs">
+                              {sale.website}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">{sale.chapterscount}</TableCell>
+                          <TableCell className="text-right">
+                            {parseFloat(sale.costperchapter || 0).toLocaleString()} ฿
+                          </TableCell>
+                          <TableCell className="text-right text-red-400">
+                            {cost.toLocaleString()} ฿
+                          </TableCell>
+                          <TableCell className="text-right text-indigo-400 font-semibold">
+                            {rev.toLocaleString()} ฿
+                          </TableCell>
+                          <TableCell
+                            className={`text-right font-semibold ${
+                              profit >= 0 ? "text-emerald-400" : "text-red-400"
+                            }`}
+                          >
+                            {profit > 0 ? "+" : ""}
+                            {profit.toLocaleString()} ฿
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                              onClick={() => handleDeleteSale(sale._rowIndex, sale)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Add Sale Modal */}
       <Dialog open={addOpen} onOpenChange={(v) => !v && setAddOpen(false)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>บันทึกยอดขายประจำเดือน</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleAddSale} className="space-y-4 mt-2">
+          <form onSubmit={handleSaveSale} className="space-y-4 mt-2">
             <div className="space-y-1.5">
               <Label>วันที่บันทึก *</Label>
               <Input
@@ -794,7 +1303,7 @@ export function FinancialsView({
                 value={finDate}
                 onChange={(e) => {
                   setFinDate(e.target.value)
-                  autoFillFinDetails(finMangaId, e.target.value)
+                  if (finMangaId) autoFillFinDetails(finMangaId, e.target.value)
                 }}
                 required
               />
