@@ -37,6 +37,7 @@ import {
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { THAI_SHORT_MONTHS, getChapterCount } from "@/lib/utils"
 import initialGrowthData from "@/data/multi_platform_growth_latest.json"
+import initialGroupedData from "@/data/grouped_matched_comics.json"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
 import {
@@ -95,7 +96,41 @@ export function FinancialsView({
   const now = new Date()
 
   // Top Tab Switcher
-  const [activeTab, setActiveTab] = React.useState<"growth" | "pnl">("growth")
+  const [activeTab, setActiveTab] = React.useState<"growth" | "grouped" | "pnl">("growth")
+
+  // --- Cross-Platform Grouped Titles State (ReadRealm + Kairew + Chaply) ---
+  const [groupedList, setGroupedList] = React.useState<any[]>(initialGroupedData)
+  const [groupedSearch, setGroupedSearch] = React.useState<string>("")
+  const [groupedPlatFilter, setGroupedPlatFilter] = React.useState<"all" | "3" | "2">("all")
+  const [groupedSortBy, setGroupedSortBy] = React.useState<"sales" | "views" | "eps">("sales")
+
+  const filteredGroupedComics = React.useMemo(() => {
+    let list = [...groupedList]
+    if (groupedPlatFilter === "3") {
+      list = list.filter((g) => g.platform_count === 3)
+    } else if (groupedPlatFilter === "2") {
+      list = list.filter((g) => g.platform_count === 2)
+    }
+    if (groupedSearch.trim()) {
+      const q = groupedSearch.trim().toLowerCase()
+      list = list.filter((g) => g.title.toLowerCase().includes(q))
+    }
+    list.sort((a, b) => {
+      if (groupedSortBy === "sales") return (b.total_sales || 0) - (a.total_sales || 0)
+      if (groupedSortBy === "views") return (b.total_views || 0) - (a.total_views || 0)
+      if (groupedSortBy === "eps") return (b.max_eps || 0) - (a.max_eps || 0)
+      return 0
+    })
+    return list
+  }, [groupedList, groupedPlatFilter, groupedSearch, groupedSortBy])
+
+  const groupedTotals = React.useMemo(() => {
+    const s = groupedList.reduce((acc, g) => acc + (g.total_sales || 0), 0)
+    const v = groupedList.reduce((acc, g) => acc + (g.total_views || 0), 0)
+    const p3 = groupedList.filter((g) => g.platform_count === 3).length
+    const p2 = groupedList.filter((g) => g.platform_count === 2).length
+    return { sales: s, views: v, p3, p2, total: groupedList.length }
+  }, [groupedList])
 
   // --- Multi-Platform Growth Tracker State (ReadRealm + Kairew + Chaply) ---
   const [trackerData, setTrackerData] = React.useState<any>(initialGrowthData)
@@ -655,6 +690,17 @@ export function FinancialsView({
             สถิติยอดขาย & อัตราเติบโต Multi-Platform
           </button>
           <button
+            onClick={() => setActiveTab("grouped")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all ${
+              activeTab === "grouped"
+                ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/20"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <Layers className="h-3.5 w-3.5 text-cyan-400" />
+            รวมเรื่องเดียวกันข้ามแพลตฟอร์ม ({groupedTotals.total} เรื่อง)
+          </button>
+          <button
             onClick={() => setActiveTab("pnl")}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all ${
               activeTab === "pnl"
@@ -1209,6 +1255,240 @@ export function FinancialsView({
                         </TableRow>
                       )
                     })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 3: CROSS-PLATFORM GROUPED TITLES (READREALM + KAIREW + CHAPLY) */}
+      {/* ========================================================================= */}
+      {activeTab === "grouped" && (
+        <div className="space-y-6">
+          {/* Header Summary Banner */}
+          <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-r from-cyan-950/30 via-[#0d1527] to-[#0f172a] p-5 shadow-lg shadow-cyan-950/20">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-600/20 text-cyan-400 border border-cyan-500/30">
+                    <Layers className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                      จัดกลุ่มเรื่องเดียวกันข้ามแพลตฟอร์ม (Cross-Platform Unified Titles)
+                      <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30 text-[10px]">
+                        {groupedTotals.total} เรื่องที่ตรงกัน
+                      </Badge>
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      รวมยอดขายและยอดวิวเฉพาะเรื่องที่เผยแพร่ซ้ำข้ามแพลตฟอร์ม (ReadRealm, Kairew, Chaply) โดยคัดเรื่องที่ไม่ตรงกันออก
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 KPI Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+              <div className="rounded-xl border border-slate-800 bg-[#0b101d]/80 p-3.5">
+                <span className="text-[11px] font-medium text-slate-400">เรื่องที่ตรงกันทั้งหมด</span>
+                <div className="text-xl font-bold text-white mt-1 flex items-baseline gap-1.5">
+                  {groupedTotals.total} <span className="text-xs text-cyan-400 font-normal">เรื่อง</span>
+                </div>
+                <div className="text-[10px] text-slate-400 mt-0.5">
+                  ครบ 3 เว็บ: {groupedTotals.p3} | 2 เว็บ: {groupedTotals.p2}
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-800 bg-[#0b101d]/80 p-3.5">
+                <span className="text-[11px] font-medium text-slate-400">ยอดขายรวมสะสม (Combined Sales)</span>
+                <div className="text-xl font-bold text-emerald-400 mt-1">
+                  ฿{groupedTotals.sales.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+                <div className="text-[10px] text-slate-400 mt-0.5">
+                  ReadRealm + Kairew
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-800 bg-[#0b101d]/80 p-3.5">
+                <span className="text-[11px] font-medium text-slate-400">ยอดคนอ่านรวม (Combined Views)</span>
+                <div className="text-xl font-bold text-indigo-400 mt-1">
+                  {groupedTotals.views.toLocaleString()} <span className="text-xs text-indigo-300 font-normal">วิว</span>
+                </div>
+                <div className="text-[10px] text-slate-400 mt-0.5">
+                  จาก 3 แพลตฟอร์ม
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-800 bg-[#0b101d]/80 p-3.5">
+                <span className="text-[11px] font-medium text-slate-400">ความครอบคลุม 3 แพลตฟอร์ม</span>
+                <div className="text-xl font-bold text-amber-400 mt-1">
+                  {((groupedTotals.p3 / groupedTotals.total) * 100).toFixed(0)}%
+                </div>
+                <div className="text-[10px] text-slate-400 mt-0.5">
+                  64 เรื่องลงครบทั้ง RR, KW, CH
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Controls: Search, Platform Filter, Sort */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0d1322] p-3 rounded-xl border border-slate-800">
+            <div className="flex flex-1 items-center gap-2">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <Input
+                  value={groupedSearch}
+                  onChange={(e) => setGroupedSearch(e.target.value)}
+                  placeholder="ค้นหาชื่อเรื่อง..."
+                  className="pl-8 h-9 text-xs bg-[#0b101d] border-slate-700 text-slate-200 placeholder:text-slate-500 rounded-lg"
+                />
+              </div>
+
+              {/* Platform Filter Chips */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setGroupedPlatFilter("all")}
+                  className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
+                    groupedPlatFilter === "all"
+                      ? "bg-cyan-600 text-white"
+                      : "bg-[#0b101d] text-slate-400 hover:text-slate-200 border border-slate-800"
+                  }`}
+                >
+                  ทั้งหมด ({groupedTotals.total})
+                </button>
+                <button
+                  onClick={() => setGroupedPlatFilter("3")}
+                  className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
+                    groupedPlatFilter === "3"
+                      ? "bg-indigo-600 text-white"
+                      : "bg-[#0b101d] text-slate-400 hover:text-slate-200 border border-slate-800"
+                  }`}
+                >
+                  ครบ 3 แพลตฟอร์ม ({groupedTotals.p3})
+                </button>
+                <button
+                  onClick={() => setGroupedPlatFilter("2")}
+                  className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
+                    groupedPlatFilter === "2"
+                      ? "bg-purple-600 text-white"
+                      : "bg-[#0b101d] text-slate-400 hover:text-slate-200 border border-slate-800"
+                  }`}
+                >
+                  2 แพลตฟอร์ม ({groupedTotals.p2})
+                </button>
+              </div>
+            </div>
+
+            {/* Sort Selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-400">เรียงตาม:</span>
+              <select
+                value={groupedSortBy}
+                onChange={(e) => setGroupedSortBy(e.target.value as any)}
+                className="h-9 px-3 text-xs bg-[#0b101d] border border-slate-700 text-slate-200 rounded-lg focus:outline-hidden focus:border-cyan-500"
+              >
+                <option value="sales">ยอดขายรวมสูงสุด ⭐</option>
+                <option value="views">ยอดคนอ่านรวมสูงสุด 👁️</option>
+                <option value="eps">จำนวนตอนสูงสุด 📖</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Table */}
+          <Card className="border-slate-800 bg-[#0d1322] shadow-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-[#0b101d]/90">
+                  <TableRow className="border-slate-800 hover:bg-transparent">
+                    <TableHead className="w-12 text-slate-400 text-xs">#</TableHead>
+                    <TableHead className="text-slate-300 text-xs font-semibold min-w-[220px]">
+                      ชื่อเรื่อง (มังงะ)
+                    </TableHead>
+                    <TableHead className="text-slate-300 text-xs font-semibold min-w-[140px]">
+                      แพลตฟอร์ม
+                    </TableHead>
+                    <TableHead className="text-right text-slate-300 text-xs font-semibold min-w-[160px]">
+                      ยอดขายรวม (฿)
+                    </TableHead>
+                    <TableHead className="text-right text-slate-300 text-xs font-semibold min-w-[160px]">
+                      ยอดวิวรวม (ครั้ง)
+                    </TableHead>
+                    <TableHead className="text-center text-slate-300 text-xs font-semibold min-w-[80px]">
+                      ตอนสูงสุด
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredGroupedComics.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-10 text-slate-500 text-xs">
+                        ไม่พบข้อมูลเรื่องที่ตรงกับเงื่อนไขการค้นหา
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredGroupedComics.map((g, idx) => (
+                      <TableRow
+                        key={g.key}
+                        className="border-slate-800/60 hover:bg-slate-800/30 transition-colors"
+                      >
+                        <TableCell className="text-slate-400 text-xs font-mono">
+                          {idx + 1}
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium text-slate-100 text-xs leading-snug">
+                            {g.title}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap items-center gap-1">
+                            {g.readrealm.exists && (
+                              <Badge className="bg-indigo-500/15 text-indigo-300 border-indigo-500/30 text-[10px] px-1.5 py-0">
+                                RR
+                              </Badge>
+                            )}
+                            {g.kairew.exists && (
+                              <Badge className="bg-purple-500/15 text-purple-300 border-purple-500/30 text-[10px] px-1.5 py-0">
+                                KW
+                              </Badge>
+                            )}
+                            {g.chaply.exists && (
+                              <Badge className="bg-cyan-500/15 text-cyan-300 border-cyan-500/30 text-[10px] px-1.5 py-0">
+                                CH
+                              </Badge>
+                            )}
+                            <span className="text-[10px] text-slate-400 font-mono ml-0.5">
+                              ({g.platform_count})
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="font-bold text-emerald-400 text-xs font-mono">
+                            ฿{g.total_sales.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
+                            {g.readrealm.exists && <span>RR: ฿{g.readrealm.sales.toLocaleString("en-US", { maximumFractionDigits: 0 })} </span>}
+                            {g.kairew.exists && <span>| KW: ฿{g.kairew.sales.toLocaleString("en-US", { maximumFractionDigits: 0 })}</span>}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="font-semibold text-slate-200 text-xs font-mono">
+                            {g.total_views.toLocaleString()}
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-0.5 font-mono">
+                            {g.readrealm.exists && <span>RR: {g.readrealm.views.toLocaleString()} </span>}
+                            {g.kairew.exists && <span>| KW: {g.kairew.views.toLocaleString()} </span>}
+                            {g.chaply.exists && <span>| CH: {g.chaply.views.toLocaleString()}</span>}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center font-mono text-xs text-slate-300">
+                          {g.max_eps}
+                        </TableCell>
+                      </TableRow>
+                    ))
                   )}
                 </TableBody>
               </Table>
