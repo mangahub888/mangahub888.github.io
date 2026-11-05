@@ -160,6 +160,9 @@ function doPost(e) {
         break;
 
       // --- WORK QUEUE CRUD ---
+      case 'BATCH_SET_PRATCHAYA_SKIP':
+        result = batchSetPratchayaOcrAndExtractToSkip();
+        break;
       case 'BATCH_SET_KIKKUK_OCR_SKIP':
         result = batchSetKikkukDoneOcrToSkip();
         break;
@@ -1098,10 +1101,16 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
       if (!obj.poststatus || String(obj.poststatus).trim() === '') obj.poststatus = 'รอเริ่ม';
       if (!obj.uploadstatus || String(obj.uploadstatus).trim() === '') obj.uploadstatus = 'รอเริ่ม';
 
+      const transStr = String(obj.translatorname || '').toLowerCase();
+      const isPratchaya = transStr.includes('pratchaya');
+
       const extractorStr = String(obj.extractorname || '').toLowerCase();
       const isKikkukExtractDone = (extractorStr.includes('kikuk') || extractorStr.includes('kikkuk')) && String(obj.extractstatus || '').trim() === 'เสร็จแล้ว';
 
-      if (isKikkukExtractDone) {
+      if (isPratchaya) {
+        obj.ocrstatus = 'skip';
+        obj.extractstatus = 'skip';
+      } else if (isKikkukExtractDone) {
         obj.ocrstatus = 'skip';
       } else if (!obj.ocrstatus || String(obj.ocrstatus).trim() === '') {
         const isUpDone = String(obj.uploadstatus).trim() === 'เสร็จแล้ว';
@@ -1158,13 +1167,17 @@ function addQueue(queueData) {
       if (header === 'chapter') return queueData.chapter;
       
       if (header === 'uploadstatus') return queueData.uploadstatus || 'รอเริ่ม';
+      const isPratchayaOnAdd = String(queueData.translatorname || (manga && manga.lockedtranslator) || '').toLowerCase().includes('pratchaya');
+
       if (header === 'ocrstatus') {
+        if (isPratchayaOnAdd) return 'skip';
         const extStr = String(queueData.extractorname || 'kikkuk').toLowerCase();
         const isKikExtractDone = (extStr.includes('kikuk') || extStr.includes('kikkuk')) && String(queueData.extractstatus || '').trim() === 'เสร็จแล้ว';
         if (isKikExtractDone) return 'skip';
         return queueData.ocrstatus || 'รอเริ่ม';
       }
       if (header === 'extractstatus') {
+        if (isPratchayaOnAdd) return 'skip';
         if (queueData.extractstatus && String(queueData.extractstatus).trim() !== '') {
           return queueData.extractstatus;
         }
@@ -1260,6 +1273,17 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
             if (!currentPostStatus || currentPostStatus.toString().trim() === '') {
               sheet.getRange(rowNum, postStatusCol).setValue('รอเริ่ม');
             }
+          }
+        }
+
+        if (step.toLowerCase() === 'translate') {
+          const effectiveAssignee = assignee !== undefined ? assignee : data[i][headers.indexOf('translatorname')];
+          const transStr = String(effectiveAssignee || '').toLowerCase();
+          if (transStr.includes('pratchaya')) {
+            const ocrStatusCol = headers.indexOf('ocrstatus') + 1;
+            const extractStatusCol = headers.indexOf('extractstatus') + 1;
+            if (ocrStatusCol > 0) sheet.getRange(rowNum, ocrStatusCol).setValue('skip');
+            if (extractStatusCol > 0) sheet.getRange(rowNum, extractStatusCol).setValue('skip');
           }
         }
 
@@ -1415,6 +1439,16 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
           const currentPostVal = data[i][postStatusColIndex];
           if (!currentPostVal || currentPostVal.toString().trim() === '') {
             data[i][postStatusColIndex] = 'รอเริ่ม';
+          }
+        }
+
+        if (stepLower === 'translate' && shouldUpdateAssignee) {
+          const transStr = String(assignee || '').toLowerCase();
+          if (transStr.includes('pratchaya')) {
+            const ocrStatusColIndex = headers.indexOf('ocrstatus');
+            const extractStatusColIndex = headers.indexOf('extractstatus');
+            if (ocrStatusColIndex !== -1) data[i][ocrStatusColIndex] = 'skip';
+            if (extractStatusColIndex !== -1) data[i][extractStatusColIndex] = 'skip';
           }
         }
 
@@ -5920,7 +5954,10 @@ function scheduledMangaOcr6HourJob() {
       const upDone = String(q.uploadstatus || '').trim() === 'เสร็จแล้ว';
       const exWaiting = String(q.extractstatus || '').trim() === 'รอเริ่ม';
       const hasLink = q.worklink && String(q.worklink).includes('drive.google.com/drive/folders/');
-      return upDone && exWaiting && hasLink;
+      const isPratchaya = String(q.translatorname || '').toLowerCase().includes('pratchaya');
+      const isOcrSkip = String(q.ocrstatus || '').toLowerCase() === 'skip';
+      const isOcrDone = String(q.ocrstatus || '').trim() === 'เสร็จแล้ว';
+      return upDone && exWaiting && hasLink && !isPratchaya && !isOcrSkip && !isOcrDone;
     });
 
     console.log('พบ ' + pendingItems.length + ' ตอนที่ผ่านสเต็ป 1 (อัป raw) และรอรันสเต็ป 2 (ดึงคำออโต้)');
@@ -6872,6 +6909,70 @@ function batchSetKikkukDoneOcrToSkip() {
     return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
   } catch (err) {
     console.error('batchSetKikkukDoneOcrToSkip error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
+ * อัปเดตคิวงานทั้งหมดที่มีคนแปลชื่อ 'pratchaya' ไม่ต้องดึงคำออโต้ (OcrStatus='skip') และคิวซีดึงคำ (ExtractStatus='skip')
+ */
+function batchSetPratchayaOcrAndExtractToSkip() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { count: 0, message: 'No data' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    let ocrStatusColIndex = headers.indexOf('ocrstatus');
+    if (ocrStatusColIndex === -1) {
+      sheet.getRange(1, headers.length + 1).setValue('OcrStatus');
+      ocrStatusColIndex = headers.length;
+    }
+    const extractStatusColIndex = headers.indexOf('extractstatus');
+    const translatorColIndex = headers.indexOf('translatorname');
+
+    let updatedCount = 0;
+    const ocrValues = [];
+    const extractValues = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const trans = String(data[i][translatorColIndex] || '').toLowerCase().trim();
+      const currentOcrStatus = String(data[i][ocrStatusColIndex] || '').trim();
+      const currentExtractStatus = String(data[i][extractStatusColIndex] || '').trim();
+
+      const isPratchaya = trans.includes('pratchaya');
+
+      let newOcr = currentOcrStatus;
+      let newExtract = currentExtractStatus;
+
+      if (isPratchaya) {
+        if (currentOcrStatus.toLowerCase() !== 'skip') {
+          newOcr = 'skip';
+          updatedCount++;
+        }
+        if (currentExtractStatus.toLowerCase() !== 'skip' && currentExtractStatus.toLowerCase() !== 'skipped') {
+          newExtract = 'skip';
+          updatedCount++;
+        }
+      }
+
+      ocrValues.push([newOcr]);
+      extractValues.push([newExtract]);
+    }
+
+    if (updatedCount > 0) {
+      sheet.getRange(2, ocrStatusColIndex + 1, ocrValues.length, 1).setValues(ocrValues);
+      sheet.getRange(2, extractStatusColIndex + 1, extractValues.length, 1).setValues(extractValues);
+    }
+
+    return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('batchSetPratchayaOcrAndExtractToSkip error:', err);
     return { error: err.toString() };
   } finally {
     lock.releaseLock();

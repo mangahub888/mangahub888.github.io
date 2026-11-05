@@ -142,17 +142,20 @@ export function QueueView({
           getStatus(q.uploadstatus) === "กำลังทำ"
         )
           waitUpload += count
+        const isPratchaya = String(q.translatorname || "").toLowerCase().includes("pratchaya");
         const extStr = String(q.extractorname || "").toLowerCase();
         const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus);
-        const ocrSt = isKikExtractDone ? "skip" : getStatus(q.ocrstatus);
+        const ocrSt = (isPratchaya || isKikExtractDone) ? "skip" : getStatus(q.ocrstatus);
         if (
           isStepDone(q.uploadstatus) &&
           !isStepDone(q.extractstatus) &&
           !isKikExtractDone &&
+          !isPratchaya &&
           (ocrSt === "รอเริ่ม" || ocrSt === "กำลังทำ")
         )
           waitOcr += count
         if (
+          !isPratchaya &&
           (getStatus(q.extractstatus) === "รอเริ่ม" ||
             getStatus(q.extractstatus) === "กำลังทำ") &&
           getStatus(q.extractstatus) !== "Skipped" &&
@@ -950,9 +953,10 @@ export function QueueView({
                     {/* 2. ดึงคำออโต้ */}
                     <TableCell>
                       {(() => {
+                        const isPratchaya = String(q.translatorname || "").toLowerCase().includes("pratchaya");
                         const extStr = String(q.extractorname || "").toLowerCase();
                         const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus);
-                        const effectiveOcrStatus = isKikExtractDone
+                        const effectiveOcrStatus = (isPratchaya || isKikExtractDone)
                           ? "skip"
                           : (q.ocrstatus || (isStepDone(q.extractstatus) ? "เสร็จแล้ว" : (isStepDone(q.uploadstatus) ? "รอเริ่ม" : "รอเริ่ม")));
                         return (
@@ -960,7 +964,7 @@ export function QueueView({
                             {renderStatusBadge(q, "ocr", effectiveOcrStatus)}
                             <div className="text-xs text-slate-400 mt-1">
                               {effectiveOcrStatus === "skip"
-                                ? (isKikExtractDone ? "kikkuk ดึงคำแล้ว" : "ข้ามการดึงคำ")
+                                ? (isPratchaya ? "pratchaya แปล (ไม่ต้องดึงคำ)" : (isKikExtractDone ? "kikkuk ดึงคำแล้ว" : "ข้ามการดึงคำ"))
                                 : (q.ocrtime ? parseQueueDate(q.ocrtime)?.toLocaleDateString("th-TH") : "GitHub Actions")}
                             </div>
                             {renderStepLinks(q.worklink, "mtp") || renderStepLinks(q.worklink, "ดึงคำออโต้")}
@@ -970,16 +974,24 @@ export function QueueView({
                     </TableCell>
 
                     <TableCell>
-                      {renderStatusBadge(q, "extract", q.extractstatus)}
-                      <div className="text-xs text-slate-400 mt-1">
-                        {q.extractorname || "-"}
-                        {exDur && (
-                          <div className="text-[11px] text-slate-500">
-                            ⏱️ {exDur}
-                          </div>
-                        )}
-                      </div>
-                      {renderStepLinks(q.worklink, "ดึงคำ")}
+                      {(() => {
+                        const isPratchaya = String(q.translatorname || "").toLowerCase().includes("pratchaya");
+                        const effectiveExtractStatus = isPratchaya ? "skip" : q.extractstatus;
+                        return (
+                          <>
+                            {renderStatusBadge(q, "extract", effectiveExtractStatus)}
+                            <div className="text-xs text-slate-400 mt-1">
+                              {isPratchaya ? "pratchaya แปล (ข้าม QC)" : (q.extractorname || "-")}
+                              {exDur && (
+                                <div className="text-[11px] text-slate-500">
+                                  ⏱️ {exDur}
+                                </div>
+                              )}
+                            </div>
+                            {renderStepLinks(q.worklink, "ดึงคำ")}
+                          </>
+                        );
+                      })()}
                     </TableCell>
 
                     <TableCell>

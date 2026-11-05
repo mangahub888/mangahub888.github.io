@@ -88,18 +88,19 @@ export function isStepDone(s: any): boolean {
 export function getQueueCurrentStep(q: any): string {
   if (!q) return 'finished'
   const isDoing = (s: any) => String(s || '').trim() === 'กำลังทำ'
+  const isPratchaya = String(q.translatorname || '').toLowerCase().includes('pratchaya')
 
   if (isDoing(q.typesetstatus)) return 'typeset'
   if (isDoing(q.translatestatus)) return 'translate'
-  if (isDoing(q.extractstatus)) return 'extract'
-  if (isDoing(q.ocrstatus)) return 'ocr'
+  if (isDoing(q.extractstatus) && !isPratchaya) return 'extract'
+  if (isDoing(q.ocrstatus) && !isPratchaya) return 'ocr'
   if (isDoing(q.publishstatus)) return 'publish'
   if (isDoing(q.poststatus)) return 'post'
   if (isDoing(q.uploadstatus)) return 'upload'
 
   if (!isStepDone(q.uploadstatus)) return 'upload'
-  if (!isStepDone(q.ocrstatus)) return 'ocr'
-  if (!isStepDone(q.extractstatus)) return 'extract'
+  if (!isPratchaya && !isStepDone(q.ocrstatus)) return 'ocr'
+  if (!isPratchaya && !isStepDone(q.extractstatus)) return 'extract'
   if (!isStepDone(q.translatestatus)) return 'translate'
   if (!isStepDone(q.typesetstatus)) return 'typeset'
   if (!isStepDone(q.publishstatus)) return 'publish'
