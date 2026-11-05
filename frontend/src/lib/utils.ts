@@ -85,26 +85,110 @@ export function isStepDone(s: any): boolean {
   return str === 'เสร็จแล้ว' || str === 'Skipped' || str === 'ข้าม' || str.toLowerCase() === 'done' || str.toLowerCase() === 'skip'
 }
 
-export function getQueueCurrentStep(q: any): string {
+export const QUEUE_STEPS = [
+  "upload",
+  "ocr",
+  "extract",
+  "translate",
+  "typeset",
+  "publish",
+  "post",
+] as const
+
+export type QueueStepKey = (typeof QUEUE_STEPS)[number]
+
+export function isQueueStepDone(q: any, step: string, manga?: any): boolean {
+  if (!q) return false
+
+  const rawStatus = q[step + "status"]
+  const strStatus = String(rawStatus || "").trim()
+  const isActivelyPending =
+    strStatus === "กำลังทำ" ||
+    strStatus === "รอเริ่ม" ||
+    strStatus.toLowerCase() === "in progress" ||
+    strStatus.toLowerCase() === "pending"
+
+  const isPratchaya = String(
+    q.translatorname || (manga && manga.lockedtranslator) || q.lockedtranslator || ""
+  ).toLowerCase().includes("pratchaya")
+
+  const extStr = String(q.extractorname || "").toLowerCase()
+  const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus)
+
+  switch (step) {
+    case "upload":
+      return isStepDone(q.uploadstatus)
+    case "ocr":
+      // If Kikkuk already extracted, OCR is considered skipped/done
+      if (isKikExtractDone) return true
+      // If Pratchaya, OCR is skipped unless actively running
+      if (isPratchaya && strStatus !== "กำลังทำ") return true
+      return isStepDone(q.ocrstatus)
+    case "extract":
+      // If extract status is actively "รอเริ่ม" or "กำลังทำ", it is strictly NOT done (even if translator is Pratchaya)
+      if (isActivelyPending) return false
+      // If Pratchaya and not actively pending, extract is skipped/done
+      if (isPratchaya) return true
+      return isStepDone(q.extractstatus)
+    case "translate":
+      return isStepDone(q.translatestatus)
+    case "typeset":
+      return isStepDone(q.typesetstatus)
+    case "publish":
+      return isStepDone(q.publishstatus)
+    case "post":
+      return isStepDone(q.poststatus)
+    default:
+      return isStepDone(q[step + "status"])
+  }
+}
+
+export function matchesStepFilter(q: any, stepFilter: string, manga?: any): boolean {
+  if (stepFilter === "all") return true
+
+  if (stepFilter === "publish_post") {
+    const prevStepsDone =
+      isQueueStepDone(q, "upload", manga) &&
+      isQueueStepDone(q, "ocr", manga) &&
+      isQueueStepDone(q, "extract", manga) &&
+      isQueueStepDone(q, "translate", manga) &&
+      isQueueStepDone(q, "typeset", manga)
+
+    return prevStepsDone && !isQueueStepDone(q, "post", manga)
+  }
+
+  const stepIdx = QUEUE_STEPS.indexOf(stepFilter as QueueStepKey)
+  if (stepIdx === -1) {
+    return !isStepDone(q[stepFilter + "status"])
+  }
+
+  // 1. Target step must NOT be finished yet
+  if (isQueueStepDone(q, stepFilter, manga)) {
+    return false
+  }
+
+  // 2. All previous steps must ALREADY be finished (done or skipped)
+  for (let i = 0; i < stepIdx; i++) {
+    const prevStep = QUEUE_STEPS[i]
+    if (!isQueueStepDone(q, prevStep, manga)) {
+      return false
+    }
+  }
+
+  return true
+}
+
+export function getQueueCurrentStep(q: any, mangaList?: any[]): string {
   if (!q) return 'finished'
-  const isDoing = (s: any) => String(s || '').trim() === 'กำลังทำ'
-  const isPratchaya = String(q.translatorname || '').toLowerCase().includes('pratchaya')
+  if (isStepDone(q.poststatus)) return 'finished'
 
-  if (isDoing(q.typesetstatus)) return 'typeset'
-  if (isDoing(q.translatestatus)) return 'translate'
-  if (isDoing(q.extractstatus) && !isPratchaya) return 'extract'
-  if (isDoing(q.ocrstatus) && !isPratchaya) return 'ocr'
-  if (isDoing(q.publishstatus)) return 'publish'
-  if (isDoing(q.poststatus)) return 'post'
-  if (isDoing(q.uploadstatus)) return 'upload'
+  const manga = mangaList ? mangaList.find((m: any) => String(m.mangaid) === String(q.mangaid)) : null
 
-  if (!isStepDone(q.uploadstatus)) return 'upload'
-  if (!isPratchaya && !isStepDone(q.ocrstatus)) return 'ocr'
-  if (!isPratchaya && !isStepDone(q.extractstatus)) return 'extract'
-  if (!isStepDone(q.translatestatus)) return 'translate'
-  if (!isStepDone(q.typesetstatus)) return 'typeset'
-  if (!isStepDone(q.publishstatus)) return 'publish'
-  if (!isStepDone(q.poststatus)) return 'post'
+  for (const step of QUEUE_STEPS) {
+    if (!isQueueStepDone(q, step, manga)) {
+      return step
+    }
+  }
   return 'finished'
 }
 

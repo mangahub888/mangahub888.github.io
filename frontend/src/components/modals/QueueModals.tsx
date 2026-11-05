@@ -46,7 +46,7 @@ export function AddQueueModal({
   const [rawLinkInput, setRawLinkInput] = React.useState("")
   const [extractorName, setExtractorName] = React.useState("Kikkuk")
   const [extractLinkInput, setExtractLinkInput] = React.useState("")
-  const [translatorName, setTranslatorName] = React.useState("")
+  const [translatorName, setTranslatorName] = React.useState("เร")
   const [typesetterName, setTypesetterName] = React.useState("")
   const [typesetType, setTypesetType] = React.useState<"จีน" | "เกาหลี">("จีน")
   const [publisherName, setPublisherName] = React.useState("")
@@ -63,7 +63,7 @@ export function AddQueueModal({
         setRawLinkInput("")
         setExtractorName("Kikkuk")
         setExtractLinkInput("")
-        setTranslatorName("")
+        setTranslatorName("เร")
         setTypesetterName("")
         setTypesetType("จีน")
         setPublisherName("")
@@ -87,11 +87,17 @@ export function AddQueueModal({
     )
     if (manga) {
       setCostPerChapter(manga.costperchapter || 0)
-      if (manga.lockedtranslator) {
+      const locked = (manga.lockedtranslator || "").trim()
+      if (locked.toLowerCase().includes("pratchaya")) {
         setTranslatorName(manga.lockedtranslator)
+      } else if (locked) {
+        setTranslatorName(manga.lockedtranslator)
+      } else {
+        setTranslatorName("เร")
       }
     } else {
       setCostPerChapter(0)
+      setTranslatorName("เร")
     }
   }
 
@@ -422,7 +428,11 @@ export function UpdateQueueModal({
       setExtractLink("")
 
       setTranslateStatus(item.translatestatus || "รอเริ่ม")
-      setTranslatorName(item.translatorname || "")
+      const locked = (manga?.lockedtranslator || "").trim()
+      const defaultTrans = locked.toLowerCase().includes("pratchaya")
+        ? manga?.lockedtranslator
+        : (locked || "เร")
+      setTranslatorName(item.translatorname || defaultTrans)
 
       setTypesetStatus(item.typesetstatus || "รอเริ่ม")
       setTypesetterName(item.typesettername || "")
@@ -842,7 +852,13 @@ export function StepUpdateModal({
       const statusField = step.toLowerCase() + "status"
       const nameField = assigneeFieldMap[step.toLowerCase()]
       setStatus(queueItem[statusField] || "รอเริ่ม")
-      setAssignee(queueItem[nameField] || "")
+      const currentAssignee = queueItem[nameField] || ""
+      if (!currentAssignee && step.toLowerCase() === "translate") {
+        const isPratchaya = String(queueItem.translatorname || "").toLowerCase().includes("pratchaya")
+        setAssignee(isPratchaya ? "Pratchaya" : "เร")
+      } else {
+        setAssignee(currentAssignee)
+      }
       setLink("")
       setNote("")
       if (step.toLowerCase() === "typeset") {

@@ -6,6 +6,80 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 ระบบตัวกรองขั้นตอนคิวงานแบบลำดับงานต่อเนื่อง (Sequential Step Filter) สำเร็จสมบูรณ์ 100% (5 พ.ย. 2569)
+
+#### 1. รายละเอียด Requirement:
+- "รายการคิวงาน ฟีลเตอร์ขั้นตอน ถ้ากดเลือกไปขั้นตอนไหน ให้แสดง งานที่ขั้นตอนนั้นยังไม่เสร็จสิ้น และ ขั้นตอนก่อนหน้าทั้งหมดเสร็จสิ้นแล้ว"
+- แก้ปัญหาคิวงานที่สเตปถัดไป (เช่น แปล, ลงคำ) แสดงปะปนขึ้นมาทั้งๆ ที่ขั้นตอนก่อนหน้า (เช่น อัป Raw, ดึงคำ) ยังไม่เสร็จสิ้น
+
+#### 2. การทำงานและตรรกะของระบบ (Sequential Pipeline Logic):
+1. **ลำดับขั้นตอนงาน (Pipeline Steps Order)**:
+   1. `upload` (1. อัป Raw)
+   2. `ocr` (2. ดึงคำออโต้)
+   3. `extract` (3. QC ดึงคำ)
+   4. `translate` (แปล)
+   5. `typeset` (ลงคำ)
+   6. `publish` (Publisher)
+   7. `post` (โพสต์)
+2. **เงื่อนไขการกรอง (`matchesStepFilter`)**:
+   - เมื่อเลือกขั้นตอน `S`:
+     * ขั้นตอน `S` ต้อง **"ยังไม่เสร็จสิ้น"** (`!isQueueStepDone(q, S, manga)`) -> ไม่ใช่ 'เสร็จแล้ว' และไม่ใช่ 'skip'
+     * ขั้นตอนก่อนหน้าทั้งหมดในลำดับ ต้อง **"เสร็จสิ้นแล้ว"** (`isQueueStepDone(q, prevStep, manga)` สำหรับทุกสเตปก่อนหน้า) -> เป็น 'เสร็จแล้ว' หรือ 'skip'
+   - รองรับตัวกรองพิเศษ `publish_post`: งานที่สเตปก่อน publish (upload, ocr, extract, translate, typeset) เสร็จทั้งหมดแล้ว และโพสต์ยังไม่เสร็จสิ้น
+   - ตัวกรอง `all`: แสดงทั้งหมดตามปกติ
+3. **รองรับ Edge Cases และกฎพิเศษ**:
+   - **กฎการกรองขั้นตอนแปล (Translate Filter Strict Rule)**: เมื่อเลือกขั้นตอน "แปล" 3 ช่องแรก (`1. อัป Raw`, `2. ดึงคำออโต้`, `3. QC ดึงคำ`) ต้องเสร็จสิ้นแล้วทั้งหมด (`isQueueStepDone` เป็น true ทั้ง 3 ช่อง) หากช่องใดช่องหนึ่งยังเป็น "รอเริ่ม" หรือ "กำลังทำ" (เช่น `3. QC ดึงคำ` ยังรอเริ่มอยู่) จะถูกบล็อกไม่ให้แสดงในฟิลเตอร์ "แปล" เด็ดขาด 100%
+   - **ความเข้มงวดของสถานะรอเริ่ม/กำลังทำ**: หากขั้นตอนมีสถานะเป็น `"รอเริ่ม"`, `"กำลังทำ"`, `"pending"`, `"in progress"` จะถูกประเมินเป็น `false` เสมอ แม้จะเป็นมังงะของ Pratchaya ก็ตาม เพื่อป้องกันงานที่ถูกมอบหมายให้ทีมงานทำหลุดเข้าไปในคิวขั้นตอนถัดไปก่อนเวลาอันควร
+   - **กฎ Pratchaya**: มังงะที่แปลโดย Pratchaya ข้าม OCR และ QC ดึงคำ (`ocr` และ `extract` ถือว่าเสร็จสิ้น/ข้ามอัตโนมัติเมื่อไม่อยู่ในสถานะที่กำลังทำงาน)
+   - **กฎ Kikkuk Extract**: หาก Kikkuk ทำ QC ดึงคำเสร็จแล้ว (`extractstatus` เป็น 'เสร็จแล้ว') ขั้นตอน OCR จะถือว่าเสร็จสิ้น/ข้ามอัตโนมัติ
+   - **ขั้นตอนแรกสุด (`upload`)**: ไม่มีขั้นตอนก่อนหน้า งานที่ยังไม่อัป Raw จะแสดงทันที
+   - **ขั้นตอนท้ายสุด (`post`)**: ทุกขั้นตอนก่อนหน้า (รวมถึง publish) ต้องเสร็จสิ้นแล้ว
+4. **ความสอดคล้องกับ Overview Stats & Cards**:
+   - อัปเดต `queueStats` ใน `QueueView.tsx` ให้คำนวณจำนวนตอนในแต่ละขั้นตอนด้วยกฎเดียวกัน ทำให้ตัวเลขบนการ์ดแต่ละใบตรงกับรายการที่กรอง 100%
+   - ทำให้ Overview Cards ทั้ง 8 ใบสามารถ **คลิกเพื่อกรองขั้นตอนได้ทันที (Interactive Click-to-Filter)** พร้อมแสดง Active Ring ชัดเจน และคลิกซ้ำเพื่อรีเซ็ต
+5. **การทดสอบและ Build**:
+   - สร้างชุดทดสอบ Unit Tests อัตโนมัติ `frontend/test_queue_steps.mjs` ครบทั้ง 12 Test Cases (ครอบคลุมเคสปัญหาจริงของผู้ใช้, สถานะรอเริ่ม/กำลังทำ, การข้ามขั้นตอน, และความสอดคล้องของ Pipeline) ผ่าน 100%
+   - รัน Build Frontend (`npm run build`) สำเร็จ 100% (Built in 4.59s) พร้อมตรวจสอบ Anti-caching และ SPA Routing ครบ 11 รายการ ไร้ข้อผิดพลาด
+
+---
+
+### 🏆 กำหนดค่าเริ่มต้นขั้นตอนงานแปลเป็น "เร" (Default Translator: เร) ยกเว้นเรื่องที่ล็อคชื่อเป็น "Pratchaya" สำเร็จสมบูรณ์ 100% (5 พ.ย. 2569)
+
+#### 1. รายละเอียดและการทำงานของกฎ:
+1. **กฎของระบบผู้แปล (Translator Business Logic)**:
+   - เรื่องใดที่มีการล็อคชื่อคนแปลไว้ในชีต `Mangas` เป็น `"Pratchaya"` (หรือ `"pratchaya"` แบบ case-insensitive / trim):
+     * คิวงานของเรื่องนั้นจะใช้คนแปลเป็น `"Pratchaya"` เสมอ
+     * เข้ากฎ Pratchaya: ข้ามขั้นตอน 2. ดึงคำออโต้ และ 3. QC ดึงคำ เป็น `skip` อัตโนมัติ
+   - เรื่องทั่วไปที่ไม่มีการล็อคคนแปล หรือสร้างคิวใหม่แบบ Manual / Auto:
+     * กำหนดค่าเริ่มต้น (Default) ให้ผู้แปล (`translatorname`) เป็น **`"เร"`** เสมอ
+   - กรณีเรื่องที่มีการล็อคคนแปลเป็นชื่ออื่น (เช่น ภูมิ, Apt):
+     * ระบบยังคงเคารพการล็อคชื่อตามตาราง `Mangas` ของเรื่องนั้นๆ
+2. **การปรับปรุง Backend (`backend/Code.js`)**:
+   - `addQueue(queueData)`: ปรับให้ fallback ไปที่ `manga.lockedtranslator` (ถ้ามี) หรือเริ่มต้นเป็น `"เร"` เสมอ ไม่ปล่อยให้เป็นค่าว่าง `""`
+   - `getWorkQueue()`: แมป `mangaMap` ตรวจสอบคิวงาน หากพบแถวที่ `translatorname` ว่าง ให้ resolve ตาม `manga.lockedtranslator` (ถ้าเป็น pratchaya ได้ Pratchaya) หรือ fallback เป็น `"เร"` อัตโนมัติ ป้องกัน UI แสดงผลผิดพลาด
+   - สร้างฟังก์ชัน `batchSetDefaultTranslatorRe()` และเปิด API action `BATCH_SET_DEFAULT_TRANSLATOR_RE`
+   - รัน Clasp Push & Clasp Deploy ขึ้นสู่ Google Apps Script Production Deployment `@91` เรียบร้อยสมบูรณ์
+3. **การรัน Batch Update บน Google Sheet จริง**:
+   - สแกนตาราง `WorkQueue` (2,167 แถว) พบแถวที่ช่องผู้แปลว่างอยู่ 29 แถว (ซึ่งเป็นเรื่องใหม่ที่ไม่มีการล็อคคนแปล)
+   - สั่งรัน Batch Update อัปเดตทั้ง 29 แถวให้เป็น `"เร"` ครบถ้วน 100%
+   - สรุปสถิติผู้แปลล่าสุดใน `WorkQueue`:
+     * เร: 1,068 ตอน
+     * Pratchaya: 455 ตอน
+     * Apt: 306 ตอน
+     * ภูมิ: 269 ตอน
+     * คนนอก: 51 ตอน
+     * ปิ๊ก: 18 ตอน
+     * **ช่องว่าง (Empty): 0 ตอน (ครบถ้วนสมบูรณ์ 100%)**
+4. **การปรับปรุง Frontend**:
+   - `AddQueueModal.tsx`: กำหนด State เริ่มต้น `translatorName` เป็น `"เร"` และเมื่อเลือกมังงะใน `handleMangaChange` หากเรื่องนั้นไม่มีการล็อคคนแปล จะเซ็ตเป็น `"เร"` อัตโนมัติ (หากล็อคเป็น Pratchaya หรือชื่ออื่นจะเซ็ตตามที่ล็อคไว้)
+   - `UpdateQueueModal.tsx`: ปรับ Fallback ของ `translatorName` ให้ดึงจาก `lockedtranslator` หรือเริ่มต้นเป็น `"เร"`
+   - `StepUpdateModal.tsx`: ในขั้นตอน `translate` หากช่องผู้รับผิดชอบว่าง จะมีค่าเริ่มต้นเป็น `"Pratchaya"` (ถ้าเรื่องนั้นเป็น pratchaya) หรือ `"เร"`
+   - `QueueView.tsx`: แสดงผล Fallback เป็น `"เร"` หรือ `"Pratchaya"` แทนเครื่องหมายขีด `"-"` และปรับเงื่อนไข `isPratchaya` ให้ตรวจคู่กับ `manga.lockedtranslator` ได้อย่างแม่นยำ
+   - `utils.ts`: ฟังก์ชัน `getQueueCurrentStep` รองรับการตรวจสอบ `lockedtranslator` เสริมความแข็งแกร่ง
+   - ผ่านการ Build (`npm run build`) สำเร็จ 100% ไร้ข้อผิดพลาด
+
+---
+
 ### 🏆 ระบบ AI Auto OCR Pipeline, Auto-Chaining Queue & QC ดึงคำ Default สำเร็จสมบูรณ์ 100% (5 พ.ย. 2569)
 
 #### 1. รายละเอียดระบบที่ติดตั้งและขึ้นระบบจริง:
@@ -22,8 +96,10 @@
    - Auto-Refresh หน้าตารางคิวงานทันทีเมื่องานใน GitHub Actions รันเสร็จสิ้น
 4. **แยกขั้นตอน 2. ดึงคำออโต้ ออกจาก 3. QC ดึงคำ (`QueueView.tsx`)**:
    - เพิ่มคอลัมน์ `2. ดึงคำออโต้` แยกออกจาก `3. QC ดึงคำ` อย่างชัดเจน
-   - กฎ Kikkuk: ถ้า Kikkuk QC ดึงคำเสร็จแล้ว $ightarrow$ ดึงคำออโต้ตั้งเป็น `skip`
-   - กฎ Pratchaya: ถ้าผู้แปลเป็น Pratchaya $ightarrow$ ข้ามทั้งดึงคำออโต้และ QC ดึงคำ (`skip`) ทันที
+   - กฎ Kikkuk: ถ้า Kikkuk QC ดึงคำเสร็จแล้ว $
+ightarrow$ ดึงคำออโต้ตั้งเป็น `skip`
+   - กฎ Pratchaya: ถ้าผู้แปลเป็น Pratchaya $
+ightarrow$ ข้ามทั้งดึงคำออโต้และ QC ดึงคำ (`skip`) ทันที
 5. **ระบบคิดเงินค่าจ้าง (Expenses & Financials)**:
    - ตรวจสอบและยืนยันการคิดเงินค่าตอบแทน: เงินค่าจ้างดึงคำ (10 บาท/ตอน) **คิดอยู่ที่ขั้นตอน `3. QC ดึงคำ` (`extractorname` / `extractstatus`) 100%**
    - ขั้นตอน `2. ดึงคำออโต้` ทำงานโดย AI บอท GitHub Actions จึงไม่มีค่าใช้จ่าย/ไม่มีค่าจ้าง
@@ -31,6 +107,52 @@
 6. **ตั้งค่า Default QC ดึงคำ เป็น "Kikkuk" ทั้งระบบ**:
    - รัน Batch Update บน Google Sheet WorkQueue อัปเดตข้อมูลเก่าที่ช่อง `extractorname` ยังว่างอยู่ 554 แถว ให้เป็น `"Kikkuk"` ครบถ้วน (ปัจจุบันมี 2,159 แถวเป็น Kikkuk)
    - ปรับ Backend (`addQueue`, `getWorkQueue`) และ Frontend (`AddQueueModal`, `EditQueueModal`, `QueueView`) ให้มีค่าเริ่มต้นเป็น `"Kikkuk"` เสมอ
+
+---
+
+### 🏆 แก้ไขปัญหา "เจ้ากงล้อแห่งโชคชะตา" ใน Raw Tracker แสดงผล "ในระบบ: -" และ "ผลต่าง: +278" สำเร็จสมบูรณ์ 100% พร้อมระบบ Multi-Source System Chapter Resolution & WorkQueue Auto-Sync (4 พ.ย. 2569)
+
+#### 1. สาเหตุของปัญหา (Root Causes Analysis):
+1. **ข้อมูล `lastchapter` ในตาราง `Mangas` ถูกบันทึกเป็น `"NaN"`**:
+   - เรื่อง "เจ้ากงล้อแห่งโชคชะตา" (MangaID: `14`, Comic ID: `655278`) ในตารางชีต `Mangas` มีค่าช่อง `lastchapter` เป็นสตริงตัวอักษร `"NaN"`
+   - โค้ดเดิมใน `getRawTrackerList()` สกัดตัวเลขด้วย regex ไม่เจอ (`mMatch === null`) จึงได้ `currentChap = 0` และ fallback ไปหยิบ `manga.lastchapter` ดิบๆ ซึ่งเป็นสตริง `"NaN"` ส่งคืนไปให้ Frontend
+2. **Frontend แปลง `"NaN"` เป็น `"-"` และคำนวณส่วนต่างตอนผิดเพี้ยน**:
+   - `formatChapterDisplay("NaN")` แปลงสตริง `"NaN"` เป็นเครื่องหมายขีด `"-"` บน UI
+   - เมื่อระบบมองว่าเลขตอนในระบบเป็น `0` ในขณะที่เลขตอนต้นฉบับล่าสุดคือ `278` (`第278话 真正的诡异者`), ระบบจึงคำนวณ `diff = 278 - 0 = 278` และแสดงผลว่ามีตอนใหม่ `+278 ตอน` ทั้งที่ในคิวงาน `WorkQueue` ทำเสร็จสมบูรณ์ถึงตอนที่ `275` แล้ว
+3. **ขาดกลไก Multi-Source Fallback เชื่อมโยงกับ `WorkQueue`**:
+   - เดิมระบบอ่านเลขตอนจากชีต `Mangas` เท่านั้น หากผู้ใช้เพิ่มหรือทำงานในคิวงาน `WorkQueue` จนเสร็จ แต่ตาราง `Mangas` ไม่ได้ถูกอัปเดต หรือเกิดข้อผิดพลาดทำให้ค่าเป็นว่าง/NaN ระบบ RawTracker จะไม่รู้เลยว่าในคิวงานได้ทำไปถึงตอนไหนแล้ว
+
+#### 2. สิ่งที่ดำเนินการแก้ไข (Comprehensive Architectural Fixes):
+1. **สร้างระบบ Multi-Source System Chapter Resolution (`resolveSystemChapter`)**:
+   - ตรวจสอบ 3 แหล่งข้อมูลพร้อมกัน:
+     1. `Mangas.lastchapter` (ตัดค่า NaN/null/ขีด, สกัดเฉพาะตัวเลขจริง)
+     2. `WorkQueue` (สแกนหาเลขตอนสูงสุดของเรื่องนี้ในคิวงาน เช่น `275`)
+     3. `RawTracker.currentchapter`
+   - คำนวณ `resolvedNum = Math.max(mangaChap, queueChap, trkChap)` รับประกันได้เลขตอนสูงสุดที่ถูกต้องตรงตามความเป็นจริงเสมอ (เช่น `275`)
+2. **ระบบตรวจจับและจับคู่มังงะข้ามตารางแบบทนทาน (Robust Matching)**:
+   - ฟังก์ชัน `extractComicIdFromUrl(url)`: สกัด Comic ID จาก Tencent (`655278`), KuaiKan topic (`12345`), ThunderScans (`series/xyz`), และ numeric paths
+   - ฟังก์ชัน `normalizeMangaTitle(title)`: ตัดสัญลักษณ์, ช่องว่าง, วงเล็บ, ตัวพิมพ์เล็ก เพื่อการจับคู่ชื่อเรื่องที่แม่นยำ
+   - ฟังก์ชัน `matchTrackerToManga(trackerObj, indexes)`: แมปด้วย MangaID -> Comic ID -> Clean URL -> Normalized Titles -> TrackerID suffix ป้องกันการแมปพลาด 100%
+3. **ระบบ Auto-Heal & Auto-Sync ลงชีตจริงอัตโนมัติ**:
+   - เมื่อรัน `getRawTrackerList`, `importTrackersFromMangaList`, หรือ `checkAllRawTrackers`:
+     * หากพบว่า `Mangas.lastchapter` เป็น `"NaN"` หรือมีค่าน้อยกว่าคิวงานจริง ระบบจะบันทึกเลขตอนที่ถูกต้อง (เช่น `275`) ทับลงในชีต `Mangas` อัตโนมัติทันที
+     * ปรับปรุงเลขตอน `currentchapter` ในชีต `RawTracker` เป็น `275`
+     * คำนวณสถานะใหม่เป็น `มีตอนใหม่ (+3 ตอน)` (จาก 278 - 275 = 3 ตอน) และบันทึกลงชีตจริง
+4. **เชื่อมโยงการอัปเดตสถานะคิวงาน (`syncMangaStatus` & `batchSyncMangaStatus`)**:
+   - ใน `updateQueueStep` และ `bulkUpdateQueueStep` เมื่อขั้นตอนเสร็จสิ้น ระบบจะเรียก `syncMangaStatus` และ `syncRawTrackerMangaInfo` เพื่อให้ทั้ง `Mangas` และ `RawTracker` อัปเดตตามคิวงานแบบ Real-time เสมอ
+5. **ปรับปรุง Frontend (`RawTrackerView.tsx`)**:
+   - ฟังก์ชัน `handleCheckSingle`: สกัดเลขตอนปลอดภัยผ่าน `parseChapterNumber` ทั้งจาก Manga และ Tracker ป้องกันการส่ง `"NaN"` กลับไปเซฟใน GAS
+   - Modal Form: ป้องกันการดึงค่า `"NaN"` มาใส่ใน Input ตอนล่าสุด
+
+#### 3. ผลการทดสอบและ Live Verification บน Production (@Deployment 78):
+- **Live GAS API Verification**:
+  * ข้อมูล Tracker "เจ้ากงล้อแห่งโชคชะตา" (Comic ID: `655278`, Tracker ID: `TRK1793803625002_14`):
+    - `currentchapter`: `"275"` (เดิมเป็น `"NaN"`)
+    - `lastrawcount`: `278`
+    - `status`: `"มีตอนใหม่ (+3 ตอน)"` (เดิมเป็น `+278 ตอน`)
+  * ข้อมูลในชีต `Mangas` (MangaID: `14`):
+    - `lastchapter`: `275` (Auto-healed จากเดิมที่เป็น `"NaN"`)
+- **Frontend Build**: ผ่านสมบูรณ์ 100% ไร้ข้อผิดพลาด TypeScript/Vite (`built in 3.56s`)
 
 ---
 
@@ -483,7 +605,7 @@
 - **GitHub Repository:** `mangahub888/mangahub888.github.io` (Branch: `main`)
 - **Live URL:** [https://mangahub888.github.io/](https://mangahub888.github.io/)
 - **Google Apps Script Production Deployment ID:**  
-  `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` (Active Version: **`@62`**)
+  `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` (Active Version: **`@91`**)
 - **Google Drive Root Folder:** `1hA_5XjT1gLnzrAOFpT-COVfIbuSfVG6_` (`แปลจนเมื่อย`)
 - **LDPlayer Port:** `127.0.0.1:5555` / `emulator-5554`
 - **Frida Client/Server Version:** `16.7.19` (Android x86_64 server binary at `/data/local/tmp/fsd`)

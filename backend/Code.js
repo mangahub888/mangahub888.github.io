@@ -54,7 +54,7 @@ function doGet(e) {
         status: 'success',
         data: {
           service: 'MangaHub Core GAS API',
-          version: '2.0.0',
+          version: '2.0.1-multisource',
           spreadsheetId: SPREADSHEET_ID,
           timestamp: new Date().toISOString()
         }
@@ -165,6 +165,9 @@ function doPost(e) {
         break;
       case 'BATCH_SET_KIKKUK_OCR_SKIP':
         result = batchSetKikkukDoneOcrToSkip();
+        break;
+      case 'BATCH_SET_DEFAULT_TRANSLATOR_RE':
+        result = batchSetDefaultTranslatorRe();
         break;
       case 'GET_WORK_QUEUE':
         result = getWorkQueue(Boolean(payload.forceRefresh), payload.month, payload.year, Boolean(payload.includeIncomplete));
@@ -1101,6 +1104,12 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
     const mStr = month !== undefined && month !== null && month !== '' ? String(month) : 'all';
     const yStr = year !== undefined && year !== null && year !== '' ? String(year) : 'all';
 
+    const mangaList = getMangaList();
+    const mangaMap = {};
+    for (let m = 0; m < mangaList.length; m++) {
+      mangaMap[String(mangaList[m].mangaid)] = mangaList[m];
+    }
+
     const results = [];
     for (let r = 0; r < data.length; r++) {
       const row = data[r];
@@ -1112,6 +1121,18 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
       }
       if (!obj.poststatus || String(obj.poststatus).trim() === '') obj.poststatus = 'รอเริ่ม';
       if (!obj.uploadstatus || String(obj.uploadstatus).trim() === '') obj.uploadstatus = 'รอเริ่ม';
+
+      if (!obj.translatorname || String(obj.translatorname).trim() === '') {
+        const m = mangaMap[String(obj.mangaid)];
+        const locked = m && m.lockedtranslator ? String(m.lockedtranslator).trim() : '';
+        if (locked.toLowerCase().includes('pratchaya')) {
+          obj.translatorname = m.lockedtranslator;
+        } else if (locked) {
+          obj.translatorname = m.lockedtranslator;
+        } else {
+          obj.translatorname = 'เร';
+        }
+      }
 
       const transStr = String(obj.translatorname || '').toLowerCase();
       const isPratchaya = transStr.includes('pratchaya');
@@ -1206,9 +1227,13 @@ function addQueue(queueData) {
       if (header === 'uploadername') return queueData.uploadername || '';
       if (header === 'extractorname') return queueData.extractorname || 'Kikkuk';
       if (header === 'translatorname') {
-        if (queueData.translatorname) return queueData.translatorname;
-        if (manga && manga.lockedtranslator) return manga.lockedtranslator;
-        return '';
+        if (queueData.translatorname && String(queueData.translatorname).trim() !== '') {
+          return queueData.translatorname;
+        }
+        if (manga && manga.lockedtranslator && String(manga.lockedtranslator).trim() !== '') {
+          return manga.lockedtranslator;
+        }
+        return 'เร';
       }
       if (header === 'typesettername') return queueData.typesettername || '';
       if (header === 'typesettype' || header === 'typesetratetype') return queueData.typesettype || queueData.typesetratetype || 'จีน';
@@ -1332,6 +1357,9 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
             try {
               const mangaId = data[i][headers.indexOf('mangaid')];
               const chapter = data[i][headers.indexOf('chapter')];
+              if (mangaId && chapter) {
+                syncMangaStatus(mangaId, chapter);
+              }
               const mangaName = getMangaNameById(mangaId);
               const stepLabel = getStepLabel(step);
               
@@ -1513,6 +1541,7 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
 
       if (finishedItems.length > 0) {
         try {
+          batchSyncMangaStatus(finishedItems.map(it => ({ mangaId: it.mangaId, newChapter: it.chapter })));
           const stepLabel = getStepLabel(step);
           if (finishedItems.length === 1) {
             const item = finishedItems[0];
@@ -1616,15 +1645,16 @@ function syncMangaStatus(mangaId, chapter) {
         const newChapter = range.end;
         
         if (newChapter >= currentChapter) {
+          const chapStr = String(newChapter);
           headers.forEach((header, index) => {
             const colNum = index + 1;
-            if (header === 'lastchapter') sheet.getRange(rowNum, colNum).setValue(newChapter);
+            if (header === 'lastchapter') sheet.getRange(rowNum, colNum).setValue(chapStr);
             if (header === 'lastupdated') sheet.getRange(rowNum, colNum).setValue(new Date());
           });
           invalidateCache('mangaList');
           // ซิงค์เลขตอนที่ทำเสร็จแล้วไปยัง RawTracker ให้สอดคล้องกันทันที
           try {
-            syncRawTrackerMangaInfo(mangaId, null, null, newChapter);
+            syncRawTrackerMangaInfo(mangaId, null, null, chapStr);
           } catch (trkErr) {
             console.warn('Could not sync RawTracker info in syncMangaStatus:', trkErr);
           }
@@ -2768,6 +2798,215 @@ function setTelegramWebhook() {
 // RAW TRACKER & WEBSCRAPING MODULE
 // ==========================================
 
+/**
+ * สกัด Comic ID หรือ Series Identifier จาก URL เพื่อการแมปที่แม่นยำ 100%
+ */
+function extractComicIdFromUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  const clean = url.trim();
+  // Tencent Comic: /id/655278 or ?id=655278
+  let m = clean.match(/ac\.qq\.com\/Comic(?:View)?\/(?:comicInfo|index)\/id\/(\d+)/i);
+  if (m) return m[1];
+  m = clean.match(/[?&]id=(\d+)/i);
+  if (m) return m[1];
+  // KuaiKan: /topic/12345 or /comics/12345
+  m = clean.match(/kuaikanmanhua\.com\/(?:web\/)?(?:topic|comics)\/(\d+)/i);
+  if (m) return m[1];
+  // ThunderScans: /comics/12345 or /series/xyz
+  m = clean.match(/thunderscans\.com\/(?:comics|series)\/([^\/?#]+)/i);
+  if (m) return m[1].toLowerCase();
+  // Generic numeric ID at end of path
+  m = clean.match(/\/(\d+)(?:\/|\.html)?$/);
+  if (m) return m[1];
+  return '';
+}
+
+/**
+ * ทำความสะอาดชื่อเรื่องเพื่อการจับคู่ที่แม่นยำ (ตัดวรรค, สัญลักษณ์, วงเล็บ, ตัวพิมพ์เล็ก)
+ */
+function normalizeMangaTitle(title) {
+  if (!title || typeof title !== 'string') return '';
+  return title
+    .toLowerCase()
+    .replace(/[\s\-_–—~:：!！?？,，.。'"“”‘’()[\]{}【】]/g, '')
+    .trim();
+}
+
+/**
+ * สร้าง Index สำคัญสำหรับการแมปมังงะข้ามตาราง (MangaID, ComicID, CleanURL, Normalized Titles)
+ */
+function buildMangaLookupIndexes(mangaList) {
+  const byId = {};
+  const byComicId = {};
+  const byCleanUrl = {};
+  const byName = {};
+  const byOrigName = {};
+
+  (mangaList || []).forEach(m => {
+    if (m.mangaid !== undefined && m.mangaid !== null) {
+      byId[String(m.mangaid).trim()] = m;
+    }
+    if (m.originalurl) {
+      const cid = extractComicIdFromUrl(m.originalurl);
+      if (cid) byComicId[cid] = m;
+      const cleanUrl = String(m.originalurl).trim().toLowerCase().replace(/\/+$/, '');
+      if (cleanUrl) byCleanUrl[cleanUrl] = m;
+    }
+    if (m.manganame) {
+      const norm = normalizeMangaTitle(m.manganame);
+      if (norm) byName[norm] = m;
+    }
+    if (m.originalname) {
+      const normOrig = normalizeMangaTitle(m.originalname);
+      if (normOrig) byOrigName[normOrig] = m;
+    }
+  });
+
+  return { byId, byComicId, byCleanUrl, byName, byOrigName };
+}
+
+/**
+ * ค้นหาข้อมูลมังงะใน Mangas ที่ตรงกับ Tracker อย่างแม่นยำและทนทาน (Robust Matching):
+ * 1. แมปด้วย MangaID ก่อน
+ * 2. แมปด้วย Comic ID จาก URL
+ * 3. แมปด้วย Cleaned URL
+ * 4. แมปด้วย Normalized MangaName หรือ OriginalName
+ * 5. แมปด้วย TrackerID suffix (เช่น TRK..._14 -> MangaID 14)
+ */
+function matchTrackerToManga(trackerObj, indexes) {
+  if (!trackerObj || !indexes) return null;
+  const { byId, byComicId, byCleanUrl, byName, byOrigName } = indexes;
+
+  // 1. Direct Manga ID
+  const mId = String(trackerObj.mangaid || '').trim();
+  if (mId && byId[mId]) return byId[mId];
+
+  // 2. Comic ID from URL
+  const trkUrl = String(trackerObj.url || '').trim();
+  if (trkUrl) {
+    const trkCid = extractComicIdFromUrl(trkUrl);
+    if (trkCid && byComicId[trkCid]) return byComicId[trkCid];
+
+    // 3. Cleaned URL
+    const cleanUrl = trkUrl.toLowerCase().replace(/\/+$/, '');
+    if (cleanUrl && byCleanUrl[cleanUrl]) return byCleanUrl[cleanUrl];
+  }
+
+  // 4. Normalized MangaName / OriginalName
+  const trkName = String(trackerObj.manganame || '').trim();
+  if (trkName) {
+    const norm = normalizeMangaTitle(trkName);
+    if (norm && byName[norm]) return byName[norm];
+    if (norm && byOrigName[norm]) return byOrigName[norm];
+  }
+
+  // 5. TrackerID suffix (e.g. TRK1793803625002_14 -> 14)
+  const trkId = String(trackerObj.trackerid || '').trim();
+  const trkSuffixMatch = trkId.match(/_(\d+)$/);
+  if (trkSuffixMatch && byId[trkSuffixMatch[1]]) {
+    return byId[trkSuffixMatch[1]];
+  }
+
+  return null;
+}
+
+/**
+ * ดึงเลขตอนสูงสุดของแต่ละเรื่องจากตาราง WorkQueue (ทั้งตอนที่ทำเสร็จแล้ว และตอนสูงสุดในคิวงาน)
+ */
+function getMaxWorkQueueChapterMap() {
+  const map = {};
+  try {
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return map;
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const mIdCol = headers.indexOf('mangaid');
+    const chapCol = headers.indexOf('chapter');
+    if (mIdCol === -1 || chapCol === -1) return map;
+
+    for (let i = 1; i < data.length; i++) {
+      const mid = String(data[i][mIdCol] || '').trim();
+      if (!mid) continue;
+      const chapRaw = String(data[i][chapCol] || '').trim();
+      const match = chapRaw.match(/(\d+(?:\.\d+)?)/);
+      if (!match) continue;
+      const num = parseFloat(match[1]);
+      if (isNaN(num) || !isFinite(num) || num <= 0) continue;
+      if (!map[mid] || num > map[mid]) {
+        map[mid] = num;
+      }
+    }
+  } catch (err) {
+    console.warn('getMaxWorkQueueChapterMap Error:', err);
+  }
+  return map;
+}
+
+/**
+ * คำนวณเลขตอนล่าสุดในระบบ (Authoritative System Chapter) จากหลายแหล่งข้อมูล (Multi-Source Fallback):
+ * 1. เลขตอนจาก Mangas.lastchapter (ตัด NaN, สกัดเฉพาะตัวเลข)
+ * 2. เลขตอนสูงสุดจาก WorkQueue (ถ้ามีค่าสูงกว่า ให้ใช้คิวงานเสมอ เช่น ทำถึง 275)
+ * 3. เลขตอนจาก RawTracker.currentchapter
+ * คืนค่า: { chapterNum: number, chapterStr: string, shouldUpdateManga: boolean, shouldUpdateTracker: boolean }
+ */
+function resolveSystemChapter(manga, trackerObj, queueMap) {
+  let mangaChap = 0;
+  let mangaRawIsInvalid = false;
+  if (manga && manga.lastchapter !== undefined && manga.lastchapter !== null) {
+    const rawStr = String(manga.lastchapter).trim();
+    if (rawStr.toLowerCase() === 'nan' || rawStr === '-' || rawStr === 'null' || rawStr === 'undefined' || rawStr === '') {
+      mangaRawIsInvalid = true;
+      mangaChap = 0;
+    } else {
+      const mMatch = rawStr.match(/(\d+(?:\.\d+)?)/);
+      mangaChap = mMatch ? parseFloat(mMatch[1]) : (parseFloat(rawStr) || 0);
+      if (isNaN(mangaChap) || !isFinite(mangaChap) || mangaChap < 0) {
+        mangaChap = 0;
+        mangaRawIsInvalid = true;
+      }
+    }
+  }
+
+  let queueChap = 0;
+  const mId = manga ? String(manga.mangaid).trim() : (trackerObj ? String(trackerObj.mangaid || '').trim() : '');
+  if (mId && queueMap && queueMap[mId]) {
+    queueChap = queueMap[mId];
+  }
+
+  let trkChap = 0;
+  let trkRawIsInvalid = false;
+  if (trackerObj && (trackerObj.currentchapter !== undefined || trackerObj.currentChapter !== undefined)) {
+    const rawTrk = String(trackerObj.currentchapter !== undefined ? trackerObj.currentchapter : trackerObj.currentChapter).trim();
+    if (rawTrk.toLowerCase() === 'nan' || rawTrk === '-' || rawTrk === 'null' || rawTrk === 'undefined' || rawTrk === '') {
+      trkRawIsInvalid = true;
+      trkChap = 0;
+    } else {
+      const cMatch = rawTrk.match(/(\d+(?:\.\d+)?)/);
+      trkChap = cMatch ? parseFloat(cMatch[1]) : (parseFloat(rawTrk) || 0);
+      if (isNaN(trkChap) || !isFinite(trkChap) || trkChap < 0) {
+        trkChap = 0;
+        trkRawIsInvalid = true;
+      }
+    }
+  }
+
+  const resolvedNum = Math.max(mangaChap || 0, queueChap || 0, trkChap || 0);
+  const resolvedStr = resolvedNum > 0 ? (Number.isInteger(resolvedNum) ? String(resolvedNum) : String(Math.round(resolvedNum * 100) / 100)) : '0';
+
+  const shouldUpdateManga = Boolean(manga && (mangaRawIsInvalid || mangaChap < resolvedNum));
+  const shouldUpdateTracker = Boolean(trackerObj && (trkRawIsInvalid || trkChap < resolvedNum));
+
+  return {
+    chapterNum: resolvedNum,
+    chapterStr: resolvedStr,
+    shouldUpdateManga: shouldUpdateManga,
+    shouldUpdateTracker: shouldUpdateTracker,
+    mangaChap: mangaChap,
+    queueChap: queueChap,
+    trkChap: trkChap
+  };
+}
+
 function getRawTrackerList() {
   try {
     const sheet = getSheet(RAW_TRACKER_SHEET_NAME);
@@ -2780,13 +3019,34 @@ function getRawTrackerList() {
     }
 
     const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const mIdCol = headers.indexOf('mangaid');
+    const nameCol = headers.indexOf('manganame');
+    const chapCol = headers.indexOf('currentchapter');
+    const countCol = headers.indexOf('lastrawcount');
+    const statusCol = headers.indexOf('status');
+    const updatedCol = headers.indexOf('updatedat');
+
     const mangaList = getMangaList();
-    const mangaMap = {};
-    const validMangaNameMap = {};
-    mangaList.forEach(m => {
-      mangaMap[String(m.mangaid).trim()] = m;
-      if (m.manganame) validMangaNameMap[m.manganame.trim().toLowerCase()] = m;
-    });
+    const indexes = buildMangaLookupIndexes(mangaList);
+    const queueMap = getMaxWorkQueueChapterMap();
+
+    // Prepare for auto-healing Mangas sheet if any manga has NaN or outdated lastchapter
+    const mangaSheet = getSheet();
+    const mangaData = mangaSheet.getDataRange().getValues();
+    const mangaHeaders = mangaData[0].map(h => h.toString().toLowerCase().trim());
+    const mSheetIdCol = mangaHeaders.indexOf('mangaid');
+    const mSheetLastChapCol = mangaHeaders.indexOf('lastchapter');
+    const mSheetUpdatedCol = mangaHeaders.indexOf('lastupdated');
+    const mangaRowMap = {};
+    if (mSheetIdCol !== -1) {
+      for (let r = 1; r < mangaData.length; r++) {
+        const idStr = String(mangaData[r][mSheetIdCol]).trim();
+        if (idStr) mangaRowMap[idStr] = r + 1; // 1-based row index
+      }
+    }
+
+    let hasMangaChanges = false;
+    const now = new Date();
 
     const results = [];
     for (let i = 1; i < data.length; i++) {
@@ -2798,33 +3058,52 @@ function getRawTrackerList() {
         obj[headers[c]] = val;
       }
 
-      const mId = String(obj.mangaid || '').trim();
-      const mName = String(obj.manganame || '').trim().toLowerCase();
-      const manga = mId ? mangaMap[mId] : (mName ? validMangaNameMap[mName] : null);
+      // Robust matching: ID -> Comic ID -> URL -> Title -> TrackerID suffix
+      const manga = matchTrackerToManga(obj, indexes);
 
-      // กรองมังงะที่ถูกลบออกจากระบบแล้ว ไม่นำมาแสดงผล
-      if (mId && !manga) {
+      // กรองมังงะที่ถูกลบออกจากระบบแล้ว (มี ID เดิมแต่ไม่พบใน Mangas) ไม่นำมาแสดงผล
+      const rawMId = String(obj.mangaid || '').trim();
+      if (rawMId && !manga) {
         continue;
       }
 
-      // Authoritative current chapter from Mangas sheet (falling back to obj.currentchapter)
-      let currentChap = 0;
-      if (manga && manga.lastchapter !== undefined && manga.lastchapter !== null && String(manga.lastchapter).trim() !== '') {
-        const mMatch = String(manga.lastchapter).match(/(\d+(?:\.\d+)?)/);
-        currentChap = mMatch ? parseFloat(mMatch[1]) : (parseFloat(manga.lastchapter) || 0);
-        if (isNaN(currentChap) || !isFinite(currentChap) || currentChap < 0) currentChap = 0;
-      } else if (obj.currentchapter !== undefined && obj.currentchapter !== null && String(obj.currentchapter).trim() !== '') {
-        const cMatch = String(obj.currentchapter).match(/(\d+(?:\.\d+)?)/);
-        currentChap = cMatch ? parseFloat(cMatch[1]) : (parseFloat(obj.currentchapter) || 0);
-        if (isNaN(currentChap) || !isFinite(currentChap) || currentChap < 0) currentChap = 0;
+      // Auto-populate missing manga info if matched
+      if (manga) {
+        if (!obj.mangaid || String(obj.mangaid).trim() === '') {
+          obj.mangaid = manga.mangaid;
+          if (mIdCol !== -1) {
+            sheet.getRange(i + 1, mIdCol + 1).setValue(manga.mangaid);
+          }
+        }
+        if (!obj.manganame || String(obj.manganame).trim() === '') {
+          obj.manganame = manga.manganame;
+          if (nameCol !== -1) {
+            sheet.getRange(i + 1, nameCol + 1).setValue(manga.manganame);
+          }
+        }
       }
 
-      const currentChapStr = currentChap > 0 ? String(currentChap) : (manga ? String(manga.lastchapter || '0') : String(obj.currentchapter || '0'));
-      obj.currentChapter = currentChapStr;
-      obj.currentchapter = currentChapStr; // Ensure lowercase consistency across scripts/UI
-      if (!obj.manganame && manga) obj.manganame = manga.manganame;
+      // Multi-Source System Chapter Resolution:
+      // Checks Mangas.lastchapter, WorkQueue max chapter, and RawTracker.currentchapter
+      const chapRes = resolveSystemChapter(manga, obj, queueMap);
+      const currentChap = chapRes.chapterNum;
+      const currentChapStr = chapRes.chapterStr;
 
-      // Ensure status is 100% accurate & NEVER contains NaN:
+      obj.currentChapter = currentChapStr;
+      obj.currentchapter = currentChapStr;
+
+      // Auto-heal Mangas sheet if lastchapter in Mangas was NaN or lower than WorkQueue
+      if (chapRes.shouldUpdateManga && manga && mSheetLastChapCol !== -1) {
+        const mRow = mangaRowMap[String(manga.mangaid).trim()];
+        if (mRow) {
+          mangaSheet.getRange(mRow, mSheetLastChapCol + 1).setValue(currentChapStr);
+          if (mSheetUpdatedCol !== -1) mangaSheet.getRange(mRow, mSheetUpdatedCol + 1).setValue(now);
+          manga.lastchapter = currentChapStr;
+          hasMangaChanges = true;
+        }
+      }
+
+      // Parse and clean rawCount:
       let rawCount = parseFloat(obj.lastrawcount);
       if (isNaN(rawCount) || !isFinite(rawCount) || rawCount < 0) {
         const rMatch = String(obj.lastrawcount || '').match(/(\d+(?:\.\d+)?)/);
@@ -2833,23 +3112,42 @@ function getRawTrackerList() {
       if (isNaN(rawCount) || !isFinite(rawCount) || rawCount < 0) rawCount = 0;
       obj.lastrawcount = rawCount > 0 ? rawCount : (obj.lastrawcount === 'NaN' ? 0 : (obj.lastrawcount || 0));
 
-      // Clean up any historical NaN in status
-      if (obj.status && (String(obj.status).indexOf('NaN') !== -1 || String(obj.status).indexOf('nan') !== -1)) {
-        obj.status = 'เป็นปัจจุบัน';
-      }
-
+      // Calculate status strictly
+      let calculatedStatus = 'เป็นปัจจุบัน';
       if (rawCount > 0 && currentChap > 0) {
         if (rawCount <= currentChap) {
-          obj.status = 'เป็นปัจจุบัน';
+          calculatedStatus = 'เป็นปัจจุบัน';
         } else {
           const diff = Math.round((rawCount - currentChap) * 100) / 100;
-          obj.status = 'มีตอนใหม่ (+' + diff + ' ตอน)';
+          calculatedStatus = 'มีตอนใหม่ (+' + diff + ' ตอน)';
         }
       } else if (rawCount > 0 && currentChap === 0) {
-        obj.status = 'มีตอนใหม่ (+' + rawCount + ' ตอน)';
+        calculatedStatus = 'มีตอนใหม่ (+' + rawCount + ' ตอน)';
+      } else if (!obj.status || String(obj.status).trim() === '' || String(obj.status).toLowerCase().indexOf('nan') !== -1) {
+        calculatedStatus = 'เป็นปัจจุบัน';
+      } else {
+        calculatedStatus = String(obj.status);
       }
+      obj.status = calculatedStatus;
+
+      // Auto-heal RawTracker sheet if cell is outdated or has NaN
+      const existingCellChap = chapCol !== -1 ? String(row[chapCol] || '').trim() : '';
+      const existingCellStatus = statusCol !== -1 ? String(row[statusCol] || '').trim() : '';
+      if (chapRes.shouldUpdateTracker || existingCellChap !== currentChapStr || existingCellChap.toLowerCase() === 'nan') {
+        if (chapCol !== -1) sheet.getRange(i + 1, chapCol + 1).setValue(currentChapStr);
+        if (statusCol !== -1) sheet.getRange(i + 1, statusCol + 1).setValue(calculatedStatus);
+        if (updatedCol !== -1) sheet.getRange(i + 1, updatedCol + 1).setValue(now);
+      } else if (existingCellStatus !== calculatedStatus && existingCellStatus.indexOf('มีตอนใหม่') !== -1 && calculatedStatus.indexOf('มีตอนใหม่') !== -1) {
+        if (statusCol !== -1) sheet.getRange(i + 1, statusCol + 1).setValue(calculatedStatus);
+      }
+
       results.push(obj);
     }
+
+    if (hasMangaChanges) {
+      invalidateCache('mangaList');
+    }
+
     return results;
   } catch (err) {
     console.error('getRawTrackerList Error:', err);
@@ -3102,7 +3400,11 @@ function updateRawTracker(trackerId, updateData) {
         Object.keys(updateData).forEach(key => {
           const colIndex = headers.indexOf(key.toLowerCase());
           if (colIndex !== -1) {
-            sheet.getRange(rowNum, colIndex + 1).setValue(updateData[key]);
+            let valToSet = updateData[key];
+            if (key.toLowerCase() === 'currentchapter' || key.toLowerCase() === 'lastrawcount') {
+              if (String(valToSet).trim().toLowerCase() === 'nan') valToSet = '0';
+            }
+            sheet.getRange(rowNum, colIndex + 1).setValue(valToSet);
           }
         });
 
@@ -3257,28 +3559,53 @@ function syncSingleRawTrackerWithManga(trackerId) {
   const updatedCol = headers.indexOf('updatedat');
 
   const mangaList = getMangaList();
-  const mangaMap = {};
-  mangaList.forEach(m => { mangaMap[String(m.mangaid).trim()] = m; });
+  const indexes = buildMangaLookupIndexes(mangaList);
+  const queueMap = getMaxWorkQueueChapterMap();
 
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][idCol]).trim() === String(trackerId).trim()) {
       const rowNum = i + 1;
-      const mId = mIdCol !== -1 ? String(data[i][mIdCol] || '').trim() : '';
-      const manga = mId ? mangaMap[mId] : null;
+      const rowObj = {};
+      for (let c = 0; c < headers.length; c++) {
+        rowObj[headers[c]] = data[i][c];
+      }
+
+      const manga = matchTrackerToManga(rowObj, indexes);
       if (!manga) {
         return { error: 'ไม่พบมังงะที่เชื่อมโยงกับ Tracker นี้ในตาราง Mangas' };
       }
 
-      let mChapNum = 0;
-      if (manga.lastchapter !== undefined && manga.lastchapter !== null && String(manga.lastchapter).trim() !== '') {
-        const mMatch = String(manga.lastchapter).match(/(\d+(?:\.\d+)?)/);
-        mChapNum = mMatch ? parseFloat(mMatch[1]) : (parseFloat(manga.lastchapter) || 0);
-        if (isNaN(mChapNum) || !isFinite(mChapNum) || mChapNum < 0) mChapNum = 0;
+      const chapRes = resolveSystemChapter(manga, rowObj, queueMap);
+      const mChapNum = chapRes.chapterNum;
+      const mChapStr = chapRes.chapterStr;
+
+      // Auto-heal Mangas sheet if needed
+      if (chapRes.shouldUpdateManga) {
+        const mangaSheet = getSheet();
+        const mangaData = mangaSheet.getDataRange().getValues();
+        const mangaHeaders = mangaData[0].map(h => h.toString().toLowerCase().trim());
+        const mSheetIdCol = mangaHeaders.indexOf('mangaid');
+        const mSheetLastChapCol = mangaHeaders.indexOf('lastchapter');
+        const mSheetUpdatedCol = mangaHeaders.indexOf('lastupdated');
+        for (let r = 1; r < mangaData.length; r++) {
+          if (String(mangaData[r][mSheetIdCol]).trim() === String(manga.mangaid).trim()) {
+            if (mSheetLastChapCol !== -1) mangaSheet.getRange(r + 1, mSheetLastChapCol + 1).setValue(mChapStr);
+            if (mSheetUpdatedCol !== -1) mangaSheet.getRange(r + 1, mSheetUpdatedCol + 1).setValue(new Date());
+            break;
+          }
+        }
+        invalidateCache('mangaList');
       }
-      const mChapStr = mChapNum > 0 ? String(mChapNum) : String(manga.lastchapter || '0');
 
       if (chapCol !== -1) {
         sheet.getRange(rowNum, chapCol + 1).setValue(mChapStr);
+      }
+
+      if (mIdCol !== -1 && (!rowObj.mangaid || String(rowObj.mangaid).trim() === '')) {
+        sheet.getRange(rowNum, mIdCol + 1).setValue(manga.mangaid);
+      }
+      if (nameCol !== -1 && (!rowObj.manganame || String(rowObj.manganame).trim() === '')) {
+        sheet.getRange(rowNum, nameCol + 1).setValue(manga.manganame);
       }
 
       // Recalculate status
@@ -3305,7 +3632,7 @@ function syncSingleRawTrackerWithManga(trackerId) {
       return {
         success: true,
         trackerId: trackerId,
-        mangaId: mId,
+        mangaId: manga.mangaid,
         currentChapter: mChapStr,
         status: newStatus,
         list: getRawTrackerList()
@@ -3316,14 +3643,10 @@ function syncSingleRawTrackerWithManga(trackerId) {
   return { error: 'Tracker not found' };
 }
 
-/**
- * ซิงค์ข้อมูลกับตารางมังงะ:
- * 1. ลบเรื่องที่ถูกลบออกจาก Mangas ทิ้งไป
- * 2. เพิ่มเรื่องที่มี Original URL แต่ยังไม่ได้ติดตาม
- * 3. อัปเดตชื่อเรื่องและ URL ของเรื่องเดิมให้เป็นปัจจุบัน
- */
 function importTrackersFromMangaList() {
   const mangaList = getMangaList();
+  const indexes = buildMangaLookupIndexes(mangaList);
+  const queueMap = getMaxWorkQueueChapterMap();
   const validMangaIdSet = new Set(mangaList.map(m => String(m.mangaid).trim()));
   const validMangaNameMap = {};
   mangaList.forEach(m => {
@@ -3351,84 +3674,116 @@ function importTrackersFromMangaList() {
   let deletedCount = 0;
   let syncedCount = 0;
 
-  // 1. ตรวจสอบแถวเดิมใน RawTracker: ถ้าเรื่องถูกลบออกจาก Mangas แล้ว หรือมีแถวซ้ำ ให้ลบแถวออกจาก RawTracker
-  //    และอัปเดตข้อมูลมังงะ (ชื่อ, originalurl, และ currentChapter ล่าสุดจากตาราง Mangas พร้อมคำนวณ status ใหม่)
+  // Auto-heal Mangas setup
+  const mangaSheet = getSheet();
+  const mangaData = mangaSheet.getDataRange().getValues();
+  const mangaHeaders = mangaData[0].map(h => h.toString().toLowerCase().trim());
+  const mSheetIdCol = mangaHeaders.indexOf('mangaid');
+  const mSheetLastChapCol = mangaHeaders.indexOf('lastchapter');
+  const mSheetUpdatedCol = mangaHeaders.indexOf('lastupdated');
+  const mangaRowMap = {};
+  if (mSheetIdCol !== -1) {
+    for (let r = 1; r < mangaData.length; r++) {
+      const idStr = String(mangaData[r][mSheetIdCol]).trim();
+      if (idStr) mangaRowMap[idStr] = r + 1;
+    }
+  }
+  let hasMangaChanges = false;
+  const now = new Date();
+
+  // 1. ตรวจสอบแถวเดิมใน RawTracker
   if (data.length > 1) {
     for (let i = data.length - 1; i >= 1; i--) {
       const rowMangaId = mIdCol !== -1 ? String(data[i][mIdCol] || '').trim() : '';
       const rowMangaName = nameCol !== -1 ? String(data[i][nameCol] || '').trim().toLowerCase() : '';
       const rowUrl = urlCol !== -1 ? String(data[i][urlCol] || '').trim().toLowerCase().replace(/\/+$/, '') : '';
       
+      const rowObj = {};
+      for (let c = 0; c < headers.length; c++) {
+        rowObj[headers[c]] = data[i][c];
+      }
+      const matchedManga = matchTrackerToManga(rowObj, indexes);
+
       let isOrphaned = false;
       if (rowMangaId) {
-        if (!validMangaIdSet.has(rowMangaId)) {
+        if (!validMangaIdSet.has(rowMangaId) && !matchedManga) {
           isOrphaned = true;
         }
       } else if (rowMangaName) {
-        if (!validMangaNameMap[rowMangaName]) {
+        if (!validMangaNameMap[rowMangaName] && !matchedManga) {
           isOrphaned = true;
         }
       }
 
-      const isDuplicate = (rowMangaId && existingMangaIds.has(rowMangaId)) ||
+      const effectiveMangaId = matchedManga ? String(matchedManga.mangaid).trim() : rowMangaId;
+      const isDuplicate = (effectiveMangaId && existingMangaIds.has(effectiveMangaId)) ||
                           (rowUrl && existingUrls.has(rowUrl));
 
       if (isOrphaned || isDuplicate) {
         sheet.deleteRow(i + 1);
         deletedCount++;
       } else {
-        if (rowMangaId) {
-          existingMangaIds.add(rowMangaId);
-          // อัปเดตข้อมูลมังงะ (ชื่อ, originalurl, และ currentchapter) ให้ตรงกับหน้าตั้งค่ามังงะเสมอ
-          const m = mangaMap[rowMangaId];
-          if (m) {
-            const rowNum = i + 1;
-            if (nameCol !== -1 && m.manganame && data[i][nameCol] !== m.manganame) {
-              sheet.getRange(rowNum, nameCol + 1).setValue(m.manganame);
-            }
-            if (urlCol !== -1 && m.originalurl && m.originalurl.trim().startsWith('http') && data[i][urlCol] !== m.originalurl.trim()) {
-              sheet.getRange(rowNum, urlCol + 1).setValue(m.originalurl.trim());
-            }
+        const m = matchedManga || (rowMangaId ? mangaMap[rowMangaId] : null);
+        if (m) {
+          const rowNum = i + 1;
+          const currentMId = String(m.mangaid).trim();
+          existingMangaIds.add(currentMId);
 
-            // Sync currentChapter from Mangas
-            let mChapNum = 0;
-            if (m.lastchapter !== undefined && m.lastchapter !== null && String(m.lastchapter).trim() !== '') {
-              const mMatch = String(m.lastchapter).match(/(\d+(?:\.\d+)?)/);
-              mChapNum = mMatch ? parseFloat(mMatch[1]) : (parseFloat(m.lastchapter) || 0);
-              if (isNaN(mChapNum) || !isFinite(mChapNum) || mChapNum < 0) mChapNum = 0;
-            }
-            const mChapStr = mChapNum > 0 ? String(mChapNum) : String(m.lastchapter || '0');
-
-            if (chapCol !== -1 && String(data[i][chapCol]).trim() !== mChapStr) {
-              sheet.getRange(rowNum, chapCol + 1).setValue(mChapStr);
-            }
-
-            // Recalculate status and diff based on updated currentChapter
-            const rawCount = countCol !== -1 ? (parseFloat(data[i][countCol]) || 0) : 0;
-            let newStatus = 'เป็นปัจจุบัน';
-            if (rawCount > 0 && mChapNum > 0) {
-              if (rawCount > mChapNum) {
-                const diff = Math.round((rawCount - mChapNum) * 100) / 100;
-                newStatus = 'มีตอนใหม่ (+' + diff + ' ตอน)';
-              } else {
-                newStatus = 'เป็นปัจจุบัน';
-              }
-            } else if (rawCount > 0 && mChapNum === 0) {
-              newStatus = 'มีตอนใหม่ (+' + rawCount + ' ตอน)';
-            } else if (!data[i][statusCol] || String(data[i][statusCol]).trim() === '') {
-              newStatus = 'รอตรวจสอบครั้งแรก';
-            } else {
-              newStatus = data[i][statusCol];
-            }
-
-            if (statusCol !== -1 && data[i][statusCol] !== newStatus) {
-              sheet.getRange(rowNum, statusCol + 1).setValue(newStatus);
-            }
-            if (updatedCol !== -1) {
-              sheet.getRange(rowNum, updatedCol + 1).setValue(new Date());
-            }
-            syncedCount++;
+          if (mIdCol !== -1 && data[i][mIdCol] != m.mangaid) {
+            sheet.getRange(rowNum, mIdCol + 1).setValue(m.mangaid);
           }
+          if (nameCol !== -1 && m.manganame && data[i][nameCol] !== m.manganame) {
+            sheet.getRange(rowNum, nameCol + 1).setValue(m.manganame);
+          }
+          if (urlCol !== -1 && m.originalurl && m.originalurl.trim().startsWith('http') && data[i][urlCol] !== m.originalurl.trim()) {
+            sheet.getRange(rowNum, urlCol + 1).setValue(m.originalurl.trim());
+          }
+
+          // Multi-Source System Chapter Resolution
+          const chapRes = resolveSystemChapter(m, rowObj, queueMap);
+          const mChapNum = chapRes.chapterNum;
+          const mChapStr = chapRes.chapterStr;
+
+          // Auto-heal Mangas sheet if needed
+          if (chapRes.shouldUpdateManga && mSheetLastChapCol !== -1) {
+            const mRow = mangaRowMap[currentMId];
+            if (mRow) {
+              mangaSheet.getRange(mRow, mSheetLastChapCol + 1).setValue(mChapStr);
+              if (mSheetUpdatedCol !== -1) mangaSheet.getRange(mRow, mSheetUpdatedCol + 1).setValue(now);
+              m.lastchapter = mChapStr;
+              hasMangaChanges = true;
+            }
+          }
+
+          if (chapCol !== -1 && String(data[i][chapCol]).trim() !== mChapStr) {
+            sheet.getRange(rowNum, chapCol + 1).setValue(mChapStr);
+          }
+
+          // Recalculate status and diff based on updated currentChapter
+          const rawCount = countCol !== -1 ? (parseFloat(data[i][countCol]) || 0) : 0;
+          let newStatus = 'เป็นปัจจุบัน';
+          if (rawCount > 0 && mChapNum > 0) {
+            if (rawCount > mChapNum) {
+              const diff = Math.round((rawCount - mChapNum) * 100) / 100;
+              newStatus = 'มีตอนใหม่ (+' + diff + ' ตอน)';
+            } else {
+              newStatus = 'เป็นปัจจุบัน';
+            }
+          } else if (rawCount > 0 && mChapNum === 0) {
+            newStatus = 'มีตอนใหม่ (+' + rawCount + ' ตอน)';
+          } else if (!data[i][statusCol] || String(data[i][statusCol]).trim() === '') {
+            newStatus = 'รอตรวจสอบครั้งแรก';
+          } else {
+            newStatus = data[i][statusCol];
+          }
+
+          if (statusCol !== -1 && data[i][statusCol] !== newStatus) {
+            sheet.getRange(rowNum, statusCol + 1).setValue(newStatus);
+          }
+          if (updatedCol !== -1) {
+            sheet.getRange(rowNum, updatedCol + 1).setValue(now);
+          }
+          syncedCount++;
         }
         if (rowUrl) {
           existingUrls.add(rowUrl);
@@ -3439,17 +3794,12 @@ function importTrackersFromMangaList() {
 
   // 2. เพิ่มมังงะใน Mangas ที่มี originalurl แต่ยังไม่มีใน RawTracker
   const rowsToAdd = [];
-  const now = new Date();
   mangaList.forEach(m => {
     const mIdStr = String(m.mangaid).trim();
     if (m.originalurl && m.originalurl.trim().startsWith('http') && !existingMangaIds.has(mIdStr)) {
       const id = 'TRK' + new Date().getTime() + '_' + m.mangaid;
-      let mChapNum = 0;
-      if (m.lastchapter !== undefined && m.lastchapter !== null && String(m.lastchapter).trim() !== '') {
-        const mMatch = String(m.lastchapter).match(/(\d+(?:\.\d+)?)/);
-        mChapNum = mMatch ? parseFloat(mMatch[1]) : (parseFloat(m.lastchapter) || 0);
-      }
-      const mChapStr = mChapNum > 0 ? String(mChapNum) : String(m.lastchapter || '0');
+      const chapRes = resolveSystemChapter(m, null, queueMap);
+      const mChapStr = chapRes.chapterStr;
 
       const row = headers.map(header => {
         if (header === 'trackerid') return id;
@@ -3473,6 +3823,10 @@ function importTrackersFromMangaList() {
 
   if (rowsToAdd.length > 0) {
     sheet.getRange(sheet.getLastRow() + 1, 1, rowsToAdd.length, headers.length).setValues(rowsToAdd);
+  }
+
+  if (hasMangaChanges) {
+    invalidateCache('mangaList');
   }
 
   return {
@@ -3503,8 +3857,24 @@ function checkAllRawTrackers(notifyTelegram = false) {
   const currentChapCol = headers.indexOf('currentchapter') + 1;
 
   const mangaList = getMangaList();
-  const mangaMap = {};
-  mangaList.forEach(m => { mangaMap[String(m.mangaid)] = m; });
+  const indexes = buildMangaLookupIndexes(mangaList);
+  const queueMap = getMaxWorkQueueChapterMap();
+
+  // Auto-heal Mangas setup
+  const mangaSheet = getSheet();
+  const mangaData = mangaSheet.getDataRange().getValues();
+  const mangaHeaders = mangaData[0].map(h => h.toString().toLowerCase().trim());
+  const mSheetIdCol = mangaHeaders.indexOf('mangaid');
+  const mSheetLastChapCol = mangaHeaders.indexOf('lastchapter');
+  const mSheetUpdatedCol = mangaHeaders.indexOf('lastupdated');
+  const mangaRowMap = {};
+  if (mSheetIdCol !== -1) {
+    for (let r = 1; r < mangaData.length; r++) {
+      const idStr = String(mangaData[r][mSheetIdCol]).trim();
+      if (idStr) mangaRowMap[idStr] = r + 1;
+    }
+  }
+  let hasMangaChanges = false;
 
   const newUpdates = [];
   const now = new Date();
@@ -3522,8 +3892,17 @@ function checkAllRawTrackers(notifyTelegram = false) {
 
     if (!autoCheck || !url || !String(url).trim().startsWith('http')) continue;
 
+    const trkObj = {
+      trackerid: trackerId,
+      mangaid: mangaId,
+      manganame: mangaName,
+      url: url,
+      currentchapter: currentChapCol > 0 ? data[i][currentChapCol - 1] : ''
+    };
+    const manga = matchTrackerToManga(trkObj, indexes);
+
     // ถ้ามังงะเรื่องนี้ถูกลบไปแล้ว ให้ข้าม ไม่ต้อง scrape
-    if (mangaId && !mangaMap[String(mangaId)]) continue;
+    if (mangaId && !manga) continue;
 
     const res = scrapeRawUrl(url, pattern);
     if (res.success) {
@@ -3531,12 +3910,20 @@ function checkAllRawTrackers(notifyTelegram = false) {
       let newCount = parseFloat(res.chapterCount);
       if (isNaN(newCount) || !isFinite(newCount) || newCount < 0) newCount = 0;
 
-      const manga = mangaMap[String(mangaId)];
-      let systemChap = 0;
-      if (manga && manga.lastchapter) {
-        const mMatch = String(manga.lastchapter).match(/(\d+(?:\.\d+)?)/);
-        systemChap = mMatch ? parseFloat(mMatch[1]) : (parseFloat(manga.lastchapter) || 0);
-        if (isNaN(systemChap) || !isFinite(systemChap) || systemChap < 0) systemChap = 0;
+      // Multi-Source System Chapter Resolution
+      const chapRes = resolveSystemChapter(manga, trkObj, queueMap);
+      const systemChap = chapRes.chapterNum;
+      const systemChapStr = chapRes.chapterStr;
+
+      // Auto-heal Mangas sheet if needed
+      if (chapRes.shouldUpdateManga && manga && mSheetLastChapCol !== -1) {
+        const mRow = mangaRowMap[String(manga.mangaid).trim()];
+        if (mRow) {
+          mangaSheet.getRange(mRow, mSheetLastChapCol + 1).setValue(systemChapStr);
+          if (mSheetUpdatedCol !== -1) mangaSheet.getRange(mRow, mSheetUpdatedCol + 1).setValue(now);
+          manga.lastchapter = systemChapStr;
+          hasMangaChanges = true;
+        }
       }
       
       let isChanged = false;
@@ -3582,7 +3969,6 @@ function checkAllRawTrackers(notifyTelegram = false) {
         if (updatedAtCol > 0) sheet.getRange(rowNum, updatedAtCol).setValue(now);
       }
 
-      const systemChapStr = systemChap > 0 ? String(systemChap) : (manga ? String(manga.lastchapter || '0') : '0');
       if (currentChapCol > 0) sheet.getRange(rowNum, currentChapCol).setValue(systemChapStr);
       if (lastTextCol > 0) sheet.getRange(rowNum, lastTextCol).setValue(newText);
       if (lastCountCol > 0) sheet.getRange(rowNum, lastCountCol).setValue(newCount);
@@ -3592,6 +3978,10 @@ function checkAllRawTrackers(notifyTelegram = false) {
       if (statusCol > 0) sheet.getRange(rowNum, statusCol).setValue('ตรวจสอบไม่ได้: ' + (res.error || ''));
       if (lastCheckedCol > 0) sheet.getRange(rowNum, lastCheckedCol).setValue(now);
     }
+  }
+
+  if (hasMangaChanges) {
+    invalidateCache('mangaList');
   }
 
   // Send Telegram notification if updates found
@@ -7147,6 +7537,67 @@ function batchSetDefaultKikkukExtractor() {
     return { success: true, updatedCount: updatedCount };
   } catch (err) {
     console.error('batchSetDefaultKikkukExtractor error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * ตั้งค่าเริ่มต้นให้คอลัมน์ TranslatorName (ขั้นตอนงานแปล) เป็น 'เร' สำหรับทุกแถวที่ยังว่างอยู่
+ * ยกเว้นเรื่องที่ล็อคชื่อไว้ว่า 'pratchaya' ให้เซ็ตเป็น 'Pratchaya' (หรือชื่อตาม lockedtranslator)
+ */
+function batchSetDefaultTranslatorRe() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, updatedCount: 0 };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const translatorCol = headers.indexOf('translatorname') + 1;
+    const mangaIdCol = headers.indexOf('mangaid') + 1;
+    if (translatorCol <= 0) {
+      return { success: false, error: 'translatorname column not found' };
+    }
+
+    const mangaList = getMangaList();
+    const mangaMap = {};
+    mangaList.forEach(m => {
+      mangaMap[String(m.mangaid)] = m;
+    });
+
+    let updatedCount = 0;
+    const transValues = [];
+    for (let i = 1; i < data.length; i++) {
+      const currentVal = String(data[i][translatorCol - 1] || '').trim();
+      let newVal = currentVal;
+      if (!currentVal) {
+        const mid = mangaIdCol > 0 ? String(data[i][mangaIdCol - 1]) : '';
+        const m = mangaMap[mid];
+        const locked = m && m.lockedtranslator ? String(m.lockedtranslator).trim() : '';
+        if (locked.toLowerCase().includes('pratchaya')) {
+          newVal = m.lockedtranslator;
+        } else if (locked) {
+          newVal = m.lockedtranslator;
+        } else {
+          newVal = 'เร';
+        }
+        updatedCount++;
+      }
+      transValues.push([newVal]);
+    }
+
+    if (updatedCount > 0) {
+      sheet.getRange(2, translatorCol, transValues.length, 1).setValues(transValues);
+      invalidateCache(['workQueue']);
+    }
+
+    console.log('batchSetDefaultTranslatorRe: Updated ' + updatedCount + ' rows to default translator');
+    return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('batchSetDefaultTranslatorRe error:', err);
     return { success: false, error: err.toString() };
   } finally {
     lock.releaseLock();

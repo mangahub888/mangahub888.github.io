@@ -187,7 +187,8 @@ export function RawTrackerView({
       setFormMangaId(String(manga.mangaid || ""))
       setFormMangaName(manga.manganame || "")
       setFormUrl(manga.originalurl || "")
-      setFormCurrentChapter(manga.lastchapter !== undefined ? String(manga.lastchapter) : "")
+      const chap = parseChapterNumber(manga.lastchapter)
+      setFormCurrentChapter(chap > 0 ? String(chap) : "")
     } else {
       setFormMangaId("")
       setFormMangaName("")
@@ -207,7 +208,8 @@ export function RawTrackerView({
     setFormMangaName(item.manganame || "")
     setFormUrl(item.url || "")
     setFormPattern(item.pattern || "")
-    setFormCurrentChapter(String(item.currentChapter || item.currentchapter || ""))
+    const curVal = parseChapterNumber(item.currentChapter || item.currentchapter)
+    setFormCurrentChapter(curVal > 0 ? String(curVal) : "")
     setFormAutoCheck(
       item.autocheck !== undefined && String(item.autocheck).toLowerCase() !== "false"
     )
@@ -328,16 +330,17 @@ export function RawTrackerView({
       })
       if (res && res.success) {
         // Resolve authoritative current chapter from linked manga in mangaMap, or fallback to tracker's value
-        const manga = item.mangaid ? mangaMap.get(String(item.mangaid)) : null
-        let currentNum = 0
-        let currentChapStr = "0"
-        if (manga && manga.lastchapter !== undefined && manga.lastchapter !== null && String(manga.lastchapter).trim() !== "") {
-          currentNum = parseChapterNumber(manga.lastchapter)
-          currentChapStr = String(manga.lastchapter)
-        } else {
-          currentNum = parseChapterNumber(item.currentChapter || item.currentchapter)
-          currentChapStr = String(item.currentChapter || item.currentchapter || "0")
-        }
+        const manga =
+          (item.mangaid ? mangaMap.get(String(item.mangaid)) : null) ||
+          mangaList.find(
+            (m) =>
+              (m.manganame && item.manganame && m.manganame.trim().toLowerCase() === item.manganame.trim().toLowerCase()) ||
+              (m.originalurl && item.url && m.originalurl.trim().toLowerCase().replace(/\/+$/, '') === item.url.trim().toLowerCase().replace(/\/+$/, ''))
+          )
+        const mangaNum = parseChapterNumber(manga?.lastchapter)
+        const trkNum = parseChapterNumber(item.currentChapter || item.currentchapter)
+        const currentNum = Math.max(mangaNum, trkNum)
+        const currentChapStr = currentNum > 0 ? (Number.isInteger(currentNum) ? String(currentNum) : String(Math.round(currentNum * 100) / 100)) : "0" 
 
         const oldScrapedNum = parseChapterNumber(item.lastrawcount)
         const newScrapedNum = parseChapterNumber(res.chapterCount)
@@ -1959,7 +1962,8 @@ export function RawTrackerView({
                       setFormUrl(m.originalurl)
                     }
                     if (m.lastchapter !== undefined) {
-                      setFormCurrentChapter(String(m.lastchapter))
+                      const chap = parseChapterNumber(m.lastchapter)
+                      setFormCurrentChapter(chap > 0 ? String(chap) : "")
                     }
                   }
                 }}
@@ -1988,8 +1992,10 @@ export function RawTrackerView({
                     onClick={() => {
                       const m = mangaList.find((x) => String(x.mangaid) === formMangaId)
                       if (m && m.lastchapter !== undefined) {
-                        setFormCurrentChapter(String(m.lastchapter))
-                        toast.info(`ดึงเลขตอนล่าสุด ${m.lastchapter} จากตารางมังงะแล้ว`)
+                        const chap = parseChapterNumber(m.lastchapter)
+                        const chapStr = chap > 0 ? String(chap) : "0"
+                        setFormCurrentChapter(chapStr)
+                        toast.info(`ดึงเลขตอนล่าสุด ${chapStr} จากตารางมังงะแล้ว`)
                       }
                     }}
                     className="text-[11px] text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"

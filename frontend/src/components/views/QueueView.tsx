@@ -16,13 +16,16 @@ import { SearchableSelect } from "@/components/ui/searchable-select"
 import { StepUpdateModal } from "@/components/modals/QueueModals"
 import {
   THAI_MONTHS,
+  QUEUE_STEPS,
   extractStepLinks,
   formatDuration,
   getChapterCount,
   getQueueCurrentStep,
   getQueueItemDate,
+  isQueueStepDone,
   isStepDone,
   isUrgentManga,
+  matchesStepFilter,
   parseQueueDate,
 } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
@@ -126,63 +129,31 @@ export function QueueView({
       waitPublish = 0,
       waitPost = 0
 
-    const getStatus = (s: any) =>
-      s === undefined || s === null || String(s).trim() === ""
-        ? "รอเริ่ม"
-        : String(s).trim()
-
     queueList.forEach((q) => {
       const count = getChapterCount(q.chapter)
-      const postSt = getStatus(q.poststatus)
       if (isStepDone(q.poststatus)) {
         finished += count
+        return
+      }
+
+      const mangaItem = (mangaList || []).find((m: any) => String(m.mangaid) === String(q.mangaid))
+
+      if (matchesStepFilter(q, "upload", mangaItem)) {
+        waitUpload += count
+      } else if (matchesStepFilter(q, "ocr", mangaItem)) {
+        waitOcr += count
+      } else if (matchesStepFilter(q, "extract", mangaItem)) {
+        waitExtract += count
+      } else if (matchesStepFilter(q, "translate", mangaItem)) {
+        waitTranslate += count
+      } else if (matchesStepFilter(q, "typeset", mangaItem)) {
+        waitTypeset += count
+      } else if (matchesStepFilter(q, "publish", mangaItem)) {
+        waitPublish += count
+      } else if (matchesStepFilter(q, "post", mangaItem)) {
+        waitPost += count
       } else {
-        if (
-          getStatus(q.uploadstatus) === "รอเริ่ม" ||
-          getStatus(q.uploadstatus) === "กำลังทำ"
-        )
-          waitUpload += count
-        const isPratchaya = String(q.translatorname || "").toLowerCase().includes("pratchaya");
-        const extStr = String(q.extractorname || "").toLowerCase();
-        const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus);
-        const ocrSt = (isPratchaya || isKikExtractDone) ? "skip" : getStatus(q.ocrstatus);
-        if (
-          isStepDone(q.uploadstatus) &&
-          !isStepDone(q.extractstatus) &&
-          !isKikExtractDone &&
-          !isPratchaya &&
-          (ocrSt === "รอเริ่ม" || ocrSt === "กำลังทำ")
-        )
-          waitOcr += count
-        if (
-          !isPratchaya &&
-          (getStatus(q.extractstatus) === "รอเริ่ม" ||
-            getStatus(q.extractstatus) === "กำลังทำ") &&
-          getStatus(q.extractstatus) !== "Skipped" &&
-          String(getStatus(q.extractstatus)).toLowerCase() !== "skip" &&
-          getStatus(q.extractstatus) !== "ข้าม"
-        )
-          waitExtract += count
-        if (
-          getStatus(q.translatestatus) === "รอเริ่ม" ||
-          getStatus(q.translatestatus) === "กำลังทำ"
-        )
-          waitTranslate += count
-        if (
-          getStatus(q.typesetstatus) === "รอเริ่ม" ||
-          getStatus(q.typesetstatus) === "กำลังทำ"
-        )
-          waitTypeset += count
-        if (
-          getStatus(q.publishstatus) === "รอเริ่ม" ||
-          getStatus(q.publishstatus) === "กำลังทำ"
-        )
-          waitPublish += count
-        if (
-          (postSt === "รอเริ่ม" || postSt === "กำลังทำ") &&
-          (isStepDone(q.publishstatus) || postSt === "กำลังทำ")
-        )
-          waitPost += count
+        finished += count
       }
     })
 
@@ -196,18 +167,12 @@ export function QueueView({
       waitPublish,
       waitPost,
     }
-  }, [queueList])
+  }, [queueList, mangaList])
 
   // Count tasks waiting in 'publish' or 'post' steps
   const publishPostCount = React.useMemo(() => {
-    return queueList
-      .filter((q) => {
-        if (isStepDone(q.poststatus)) return false
-        const step = getQueueCurrentStep(q)
-        return step === "publish" || step === "post"
-      })
-      .reduce((acc, q) => acc + getChapterCount(q.chapter), 0)
-  }, [queueList])
+    return queueStats.waitPublish + queueStats.waitPost
+  }, [queueStats.waitPublish, queueStats.waitPost])
 
   // Filtered Queue
   const filteredQueue = React.useMemo(() => {
@@ -230,60 +195,45 @@ export function QueueView({
         if (!mMatch || !yMatch) return false
       }
 
+      // Find associated manga
+      const manga = (mangaList || []).find(
+        (m: any) =>
+          m.mangaid != null &&
+          q.mangaid != null &&
+          String(m.mangaid) === String(q.mangaid)
+      )
+
       // Search
       if (cleanSearch) {
-        const manga = mangaList.find(
-          (m) =>
-            m.mangaid != null &&
-            q.mangaid != null &&
-            String(m.mangaid) === String(q.mangaid)
-        )
         const name = manga ? String(manga.manganame).toLowerCase() : ""
         if (!name.includes(cleanSearch)) return false
       }
 
       // Completion
+      const isFinished = isStepDone(q.poststatus)
       if (completionFilter !== "all") {
-        const isFinished = q.poststatus === "เสร็จแล้ว"
         if (completionFilter === "complete" && !isFinished) return false
         if (completionFilter === "incomplete" && isFinished) return false
       }
 
       // Step filter & Publish/Post visibility logic
-      const currentStep = getQueueCurrentStep(q)
+      const currentStep = getQueueCurrentStep(q, mangaList)
       const isPublishOrPost = currentStep === "publish" || currentStep === "post"
 
       if (stepFilter === "publish_post") {
         // Show ONLY publish and post steps
-        if (!isPublishOrPost) return false
+        if (!matchesStepFilter(q, "publish_post", manga)) return false
       } else if (stepFilter === "all") {
         // If showPublishPost is false (default), hide publish and post tasks so they don't clutter production queue
         if (!showPublishPost && isPublishOrPost) {
           return false
         }
       } else {
-        const statusField = stepFilter + "status"
-        const rawStatus = q[statusField]
-        const status =
-          rawStatus === undefined ||
-          rawStatus === null ||
-          String(rawStatus).trim() === ""
-            ? "รอเริ่ม"
-            : String(rawStatus).trim()
-
-        const isPending = status === "รอเริ่ม" || status === "กำลังทำ"
-        if (!isPending) return false
-
-        if (
-          stepFilter === "post" &&
-          !isStepDone(q.publishstatus) &&
-          status !== "กำลังทำ"
-        )
+        // Strict Sequential Step Rule:
+        // งานที่ขั้นตอนนั้นยังไม่เสร็จสิ้น และขั้นตอนก่อนหน้าทั้งหมดเสร็จสิ้นแล้ว
+        if (!matchesStepFilter(q, stepFilter, manga)) {
           return false
-        if (stepFilter === "publish" && !isStepDone(q.typesetstatus))
-          return false
-        if (stepFilter === "typeset" && !isStepDone(q.translatestatus))
-          return false
+        }
       }
 
       // Assignee filter
@@ -300,12 +250,6 @@ export function QueueView({
 
       // Urgent filter
       if (urgentFilter !== "all") {
-        const manga = mangaList.find(
-          (m) =>
-            m.mangaid != null &&
-            q.mangaid != null &&
-            String(m.mangaid) === String(q.mangaid)
-        )
         const urgent = isUrgentManga(manga)
         if (urgentFilter === "urgent" && !urgent) return false
         if (urgentFilter === "normal" && urgent) return false
@@ -466,61 +410,136 @@ export function QueueView({
     <div className="space-y-6">
       {/* Queue Step Overview Cards */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-          🕒 สถานะคิวงานแยกตามขั้นตอน (จำนวนตอน)
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            🕒 สถานะคิวงานแยกตามขั้นตอน (จำนวนตอน) • คลิกการ์ดเพื่อกรอง
+          </p>
+          {(stepFilter !== "all" || completionFilter !== "incomplete") && (
+            <button
+              type="button"
+              onClick={() => {
+                setStepFilter("all")
+                setCompletionFilter("incomplete")
+              }}
+              className="text-xs text-indigo-400 hover:text-indigo-300 underline font-medium cursor-pointer"
+            >
+              รีเซ็ตตัวกรองขั้นตอน (แสดงทั้งหมด)
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
             {
+              id: "finished",
               label: "เสร็จแล้ว",
               val: queueStats.finished,
               icon: "✅",
               color: "text-emerald-400",
+              active: completionFilter === "complete",
+              onClick: () => {
+                if (completionFilter === "complete") {
+                  setCompletionFilter("all")
+                } else {
+                  setCompletionFilter("complete")
+                  setStepFilter("all")
+                }
+              },
             },
             {
+              id: "upload",
               label: "1. รออัป Raw",
               val: queueStats.waitUpload,
               icon: "🔼",
               color: "text-indigo-400",
+              active: stepFilter === "upload",
+              onClick: () => {
+                setStepFilter(stepFilter === "upload" ? "all" : "upload")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
             },
             {
+              id: "ocr",
               label: "2. รอดึงคำออโต้",
               val: queueStats.waitOcr,
               icon: "🤖",
               color: "text-cyan-400",
+              active: stepFilter === "ocr",
+              onClick: () => {
+                setStepFilter(stepFilter === "ocr" ? "all" : "ocr")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
             },
             {
+              id: "extract",
               label: "3. รอ QC ดึงคำ",
               val: queueStats.waitExtract,
               icon: "📝",
               color: "text-orange-400",
+              active: stepFilter === "extract",
+              onClick: () => {
+                setStepFilter(stepFilter === "extract" ? "all" : "extract")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
             },
             {
+              id: "translate",
               label: "รอแปล",
               val: queueStats.waitTranslate,
               icon: "🌐",
               color: "text-pink-400",
+              active: stepFilter === "translate",
+              onClick: () => {
+                setStepFilter(stepFilter === "translate" ? "all" : "translate")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
             },
             {
+              id: "typeset",
               label: "รอลงคำ",
               val: queueStats.waitTypeset,
               icon: "✍️",
               color: "text-amber-300",
+              active: stepFilter === "typeset",
+              onClick: () => {
+                setStepFilter(stepFilter === "typeset" ? "all" : "typeset")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
             },
             {
+              id: "publish",
               label: "รอ Publish",
               val: queueStats.waitPublish,
               icon: "📤",
               color: "text-sky-400",
+              active: stepFilter === "publish",
+              onClick: () => {
+                setStepFilter(stepFilter === "publish" ? "all" : "publish")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
             },
             {
+              id: "post",
               label: "รอโพสต์",
               val: queueStats.waitPost,
               icon: "✉️",
               color: "text-slate-300",
+              active: stepFilter === "post",
+              onClick: () => {
+                setStepFilter(stepFilter === "post" ? "all" : "post")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
             },
           ].map((st) => (
-            <Card key={st.label} className="p-3.5 flex items-center justify-between">
+            <Card
+              key={st.label}
+              onClick={st.onClick}
+              className={`p-3.5 flex items-center justify-between cursor-pointer transition-all hover:scale-[1.02] hover:shadow-md select-none ${
+                st.active
+                  ? "ring-2 ring-indigo-500 bg-indigo-950/40 border-indigo-500 shadow-md"
+                  : "hover:border-slate-600"
+              }`}
+              title={`คลิกเพื่อกรองงาน: ${st.label}`}
+            >
               <div>
                 <p className="text-xs text-slate-400">{st.label}</p>
                 <p className={`text-xl font-bold mt-0.5 ${st.color}`}>{st.val}</p>
@@ -678,9 +697,15 @@ export function QueueView({
           </select>
 
           <select
-            className="flex h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-3 py-2 text-sm text-slate-100"
+            className="flex h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-3 py-2 text-sm text-slate-100 cursor-pointer"
             value={stepFilter}
-            onChange={(e) => setStepFilter(e.target.value)}
+            onChange={(e) => {
+              const newStep = e.target.value
+              setStepFilter(newStep)
+              if (newStep !== "all" && completionFilter === "complete") {
+                setCompletionFilter("incomplete")
+              }
+            }}
           >
             <option value="all">ขั้นตอน: ทั้งหมด</option>
             <option value="publish_post">เฉพาะ 2 สเตป: รอ Publish & รอโพสต์ ({publishPostCount} ตอน)</option>
@@ -953,10 +978,11 @@ export function QueueView({
                     {/* 2. ดึงคำออโต้ */}
                     <TableCell>
                       {(() => {
-                        const isPratchaya = String(q.translatorname || "").toLowerCase().includes("pratchaya");
+                        const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || "").toLowerCase().includes("pratchaya");
                         const extStr = String(q.extractorname || "").toLowerCase();
                         const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus);
-                        const effectiveOcrStatus = (isPratchaya || isKikExtractDone)
+                        const isOcrDoing = String(q.ocrstatus || "").trim() === "กำลังทำ";
+                        const effectiveOcrStatus = ((isPratchaya || isKikExtractDone) && !isOcrDoing)
                           ? "skip"
                           : (q.ocrstatus || (isStepDone(q.extractstatus) ? "เสร็จแล้ว" : (isStepDone(q.uploadstatus) ? "รอเริ่ม" : "รอเริ่ม")));
                         return (
@@ -975,13 +1001,14 @@ export function QueueView({
 
                     <TableCell>
                       {(() => {
-                        const isPratchaya = String(q.translatorname || "").toLowerCase().includes("pratchaya");
-                        const effectiveExtractStatus = isPratchaya ? "skip" : q.extractstatus;
+                        const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || "").toLowerCase().includes("pratchaya");
+                        const isExtractActive = String(q.extractstatus || "").trim() === "กำลังทำ" || String(q.extractstatus || "").trim() === "รอเริ่ม";
+                        const effectiveExtractStatus = (isPratchaya && !isExtractActive) ? "skip" : q.extractstatus;
                         return (
                           <>
                             {renderStatusBadge(q, "extract", effectiveExtractStatus)}
                             <div className="text-xs text-slate-400 mt-1">
-                              {isPratchaya ? "pratchaya แปล (ข้าม QC)" : (q.extractorname || "Kikkuk")}
+                              {isPratchaya && !isExtractActive ? "pratchaya แปล (ข้าม QC)" : (q.extractorname || "Kikkuk")}
                               {exDur && (
                                 <div className="text-[11px] text-slate-500">
                                   ⏱️ {exDur}
@@ -997,7 +1024,7 @@ export function QueueView({
                     <TableCell>
                       {renderStatusBadge(q, "translate", q.translatestatus)}
                       <div className="text-xs text-slate-400 mt-1">
-                        {q.translatorname || "-"}
+                        {q.translatorname || ((manga && manga.lockedtranslator && String(manga.lockedtranslator).toLowerCase().includes("pratchaya")) ? manga.lockedtranslator : ((manga && manga.lockedtranslator) || "เร"))}
                         {trDur && (
                           <div className="text-[11px] text-slate-500">
                             ⏱️ {trDur}

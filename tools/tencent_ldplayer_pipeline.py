@@ -36,6 +36,7 @@ import threading
 import time
 import urllib.request
 import urllib.parse
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
@@ -344,6 +345,220 @@ def find_chapter_seq_coords(xml_text: str, target_seq: str, alt_seq: str = ""):
     return (found_coord or alt_coord), min_seq, max_seq, is_reversed
 
 
+def get_download_selected_count(xml_text: str) -> int:
+    """
+    Parses the number of currently selected chapters from DownloadChapterSelectActivity UI.
+    Matches text like '已选择0话', '已选择1话', '已选择89话'.
+    Returns count as int, or -1 if not found.
+    """
+    if not xml_text:
+        return -1
+    m = re.search(r'已选择(\d+)话', xml_text)
+    if m:
+        try:
+            return int(m.group(1))
+        except ValueError:
+            return -1
+    return -1
+
+
+def ensure_clear_selection(adb_path: str, serial: str, max_retries: int = 6) -> bool:
+    """
+    Ensures that no chapters are selected in DownloadChapterSelectActivity (count == 0).
+    Handles Tencent Comic's automatic 'Smart Selection' (智能选择: 放弃智能选择) and toggles.
+    """
+    for attempt in range(max_retries):
+        xml = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml"
+        )
+        if not xml:
+            time.sleep(0.5)
+            continue
+
+        # Handle captcha / verify page if it popped up
+        if "VerifyCodePage" in xml or "安全验证" in xml:
+            log("   ⚠️ VerifyCodePage detected on screen, pressing back...")
+            adb_command(adb_path, serial, "shell", "input keyevent 4")
+            time.sleep(1.0)
+            continue
+
+        count = get_download_selected_count(xml)
+        if count == 0:
+            log("   ✨ Selection is verified completely clear (已选择0话).")
+            return True
+
+        # Case 1: Smart selection active -> tap '放弃智能选择' (auto_deselect)
+        if "auto_deselect" in xml or "放弃智能选择" in xml:
+            log(f"   🧹 Smart selection active (已选择{count}话). Tapping '放弃智能选择' (auto_deselect)...")
+            m_btn = re.search(r'resource-id="[^"]*auto_deselect"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml)
+            if not m_btn:
+                m_btn = re.search(r'text="放弃智能选择"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml)
+            if m_btn:
+                cx = (int(m_btn.group(1)) + int(m_btn.group(3))) // 2
+                cy = (int(m_btn.group(2)) + int(m_btn.group(4))) // 2
+                adb_command(adb_path, serial, "shell", f"input tap {cx} {cy}")
+            else:
+                adb_command(adb_path, serial, "shell", "input tap 822 135")
+            time.sleep(1.0)
+            continue
+
+        # Case 2: Chapters selected -> tap '取消全选' or toggle '全选'
+        if "取消全选" in xml:
+            log(f"   🧹 Tapping '取消全选' (container_select) to deselect all (currently {count} selected)...")
+            adb_command(adb_path, serial, "shell", "input tap 224 1550")
+            time.sleep(1.0)
+            continue
+        elif "全选" in xml and count > 0:
+            log(f"   🧹 Chapters selected ({count}话) without auto_deselect. Tapping '全选' to toggle...")
+            adb_command(adb_path, serial, "shell", "input tap 224 1550")
+            time.sleep(1.0)
+            continue
+
+        time.sleep(0.5)
+
+    # Final check
+    xml_final = adb_command(
+        adb_path, serial, "shell",
+        "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml"
+    )
+    final_count = get_download_selected_count(xml_final)
+    return final_count == 0
+
+
+def auto_clear_download_history_for_comic(adb_path: str, serial: str, manga_name: str) -> bool:
+    """
+    1-Click Auto-Recovery: Opens MyDownloadActivity ('我的' -> '离线下载'), finds manga_name,
+    taps '编辑', checks the comic's delete checkbox, taps '删除', confirms dialog,
+    and taps '完成' to exit edit mode.
+    Resets stuck/already-downloaded chapter states (removes green download icon ⬇️)
+    allowing 1-click re-selection and download without manual user intervention.
+    """
+    if not manga_name:
+        return False
+    log(f"   🧹 [Auto-Recovery] Clearing download history for '{manga_name}' in MyDownloadActivity...")
+    try:
+        # Launch MyDownloadActivity
+        adb_command(adb_path, serial, "shell", "su 0 am start -n com.qq.ac.android/.view.activity.MyDownloadActivity")
+        time.sleep(1.5)
+
+        xml = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/mydl.xml >/dev/null 2>&1 && cat /data/local/tmp/mydl.xml"
+        )
+        if not xml or manga_name not in xml:
+            log(f"   ℹ️ '{manga_name}' not found in MyDownloadActivity. (Already clean)")
+            return True
+
+        # 1. Tap "编辑" (btn_edit at [832, 53][876, 84])
+        m_edit = re.search(r'resource-id="[^"]*btn_edit"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml)
+        if m_edit:
+            cx = (int(m_edit.group(1)) + int(m_edit.group(3))) // 2
+            cy = (int(m_edit.group(2)) + int(m_edit.group(4))) // 2
+            adb_command(adb_path, serial, "shell", f"input tap {cx} {cy}")
+        else:
+            adb_command(adb_path, serial, "shell", "input tap 854 68")
+        time.sleep(1.0)
+
+        # 2. In Edit mode, find checkbox closest to manga_name Y-coords
+        xml_edit = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/mydl_edit.xml >/dev/null 2>&1 && cat /data/local/tmp/mydl_edit.xml"
+        )
+        if not xml_edit:
+            return False
+
+        # Locate Y coordinate of manga_name
+        target_y = None
+        try:
+            tree_edit = ET.fromstring(xml_edit)
+            for n in tree_edit.iter('node'):
+                if manga_name in n.attrib.get('text', ''):
+                    m = re.findall(r'\d+', n.attrib.get('bounds', ''))
+                    if len(m) == 4:
+                        target_y = (int(m[1]) + int(m[3])) // 2
+                        break
+        except Exception:
+            pass
+
+        if target_y is None:
+            m_text = re.search(rf'text="[^"]*{re.escape(manga_name)}[^"]*"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_edit)
+            if m_text:
+                target_y = (int(m_text.group(2)) + int(m_text.group(4))) // 2
+
+        # Find delete_select_icon closest to target_y
+        best_cb = None
+        min_dist = 9999
+        if target_y is not None:
+            try:
+                tree_edit = ET.fromstring(xml_edit)
+                for n in tree_edit.iter('node'):
+                    if n.attrib.get('resource-id') == 'com.qq.ac.android:id/delete_select_icon':
+                        m = re.findall(r'\d+', n.attrib.get('bounds', ''))
+                        if len(m) == 4:
+                            cy = (int(m[1]) + int(m[3])) // 2
+                            dist = abs(cy - target_y)
+                            if dist < min_dist and dist < 120:
+                                min_dist = dist
+                                best_cb = ((int(m[0]) + int(m[2])) // 2, cy)
+            except Exception:
+                pass
+
+        if best_cb:
+            adb_command(adb_path, serial, "shell", f"input tap {best_cb[0]} {best_cb[1]}")
+        elif target_y is not None:
+            adb_command(adb_path, serial, "shell", f"input tap 57 {target_y}")
+        else:
+            log(f"   ⚠️ Could not pinpoint Y-coords for '{manga_name}', exiting edit mode...")
+            adb_command(adb_path, serial, "shell", "input tap 854 68")
+            return False
+        time.sleep(0.8)
+
+        # 3. Tap "删除" (delete_text or delete_button)
+        m_del = re.search(r'resource-id="[^"]*delete_text"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_edit)
+        if m_del:
+            cx = (int(m_del.group(1)) + int(m_del.group(3))) // 2
+            cy = (int(m_del.group(2)) + int(m_del.group(4))) // 2
+            adb_command(adb_path, serial, "shell", f"input tap {cx} {cy}")
+        else:
+            adb_command(adb_path, serial, "shell", "input tap 695 1555")
+        time.sleep(1.0)
+
+        # 4. Confirm delete dialog ("确定", "是的", "删除", positive_btn)
+        xml_dlg = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/mydl_dlg.xml >/dev/null 2>&1 && cat /data/local/tmp/mydl_dlg.xml"
+        )
+        if xml_dlg and any(k in xml_dlg for k in ["确定", "是的", "删除", "positive_btn"]):
+            m_pos = re.search(r'resource-id="[^"]*positive_btn"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dlg)
+            if m_pos:
+                cx = (int(m_pos.group(1)) + int(m_pos.group(3))) // 2
+                cy = (int(m_pos.group(2)) + int(m_pos.group(4))) // 2
+                adb_command(adb_path, serial, "shell", f"input tap {cx} {cy}")
+            else:
+                adb_command(adb_path, serial, "shell", "input tap 660 880")
+            time.sleep(1.2)
+
+        # 5. Exit Edit mode ("完成") if still open
+        xml_post = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/mydl_post.xml >/dev/null 2>&1 && cat /data/local/tmp/mydl_post.xml"
+        )
+        if xml_post and "完成" in xml_post:
+            adb_command(adb_path, serial, "shell", "input tap 854 68")
+            time.sleep(0.8)
+
+        # Also dismiss MyDownloadActivity to return clean
+        adb_command(adb_path, serial, "shell", "input keyevent 4")
+        time.sleep(0.5)
+
+        log(f"   ✅ [Auto-Recovery] Cleaned '{manga_name}' from Download Manager successfully.")
+        return True
+    except Exception as e:
+        log(f"   ⚠️ [Auto-Recovery] Notice during clean: {e}")
+        return False
+
+
 def trigger_native_offline_download(
     script,
     adb_path: str,
@@ -353,7 +568,8 @@ def trigger_native_offline_download(
     chapter_name: str,
     seq_no: str = "",
     auto_buy: bool = True,
-    timeout: float = 35.0
+    timeout: float = 35.0,
+    manga_name: str = ""
 ) -> list:
     """
     Triggers Tencent Comic native offline download for the target chapter.
@@ -382,34 +598,48 @@ def trigger_native_offline_download(
         script.exports_sync.opendlselect(str(comic_id))
     except Exception as e:
         log(f"   ⚠️ opendlselect RPC fallback ({e})...")
-        adb_command(adb_path, serial, "shell", f"su -c 'am start -n com.qq.ac.android/.view.activity.DownloadChapterSelectActivity --es STR_MSG_COMIC_ID {comic_id} --ei STR_MSG_FROM 1'")
+        adb_command(adb_path, serial, "shell", f"su 0 am start -n com.qq.ac.android/.view.activity.DownloadChapterSelectActivity --es STR_MSG_COMIC_ID {comic_id} --ei STR_MSG_FROM 1")
 
-    time.sleep(1.8)
+    time.sleep(2.0)
 
-    # Search and select chapter in DownloadChapterSelectActivity
+    # Dismiss any captcha/dialog if popped up
+    xml_init = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml")
+    if "VerifyCodePage" in xml_init or "安全验证" in xml_init:
+        log("   ⚠️ VerifyCodePage detected on screen, pressing back...")
+        adb_command(adb_path, serial, "shell", "input keyevent 4")
+        time.sleep(1.0)
+
+    # 1. Ensure selection is completely cleared (0 chapters selected)
+    if not ensure_clear_selection(adb_path, serial):
+        log("   ⚠️ Warning: Could not fully confirm 0 selection count, attempting to proceed with care...")
+
+    # 2. Search and select target chapter in DownloadChapterSelectActivity
     target_found = False
     for attempt in range(8):
-        xml = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml && cat /data/local/tmp/dl_ui.xml")
+        xml = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml")
         coords, min_seq, max_seq, is_reversed = find_chapter_seq_coords(xml, target_seq, alt_seq)
 
         if coords:
             log(f"   🎯 Found Chapter target={target_seq}/alt={alt_seq} at screen {coords}. Selecting...")
             adb_command(adb_path, serial, "shell", f"input tap {coords[0]} {coords[1]}")
-            time.sleep(0.6)
+            time.sleep(0.8)
             target_found = True
             break
 
         # Check if toggling sequence order helps on first attempt
         if attempt == 0 and target_seq.isdigit():
             t_val = int(target_seq)
+            m_seq_btn = re.search(r'resource-id="[^"]*btn_sequence"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml)
+            seq_x = (int(m_seq_btn.group(1)) + int(m_seq_btn.group(3))) // 2 if m_seq_btn else 855
+            seq_y = (int(m_seq_btn.group(2)) + int(m_seq_btn.group(4))) // 2 if m_seq_btn else 130
             if not is_reversed and t_val > 15:
                 log(f"   🔄 Toggling to descending order (倒序) for target Ch {target_seq}...")
-                adb_command(adb_path, serial, "shell", "input tap 855 130")
+                adb_command(adb_path, serial, "shell", f"input tap {seq_x} {seq_y}")
                 time.sleep(1.0)
                 continue
             elif is_reversed and t_val <= min_seq:
                 log(f"   🔄 Toggling to ascending order (正序) for target Ch {target_seq}...")
-                adb_command(adb_path, serial, "shell", "input tap 855 130")
+                adb_command(adb_path, serial, "shell", f"input tap {seq_x} {seq_y}")
                 time.sleep(1.0)
                 continue
 
@@ -428,9 +658,55 @@ def trigger_native_offline_download(
         log(f"   ⚠️ Could not locate Chapter {target_seq} (alt: {alt_seq}) in DownloadChapterSelectActivity UI.")
         return []
 
-    # Tap "下载所选" (Download button at [692, 1520])
-    log("   🚀 Tapping '下载所选' (Start Download)...")
-    adb_command(adb_path, serial, "shell", "input tap 692 1520")
+    # 3. STRICT PRE-DOWNLOAD SAFETY GUARD
+    # Enforce that EXACTLY 1 chapter is selected ('已选择1话')!
+    xml_guard = adb_command(
+        adb_path, serial, "shell",
+        "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml"
+    )
+    guard_count = get_download_selected_count(xml_guard)
+    log(f"   🛡️ Pre-Download Safety Guard: Currently selected = {guard_count} chapter(s)...")
+
+    if guard_count != 1:
+        log(f"   🚨 [SAFETY GUARD BLOCKED] Selection count is {guard_count} (expected exactly 1)!")
+
+        # 1-Click Auto-Recovery: If selection failed (likely chapter already downloaded or stuck with ⬇️ icon)
+        if manga_name:
+            log(f"   🔄 [1-Click Auto-Recovery] Triggering automatic download clean for '{manga_name}' to unlock chapter selection...")
+            auto_clear_download_history_for_comic(adb_path, serial, manga_name)
+
+            # Re-launch DownloadChapterSelectActivity freshly
+            adb_command(adb_path, serial, "shell", "input keyevent 4")
+            time.sleep(0.5)
+            adb_command(adb_path, serial, "shell", f"su 0 am start -n com.qq.ac.android/.view.activity.DownloadChapterSelectActivity --es STR_MSG_COMIC_ID {comic_id} --ei STR_MSG_FROM 1")
+            time.sleep(2.0)
+
+            # Clear smart selection afresh
+            ensure_clear_selection(adb_path, serial)
+
+            # Re-search and select chapter
+            xml_retry = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml")
+            retry_coords, _, _, _ = find_chapter_seq_coords(xml_retry, target_seq, alt_seq)
+            if retry_coords:
+                log(f"   🎯 [1-Click Auto-Recovery] Re-selecting Chapter target={target_seq}/alt={alt_seq} at {retry_coords}...")
+                adb_command(adb_path, serial, "shell", f"input tap {retry_coords[0]} {retry_coords[1]}")
+                time.sleep(1.0)
+
+                # Check guard count again
+                xml_guard_retry = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml")
+                guard_count = get_download_selected_count(xml_guard_retry)
+                log(f"   🛡️ [1-Click Auto-Recovery] Guard re-check: Currently selected = {guard_count} chapter(s)...")
+
+        if guard_count != 1:
+            log(f"   🚨 [SAFETY GUARD BLOCKED] Selection count remains {guard_count} (expected exactly 1)! Aborting download click to prevent over-download!")
+            ensure_clear_selection(adb_path, serial)
+            return []
+
+    log("   ✅ [SAFETY GUARD PASSED] Verified exactly 1 chapter selected ('已选择1话'). Proceeding to tap download...")
+
+    # 4. Tap "下载所选" / "购买下载" (Download button at [675, 1550])
+    log("   🚀 Tapping download button ('下载所选' / '购买下载')...")
+    adb_command(adb_path, serial, "shell", "input tap 675 1550")
     time.sleep(1.2)
 
     # Check for confirmation dialog ("是的" / positive_btn) or VIP purchase dialog
@@ -1490,7 +1766,8 @@ def execute_pipeline_for_chapter(
             chapter_name=chapter_name,
             seq_no=seq_no,
             auto_buy=auto_buy,
-            timeout=timeout
+            timeout=timeout,
+            manga_name=manga_name
         )
 
     if not (offline_urls and len(offline_urls) >= 5):
@@ -1507,7 +1784,8 @@ def execute_pipeline_for_chapter(
             chapter_name=chapter_name,
             seq_no=seq_no,
             auto_buy=auto_buy,
-            timeout=timeout
+            timeout=timeout,
+            manga_name=manga_name
         )
 
     if not (offline_urls and len(offline_urls) >= 5):
