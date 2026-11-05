@@ -491,6 +491,10 @@ function doPost(e) {
         result = uploadTextToDriveFolder(payload);
         break;
 
+      case 'FIND_CHAPTERS_WITH_MTP_MISSING_TXT':
+        result = findChaptersWithMtpMissingTxt(payload);
+        break;
+
       default:
         return createJsonResponse({ status: 'error', message: 'Unknown action: ' + action });
     }
@@ -7849,4 +7853,73 @@ function uploadTextToDriveFolder(payload) {
     console.error('uploadTextToDriveFolder error:', err);
     return { error: err.toString() };
   }
+}
+
+
+/**
+ * สแกนคิวงานเพื่อหาโฟลเดอร์ Google Drive ที่มีไฟล์ .mtp แต่ยังไม่มีไฟล์ export_txt_chap_..._ห้ามใช้ลงคำ.txt
+ */
+function findChaptersWithMtpMissingTxt(payload) {
+  payload = payload || {};
+  const maxRows = payload.limit || 500;
+  const sheet = getSheet(QUEUE_SHEET_NAME);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { candidates: [] };
+
+  const headers = data[0].map(h => h.toString().toLowerCase().trim());
+  const workLinkCol = headers.indexOf('worklink');
+  const upCol = headers.indexOf('uploadstatus');
+  const chapCol = headers.indexOf('chapter');
+  const mangaIdCol = headers.indexOf('mangaid');
+
+  const candidates = [];
+  const startRow = Math.max(1, data.length - maxRows);
+
+  for (let i = data.length - 1; i >= startRow; i--) {
+    const row = data[i];
+    const qid = String(row[0]).trim();
+    const workLink = String(row[workLinkCol] || '');
+    const chap = String(row[chapCol] || '');
+    const mid = String(row[mangaIdCol] || '');
+
+    const match = workLink.match(/folders\/([a-zA-Z0-9_-]+)/);
+    if (!match) continue;
+    const folderId = match[1];
+
+    try {
+      const folder = DriveApp.getFolderById(folderId);
+      const files = folder.getFiles();
+      let mtpFile = null;
+      let hasTxt = false;
+
+      while (files.hasNext()) {
+        const f = files.next();
+        const fn = f.getName();
+        const fnLower = fn.toLowerCase();
+
+        if (fnLower.endsWith('.mtp')) {
+          mtpFile = { id: f.getId(), name: fn };
+        }
+        if (fn.indexOf('ห้ามใช้ลงคำ') !== -1 || fnLower.indexOf('_ocr.txt') !== -1) {
+          hasTxt = true;
+        }
+      }
+
+      if (mtpFile && !hasTxt) {
+        candidates.push({
+          queueId: qid,
+          chapter: chap,
+          mangaId: mid,
+          folderId: folderId,
+          mtpFileId: mtpFile.id,
+          mtpFileName: mtpFile.name,
+          workLink: workLink
+        });
+      }
+    } catch (err) {
+      // Folder inaccessible or deleted
+    }
+  }
+
+  return { candidates: candidates, totalScanned: data.length - startRow };
 }
