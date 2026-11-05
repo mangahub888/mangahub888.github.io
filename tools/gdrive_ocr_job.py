@@ -14,6 +14,14 @@ Workflow:
 
 import os
 import sys
+
+# Disable oneDNN/MKLDNN on CPU to prevent PIR instruction runtime bug:
+# "ConvertPirAttribute2RuntimeAttribute not support [pir::ArrayAttribute<pir::DoubleAttribute>]"
+os.environ["PADDLE_PDX_ENABLE_MKLDNN_BYDEFAULT"] = "0"
+os.environ["FLAGS_use_mkldnn"] = "0"
+os.environ["FLAGS_enable_pir_api"] = "0"
+os.environ["PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK"] = "True"
+
 import argparse
 import json
 import time
@@ -83,14 +91,18 @@ def get_paddle_ocr_engine(lang="ch"):
         "use_doc_orientation_classify": False,
         "use_doc_unwarping": False,
         "use_textline_orientation": False,
+        "enable_mkldnn": False,
     }
     try:
         ocr = PaddleOCR(**init_kwargs)
     except TypeError:
         try:
-            ocr = PaddleOCR(lang=lang, use_angle_cls=False)
+            ocr = PaddleOCR(lang=lang, use_angle_cls=False, enable_mkldnn=False)
         except Exception:
-            ocr = PaddleOCR(lang=lang)
+            try:
+                ocr = PaddleOCR(lang=lang, enable_mkldnn=False)
+            except Exception:
+                ocr = PaddleOCR(lang=lang)
     except Exception as e:
         print(f"⚠️ Fallback init PaddleOCR: {e}")
         ocr = PaddleOCR(lang=lang)
