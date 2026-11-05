@@ -2036,26 +2036,42 @@ def main():
             if not pending_items:
                 log("✨ No pending Tencent tasks found. WorkQueue is up to date!")
             else:
+                comic_tocs = {}
                 for idx, item in enumerate(pending_items):
                     m_name = item.get("manganame", "")
                     ch_num = str(item.get("chapter", ""))
                     raw_url = item.get("rawurl", "") or item.get("originalurl", "")
                     m_cid = re.search(r"id/(\d+)", raw_url)
-                    cid_from_url = m_cid.group(1) if m_cid else item.get("comicid", "")
-                    item_cid = item.get("cid", "")
+                    cid_from_url = m_cid.group(1) if m_cid else str(item.get("comicid", "")).strip()
+                    item_cid = str(item.get("cid", "")).strip()
 
                     if not cid_from_url:
                         continue
 
                     log(f"\n▶️ [{idx+1}/{len(pending_items)}] Processing pending: {m_name} Ch {ch_num} (Comic {cid_from_url})...")
 
-                    # Fetch TOC if CID is missing
-                    if not item_cid:
-                        _, ch_list = fetch_tencent_chapter_list(cid_from_url)
+                    # Initialize matched safely for every pending item
+                    matched = None
+
+                    # Retrieve or fetch comic TOC (cached per comic_id for performance)
+                    if cid_from_url not in comic_tocs:
+                        comic_tocs[cid_from_url] = fetch_tencent_chapter_list(cid_from_url)
+                    comic_title, ch_list = comic_tocs[cid_from_url]
+                    if not m_name and comic_title:
+                        m_name = comic_title
+
+                    # Resolve matched chapter by chapter_num or CID
+                    if ch_list:
                         matched = find_chapter_by_spec(ch_list, ch_num)
-                        if matched:
+                        if not matched and item_cid:
+                            matched = find_chapter_by_spec(ch_list, item_cid)
+
+                    if matched:
+                        if not item_cid:
                             item_cid = matched["cid"]
-                            log(f"   ✓ Mapped chapter {ch_num} -> CID {item_cid} ('{matched['title']}')")
+                            log(f"   ✓ Mapped chapter {ch_num} -> CID {item_cid} ('{matched['title']}') [Seq: {matched.get('seq_no', '')}]")
+                        else:
+                            log(f"   ✓ Confirmed chapter {ch_num} (CID {item_cid}, Seq {matched.get('seq_no', '')}) -> '{matched['title']}'")
 
                     if not item_cid:
                         log(f"   ⚠️ Could not find CID for {m_name} Ch {ch_num}. Skipping.")
@@ -2063,6 +2079,7 @@ def main():
                         continue
 
                     seq_val = matched.get("seq_no", "") if matched else ""
+                    item_manga_id = str(item.get("mangaid", "")).strip()
                     ok = execute_pipeline_for_chapter(
                         adb_path=adb_path,
                         serial=serial,
@@ -2073,7 +2090,7 @@ def main():
                         chapter_name=ch_num,
                         manga_name=m_name,
                         seq_no=seq_val,
-                        manga_id=str(item.get("mangaid", "")),
+                        manga_id=item_manga_id,
                         timeout=args.timeout,
                         auto_buy=not args.no_auto_buy
                     )
@@ -2164,8 +2181,10 @@ def main():
 
     finally:
         try:
-            script.unload()
-            session.detach()
+            if 'script' in locals() and script:
+                script.unload()
+            if 'session' in locals() and session:
+                session.detach()
         except Exception:
             pass
 
