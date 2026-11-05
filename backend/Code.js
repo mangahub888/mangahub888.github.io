@@ -375,6 +375,9 @@ function doPost(e) {
       case 'TRIGGER_NEXT_PENDING_MANGA_OCR':
         result = triggerNextPendingMangaOcr();
         break;
+      case 'BATCH_SET_DEFAULT_KIKKUK_EXTRACTOR':
+        result = batchSetDefaultKikkukExtractor();
+        break;
       case 'SYNC_OCR_FROM_DRIVE':
         result = syncOcrStatusFromDrive();
         break;
@@ -1113,6 +1116,9 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
       const transStr = String(obj.translatorname || '').toLowerCase();
       const isPratchaya = transStr.includes('pratchaya');
 
+      if (!obj.extractorname || String(obj.extractorname).trim() === '') {
+        obj.extractorname = 'Kikkuk';
+      }
       const extractorStr = String(obj.extractorname || '').toLowerCase();
       const isKikkukExtractDone = (extractorStr.includes('kikuk') || extractorStr.includes('kikkuk')) && String(obj.extractstatus || '').trim() === 'เสร็จแล้ว';
 
@@ -1198,7 +1204,7 @@ function addQueue(queueData) {
       if (header === 'poststatus') return queueData.poststatus || 'รอเริ่ม';
 
       if (header === 'uploadername') return queueData.uploadername || '';
-      if (header === 'extractorname') return queueData.extractorname || 'kikkuk';
+      if (header === 'extractorname') return queueData.extractorname || 'Kikkuk';
       if (header === 'translatorname') {
         if (queueData.translatorname) return queueData.translatorname;
         if (manga && manga.lockedtranslator) return manga.lockedtranslator;
@@ -7111,6 +7117,42 @@ function completeMangaOcr(payload) {
  * สั่งรันคิวลำดับถัดไปอัตโนมัติ (Auto-Chain Manga OCR Queue)
  * เมื่อตอนก่อนหน้าทำงานเสร็จสมบูรณ์ ให้ดึงตอนถัดไปที่รอคิวอยู่ส่งไปรันบน GitHub Actions ทันที 1 ตอน
  */
+/**
+ * ตั้งค่าเริ่มต้นให้คอลัมน์ ExtractorName (QC ดึงคำ) เป็น 'Kikkuk' สำหรับทุกแถวที่ยังว่างอยู่
+ */
+function batchSetDefaultKikkukExtractor() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, updated: 0 };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const extractorCol = headers.indexOf('extractorname') + 1;
+    if (extractorCol <= 0) {
+      return { success: false, error: 'extractorname column not found' };
+    }
+
+    let updatedCount = 0;
+    for (let i = 1; i < data.length; i++) {
+      const currentVal = String(data[i][extractorCol - 1] || '').trim();
+      if (!currentVal) {
+        sheet.getRange(i + 1, extractorCol).setValue('Kikkuk');
+        updatedCount++;
+      }
+    }
+
+    console.log('batchSetDefaultKikkukExtractor: Updated ' + updatedCount + ' rows to Kikkuk');
+    return { success: true, updatedCount: updatedCount };
+  } catch (err) {
+    console.error('batchSetDefaultKikkukExtractor error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function triggerNextPendingMangaOcr() {
   const lock = LockService.getScriptLock();
   try {

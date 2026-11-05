@@ -44,7 +44,7 @@ export function AddQueueModal({
   const [costPerChapter, setCostPerChapter] = React.useState<string | number>(0)
   const [uploaderName, setUploaderName] = React.useState("")
   const [rawLinkInput, setRawLinkInput] = React.useState("")
-  const [extractorName, setExtractorName] = React.useState("kikkuk")
+  const [extractorName, setExtractorName] = React.useState("Kikkuk")
   const [extractLinkInput, setExtractLinkInput] = React.useState("")
   const [translatorName, setTranslatorName] = React.useState("")
   const [typesetterName, setTypesetterName] = React.useState("")
@@ -61,7 +61,7 @@ export function AddQueueModal({
         setCostPerChapter(0)
         setUploaderName("")
         setRawLinkInput("")
-        setExtractorName("kikkuk")
+        setExtractorName("Kikkuk")
         setExtractLinkInput("")
         setTranslatorName("")
         setTypesetterName("")
@@ -159,7 +159,7 @@ export function AddQueueModal({
         uploadstatus: "รอเริ่ม",
         uploadername: uploaderName,
         extractstatus: "รอเริ่ม",
-        extractorname: extractorName || "kikkuk",
+        extractorname: extractorName || "Kikkuk",
         translatestatus: "รอเริ่ม",
         translatorname: translatorName,
         typesetstatus: "รอเริ่ม",
@@ -382,7 +382,7 @@ export function UpdateQueueModal({
   const [ocrStatus, setOcrStatus] = React.useState("รอเริ่ม")
 
   const [extractStatus, setExtractStatus] = React.useState("รอเริ่ม")
-  const [extractorName, setExtractorName] = React.useState("kikkuk")
+  const [extractorName, setExtractorName] = React.useState("Kikkuk")
   const [extractLink, setExtractLink] = React.useState("")
 
   const [translateStatus, setTranslateStatus] = React.useState("รอเริ่ม")
@@ -418,7 +418,7 @@ export function UpdateQueueModal({
       setRawLink("")
 
       setExtractStatus(item.extractstatus || "รอเริ่ม")
-      setExtractorName(item.extractorname || "")
+      setExtractorName(item.extractorname || "Kikkuk")
       setExtractLink("")
 
       setTranslateStatus(item.translatestatus || "รอเริ่ม")
@@ -484,7 +484,7 @@ export function UpdateQueueModal({
         publishstatus: publishStatus,
         poststatus: postStatus,
         uploadername: uploaderName,
-        extractorname: extractorName,
+        extractorname: extractorName || "Kikkuk",
         translatorname: translatorName,
         typesettername: typesetterName,
         typesettype: typesetType,

@@ -981,7 +981,7 @@ export function QueueView({
                           <>
                             {renderStatusBadge(q, "extract", effectiveExtractStatus)}
                             <div className="text-xs text-slate-400 mt-1">
-                              {isPratchaya ? "pratchaya แปล (ข้าม QC)" : (q.extractorname || "-")}
+                              {isPratchaya ? "pratchaya แปล (ข้าม QC)" : (q.extractorname || "Kikkuk")}
                               {exDur && (
                                 <div className="text-[11px] text-slate-500">
                                   ⏱️ {exDur}
