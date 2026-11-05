@@ -372,6 +372,9 @@ function doPost(e) {
       case 'COMPLETE_MANGA_OCR':
         result = completeMangaOcr(payload);
         break;
+      case 'TRIGGER_NEXT_PENDING_MANGA_OCR':
+        result = triggerNextPendingMangaOcr();
+        break;
       case 'SYNC_OCR_FROM_DRIVE':
         result = syncOcrStatusFromDrive();
         break;
@@ -6037,6 +6040,25 @@ function scheduledMangaOcr6HourJob() {
           folderId: folderId,
           triggeredAt: new Date().toISOString()
         });
+        // ทำเครื่องหมาย "กำลังทำ" ใน Sheet ทันที
+        try {
+          const sheet = getSheet(QUEUE_SHEET_NAME);
+          const qData = sheet.getDataRange().getValues();
+          const qHeaders = qData[0].map(h => h.toString().toLowerCase().trim());
+          const ocrCol = qHeaders.indexOf('ocrstatus') + 1;
+          const ocrTimeCol = qHeaders.indexOf('ocrtime') + 1;
+          const ocrNameCol = qHeaders.indexOf('ocrname') + 1;
+          for (let r = 1; r < qData.length; r++) {
+            if (String(qData[r][0]).trim() === String(item.queueid).trim()) {
+              if (ocrCol > 0) sheet.getRange(r + 1, ocrCol).setValue('กำลังทำ');
+              if (ocrTimeCol > 0) sheet.getRange(r + 1, ocrTimeCol).setValue(new Date());
+              if (ocrNameCol > 0) sheet.getRange(r + 1, ocrNameCol).setValue('GitHub Actions (Auto OCR)');
+              break;
+            }
+          }
+        } catch (mErr) {
+          console.warn('Could not mark ocrstatus=กำลังทำ in scheduled job:', mErr);
+        }
         Utilities.sleep(2000);
       }
     }
@@ -7064,6 +7086,14 @@ function completeMangaOcr(payload) {
 
     if (updatedRow) {
       console.log('completeMangaOcr: Marked queue ' + updatedRow.queueId + ' (Chapter ' + updatedRow.chapter + ') as OCR completed');
+      
+      // Auto-Chaining: สั่งรันตอนถัดไปในคิวต่อเนื่องทันที
+      try {
+        triggerNextPendingMangaOcr();
+      } catch (chainErr) {
+        console.warn('Auto-chain trigger next OCR error:', chainErr);
+      }
+
       return { success: true, updated: updatedRow };
     } else {
       console.warn('completeMangaOcr: Could not find matching queue item for folderId=' + folderId + ', queueId=' + queueId);
@@ -7072,6 +7102,97 @@ function completeMangaOcr(payload) {
   } catch (err) {
     console.error('completeMangaOcr error:', err);
     return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * สั่งรันคิวลำดับถัดไปอัตโนมัติ (Auto-Chain Manga OCR Queue)
+ * เมื่อตอนก่อนหน้าทำงานเสร็จสมบูรณ์ ให้ดึงตอนถัดไปที่รอคิวอยู่ส่งไปรันบน GitHub Actions ทันที 1 ตอน
+ */
+function triggerNextPendingMangaOcr() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const queue = getWorkQueue(true);
+    const mangaList = getMangaList();
+
+    // กรองหาตอนที่: อัป Raw แล้ว + QC ยังรอเริ่ม + ไม่ใช่ pratchaya + ocrstatus ยังไม่เสร็จ / ยังไม่ skip / ยังไม่กำลังทำ
+    const pendingItems = queue.filter(q => {
+      const upDone = String(q.uploadstatus || '').trim() === 'เสร็จแล้ว';
+      const exWaiting = String(q.extractstatus || '').trim() === 'รอเริ่ม';
+      const hasLink = q.worklink && String(q.worklink).includes('drive.google.com/drive/folders/');
+      const isPratchaya = String(q.translatorname || '').toLowerCase().includes('pratchaya');
+      const ocrSt = String(q.ocrstatus || '').trim();
+      const isOcrSkip = ocrSt.toLowerCase() === 'skip' || ocrSt === 'ข้าม';
+      const isOcrDone = ocrSt === 'เสร็จแล้ว';
+      const isOcrDoing = ocrSt === 'กำลังทำ';
+      return upDone && exWaiting && hasLink && !isPratchaya && !isOcrSkip && !isOcrDone && !isOcrDoing;
+    });
+
+    if (pendingItems.length === 0) {
+      console.log('triggerNextPendingMangaOcr: ไม่มีตอนค้างรอ OCR เพิ่มเติมแล้ว (All OCR pending completed)');
+      return { success: true, remaining: 0 };
+    }
+
+    // เอาตอนถัดไป 1 ตอน (เรียงลำดับจากใหม่ไปเก่าตาม scheduled job)
+    const reversed = [...pendingItems].reverse();
+    const nextItem = reversed[0];
+    const match = String(nextItem.worklink).match(/folders\/([a-zA-Z0-9_-]+)/);
+    if (!match) {
+      console.warn('triggerNextPendingMangaOcr: ไม่พบ folderId ใน worklink ของคิว', nextItem.queueid);
+      return { success: false, error: 'No folderId found in worklink' };
+    }
+    const folderId = match[1];
+
+    const manga = mangaList.find(m => String(m.mangaid) === String(nextItem.mangaid));
+    const mangaTitle = manga ? (manga.manganame || manga.originalname || '') : '';
+    const cleanChapter = String(nextItem.chapter || '').replace(/[^\d.]/g, '');
+
+    // ทำเครื่องหมาย "กำลังทำ" ใน Sheet ทันทีเพื่อป้องกันยิงซ้ำและให้หน้าเว็บแสดงผลสด
+    try {
+      const sheet = getSheet(QUEUE_SHEET_NAME);
+      const qData = sheet.getDataRange().getValues();
+      const qHeaders = qData[0].map(h => h.toString().toLowerCase().trim());
+      const ocrCol = qHeaders.indexOf('ocrstatus') + 1;
+      const ocrTimeCol = qHeaders.indexOf('ocrtime') + 1;
+      const ocrNameCol = qHeaders.indexOf('ocrname') + 1;
+      for (let r = 1; r < qData.length; r++) {
+        if (String(qData[r][0]).trim() === String(nextItem.queueid).trim()) {
+          if (ocrCol > 0) sheet.getRange(r + 1, ocrCol).setValue('กำลังทำ');
+          if (ocrTimeCol > 0) sheet.getRange(r + 1, ocrTimeCol).setValue(new Date());
+          if (ocrNameCol > 0) sheet.getRange(r + 1, ocrNameCol).setValue('GitHub Actions (Auto OCR)');
+          break;
+        }
+      }
+    } catch (mErr) {
+      console.warn('triggerNextPendingMangaOcr: Could not mark ocrstatus=กำลังทำ:', mErr);
+    }
+
+    console.log('🚀 Auto-Chaining: สั่งรันคิวถัดไปต่อเนื่อง ->', mangaTitle, 'ตอนที่', cleanChapter, 'Folder:', folderId);
+    const res = triggerMangaOcrWorkflow({
+      queueId: nextItem.queueid,
+      folderId: folderId,
+      mangaName: mangaTitle,
+      chapterNum: cleanChapter,
+      lang: 'ch'
+    });
+
+    return {
+      success: true,
+      triggered: {
+        queueId: nextItem.queueid,
+        chapter: cleanChapter,
+        mangaTitle: mangaTitle,
+        folderId: folderId
+      },
+      remainingCount: pendingItems.length - 1,
+      dispatchResult: res
+    };
+  } catch (err) {
+    console.error('triggerNextPendingMangaOcr error:', err);
+    return { success: false, error: err.toString() };
   } finally {
     lock.releaseLock();
   }

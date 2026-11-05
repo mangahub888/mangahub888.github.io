@@ -56,6 +56,18 @@ export function AutoOcrStatusBanner({ onQueueRefresh, className = "" }: AutoOcrS
     staleTime: 15000,
   })
 
+  // Auto-refresh queue and stats when GitHub Actions run finishes
+  const prevIsRunningRef = React.useRef(isMangaOcrRunning)
+  React.useEffect(() => {
+    if (prevIsRunningRef.current && !isMangaOcrRunning) {
+      if (onQueueRefresh) {
+        onQueueRefresh()
+      }
+      refetchGasStatus()
+    }
+    prevIsRunningRef.current = isMangaOcrRunning
+  }, [isMangaOcrRunning, onQueueRefresh, refetchGasStatus])
+
   // Format relative time helper
   const formatTimeAgo = (isoString?: string) => {
     if (!isoString) return "-"
