@@ -860,9 +860,9 @@ export function RawTrackerView({
                 GAS Active (快看 / QQ / Thunderscans)
               </Badge>
             </div>
-            <div className="text-slate-300 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-              <span>
-                🔍 <strong>ตรวจเช็คล่าสุด:</strong>{" "}
+            <div className="text-slate-300 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
+              <span className="flex items-center gap-1.5">
+                🔍 <strong className="text-amber-200/90">ตรวจเช็คอัปเดต RAW:</strong>{" "}
                 <span className="text-amber-300 font-medium">
                   {formatRelativeTime(effectiveLastCheckTime)}
                   {effectiveLastCheckTime && (
@@ -871,10 +871,13 @@ export function RawTrackerView({
                     </span>
                   )}
                 </span>
+                <span className="text-[10px] text-amber-300/80 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded font-normal">
+                  ตรวจเว็บต้นฉบับ
+                </span>
               </span>
               <span className="text-slate-600 hidden sm:inline">•</span>
-              <span>
-                🚀 <strong>รัน GitAction ล่าสุด:</strong>{" "}
+              <span className="flex items-center gap-1.5">
+                🚀 <strong className="text-emerald-200/90">สั่งรันดาวน์โหลด RAW (GitAction):</strong>{" "}
                 <span className="text-emerald-400 font-medium">
                   {effectiveLastPipelineRunTime
                     ? `${formatRelativeTime(effectiveLastPipelineRunTime)} (${
@@ -890,10 +893,13 @@ export function RawTrackerView({
                       })`
                     : "ยังไม่มีประวัติการรัน"}
                 </span>
+                <span className="text-[10px] text-emerald-300/80 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded font-normal">
+                  ดาวน์โหลดภาพดิบ
+                </span>
               </span>
               {isRawTrackerRunning && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold animate-pulse text-[11px]">
-                  <RefreshCw className="h-3 w-3 animate-spin" /> กำลังรัน Pipeline...
+                  <RefreshCw className="h-3 w-3 animate-spin" /> กำลังรันดาวน์โหลด RAW...
                 </span>
               )}
             </div>
@@ -907,10 +913,10 @@ export function RawTrackerView({
             onClick={handleTriggerPipelineNow}
             disabled={triggeringPipeline || isRawTrackerRunning}
             className="h-8 text-xs border-indigo-500/40 bg-indigo-950/40 hover:bg-indigo-900/50 text-indigo-200 gap-1.5 shadow-sm cursor-pointer"
-            title="สั่งให้ GAS รัน GitAction Raw Tracker Pipeline ทันที"
+            title="สั่งให้ GitAction เริ่มกระบวนการดาวน์โหลดและเย็บภาพ RAW ทันที"
           >
             <Zap className={`h-3.5 w-3.5 text-amber-400 ${triggeringPipeline ? "animate-spin" : ""}`} />
-            {triggeringPipeline ? "กำลังสั่งรัน..." : "สั่งรัน Pipeline ทันที"}
+            {triggeringPipeline ? "กำลังสั่งดาวน์โหลด..." : "สั่งรันดาวน์โหลด RAW ทันที"}
           </Button>
         </div>
       </div>
