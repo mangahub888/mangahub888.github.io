@@ -1,0 +1,61 @@
+name: Google Drive Manga OCR Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder_id:
+        description: 'Google Drive Folder ID or URL'
+        required: true
+        default: '19P4c1nLybE1KshF-7HSbhfQPX2H60A54'
+      manga_name:
+        description: 'Manga Title'
+        required: false
+        default: 'ราชันนักฆ่าเกิดใหม่เป็นลูกเขย'
+      chapter_num:
+        description: 'Chapter Number'
+        required: false
+        default: '35'
+      lang:
+        description: 'OCR Language (ch / japan / korean / en)'
+        required: true
+        default: 'ch'
+
+permissions:
+  contents: write
+
+jobs:
+  ocr-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies (CPU Optimized)
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install paddlepaddle -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+          pip install paddleocr ultralytics gdown pillow opencv-python-headless requests
+
+      - name: Run Manga OCR Pipeline
+        run: |
+          python tools/gdrive_ocr_job.py \
+            --folder-id "${{ github.event.inputs.folder_id }}" \
+            --manga-name "${{ github.event.inputs.manga_name }}" \
+            --chapter-num "${{ github.event.inputs.chapter_num }}" \
+            --lang "${{ github.event.inputs.lang }}" \
+            --output-dir "./ocr_output"
+
+      - name: Upload Results & .MTP to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: manga-ocr-${{ github.event.inputs.chapter_num }}
+          path: ocr_output/
