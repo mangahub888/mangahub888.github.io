@@ -645,7 +645,7 @@ function ensureSheetHeaders(sheet, name) {
     const lastCol = sheet.getLastColumn();
     if (lastCol > 0) {
       const currentHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(h => h.toString().toLowerCase().trim());
-      const required = ['poststatus', 'postername', 'posttime', 'isediting', 'editingby', 'editingtime', 'typesettype'];
+      const required = ['poststatus', 'postername', 'posttime', 'isediting', 'editingby', 'editingtime', 'typesettype', 'ocrstatus', 'ocrtime'];
       const displayMap = {
         'poststatus': 'PostStatus',
         'postername': 'PosterName',
@@ -653,7 +653,9 @@ function ensureSheetHeaders(sheet, name) {
         'isediting': 'IsEditing',
         'editingby': 'EditingBy',
         'editingtime': 'EditingTime',
-        'typesettype': 'TypesetType'
+        'typesettype': 'TypesetType',
+        'ocrstatus': 'OcrStatus',
+        'ocrtime': 'OcrTime'
       };
       required.forEach(req => {
         if (currentHeaders.indexOf(req) === -1) {
@@ -1092,6 +1094,11 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
       }
       if (!obj.poststatus || String(obj.poststatus).trim() === '') obj.poststatus = 'รอเริ่ม';
       if (!obj.uploadstatus || String(obj.uploadstatus).trim() === '') obj.uploadstatus = 'รอเริ่ม';
+      if (!obj.ocrstatus || String(obj.ocrstatus).trim() === '') {
+        const isUpDone = String(obj.uploadstatus).trim() === 'เสร็จแล้ว';
+        const isExDone = String(obj.extractstatus).trim() === 'เสร็จแล้ว';
+        obj.ocrstatus = (isUpDone && isExDone) ? 'เสร็จแล้ว' : 'รอเริ่ม';
+      }
       if (!obj.translatestatus || String(obj.translatestatus).trim() === '') obj.translatestatus = 'รอเริ่ม';
       if (!obj.typesetstatus || String(obj.typesetstatus).trim() === '') obj.typesetstatus = 'รอเริ่ม';
       if (!obj.publishstatus || String(obj.publishstatus).trim() === '') obj.publishstatus = 'รอเริ่ม';
@@ -1619,6 +1626,7 @@ function updateFullQueueItem(queueId, updateData) {
 
         updateCell('chapter', updateData.chapter);
         updateCell('uploadstatus', updateData.uploadstatus);
+        updateCell('ocrstatus', updateData.ocrstatus);
         updateCell('extractstatus', updateData.extractstatus);
         updateCell('translatestatus', updateData.translatestatus);
         updateCell('typesetstatus', updateData.typesetstatus);

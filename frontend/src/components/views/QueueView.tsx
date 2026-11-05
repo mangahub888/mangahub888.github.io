@@ -109,6 +109,7 @@ export function QueueView({
   const queueStats = React.useMemo(() => {
     let finished = 0,
       waitUpload = 0,
+      waitOcr = 0,
       waitExtract = 0,
       waitTranslate = 0,
       waitTypeset = 0,
@@ -131,6 +132,12 @@ export function QueueView({
           getStatus(q.uploadstatus) === "กำลังทำ"
         )
           waitUpload += count
+        if (
+          isStepDone(q.uploadstatus) &&
+          !isStepDone(q.extractstatus) &&
+          (getStatus(q.ocrstatus) === "รอเริ่ม" || getStatus(q.ocrstatus) === "กำลังทำ")
+        )
+          waitOcr += count
         if (
           (getStatus(q.extractstatus) === "รอเริ่ม" ||
             getStatus(q.extractstatus) === "กำลังทำ") &&
@@ -165,6 +172,7 @@ export function QueueView({
     return {
       finished,
       waitUpload,
+      waitOcr,
       waitExtract,
       waitTranslate,
       waitTypeset,
@@ -454,13 +462,19 @@ export function QueueView({
               color: "text-emerald-400",
             },
             {
-              label: "รออัป Raw",
+              label: "1. รออัป Raw",
               val: queueStats.waitUpload,
               icon: "🔼",
               color: "text-indigo-400",
             },
             {
-              label: "รอ QC ดึงคำ",
+              label: "2. รอดึงคำออโต้",
+              val: queueStats.waitOcr,
+              icon: "🤖",
+              color: "text-cyan-400",
+            },
+            {
+              label: "3. รอ QC ดึงคำ",
               val: queueStats.waitExtract,
               icon: "📝",
               color: "text-orange-400",
@@ -651,8 +665,9 @@ export function QueueView({
           >
             <option value="all">ขั้นตอน: ทั้งหมด</option>
             <option value="publish_post">เฉพาะ 2 สเตป: รอ Publish & รอโพสต์ ({publishPostCount} ตอน)</option>
-            <option value="upload">รอ/ทำ: อัป Raw</option>
-            <option value="extract">รอ/ทำ: QC ดึงคำ</option>
+            <option value="upload">รอ/ทำ: 1. อัป Raw</option>
+            <option value="ocr">รอ/ทำ: 2. ดึงคำออโต้ (AI)</option>
+            <option value="extract">รอ/ทำ: 3. QC ดึงคำ</option>
             <option value="translate">รอ/ทำ: แปล</option>
             <option value="typeset">รอ/ทำ: ลงคำ</option>
             <option value="publish">รอ/ทำ: Publish</option>
@@ -749,8 +764,9 @@ export function QueueView({
               <option value="publish">📤 Publisher</option>
               <option value="typeset">✍️ ลงคำ</option>
               <option value="translate">🌐 แปล</option>
-              <option value="extract">📝 QC ดึงคำ</option>
-              <option value="upload">🔼 อัป Raw</option>
+              <option value="extract">📝 3. QC ดึงคำ</option>
+              <option value="ocr">🤖 2. ดึงคำออโต้</option>
+              <option value="upload">🔼 1. อัป Raw</option>
             </select>
 
             <select
@@ -808,8 +824,9 @@ export function QueueView({
                 />
               </TableHead>
               <TableHead>วันที่ / เรื่อง</TableHead>
-              <TableHead>อัป Raw</TableHead>
-              <TableHead>QC ดึงคำ</TableHead>
+              <TableHead>1. อัป Raw</TableHead>
+              <TableHead>2. ดึงคำออโต้</TableHead>
+              <TableHead>3. QC ดึงคำ</TableHead>
               <TableHead>แปล</TableHead>
               <TableHead>ลงคำ</TableHead>
               <TableHead>Publisher</TableHead>
@@ -823,7 +840,7 @@ export function QueueView({
             {isLoading ? (
               Array.from({ length: 6 }).map((_, idx) => (
                 <TableRow key={idx}>
-                  <TableCell colSpan={10}>
+                  <TableCell colSpan={11}>
                     <Skeleton className="h-12 w-full" />
                   </TableCell>
                 </TableRow>
@@ -831,7 +848,7 @@ export function QueueView({
             ) : filteredQueue.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={10}
+                  colSpan={11}
                   className="text-center py-12 text-slate-400"
                 >
                   ไม่มีข้อมูลคิวงานที่ตรงกับตัวกรอง
@@ -912,6 +929,15 @@ export function QueueView({
                         )}
                       </div>
                       {renderStepLinks(q.worklink, "อัป Raw")}
+                    </TableCell>
+
+                    {/* 2. ดึงคำออโต้ */}
+                    <TableCell>
+                      {renderStatusBadge(q, "ocr", q.ocrstatus || (isStepDone(q.extractstatus) ? "เสร็จแล้ว" : (isStepDone(q.uploadstatus) ? "รอเริ่ม" : "รอเริ่ม")))}
+                      <div className="text-xs text-slate-400 mt-1">
+                        {q.ocrtime ? parseQueueDate(q.ocrtime)?.toLocaleDateString("th-TH") : "GitHub Actions"}
+                      </div>
+                      {renderStepLinks(q.worklink, "mtp") || renderStepLinks(q.worklink, "ดึงคำออโต้")}
                     </TableCell>
 
                     <TableCell>

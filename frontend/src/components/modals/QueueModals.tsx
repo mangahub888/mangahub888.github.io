@@ -379,6 +379,7 @@ export function UpdateQueueModal({
   const [uploadStatus, setUploadStatus] = React.useState("รอเริ่ม")
   const [uploaderName, setUploaderName] = React.useState("")
   const [rawLink, setRawLink] = React.useState("")
+  const [ocrStatus, setOcrStatus] = React.useState("รอเริ่ม")
 
   const [extractStatus, setExtractStatus] = React.useState("รอเริ่ม")
   const [extractorName, setExtractorName] = React.useState("kikkuk")
@@ -571,6 +572,30 @@ export function UpdateQueueModal({
                   value={rawLink}
                   onChange={(e) => setRawLink(e.target.value)}
                   className="h-8 text-xs"
+                />
+              </div>
+            </div>
+
+            {/* 2. ดึงคำออโต้ (Auto OCR) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start">
+              <div className="space-y-1">
+                <Label>🤖 2. ดึงคำออโต้</Label>
+                <select
+                  className="flex h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-3 py-2 text-sm text-slate-100"
+                  value={ocrStatus}
+                  onChange={(e) => setOcrStatus(e.target.value)}
+                >
+                  <option value="รอเริ่ม">รอเริ่ม</option>
+                  <option value="กำลังทำ">กำลังทำ (GitHub Actions)</option>
+                  <option value="เสร็จแล้ว">เสร็จแล้ว</option>
+                  <option value="skip">ข้าม (skip)</option>
+                </select>
+              </div>
+              <div className="sm:col-span-2 space-y-1.5 sm:pt-5">
+                <Input
+                  disabled
+                  value="AI OCR (best.pt + PaddleOCR) -> สร้าง .mtp เข้าไดรฟ์"
+                  className="h-10 text-xs text-slate-400 bg-slate-900/50"
                 />
               </div>
             </div>
@@ -783,8 +808,9 @@ export function StepUpdateModal({
   const [typesetType, setTypesetType] = React.useState<"จีน" | "เกาหลี">("จีน")
 
   const stepLabels: Record<string, string> = {
-    upload: "🔼 อัปโหลด Raw",
-    extract: "📝 QC ดึงคำ (kikkuk)",
+    upload: "🔼 1. อัปโหลด Raw",
+    ocr: "🤖 2. ดึงคำออโต้ (GitHub Actions)",
+    extract: "📝 3. QC ดึงคำ (kikkuk)",
     translate: "🌐 แปล (Translator)",
     typeset: "✍️ ลงคำ (Typesetter)",
     publish: "📤 เผยแพร่ (Publisher)",
@@ -793,6 +819,7 @@ export function StepUpdateModal({
 
   const roleMapping: Record<string, string[]> = {
     upload: ["Raw Provider/Uploader", "Multi-role"],
+    ocr: ["Multi-role", "Raw Provider/Uploader"],
     extract: ["Cleaner/Draft", "Multi-role"],
     translate: ["Translator", "Multi-role"],
     typeset: ["Editor/Typesetter", "Multi-role"],
@@ -802,6 +829,7 @@ export function StepUpdateModal({
 
   const assigneeFieldMap: Record<string, string> = {
     upload: "uploadername",
+    ocr: "ocrname",
     extract: "extractorname",
     translate: "translatorname",
     typeset: "typesettername",
