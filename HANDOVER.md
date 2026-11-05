@@ -6,6 +6,39 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ไขปัญหา Raw Tracker ตรวจจับต้นฉบับผิดพลาดเมื่อชื่อตอนไม่มีเลขตอน (Unnumbered Chapters / Notice Detection) สำเร็จสมบูรณ์ 100% (5 พ.ย. 2569)
+
+#### 1. สาเหตุของปัญหา (Root Cause Analysis):
+- กรณีศึกษา: มังงะเรื่อง *เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก* (`https://ac.qq.com/Comic/comicInfo/id/656779`)
+  * ชื่อตอนล่าสุดของเรื่องนี้ใน Tencent Comic เป็นชื่อเฉพาะที่ไม่มีตัวเลขตอน เช่น `[亚索]2026.10.30` หรือ `[泥腿子]2026.11.06`
+  * โค้ดเดิมใน `backend/Code.js` (`scrapeRawUrl`) สกัดเฉพาะตัวเลขจาก `innerTitle` ด้วย regex `/(?:第)?\s*(\d+(?:\.\d+)?)\s*(?:话|集)?/`
+  * เมื่อชื่อตอนไม่มีตัวเลข ผลการ match ได้ค่าเป็น `null` ส่งผลให้ `chapterCount` คงค่าเป็น `0`
+  * และเนื่องจาก `matchedText` ถูกเซ็ตค่าไปแล้ว (เช่น `最新话：[亚索]2026.10.30`) ทำให้ข้าม fallback sections อื่นๆ ทั้งหมด
+  * ส่งผลให้ `lastrawcount` ในชีต `RawTracker` ถูกบันทึกเป็น `0` ทำให้การคำนวณส่วนต่างตอนใหม่ (`diff`) กลายเป็น `0` และสถานะกลายเป็น "เป็นปัจจุบัน" ทั้งที่มังงะมีตอนใหม่จริง (ในระบบ 73, ต้นฉบับล่าสุดคือตอนที่ 74)
+
+#### 2. สิ่งที่ได้รับการปรับปรุงและแก้ไข (Comprehensive Solution):
+1. **ปรับปรุง `scrapeRawUrl` ใน `backend/Code.js`**:
+   - เพิ่มฟังก์ชัน `extractChapterNumberFromTitle(title)` ที่รองรับการสกัดเลขตอนทั้งแบบ `第X话`, ตัวเลขนำหน้า เช่น `43 背景`, `1 相遇`, และ `Chapter X` (กรองข้ามปี ค.ศ. 1900-2100)
+   - เพิ่มระบบสำรองอัจฉริยะ (Smart TOC Fallback) สำหรับ Tencent Comic (`ac.qq.com`):
+     * หากชื่อตอนไม่มีเลขตอน หรือได้ `chapterCount === 0` ระบบจะดึงและวิเคราะห์รายการสารบัญตอน (`ol.chapter-page-all` / `id="chapter"`) ในหน้าเว็บทันที
+     * **กรณีที่ 1 (Numbered comic with unnumbered latest/notice)**: วนลูปย้อนหลังจากตอนล่าสุดเพื่อหาตอนก่อนหน้าที่เป็นตัวเลข หากตอนล่าสุดเป็นประกาศ (`公告`, `停更`, `休刊`, etc.) จะคงเลขตอนเดิมไว้ ไม่เตือนผิดพลาด หากเป็นตอนเนื้อหาปกติที่ไม่มีเลข จะนับลำดับต่อเนื่องจากตอนล่าสุดที่มีเลข
+     * **กรณีที่ 2 (Unnumbered comic like 656779)**: นับจำนวนตอนเนื้อหาจริงทั้งหมด โดยคัดกรองข้ามตอนตัวอย่าง/ประกาศ (`预告`, `序章`, `公告`, `停更`, `休刊`, `上线`, etc.) ทำให้เรื่อง 656779 นับได้ `73` ตอน (ถึง `亚索`) และ `74` ตอน (ถึง `泥腿子`) อย่างแม่นยำ 100%
+   - เพิ่ม Safety Net ขั้นสุดท้าย: หาก `matchedText` ไม่ว่างแต่ `chapterCount` ยังเป็น 0 ให้พยายามสกัดเลขตอนจาก `matchedText` อีกครั้ง ป้องกันการคืนค่า 0
+2. **เพิ่มระบบตรวจจับตอนใหม่ Tencent ใน `getRawTrackerPendingChapters` (`backend/Code.js`)**:
+   - เพิ่มบล็อกรองรับ `url.indexOf('ac.qq.com') !== -1` คล้ายกับ KuaiKan
+   - ดึงรายการสารบัญตอนและคำนวณ `chapterNum` สำหรับตอนใหม่ที่ `> currentChap` ส่งต่อให้ `tools/auto_raw_tracker.py` และ `tools/tencent_purchaser.py` อัตโนมัติ (ได้ `comicId`, `cid`, `chapterNum`, `chapterTitle`, `connector: 'tencent'`)
+3. **ปรับปรุง `fetch_tencent_chapter_list` ใน `tools/tencent_ldplayer_pipeline.py`**:
+   - ปรับให้แยกแยะประกาศ/ตัวอย่าง (`预告`, `序章`, `公告`) กำหนด `chapter_num = "0"` และไม่กินลำดับตอนหลัก
+   - รองรับตอนที่ไม่มีเลขตอนในชื่อเรื่อง ให้กำหนด `chapter_num` ตามลำดับเนื้อเรื่องจริง (`story_seq`) ทำให้ `find_chapter_by_spec` ค้นหาตอน 73 (`亚索`) และ 74 (`泥腿子`) ด้วย `cid` ที่ถูกต้องแม่นยำ ไม่เลื่อนหลุดลำดับ
+4. **Deploy ขึ้น Production & ทดสอบจริง**:
+   - ทำการ `npx clasp push` และ `npx clasp deploy` อัปเดต Deployment ID `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` ขึ้นเป็น **Version @94**
+   - ทดสอบยิง `SCRAPE_RAW_URL` บน Live Web App: เรื่อง 656779 คืนค่า `chapterCount: 74`, `rawText: 最新话：[泥腿子]2026.11.06` สำเร็จ
+   - อัปเดตข้อมูลแถว `TRK1793436354333_29` ในชีต RawTracker จริง: สถานะอัปเดตเป็น `มีตอนใหม่ (+1 ตอน)`, `Current: 73`, `Last Raw: 74`
+   - ทดสอบ `GET_RAW_TRACKER_PENDING_CHAPTERS` บน Live Web App: คืนค่าคิวงาน Tencent ตอนที่ 74 (`泥腿子`, CID: `154956`) ได้อย่างสมบูรณ์แบบ
+   - รัน Build Frontend (`npm --prefix frontend run build`) สำเร็จ 100% ไร้ข้อผิดพลาด
+
+---
+
 ### 🏆 ระบบตัวกรองขั้นตอนคิวงานแบบลำดับงานต่อเนื่อง (Sequential Step Filter) สำเร็จสมบูรณ์ 100% (5 พ.ย. 2569)
 
 #### 1. รายละเอียด Requirement:

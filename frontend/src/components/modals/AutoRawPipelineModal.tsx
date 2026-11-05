@@ -158,6 +158,14 @@ export function AutoRawPipelineModal({
     task: PendingChapterTask,
     taskIdx: number
   ): Promise<{ success: boolean; driveUrl?: string; error?: string }> => {
+    // 0. Guard for Tencent connector (requires LDPlayer / Frida emulator decryption)
+    if (task.connector === "tencent" || task.connector === "qq") {
+      return {
+        success: false,
+        error: "งาน Tencent มีระบบเข้ารหัสภาพเฉพาะ ต้องรันผ่าน RUN_TENCENT_PIPELINE.bat (1-Click Pipeline) หรือ python tools/tencent_ldplayer_pipeline.py บนเครื่อง",
+      }
+    }
+
     // 1. Fetch Chapter Images from GAS
     setTasks((prev) =>
       prev.map((t, idx) =>
@@ -675,6 +683,21 @@ export function AutoRawPipelineModal({
                             >
                               <FolderOpen className="h-3 w-3" /> เปิด Google Drive
                             </a>
+                          )}
+                          {(task.connector === "tencent" || task.connector === "qq") && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                navigator.clipboard.writeText(`python tools/tencent_ldplayer_pipeline.py --comic-id ${task.comicId} --chapter ${task.chapterNum}`)
+                                toast.success("📋 คัดลอกคำสั่งรัน Tencent Pipeline เรียบร้อย!")
+                              }}
+                              className="h-5 text-[10px] px-2 py-0 border-cyan-500/40 text-cyan-300 hover:bg-cyan-950/40"
+                              title="คัดลอกคำสั่งรันผ่าน LDPlayer บนเครื่อง"
+                            >
+                              คัดลอกคำสั่งรัน LDPlayer
+                            </Button>
                           )}
                         </div>
                       </div>

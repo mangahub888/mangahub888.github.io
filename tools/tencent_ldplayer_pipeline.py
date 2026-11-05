@@ -998,6 +998,11 @@ def fetch_tencent_chapter_list(comic_id: str) -> tuple:
 
     chapters = []
     seen_cids = set()
+    notice_regex = re.compile(
+        r"^(?:预告|序章?|公告|停更|休刊|通知|抽奖|活动|感言|调查|上线|定档|请假)$|^(?:\d{1,2}月\d{1,2}日.*上线)",
+        re.IGNORECASE
+    )
+    story_seq = 0
 
     for m in pattern.finditer(block):
         cid = m.group(1)
@@ -1012,16 +1017,30 @@ def fetch_tencent_chapter_list(comic_id: str) -> tuple:
 
         seen_cids.add(cid)
 
-        # Extract numeric chapter number (e.g. 第22话 -> 22, 22 -> 22, 序章 -> 0)
+        # 1. Check if notice / preview / prologue
+        is_notice = bool(notice_regex.search(clean_text)) or ("序" in clean_text) or ("预告" in clean_text)
+
+        # 2. Extract numeric chapter number (e.g. 第22话 -> 22, 43 背景 -> 43)
         num_m = re.search(r"第\s*(\d+(?:\.\d+)?)\s*[话話集回]", clean_text)
         if not num_m:
-            num_m = re.search(r"(\d+(?:\.\d+)?)", clean_text)
+            num_m = re.search(r"^(?:第)?\s*(\d+(?:\.\d+)?)\b", clean_text)
+            if num_m:
+                val = float(num_m.group(1))
+                if 1900 <= val <= 2100:  # ignore year
+                    num_m = None
 
         ch_num = None
         if num_m:
-            ch_num = num_m.group(1)
-        elif "序" in clean_text:
+            ch_num = str(num_m.group(1))
+            try:
+                story_seq = int(float(ch_num))
+            except Exception:
+                story_seq += 1
+        elif is_notice:
             ch_num = "0"
+        else:
+            story_seq += 1
+            ch_num = str(story_seq)
 
         seq_no = str(len(chapters) + 1)
         chapters.append({

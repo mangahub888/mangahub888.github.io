@@ -3164,6 +3164,34 @@ function getRawTrackerList() {
   }
 }
 
+/**
+ * สกัดเลขตอนที่เป็นตัวเลขจากข้อความชื่อตอน (เช่น 第783话, 43 背景, Chapter 25)
+ * คืนค่าเป็นตัวเลข (float) หรือ null หากไม่มีตัวเลข
+ */
+function extractChapterNumberFromTitle(title) {
+  if (!title || typeof title !== 'string') return null;
+  const t = title.trim();
+  // 1. 第X话 / 第X集 / 第X回
+  const m1 = t.match(/第\s*(\d+(?:\.\d+)?)\s*[话話集回]/);
+  if (m1) return parseFloat(m1[1]);
+
+  // 2. Leading number e.g. "43 背景", "1 相遇", "04 苦战"
+  const m2 = t.match(/^(?:第)?\s*(\d+(?:\.\d+)?)\b/);
+  if (m2) {
+    const val = parseFloat(m2[1]);
+    if (!(val >= 1900 && val <= 2100)) return val;
+  }
+
+  // 3. Chapter / Ch. / Ep. / 话 / ตอนที่
+  const m3 = t.match(/(?:Chapter|Ch\.|Ep\.|话|集|回|ตอน(?:ที่)?)\s*(\d+(?:\.\d+)?)/i);
+  if (m3) {
+    const val = parseFloat(m3[1]);
+    if (!(val >= 1900 && val <= 2100)) return val;
+  }
+
+  return null;
+}
+
 function scrapeRawUrl(url, pattern) {
   if (!url || typeof url !== 'string' || !url.trim().startsWith('http')) {
     return { success: false, error: 'URL ไม่ถูกต้อง' };
@@ -3215,33 +3243,106 @@ function scrapeRawUrl(url, pattern) {
       }
     }
 
-    // 2. QQ Comic (ac.qq.com) pattern: 最新话：[第277话 哪个才是真的？]2026.10.30
+    // 2. QQ Comic (ac.qq.com) pattern: 最新话：[第277话 哪个才是真的？]2026.10.30 or [亚索]2026.10.30
     // Matches exact HTML structure: <li><span class="ui-font-fb">最新话：</span><a class="works-ft-new" ...>[第277话 哪个才是真的？]</a><span class="ui-pl10 ui-text-gray6">2026.10.30</span></li>
     if (!matchedText && (cleanUrl.indexOf('ac.qq.com') !== -1 || html.indexOf('最新话') !== -1)) {
+      let innerTitle = '';
+      let dateStr = '';
+
       const qqLiMatch = html.match(/<li[^>]*>(?:(?!<\/li>)[\s\S])*?最新话(?:(?!<\/li>)[\s\S])*?<\/li>/i);
       if (qqLiMatch) {
         const rawLi = qqLiMatch[0];
         const titleMatch = rawLi.match(/\[([^\]]+)\]/);
         const dateMatch = rawLi.match(/(\d{4}[.\-/]\d{1,2}[.\-/]\d{1,2})/);
         if (titleMatch) {
-          const innerTitle = titleMatch[1].trim();
-          const dateStr = dateMatch ? dateMatch[1].trim() : '';
-          matchedText = '最新话：[' + innerTitle + ']' + (dateStr ? dateStr : '');
-          const chapNumMatch = innerTitle.match(/(?:第)?\s*(\d+(?:\.\d+)?)\s*(?:话|集)?/);
-          if (chapNumMatch) {
-            chapterCount = parseFloat(chapNumMatch[1]);
-          }
+          innerTitle = titleMatch[1].trim();
+          dateStr = dateMatch ? dateMatch[1].trim() : '';
         }
       } else {
         const rawQqMatch = html.match(/最新话[：:][\s\S]*?\[([^\]]+)\](?:[\s\S]*?(\d{4}[.\-/]\d{1,2}[.\-/]\d{1,2}))?/);
         if (rawQqMatch) {
-          const innerTitle = rawQqMatch[1].trim();
-          const dateStr = rawQqMatch[2] ? rawQqMatch[2].trim() : '';
-          matchedText = '最新话：[' + innerTitle + ']' + (dateStr ? dateStr : '');
-          const chapNumMatch = innerTitle.match(/(?:第)?\s*(\d+(?:\.\d+)?)\s*(?:话|集)?/);
-          if (chapNumMatch) {
-            chapterCount = parseFloat(chapNumMatch[1]);
+          innerTitle = rawQqMatch[1].trim();
+          dateStr = rawQqMatch[2] ? rawQqMatch[2].trim() : '';
+        }
+      }
+
+      if (innerTitle) {
+        matchedText = '最新话：[' + innerTitle + ']' + (dateStr ? dateStr : '');
+        const numFromTitle = extractChapterNumberFromTitle(innerTitle);
+        if (numFromTitle !== null && !isNaN(numFromTitle)) {
+          chapterCount = numFromTitle;
+        }
+      }
+
+      // If chapterCount is 0 (or innerTitle had no chapter number), parse Table of Contents from HTML
+      const pos = html.indexOf('chapter-page-all');
+      let block = '';
+      if (pos !== -1) {
+        const endOl = html.indexOf('</ol>', pos);
+        block = endOl !== -1 ? html.substring(pos, endOl) : html.substring(pos);
+      } else {
+        const chStart = html.indexOf('id="chapter"');
+        if (chStart !== -1) {
+          const endDiv = html.indexOf('</div>', chStart);
+          block = endDiv !== -1 ? html.substring(chStart, endDiv) : html.substring(chStart);
+        }
+      }
+
+      const items = [];
+      if (block) {
+        const cidRegex = /\/ComicView\/index\/id\/\d+\/cid\/(\d+)[^>]*>([\s\S]*?)<\/a>/gi;
+        const seenCids = {};
+        let m;
+        while ((m = cidRegex.exec(block)) !== null) {
+          const cid = m[1];
+          if (seenCids[cid]) continue;
+          seenCids[cid] = true;
+          const cleanTxt = m[2].replace(/<[^>]+>/g, '').trim().replace(/\s+/g, ' ');
+          if (!cleanTxt || cleanTxt === '开始阅读' || cleanTxt === '日月同错') continue;
+          items.push({ cid: cid, title: cleanTxt });
+        }
+      }
+
+      if (!matchedText && items.length > 0) {
+        innerTitle = items[items.length - 1].title;
+        matchedText = '最新话：[' + innerTitle + ']';
+        const numFromLast = extractChapterNumberFromTitle(innerTitle);
+        if (numFromLast !== null && !isNaN(numFromLast)) {
+          chapterCount = numFromLast;
+        }
+      }
+
+      // If chapterCount is still 0, analyze the chapter list
+      if (chapterCount === 0 && items.length > 0) {
+        let lastNumberedIdx = -1;
+        let lastNumberedVal = 0;
+        for (let idx = items.length - 1; idx >= 0; idx--) {
+          const n = extractChapterNumberFromTitle(items[idx].title);
+          if (n !== null && !isNaN(n)) {
+            lastNumberedIdx = idx;
+            lastNumberedVal = n;
+            break;
           }
+        }
+
+        if (lastNumberedIdx !== -1) {
+          const distance = (items.length - 1) - lastNumberedIdx;
+          const isNotice = /公告|停更|休刊|通知|抽奖|活动|感言|调查|上线|定档|请假/.test(innerTitle || items[items.length - 1].title);
+          if (isNotice) {
+            chapterCount = lastNumberedVal;
+          } else {
+            chapterCount = lastNumberedVal + distance;
+          }
+        } else {
+          // Entire comic has unnumbered chapters (e.g. 656779)
+          const noticePattern = /^(?:预告|序章?|公告|停更|休刊|通知|抽奖|活动|感言|调查|上线|定档|请假)$|^(?:\d{1,2}月\d{1,2}日.*上线)/;
+          let storyCount = 0;
+          for (let i = 0; i < items.length; i++) {
+            if (!noticePattern.test(items[i].title)) {
+              storyCount++;
+            }
+          }
+          chapterCount = storyCount > 0 ? storyCount : items.length;
         }
       }
     }
@@ -3311,6 +3412,14 @@ function scrapeRawUrl(url, pattern) {
 
     if (isNaN(chapterCount) || !isFinite(chapterCount) || chapterCount < 0) {
       chapterCount = 0;
+    }
+
+    // Safety net: If matchedText exists but chapterCount is 0, attempt fallback extract from matchedText
+    if (chapterCount === 0 && matchedText) {
+      const fallbackNum = extractChapterNumberFromTitle(matchedText);
+      if (fallbackNum !== null && !isNaN(fallbackNum) && fallbackNum > 0) {
+        chapterCount = fallbackNum;
+      }
     }
 
     return {
@@ -4291,6 +4400,95 @@ function getRawTrackerPendingChapters(targetTrackerId) {
             });
           } catch (fetchErr) {
             console.error('Error fetching KuaiKan topic ' + topicId + ':', fetchErr);
+          }
+        }
+      } else if (url.indexOf('ac.qq.com') !== -1 || url.indexOf('qq.com') !== -1) {
+        const comicMatch = url.match(/\/id\/(\d+)/i);
+        if (comicMatch) {
+          const comicId = comicMatch[1];
+          const infoUrl = 'https://ac.qq.com/Comic/comicInfo/id/' + comicId;
+          try {
+            const resp = UrlFetchApp.fetch(infoUrl, {
+              method: 'get',
+              muteHttpExceptions: true,
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+              }
+            });
+            const html = resp.getContentText('UTF-8') || resp.getContentText();
+            const pos = html.indexOf('chapter-page-all');
+            let block = '';
+            if (pos !== -1) {
+              const endOl = html.indexOf('</ol>', pos);
+              block = endOl !== -1 ? html.substring(pos, endOl) : html.substring(pos);
+            } else {
+              const chStart = html.indexOf('id="chapter"');
+              if (chStart !== -1) {
+                const endDiv = html.indexOf('</div>', chStart);
+                block = endDiv !== -1 ? html.substring(chStart, endDiv) : html.substring(chStart);
+              }
+            }
+
+            if (block) {
+              const cidRegex = /\/ComicView\/index\/id\/\d+\/cid\/(\d+)[^>]*>([\s\S]*?)<\/a>/gi;
+              const chapterMatches = [];
+              const seenCids = {};
+              const noticeRegex = /^(?:预告|序章?|公告|停更|休刊|通知|抽奖|活动|感言|调查|上线|定档|请假)$|^(?:\d{1,2}月\d{1,2}日.*上线)/;
+              let storySeq = 0;
+              let m;
+
+              while ((m = cidRegex.exec(block)) !== null) {
+                const cid = m[1];
+                if (seenCids[cid]) continue;
+                seenCids[cid] = true;
+
+                const cleanTitle = m[2].replace(/<[^>]+>/g, '').trim().replace(/\s+/g, ' ');
+                if (!cleanTitle || cleanTitle === '开始阅读' || cleanTitle === '日月同错') continue;
+
+                const isNotice = noticeRegex.test(cleanTitle) || cleanTitle.indexOf('序') !== -1 || cleanTitle.indexOf('预告') !== -1;
+
+                let cNum = extractChapterNumberFromTitle(cleanTitle);
+                if (cNum !== null && !isNaN(cNum)) {
+                  storySeq = Math.floor(cNum);
+                } else if (isNotice) {
+                  cNum = 0;
+                } else {
+                  storySeq++;
+                  cNum = storySeq;
+                }
+
+                if (cNum > 0) {
+                  chapterMatches.push({
+                    cid: cid,
+                    chapterTitle: cleanTitle,
+                    chapterNum: cNum
+                  });
+                }
+              }
+
+              chapterMatches.sort(function(a, b) { return a.chapterNum - b.chapterNum; });
+
+              chapterMatches.forEach(function(chap) {
+                const cStr = String(chap.chapterNum);
+                const mQueued = queuedChaptersByManga[String(item.mangaid)];
+                const isAlreadyQueued = mQueued && (mQueued.has(cStr) || mQueued.has(String(Math.floor(chap.chapterNum))));
+                if (chap.chapterNum > currentChap && !isAlreadyQueued) {
+                  pendingTasks.push({
+                    trackerId: item.trackerid,
+                    mangaId: item.mangaid,
+                    mangaName: item.manganame || (manga ? manga.manganame : ''),
+                    comicId: comicId,
+                    cid: chap.cid,
+                    chapterNum: chap.chapterNum,
+                    chapterTitle: chap.chapterTitle,
+                    sourceUrl: item.url,
+                    connector: 'tencent'
+                  });
+                }
+              });
+            }
+          } catch (tErr) {
+            console.error('Error fetching Tencent comic ' + comicId + ':', tErr);
           }
         }
       }
