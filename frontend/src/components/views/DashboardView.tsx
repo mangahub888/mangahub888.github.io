@@ -260,8 +260,9 @@ export function DashboardView({
   const dayZeroItems = calendarData.dayZeroItems
 
   const stepThaiNames: Record<string, string> = {
-    upload: "อัป Raw",
-    extract: "ดึงคำ",
+    upload: "1. อัป Raw",
+    ocr: "2. ดึงคำออโต้",
+    extract: "3. QC ดึงคำ",
     translate: "แปล",
     typeset: "ลงคำ",
     publish: "ตรวจ/ลงเว็บ",

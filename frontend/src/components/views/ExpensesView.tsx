@@ -618,7 +618,7 @@ export function ExpensesView({
               chapter: String(q.chapter),
               mangaName,
               step: "extract",
-              stepLabel: "ดึงคำ",
+              stepLabel: "QC ดึงคำ",
               date: taskDate,
               rate: rates.extractRate,
               count,
@@ -1205,7 +1205,7 @@ export function ExpensesView({
   // Doughnut Chart Data (by step)
   const stepChartData = React.useMemo(() => {
     return {
-      labels: ["แปล", "ลงคำ", "ดึงคำ", "อัป Raw", "Support (KIKKUK)"],
+      labels: ["แปล", "ลงคำ", "QC ดึงคำ", "อัป Raw", "Support (KIKKUK)"],
       datasets: [
         {
           data: [
@@ -1262,7 +1262,7 @@ export function ExpensesView({
       text += `${idx + 1}. 👤 ${m.name}: ${m.totalCost.toLocaleString()} บาท\n`
       const details: string[] = []
       if (m.uploadCost > 0) details.push(`Raw ${m.uploadChapters} ตอน (${m.uploadCost.toLocaleString()}บ.)`)
-      if (m.extractCost > 0) details.push(`ดึงคำ ${m.extractChapters} ตอน (${m.extractCost.toLocaleString()}บ.)`)
+      if (m.extractCost > 0) details.push(`QC ดึงคำ ${m.extractChapters} ตอน (${m.extractCost.toLocaleString()}บ.)`)
       if (m.translateCost > 0) details.push(`แปล ${m.translateChapters} ตอน (${m.translateCost.toLocaleString()}บ.)`)
       if (m.typesetCost > 0) details.push(`ลงคำ ${m.typesetChapters} ตอน (${m.typesetCost.toLocaleString()}บ.)`)
       if (m.supportCost > 0) details.push(`Support (${m.supportCost.toLocaleString()}บ.)`)
@@ -1283,7 +1283,7 @@ export function ExpensesView({
 
   // Export CSV
   const handleExportCSV = () => {
-    let csv = "\uFEFFรายชื่อทีมงาน,อัป Raw (ตอน),อัป Raw (บาท),ดึงคำ (ตอน),ดึงคำ (บาท),แปล (ตอน),แปล (บาท),ลงคำ (ตอน),ลงคำ (บาท),Support (บาท),ยอดสุทธิ (บาท)\n"
+    let csv = "\uFEFFรายชื่อทีมงาน,อัป Raw (ตอน),อัป Raw (บาท),QC ดึงคำ (ตอน),QC ดึงคำ (บาท),แปล (ตอน),แปล (บาท),ลงคำ (ตอน),ลงคำ (บาท),Support (บาท),ยอดสุทธิ (บาท)\n"
     memberPayrolls.forEach((m) => {
       csv += `"${m.name}",${m.uploadChapters},${m.uploadCost},${m.extractChapters},${m.extractCost},${m.translateChapters},${m.translateCost},${m.typesetChapters},${m.typesetCost},${m.supportCost},${m.totalCost}\n`
     })
@@ -1566,7 +1566,7 @@ export function ExpensesView({
               อัป Raw: {rates.uploadRate}บ.
             </Badge>
             <Badge variant="outline" className="bg-[#151d2f] text-slate-300 border-[#26334d]">
-              ดึงคำ: {rates.extractRate}บ.
+              QC ดึงคำ: {rates.extractRate}บ.
             </Badge>
             <Badge variant="outline" className="bg-[#151d2f] text-pink-300 border-pink-500/30">
               แปล: {rates.translateSpecialName} {rates.translateSpecialRate}บ. / ทั่วไป {rates.translateNormalRate}บ.
@@ -1644,7 +1644,7 @@ export function ExpensesView({
         <Card className="p-5 border-indigo-500/30 bg-gradient-to-br from-[#111726] to-[#141530]">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
-              🛠️ Raw + ดึงคำ + Support
+              🛠️ Raw + QC ดึงคำ + Support
             </span>
             <div className="rounded-lg bg-indigo-500/20 p-2 text-indigo-400">
               <Users className="h-5 w-5" />
@@ -1659,7 +1659,7 @@ export function ExpensesView({
             <span className="text-sm font-normal text-slate-400">บาท</span>
           </div>
           <p className="mt-1 text-xs text-slate-400">
-            Raw: {grandTotals.totalUploadCost.toLocaleString()}บ. | ดึงคำ: {grandTotals.totalExtractCost.toLocaleString()}บ.
+            Raw: {grandTotals.totalUploadCost.toLocaleString()}บ. | QC ดึงคำ: {grandTotals.totalExtractCost.toLocaleString()}บ.
           </p>
         </Card>
       </div>
@@ -1789,7 +1789,7 @@ export function ExpensesView({
                 <TableHead className="w-12 text-center">#</TableHead>
                 <TableHead className="min-w-[160px]">รายชื่อทีมงาน</TableHead>
                 <TableHead className="text-right">อัป Raw</TableHead>
-                <TableHead className="text-right">ดึงคำ</TableHead>
+                <TableHead className="text-right">QC ดึงคำ</TableHead>
                 <TableHead className="text-right">แปล</TableHead>
                 <TableHead className="text-right">ลงคำ</TableHead>
                 <TableHead className="text-right">Support</TableHead>
@@ -2029,7 +2029,7 @@ export function ExpensesView({
               <TableRow className="bg-[#0b1120] hover:bg-[#0b1120]">
                 <TableHead>เรื่อง / ตอน</TableHead>
                 <TableHead>อัป Raw</TableHead>
-                <TableHead>ดึงคำ</TableHead>
+                <TableHead>QC ดึงคำ</TableHead>
                 <TableHead>แปล</TableHead>
                 <TableHead>ลงคำ</TableHead>
                 <TableHead className="text-right font-bold text-emerald-400">
@@ -2374,7 +2374,7 @@ export function ExpensesView({
                             <TableRow className="border-[#26334d]">
                               <TableHead className="text-xs text-slate-300 font-semibold">พนักงาน</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">อัป Raw</TableHead>
-                              <TableHead className="text-xs text-slate-300 text-center">ดึงคำ</TableHead>
+                              <TableHead className="text-xs text-slate-300 text-center">QC ดึงคำ</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">แปล</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">ลงคำ (จีน)</TableHead>
                               <TableHead className="text-xs text-slate-300 text-center">ลงคำ (เกาหลี)</TableHead>
@@ -3056,7 +3056,7 @@ export function ExpensesView({
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs">ดึงคำ (บาท/ตอน)</Label>
+                <Label className="text-xs">QC ดึงคำ (บาท/ตอน)</Label>
                 <Input
                   type="number"
                   value={tempRates.extractRate}
