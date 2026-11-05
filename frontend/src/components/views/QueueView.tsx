@@ -460,7 +460,7 @@ export function QueueView({
               color: "text-indigo-400",
             },
             {
-              label: "รอดึงคำ",
+              label: "รอ QC ดึงคำ",
               val: queueStats.waitExtract,
               icon: "📝",
               color: "text-orange-400",
@@ -652,7 +652,7 @@ export function QueueView({
             <option value="all">ขั้นตอน: ทั้งหมด</option>
             <option value="publish_post">เฉพาะ 2 สเตป: รอ Publish & รอโพสต์ ({publishPostCount} ตอน)</option>
             <option value="upload">รอ/ทำ: อัป Raw</option>
-            <option value="extract">รอ/ทำ: ดึงคำ</option>
+            <option value="extract">รอ/ทำ: QC ดึงคำ</option>
             <option value="translate">รอ/ทำ: แปล</option>
             <option value="typeset">รอ/ทำ: ลงคำ</option>
             <option value="publish">รอ/ทำ: Publish</option>
@@ -749,7 +749,7 @@ export function QueueView({
               <option value="publish">📤 Publisher</option>
               <option value="typeset">✍️ ลงคำ</option>
               <option value="translate">🌐 แปล</option>
-              <option value="extract">📝 ดึงคำ</option>
+              <option value="extract">📝 QC ดึงคำ</option>
               <option value="upload">🔼 อัป Raw</option>
             </select>
 
@@ -809,7 +809,7 @@ export function QueueView({
               </TableHead>
               <TableHead>วันที่ / เรื่อง</TableHead>
               <TableHead>อัป Raw</TableHead>
-              <TableHead>ดึงคำ</TableHead>
+              <TableHead>QC ดึงคำ</TableHead>
               <TableHead>แปล</TableHead>
               <TableHead>ลงคำ</TableHead>
               <TableHead>Publisher</TableHead>

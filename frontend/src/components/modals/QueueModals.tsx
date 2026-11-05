@@ -44,7 +44,7 @@ export function AddQueueModal({
   const [costPerChapter, setCostPerChapter] = React.useState<string | number>(0)
   const [uploaderName, setUploaderName] = React.useState("")
   const [rawLinkInput, setRawLinkInput] = React.useState("")
-  const [extractorName, setExtractorName] = React.useState("")
+  const [extractorName, setExtractorName] = React.useState("kikkuk")
   const [extractLinkInput, setExtractLinkInput] = React.useState("")
   const [translatorName, setTranslatorName] = React.useState("")
   const [typesetterName, setTypesetterName] = React.useState("")
@@ -61,7 +61,7 @@ export function AddQueueModal({
         setCostPerChapter(0)
         setUploaderName("")
         setRawLinkInput("")
-        setExtractorName("")
+        setExtractorName("kikkuk")
         setExtractLinkInput("")
         setTranslatorName("")
         setTypesetterName("")
@@ -158,8 +158,8 @@ export function AddQueueModal({
         chapter: chapter.trim(),
         uploadstatus: "รอเริ่ม",
         uploadername: uploaderName,
-        extractstatus: needsExtract ? "รอเริ่ม" : "skip",
-        extractorname: extractorName,
+        extractstatus: "รอเริ่ม",
+        extractorname: extractorName || "kikkuk",
         translatestatus: "รอเริ่ม",
         translatorname: translatorName,
         typesetstatus: "รอเริ่ม",
@@ -253,7 +253,7 @@ export function AddQueueModal({
           </div>
 
           <div className="space-y-1.5">
-            <Label>📝 ผู้ดึงคำ (Extractor)</Label>
+            <Label>📝 QC ดึงคำ (kikkuk)</Label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <SearchableSelect
                 options={teamOptions}
@@ -381,7 +381,7 @@ export function UpdateQueueModal({
   const [rawLink, setRawLink] = React.useState("")
 
   const [extractStatus, setExtractStatus] = React.useState("รอเริ่ม")
-  const [extractorName, setExtractorName] = React.useState("")
+  const [extractorName, setExtractorName] = React.useState("kikkuk")
   const [extractLink, setExtractLink] = React.useState("")
 
   const [translateStatus, setTranslateStatus] = React.useState("รอเริ่ม")
@@ -578,7 +578,7 @@ export function UpdateQueueModal({
             {/* Extract */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start">
               <div className="space-y-1">
-                <Label>📝 ดึงคำ</Label>
+                <Label>📝 QC ดึงคำ</Label>
                 <select
                   className="flex h-10 w-full rounded-lg border border-[#26334d] bg-[#0b1120] px-3 py-2 text-sm text-slate-100"
                   value={extractStatus}
@@ -784,7 +784,7 @@ export function StepUpdateModal({
 
   const stepLabels: Record<string, string> = {
     upload: "🔼 อัปโหลด Raw",
-    extract: "📝 ดึงคำ (Extractor)",
+    extract: "📝 QC ดึงคำ (kikkuk)",
     translate: "🌐 แปล (Translator)",
     typeset: "✍️ ลงคำ (Typesetter)",
     publish: "📤 เผยแพร่ (Publisher)",

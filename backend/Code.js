@@ -1143,8 +1143,7 @@ function addQueue(queueData) {
         if (queueData.extractstatus && String(queueData.extractstatus).trim() !== '') {
           return queueData.extractstatus;
         }
-        const isExtractNeeded = manga && (manga.needsextract === true || String(manga.needsextract).toLowerCase() === 'true');
-        return isExtractNeeded ? 'รอเริ่ม' : 'skip';
+        return 'รอเริ่ม';
       }
       if (header === 'translatestatus') return queueData.translatestatus || 'รอเริ่ม';
       if (header === 'typesetstatus') return queueData.typesetstatus || 'รอเริ่ม';
@@ -1152,7 +1151,7 @@ function addQueue(queueData) {
       if (header === 'poststatus') return queueData.poststatus || 'รอเริ่ม';
 
       if (header === 'uploadername') return queueData.uploadername || '';
-      if (header === 'extractorname') return queueData.extractorname || '';
+      if (header === 'extractorname') return queueData.extractorname || 'kikkuk';
       if (header === 'translatorname') {
         if (queueData.translatorname) return queueData.translatorname;
         if (manga && manga.lockedtranslator) return manga.lockedtranslator;
@@ -4854,8 +4853,23 @@ function uploadChapterStitchedPart(payload) {
             uploadername: uploaderName,
             worklink: workLink,
             note: payload.note || ('KuaiKan VIP Concat รวมเป็น ' + totalParts + ' หน้า ลง แปลจนเมื่อย'),
-            extractstatus: defaultExtractStatus
+            extractstatus: 'รอเริ่ม',
+            extractorname: 'kikkuk'
           });
+        }
+
+        // Step 2: ดึงคำออโต้ (Trigger GitHub Actions Manga OCR Pipeline)
+        try {
+          const targetFolderId = targetFolder.getId();
+          console.log('Auto-triggering Step 2 (ดึงคำออโต้) for folder:', targetFolderId);
+          triggerMangaOcrWorkflow({
+            folderId: targetFolderId,
+            mangaName: thaiMangaName,
+            chapterNum: cleanChapter,
+            lang: 'ch'
+          });
+        } catch (ocrErr) {
+          console.warn('Auto-trigger OCR error in uploadChapterStitchedPart:', ocrErr);
         }
       } catch (qe) {
         console.warn('Auto add/update WorkQueue error in uploadChapterStitchedPart:', qe);
@@ -5034,8 +5048,23 @@ function downloadKuaikanChapterToDrive(payload) {
             uploadername: uploaderName,
             worklink: workLink,
             note: (payload && payload.note) || ('Auto KuaiKan VIP DL (ตอน: ' + (testRes ? testRes.title : chapter) + ') ลง แปลจนเมื่อย'),
-            extractstatus: defaultExtractStatus
+            extractstatus: 'รอเริ่ม',
+            extractorname: 'kikkuk'
           });
+        }
+
+        // Step 2: ดึงคำออโต้ (Trigger GitHub Actions Manga OCR Pipeline)
+        try {
+          const targetFolderId = targetFolder.getId();
+          console.log('Auto-triggering Step 2 (ดึงคำออโต้) for folder:', targetFolderId);
+          triggerMangaOcrWorkflow({
+            folderId: targetFolderId,
+            mangaName: thaiMangaName,
+            chapterNum: cleanChapter,
+            lang: 'ch'
+          });
+        } catch (ocrErr) {
+          console.warn('Auto-trigger OCR error in downloadKuaikanChapterToDrive:', ocrErr);
         }
       } catch (qe) {
         console.warn('Auto add/update Queue error in downloadKuaikanChapterToDrive:', qe);
