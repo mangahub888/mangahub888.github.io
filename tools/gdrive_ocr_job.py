@@ -584,11 +584,51 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
         return None
 
 
+def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", gas_url=None, passcode="10211032"):
+    """
+    Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' and attach .mtp link in WorkQueue.
+    """
+    import urllib.request
+    import json
+
+    gas_api_url = gas_url or "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
+    payload = {
+        "action": "COMPLETE_MANGA_OCR",
+        "passcode": passcode,
+        "payload": {
+            "folderId": folder_id,
+            "queueId": queue_id,
+            "chapter": chapter,
+            "mangaName": manga_name,
+            "mtpFileId": mtp_file_id
+        }
+    }
+    try:
+        req = urllib.request.Request(
+            gas_api_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"}
+        )
+        print(f"\n📡 [GAS Update] Notifying Google Apps Script to mark OCR as 'เสร็จแล้ว' (Queue: {queue_id or folder_id})...")
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            res = json.loads(resp.read().decode("utf-8"))
+            if res.get("status") == "success":
+                up = res.get("data", {}).get("updated", {})
+                print(f"   ✓ Successfully updated WorkQueue in Google Sheet! Chapter {up.get('chapter', chapter)} marked as OCR 'เสร็จแล้ว'!")
+            else:
+                print(f"   ⚠️ GAS response: {res}")
+    except Exception as e:
+        print(f"   ⚠️ Failed to notify GAS OCR completion: {e}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Manga OCR Pipeline (best.pt + PaddleOCR)")
     parser.add_argument("--folder-id", default="19P4c1nLybE1KshF-7HSbhfQPX2H60A54", help="Google Drive folder ID or URL")
     parser.add_argument("--manga-name", default="", help="Manga title")
     parser.add_argument("--chapter-num", default="", help="Chapter number")
+    parser.add_argument("--queue-id", default="", help="WorkQueue item ID to update status in Google Sheet")
+    parser.add_argument("--gas-url", default=None, help="GAS Web App exec URL")
+    parser.add_argument("--gas-passcode", default="10211032", help="GAS Passcode")
     parser.add_argument("--lang", default="ch", help="OCR Language code (ch, japan, korean, en)")
     parser.add_argument("--output-dir", default="./ocr_output", help="Output directory")
     parser.add_argument("--model-path", default=None, help="Path to best.pt text detection model")
@@ -699,11 +739,23 @@ def main():
     print("=================================================================")
 
     # 5. Upload .MTP directly into source Google Drive folder
+    uploaded_mtp_id = None
     if args.upload_to_source and drive_service:
         print("\n☁️ [Google Drive Upload] Uploading .mtp directly into source folder...")
-        upload_file_to_source_folder(drive_service, clean_folder_id, mtp_path)
+        uploaded_mtp_id = upload_file_to_source_folder(drive_service, clean_folder_id, mtp_path)
     elif not drive_service:
         print("\n⚠️ Google Drive service not initialized. File saved locally in ocr_output/")
+
+    # Notify GAS WorkQueue that OCR has finished
+    notify_gas_ocr_completed(
+        folder_id=clean_folder_id,
+        queue_id=args.queue_id,
+        chapter=args.chapter_num,
+        manga_name=args.manga_name,
+        mtp_file_id=uploaded_mtp_id or "",
+        gas_url=args.gas_url,
+        passcode=args.gas_passcode
+    )
 
     # 6. Cleanup local files if requested
     if args.cleanup:

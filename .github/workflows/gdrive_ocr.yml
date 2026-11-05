@@ -15,6 +15,10 @@ on:
         description: 'Chapter Number'
         required: false
         default: ''
+      queue_id:
+        description: 'WorkQueue Item ID'
+        required: false
+        default: ''
       lang:
         description: 'OCR Language (ch / japan / korean / en)'
         required: true
@@ -62,6 +66,7 @@ jobs:
             --folder-id "${{ github.event.inputs.folder_id }}" \
             --manga-name "${{ github.event.inputs.manga_name }}" \
             --chapter-num "${{ github.event.inputs.chapter_num }}" \
+            --queue-id "${{ github.event.inputs.queue_id }}" \
             --lang "${{ github.event.inputs.lang }}" \
             --google-access-token "${{ github.event.inputs.google_access_token }}" \
             --output-dir "./ocr_output" \

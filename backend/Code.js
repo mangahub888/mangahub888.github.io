@@ -369,6 +369,12 @@ function doPost(e) {
       case 'DELETE_MANGA_OCR_6H_TRIGGER':
         result = { message: deleteMangaOcr6HourTrigger() };
         break;
+      case 'COMPLETE_MANGA_OCR':
+        result = completeMangaOcr(payload);
+        break;
+      case 'SYNC_OCR_FROM_DRIVE':
+        result = syncOcrStatusFromDrive();
+        break;
       case 'GET_MANGA_OCR_STATUS':
         result = getMangaOcrStatus();
         break;
@@ -5900,6 +5906,7 @@ function triggerMangaOcrWorkflow(params) {
         folder_id: folderId,
         manga_name: mangaName,
         chapter_num: chapterNum,
+        queue_id: String(params.queueId || params.queue_id || ''),
         lang: lang,
         google_access_token: googleAccessToken
       }
@@ -5943,6 +5950,12 @@ function triggerMangaOcrWorkflow(params) {
 
 function scheduledMangaOcr6HourJob() {
   console.log('--- Executing scheduledMangaOcr6HourJob (GAS Scheduled Step 2 Trigger -> GitHub Actions) ---');
+  try {
+    syncOcrStatusFromDrive();
+  } catch (syncErr) {
+    console.warn('syncOcrStatusFromDrive pre-check warning:', syncErr);
+  }
+
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(15000);
@@ -5975,13 +5988,16 @@ function scheduledMangaOcr6HourJob() {
 
       // ตรวจสอบใน Google Drive ว่าโฟลเดอร์นี้มีไฟล์ .mtp หรือยัง
       let hasMtp = false;
+      let mtpFileId = '';
       try {
         const folder = DriveApp.getFolderById(folderId);
         const files = folder.getFiles();
         while (files.hasNext()) {
-          const fn = files.next().getName().toLowerCase();
+          const f = files.next();
+          const fn = f.getName().toLowerCase();
           if (fn.endsWith('.mtp')) {
             hasMtp = true;
+            mtpFileId = f.getId();
             break;
           }
         }
@@ -5990,7 +6006,12 @@ function scheduledMangaOcr6HourJob() {
       }
 
       if (hasMtp) {
-        console.log('โฟลเดอร์ ' + folderId + ' มีไฟล์ .mtp เรียบร้อยแล้ว (ข้ามการทำ OCR)');
+        console.log('โฟลเดอร์ ' + folderId + ' มีไฟล์ .mtp เรียบร้อยแล้ว (อัปเดต ocrstatus เป็นเสร็จแล้ว)');
+        completeMangaOcr({
+          folderId: folderId,
+          queueId: item.queueid,
+          mtpFileId: mtpFileId
+        });
         continue;
       }
 
@@ -6000,6 +6021,7 @@ function scheduledMangaOcr6HourJob() {
 
       console.log('🚀 สั่งรันสเต็ป 2 (ดึงคำออโต้) ไปยัง GitHub Actions:', mangaTitle, 'ตอนที่', cleanChapter, 'Folder:', folderId);
       const res = triggerMangaOcrWorkflow({
+        queueId: item.queueid,
         folderId: folderId,
         mangaName: mangaTitle,
         chapterNum: cleanChapter,
@@ -6973,6 +6995,161 @@ function batchSetPratchayaOcrAndExtractToSkip() {
     return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
   } catch (err) {
     console.error('batchSetPratchayaOcrAndExtractToSkip error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
+ * บันทึกสถานะดึงคำออโต้ (Step 2 OCR) เป็น 'เสร็จแล้ว' เมื่อ GitHub Actions รันเสร็จสิ้น
+ */
+function completeMangaOcr(payload) {
+  payload = payload || {};
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { error: 'No queue data' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const ocrStatusCol = headers.indexOf('ocrstatus') + 1;
+    const ocrTimeCol = headers.indexOf('ocrtime') + 1;
+    const ocrNameCol = headers.indexOf('ocrname') + 1;
+    const workLinkCol = headers.indexOf('worklink') + 1;
+    const folderId = String(payload.folderId || payload.folder_id || '').trim();
+    const queueId = String(payload.queueId || payload.queue_id || '').trim();
+    const mtpFileId = String(payload.mtpFileId || payload.mtp_file_id || '').trim();
+    const now = new Date();
+
+    let updatedRow = null;
+
+    for (let i = 1; i < data.length; i++) {
+      const rowId = String(data[i][0]).trim();
+      const rowLink = String(data[i][workLinkCol - 1] || '');
+
+      const isMatch = (queueId && rowId === queueId) ||
+                      (folderId && rowLink.includes(folderId));
+
+      if (isMatch) {
+        const rowNum = i + 1;
+        if (ocrStatusCol > 0) {
+          sheet.getRange(rowNum, ocrStatusCol).setValue('เสร็จแล้ว');
+        }
+        if (ocrTimeCol > 0) {
+          sheet.getRange(rowNum, ocrTimeCol).setValue(now);
+        }
+        if (ocrNameCol > 0) {
+          sheet.getRange(rowNum, ocrNameCol).setValue('GitHub Actions (Auto OCR)');
+        }
+
+        if (mtpFileId && workLinkCol > 0) {
+          const mtpUrl = 'https://drive.google.com/file/d/' + mtpFileId + '/view?usp=sharing';
+          if (!rowLink.includes(mtpFileId)) {
+            const newLink = rowLink + (rowLink ? '\n' : '') + '[mtp] ' + mtpUrl;
+            sheet.getRange(rowNum, workLinkCol).setValue(newLink);
+          }
+        }
+
+        updatedRow = {
+          rowNum: rowNum,
+          queueId: rowId,
+          chapter: data[i][headers.indexOf('chapter')]
+        };
+        break;
+      }
+    }
+
+    if (updatedRow) {
+      console.log('completeMangaOcr: Marked queue ' + updatedRow.queueId + ' (Chapter ' + updatedRow.chapter + ') as OCR completed');
+      return { success: true, updated: updatedRow };
+    } else {
+      console.warn('completeMangaOcr: Could not find matching queue item for folderId=' + folderId + ', queueId=' + queueId);
+      return { success: false, message: 'Queue item not found' };
+    }
+  } catch (err) {
+    console.error('completeMangaOcr error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * สแกน Google Drive สำหรับตอนที่มีไฟล์ .mtp อยู่แล้ว และอัปเดตเข้า WorkQueue ว่าเสร็จแล้วทันที
+ */
+function syncOcrStatusFromDrive() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(60000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { count: 0, message: 'No data' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const ocrStatusCol = headers.indexOf('ocrstatus') + 1;
+    const ocrTimeCol = headers.indexOf('ocrtime') + 1;
+    const ocrNameCol = headers.indexOf('ocrname') + 1;
+    const workLinkCol = headers.indexOf('worklink') + 1;
+    const upIdx = headers.indexOf('uploadstatus');
+    const ocrIdx = headers.indexOf('ocrstatus');
+    const now = new Date();
+
+    const updated = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const up = String(data[i][upIdx] || '').trim();
+      const ocr = String(data[i][ocrIdx] || '').trim().toLowerCase();
+      const workLink = String(data[i][workLinkCol - 1] || '');
+
+      if (up === 'เสร็จแล้ว' && ocr !== 'เสร็จแล้ว' && ocr !== 'skip') {
+        const match = workLink.match(/folders\/([a-zA-Z0-9_-]+)/);
+        if (!match) continue;
+        const folderId = match[1];
+
+        let hasMtp = false;
+        let mtpFileId = '';
+        try {
+          const folder = DriveApp.getFolderById(folderId);
+          const files = folder.getFiles();
+          while (files.hasNext()) {
+            const f = files.next();
+            const fn = f.getName().toLowerCase();
+            if (fn.endsWith('.mtp')) {
+              hasMtp = true;
+              mtpFileId = f.getId();
+              break;
+            }
+          }
+        } catch (e) {
+          continue;
+        }
+
+        if (hasMtp) {
+          const rowNum = i + 1;
+          if (ocrStatusCol > 0) sheet.getRange(rowNum, ocrStatusCol).setValue('เสร็จแล้ว');
+          if (ocrTimeCol > 0) sheet.getRange(rowNum, ocrTimeCol).setValue(now);
+          if (ocrNameCol > 0) sheet.getRange(rowNum, ocrNameCol).setValue('GitHub Actions (Auto OCR)');
+
+          if (mtpFileId && workLinkCol > 0 && !workLink.includes(mtpFileId)) {
+            const mtpUrl = 'https://drive.google.com/file/d/' + mtpFileId + '/view?usp=sharing';
+            sheet.getRange(rowNum, workLinkCol).setValue(workLink + '\n[mtp] ' + mtpUrl);
+          }
+
+          updated.push({
+            queueId: data[i][0],
+            chapter: data[i][headers.indexOf('chapter')],
+            folderId: folderId
+          });
+        }
+      }
+    }
+
+    return { success: true, updatedCount: updated.length, updated: updated };
+  } catch (err) {
+    console.error('syncOcrStatusFromDrive error:', err);
     return { error: err.toString() };
   } finally {
     lock.releaseLock();
