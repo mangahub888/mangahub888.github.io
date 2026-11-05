@@ -6,10 +6,13 @@ export function GitHubActionsHeaderBadge() {
   const {
     isAnyRunning,
     isKuaikanRunning,
+    isMangaOcrRunning,
     activeKuaikanRun,
+    activeMangaOcrRun,
     latestActiveRun,
     latestKuaikanRun,
     latestRawTrackerRun,
+    latestMangaOcrRun,
   } = useGitHubActionsStatus()
 
   // 1. If KuaiKan Auto-Purchaser is currently running
@@ -28,6 +31,27 @@ export function GitHubActionsHeaderBadge() {
         </span>
         <RefreshCw className="h-3 w-3 animate-spin text-emerald-300" />
         <span>GitAction: กำลังรัน (KuaiKan)</span>
+        <ExternalLink className="h-3 w-3 opacity-70" />
+      </a>
+    )
+  }
+
+  // 1.1 If Manga OCR is currently running
+  if (isMangaOcrRunning && activeMangaOcrRun) {
+    return (
+      <a
+        href={activeMangaOcrRun.html_url}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 text-xs font-bold shadow-md shadow-cyan-500/10 animate-pulse transition-all cursor-pointer"
+        title={`GitHub Actions: ดึงคำออโต้ (Manga OCR) กำลังรันอยู่ (Run #${activeMangaOcrRun.run_number}) • คลิกเพื่อดู Log สด`}
+      >
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+        </span>
+        <RefreshCw className="h-3 w-3 animate-spin text-cyan-300" />
+        <span>GitAction: กำลังดึงคำ AI (#{activeMangaOcrRun.run_number})</span>
         <ExternalLink className="h-3 w-3 opacity-70" />
       </a>
     )
@@ -63,7 +87,7 @@ export function GitHubActionsHeaderBadge() {
   }
 
   // 3. Standby State (Idle)
-  const mostRecentRun = [latestRawTrackerRun, latestKuaikanRun]
+  const mostRecentRun = [latestMangaOcrRun, latestRawTrackerRun, latestKuaikanRun]
     .filter(Boolean)
     .sort((a, b) => new Date(b!.created_at).getTime() - new Date(a!.created_at).getTime())[0]
 

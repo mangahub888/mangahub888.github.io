@@ -27,6 +27,7 @@ import {
 } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
+import { AutoOcrStatusBanner } from "@/components/ui/AutoOcrStatusBanner"
 import { toast } from "sonner"
 import {
   Plus,
@@ -78,6 +79,15 @@ export function QueueView({
   const [assigneeFilter, setAssigneeFilter] = React.useState("all")
   const [showPublishPost, setShowPublishPost] = React.useState(false)
   const { isAnyRunning, isKuaikanRunning, latestActiveRun } = useGitHubActionsStatus()
+
+  const handleOcrQueueRefresh = async () => {
+    try {
+      const res = await callGasApi("GET_WORK_QUEUE", { forceRefresh: true })
+      if (res) onQueueChange(Array.isArray(res) ? res : res.data || res.queue || [])
+    } catch (e) {
+      console.warn("Failed to refresh queue:", e)
+    }
+  }
 
   // Bulk Action state
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())
@@ -517,6 +527,9 @@ export function QueueView({
           ))}
         </div>
       </div>
+
+      {/* GAS + GitHub Actions Auto OCR Status Banner */}
+      <AutoOcrStatusBanner onQueueRefresh={handleOcrQueueRefresh} />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#26334d] pt-5">

@@ -6029,6 +6029,7 @@ function deleteMangaOcr6HourTrigger() {
 
 function getMangaOcrStatus() {
   let lastTrigger = null;
+  let lastBatch = null;
   let is6HourTriggerActive = false;
 
   try {
@@ -6037,14 +6038,61 @@ function getMangaOcrStatus() {
   } catch (e) {}
 
   try {
+    const rawBatch = PropertiesService.getScriptProperties().getProperty('MANGA_OCR_SCHEDULED_BATCH_LATEST');
+    if (rawBatch) lastBatch = JSON.parse(rawBatch);
+  } catch (e) {}
+
+  try {
     const triggers = ScriptApp.getProjectTriggers();
     is6HourTriggerActive = triggers.some(t => t.getHandlerFunction() === 'scheduledMangaOcr6HourJob');
+  } catch (e) {}
+
+  let pendingCount = 0;
+  let skippedCount = 0;
+  let doneCount = 0;
+  let totalTasks = 0;
+
+  try {
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length > 1) {
+      totalTasks = data.length - 1;
+      const headers = data[0].map(h => h.toString().toLowerCase().trim());
+      const upIdx = headers.indexOf('uploadstatus');
+      const exIdx = headers.indexOf('extractstatus');
+      const ocrIdx = headers.indexOf('ocrstatus');
+      const extNameIdx = headers.indexOf('extractorname');
+
+      for (let i = 1; i < data.length; i++) {
+        const up = String(data[i][upIdx] || '').trim();
+        const ex = String(data[i][exIdx] || '').trim();
+        const ocr = String(data[i][ocrIdx] || '').trim().toLowerCase();
+        const ext = String(data[i][extNameIdx] || '').toLowerCase();
+
+        const isKikDone = (ext.includes('kikuk') || ext.includes('kik')) && ex === 'เสร็จแล้ว';
+
+        if (ocr === 'skip' || isKikDone) {
+          skippedCount++;
+        } else if (ocr === 'เสร็จแล้ว') {
+          doneCount++;
+        } else if (up === 'เสร็จแล้ว' && ex === 'รอเริ่ม') {
+          pendingCount++;
+        }
+      }
+    }
   } catch (e) {}
 
   return {
     success: true,
     is6HourTriggerActive: is6HourTriggerActive,
-    lastPipelineTrigger: lastTrigger
+    lastPipelineTrigger: lastTrigger,
+    lastBatchSummary: lastBatch,
+    stats: {
+      totalTasks: totalTasks,
+      pendingOcr: pendingCount,
+      skippedOcr: skippedCount,
+      doneOcr: doneCount
+    }
   };
 }
 
