@@ -1,10 +1,38 @@
 # 📋 MangaHub Project Handover & Next Tasks
 > **บันทึกสถานะงานและการส่งมอบโปรเจกต์ (สำหรับย้ายเครื่องทำงานต่อ / Machine Transition)**  
-> *วันที่อัปเดต: 4 พฤศจิกายน 2569 (2026-11-04)*
+> *วันที่อัปเดต: 5 พฤศจิกายน 2569 (2026-11-05)*
 
 ---
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
+
+### 🏆 ระบบ AI Auto OCR Pipeline, Auto-Chaining Queue & QC ดึงคำ Default สำเร็จสมบูรณ์ 100% (5 พ.ย. 2569)
+
+#### 1. รายละเอียดระบบที่ติดตั้งและขึ้นระบบจริง:
+1. **ระบบ AI Auto OCR บน GitHub Actions (`.github/workflows/gdrive_ocr.yml` & `tools/gdrive_ocr_job.py`)**:
+   - เชื่อมต่อ Google Drive สกัดภาพและดึงคำอัตโนมัติด้วย Manga OCR + EasyOCR แปลงเป็นไฟล์โปรเจกต์ MangaToolPlus (`.mtp`)
+   - อัปโหลดไฟล์ `.mtp` กลับไปยัง Google Drive โฟลเดอร์ต้นทาง และแจ้ง GAS ให้ผูกลิงก์ `[mtp]` ลงในช่อง `worklink` ของ WorkQueue อัตโนมัติ
+   - เพิ่มการทำความสะอาดชื่อไฟล์ (`sanitize_filename`) ป้องกันอักขระต้องห้ามของ NTFS/GitHub Artifacts (เช่น `:`, `"`, `<`, `>`, `|`, `*`, `?`)
+   - สั่งเคลียร์ Workspace Runner (`rm -rf`) ทุกครั้งหลังรันเสร็จ เพื่อความสะอาดและปลอดภัย
+2. **ระบบ Auto-Chaining Queue (รันลูกโซ่อัตโนมัติ)**:
+   - ปรับปรุง `completeMangaOcr` ใน GAS ให้สั่งยิงคิวถัดไป (`triggerNextPendingMangaOcr`) ทันทีที่ตอนก่อนหน้าเสร็จสมบูรณ์
+   - ส่งผลให้ระบบประมวลผลต่อเนื่องอัตโนมัติ (Self-advancing queue) รันผ่านไปแล้วกว่า 38 ตอนต่อเนื่องโดยไม่ต้องกดเอง
+3. **Banner สถานะ Real-Time บนหน้าคิวงาน (`AutoOcrStatusBanner.tsx`)**:
+   - แสดงสถานะการรันสดจาก GitHub Actions API สถิติคิวงาน (เสร็จแล้ว, กำลังทำ, รอเริ่ม, ข้าม) ลิงก์ดู Log สด และปุ่มสั่งรันด้วยมือ
+   - Auto-Refresh หน้าตารางคิวงานทันทีเมื่องานใน GitHub Actions รันเสร็จสิ้น
+4. **แยกขั้นตอน 2. ดึงคำออโต้ ออกจาก 3. QC ดึงคำ (`QueueView.tsx`)**:
+   - เพิ่มคอลัมน์ `2. ดึงคำออโต้` แยกออกจาก `3. QC ดึงคำ` อย่างชัดเจน
+   - กฎ Kikkuk: ถ้า Kikkuk QC ดึงคำเสร็จแล้ว $ightarrow$ ดึงคำออโต้ตั้งเป็น `skip`
+   - กฎ Pratchaya: ถ้าผู้แปลเป็น Pratchaya $ightarrow$ ข้ามทั้งดึงคำออโต้และ QC ดึงคำ (`skip`) ทันที
+5. **ระบบคิดเงินค่าจ้าง (Expenses & Financials)**:
+   - ตรวจสอบและยืนยันการคิดเงินค่าตอบแทน: เงินค่าจ้างดึงคำ (10 บาท/ตอน) **คิดอยู่ที่ขั้นตอน `3. QC ดึงคำ` (`extractorname` / `extractstatus`) 100%**
+   - ขั้นตอน `2. ดึงคำออโต้` ทำงานโดย AI บอท GitHub Actions จึงไม่มีค่าใช้จ่าย/ไม่มีค่าจ้าง
+   - ปรับปรุง Label ในหน้ารายจ่าย (`ExpensesView.tsx`) และหน้าแรก (`DashboardView.tsx`) ให้แสดงเป็น `"QC ดึงคำ"` ทั้งหมด
+6. **ตั้งค่า Default QC ดึงคำ เป็น "Kikkuk" ทั้งระบบ**:
+   - รัน Batch Update บน Google Sheet WorkQueue อัปเดตข้อมูลเก่าที่ช่อง `extractorname` ยังว่างอยู่ 554 แถว ให้เป็น `"Kikkuk"` ครบถ้วน (ปัจจุบันมี 2,159 แถวเป็น Kikkuk)
+   - ปรับ Backend (`addQueue`, `getWorkQueue`) และ Frontend (`AddQueueModal`, `EditQueueModal`, `QueueView`) ให้มีค่าเริ่มต้นเป็น `"Kikkuk"` เสมอ
+
+---
 
 ### 🏆 แก้ไขปัญหา "กดตรวจสอบทั้งหมด แต่ยังเป็น NaN ในหน้าติดตามต้นฉบับอัปเดต (Raw Tracker)" สำเร็จสมบูรณ์ 100% (4 พ.ย. 2569)
 
