@@ -132,10 +132,14 @@ export function QueueView({
           getStatus(q.uploadstatus) === "กำลังทำ"
         )
           waitUpload += count
+        const extStr = String(q.extractorname || "").toLowerCase();
+        const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus);
+        const ocrSt = isKikExtractDone ? "skip" : getStatus(q.ocrstatus);
         if (
           isStepDone(q.uploadstatus) &&
           !isStepDone(q.extractstatus) &&
-          (getStatus(q.ocrstatus) === "รอเริ่ม" || getStatus(q.ocrstatus) === "กำลังทำ")
+          !isKikExtractDone &&
+          (ocrSt === "รอเริ่ม" || ocrSt === "กำลังทำ")
         )
           waitOcr += count
         if (
@@ -407,7 +411,6 @@ export function QueueView({
       <Badge
         variant={variant}
         onClick={() => {
-          if (isSkipped) return
           setBackupQueue([...queueList])
           setActiveStepItem(item)
           setActiveStepKey(step)
@@ -415,11 +418,11 @@ export function QueueView({
         }}
         className={
           isSkipped
-            ? "opacity-50 cursor-not-allowed"
+            ? "cursor-pointer bg-slate-800/80 text-slate-400 border border-slate-700 hover:border-slate-500 hover:text-slate-200 transition-all font-mono text-[11px] uppercase tracking-wider"
             : "cursor-pointer hover:scale-105 transition-transform"
         }
       >
-        {isSkipped ? "ข้าม" : status}
+        {isSkipped ? "skip" : status}
       </Badge>
     )
   }
@@ -933,11 +936,24 @@ export function QueueView({
 
                     {/* 2. ดึงคำออโต้ */}
                     <TableCell>
-                      {renderStatusBadge(q, "ocr", q.ocrstatus || (isStepDone(q.extractstatus) ? "เสร็จแล้ว" : (isStepDone(q.uploadstatus) ? "รอเริ่ม" : "รอเริ่ม")))}
-                      <div className="text-xs text-slate-400 mt-1">
-                        {q.ocrtime ? parseQueueDate(q.ocrtime)?.toLocaleDateString("th-TH") : "GitHub Actions"}
-                      </div>
-                      {renderStepLinks(q.worklink, "mtp") || renderStepLinks(q.worklink, "ดึงคำออโต้")}
+                      {(() => {
+                        const extStr = String(q.extractorname || "").toLowerCase();
+                        const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus);
+                        const effectiveOcrStatus = isKikExtractDone
+                          ? "skip"
+                          : (q.ocrstatus || (isStepDone(q.extractstatus) ? "เสร็จแล้ว" : (isStepDone(q.uploadstatus) ? "รอเริ่ม" : "รอเริ่ม")));
+                        return (
+                          <>
+                            {renderStatusBadge(q, "ocr", effectiveOcrStatus)}
+                            <div className="text-xs text-slate-400 mt-1">
+                              {effectiveOcrStatus === "skip"
+                                ? (isKikExtractDone ? "kikkuk ดึงคำแล้ว" : "ข้ามการดึงคำ")
+                                : (q.ocrtime ? parseQueueDate(q.ocrtime)?.toLocaleDateString("th-TH") : "GitHub Actions")}
+                            </div>
+                            {renderStepLinks(q.worklink, "mtp") || renderStepLinks(q.worklink, "ดึงคำออโต้")}
+                          </>
+                        );
+                      })()}
                     </TableCell>
 
                     <TableCell>

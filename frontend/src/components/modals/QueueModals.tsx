@@ -941,10 +941,9 @@ export function StepUpdateModal({
               <option value="รอเริ่ม">⏸️ รอเริ่ม</option>
               <option value="กำลังทำ">⚙️ กำลังทำ</option>
               <option value="เสร็จแล้ว">✅ เสร็จแล้ว</option>
-              {step === "extract" && (
+              {(step === "extract" || step === "ocr") && (
                 <React.Fragment>
-                  <option value="skip">⏭️ ข้าม</option>
-                  <option value="skip">⏭️ ข้าม (skip)</option>
+                  <option value="skip">⏭️ skip (ข้าม)</option>
                 </React.Fragment>
               )}
             </select>

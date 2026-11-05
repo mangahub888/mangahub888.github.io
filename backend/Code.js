@@ -160,6 +160,9 @@ function doPost(e) {
         break;
 
       // --- WORK QUEUE CRUD ---
+      case 'BATCH_SET_KIKKUK_OCR_SKIP':
+        result = batchSetKikkukDoneOcrToSkip();
+        break;
       case 'GET_WORK_QUEUE':
         result = getWorkQueue(Boolean(payload.forceRefresh), payload.month, payload.year, Boolean(payload.includeIncomplete));
         break;
@@ -1094,7 +1097,13 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
       }
       if (!obj.poststatus || String(obj.poststatus).trim() === '') obj.poststatus = 'รอเริ่ม';
       if (!obj.uploadstatus || String(obj.uploadstatus).trim() === '') obj.uploadstatus = 'รอเริ่ม';
-      if (!obj.ocrstatus || String(obj.ocrstatus).trim() === '') {
+
+      const extractorStr = String(obj.extractorname || '').toLowerCase();
+      const isKikkukExtractDone = (extractorStr.includes('kikuk') || extractorStr.includes('kikkuk')) && String(obj.extractstatus || '').trim() === 'เสร็จแล้ว';
+
+      if (isKikkukExtractDone) {
+        obj.ocrstatus = 'skip';
+      } else if (!obj.ocrstatus || String(obj.ocrstatus).trim() === '') {
         const isUpDone = String(obj.uploadstatus).trim() === 'เสร็จแล้ว';
         const isExDone = String(obj.extractstatus).trim() === 'เสร็จแล้ว';
         obj.ocrstatus = (isUpDone && isExDone) ? 'เสร็จแล้ว' : 'รอเริ่ม';
@@ -1149,6 +1158,12 @@ function addQueue(queueData) {
       if (header === 'chapter') return queueData.chapter;
       
       if (header === 'uploadstatus') return queueData.uploadstatus || 'รอเริ่ม';
+      if (header === 'ocrstatus') {
+        const extStr = String(queueData.extractorname || 'kikkuk').toLowerCase();
+        const isKikExtractDone = (extStr.includes('kikuk') || extStr.includes('kikkuk')) && String(queueData.extractstatus || '').trim() === 'เสร็จแล้ว';
+        if (isKikExtractDone) return 'skip';
+        return queueData.ocrstatus || 'รอเริ่ม';
+      }
       if (header === 'extractstatus') {
         if (queueData.extractstatus && String(queueData.extractstatus).trim() !== '') {
           return queueData.extractstatus;
@@ -1244,6 +1259,17 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
             const currentPostStatus = data[i][postStatusCol - 1];
             if (!currentPostStatus || currentPostStatus.toString().trim() === '') {
               sheet.getRange(rowNum, postStatusCol).setValue('รอเริ่ม');
+            }
+          }
+        }
+
+        if (step.toLowerCase() === 'extract' && status === 'เสร็จแล้ว') {
+          const effectiveAssignee = assignee !== undefined ? assignee : data[i][headers.indexOf('extractorname')];
+          const assigneeStr = String(effectiveAssignee || '').toLowerCase();
+          if (assigneeStr.includes('kikuk') || assigneeStr.includes('kikkuk')) {
+            const ocrStatusCol = headers.indexOf('ocrstatus') + 1;
+            if (ocrStatusCol > 0) {
+              sheet.getRange(rowNum, ocrStatusCol).setValue('skip');
             }
           }
         }
@@ -1389,6 +1415,17 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
           const currentPostVal = data[i][postStatusColIndex];
           if (!currentPostVal || currentPostVal.toString().trim() === '') {
             data[i][postStatusColIndex] = 'รอเริ่ม';
+          }
+        }
+
+        if (stepLower === 'extract' && status === 'เสร็จแล้ว') {
+          const effectiveAssignee = shouldUpdateAssignee ? assignee : data[i][headers.indexOf('extractorname')];
+          const assigneeStr = String(effectiveAssignee || '').toLowerCase();
+          if (assigneeStr.includes('kikuk') || assigneeStr.includes('kikkuk')) {
+            const ocrStatusColIndex = headers.indexOf('ocrstatus');
+            if (ocrStatusColIndex !== -1) {
+              data[i][ocrStatusColIndex] = 'skip';
+            }
           }
         }
 
@@ -6736,4 +6773,59 @@ function getProjectIdeasTriggerStatus() {
     is6HourTriggerActive: is6HourTriggerActive,
     lastPipelineTrigger: lastTrigger
   };
+}
+
+
+/**
+ * อัปเดตคิวงานทั้งหมดที่มีชื่อ kikkuk/kikuk ดึงคำเสร็จแล้ว ในช่องดึงคำออโต้ (OcrStatus) ให้เป็น 'skip'
+ */
+function batchSetKikkukDoneOcrToSkip() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { count: 0, message: 'No data' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    let ocrStatusColIndex = headers.indexOf('ocrstatus');
+    if (ocrStatusColIndex === -1) {
+      sheet.getRange(1, headers.length + 1).setValue('OcrStatus');
+      ocrStatusColIndex = headers.length;
+    }
+    const extractorColIndex = headers.indexOf('extractorname');
+    const extractStatusColIndex = headers.indexOf('extractstatus');
+
+    let updatedCount = 0;
+    const ocrValues = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const extractor = String(data[i][extractorColIndex] || '').toLowerCase().trim();
+      const extractStatus = String(data[i][extractStatusColIndex] || '').trim();
+      const currentOcrStatus = String(data[i][ocrStatusColIndex] || '').trim();
+
+      const isKikkuk = extractor.includes('kikuk') || extractor.includes('kikkuk');
+      const isExtractDone = extractStatus === 'เสร็จแล้ว';
+
+      let newStatus = currentOcrStatus;
+      if (isKikkuk && isExtractDone) {
+        if (currentOcrStatus.toLowerCase() !== 'skip') {
+          newStatus = 'skip';
+          updatedCount++;
+        }
+      }
+      ocrValues.push([newStatus]);
+    }
+
+    if (updatedCount > 0) {
+      sheet.getRange(2, ocrStatusColIndex + 1, ocrValues.length, 1).setValues(ocrValues);
+    }
+
+    return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('batchSetKikkukDoneOcrToSkip error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
 }
