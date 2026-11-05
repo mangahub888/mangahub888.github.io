@@ -171,26 +171,47 @@ def detect_text_boxes_yolo(img_path, model_path, tile_height=2000):
 def extract_text_from_paddle(res, lang="ch"):
     """
     Extracts recognized text cleanly across all PaddleOCR versions (v2.x, v3.x, paddlex).
+    Handles Python generators returned by PaddleX 3.7+ streaming pipelines.
     """
     if not res:
         return ""
 
+    # In PaddleX 3.7+, predict() returns a generator by default.
+    # Convert generator / iterator to list to force execution of the inference pipeline.
+    if not isinstance(res, (list, tuple, dict, str, bytes)):
+        try:
+            res = list(res)
+        except Exception:
+            pass
+
     texts = []
-    if isinstance(res, (list, tuple)) and len(res) > 0:
-        item = res[0]
+    items = res if isinstance(res, (list, tuple)) else [res]
+
+    for item in items:
         rec = None
+        # 1. Try dict get() or attribute rec_texts (PaddleOCR 3.x / PaddleX OCRResult)
         if hasattr(item, "get") and callable(item.get):
             rec = item.get("rec_texts")
-        elif hasattr(item, "rec_texts"):
+        if rec is None and hasattr(item, "rec_texts"):
             rec = getattr(item, "rec_texts")
-        elif isinstance(item, dict) and "rec_texts" in item:
-            rec = item["rec_texts"]
+        if rec is None and hasattr(item, "__getitem__"):
+            try:
+                rec = item["rec_texts"]
+            except Exception:
+                pass
 
-        if rec is not None and isinstance(rec, (list, tuple)):
-            for t in rec:
-                s = str(t).strip()
-                if s:
-                    texts.append(s)
+        if rec is not None:
+            if hasattr(rec, "tolist"):
+                rec = rec.tolist()
+            if isinstance(rec, (list, tuple)):
+                for t in rec:
+                    s = str(t).strip()
+                    if s:
+                        texts.append(s)
+            elif isinstance(rec, str) and rec.strip():
+                texts.append(rec.strip())
+
+        # 2. Fallback for PaddleOCR 2.x: item is list of lines [[poly, (text, conf)], ...]
         elif isinstance(item, (list, tuple)):
             for line in item:
                 if isinstance(line, (list, tuple)) and len(line) > 1:
@@ -199,17 +220,8 @@ def extract_text_from_paddle(res, lang="ch"):
                         s = str(sub[0]).strip()
                         if s:
                             texts.append(s)
-                    elif isinstance(sub, str):
-                        s = sub.strip()
-                        if s:
-                            texts.append(s)
-    elif hasattr(res, "get") and callable(res.get):
-        rec = res.get("rec_texts")
-        if rec and isinstance(rec, (list, tuple)):
-            for t in rec:
-                s = str(t).strip()
-                if s:
-                    texts.append(s)
+                    elif isinstance(sub, str) and sub.strip():
+                        texts.append(sub.strip())
 
     if not texts:
         return ""
@@ -292,16 +304,16 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
                         if hasattr(ocr_engine, "predict"):
                             res = ocr_engine.predict(crop)
                             text = extract_text_from_paddle(res, lang=lang)
-                    except Exception:
-                        pass
+                    except Exception as e_pred:
+                        print(f"      ⚠️ predict error on box {b_idx}: {e_pred}")
 
                     if not text:
                         try:
                             # 2. Fallback: ocr() call for PaddleOCR 2.x
                             res = ocr_engine.ocr(crop)
                             text = extract_text_from_paddle(res, lang=lang)
-                        except Exception:
-                            pass
+                        except Exception as e_ocr:
+                            print(f"      ⚠️ ocr error on box {b_idx}: {e_ocr}")
 
                 if text:
                     # 4 corner coordinates [[x1, y1], [x2, y1], [x2, y2], [x1, y2]]
