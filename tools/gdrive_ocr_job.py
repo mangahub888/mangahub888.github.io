@@ -64,19 +64,18 @@ def download_images_from_gdrive(folder_url_or_id, output_dir):
     return images
 
 
-def image_to_data_url(image_path: Path):
-    """Reads image and returns dataUrl, width, height for MangaToolPlus .mtp."""
+def image_to_data_url(image_path: Path, quality=90):
+    """Reads image, normalizes to high-quality JPEG and returns dataUrl, width, height for MangaToolPlus .mtp."""
     from PIL import Image
+    import io
     with Image.open(image_path) as im:
+        if im.mode in ("RGBA", "P"):
+            im = im.convert("RGB")
         w, h = im.size
-        fmt = (im.format or 'JPEG').lower()
-        if fmt == 'jpg':
-            fmt = 'jpeg'
-        mime = f"image/{fmt}"
-
-    with open(image_path, "rb") as fp:
-        b64 = base64.b64encode(fp.read()).decode("utf-8")
-    data_url = f"data:{mime};base64,{b64}"
+        buf = io.BytesIO()
+        im.save(buf, format="JPEG", quality=quality)
+        b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+    data_url = f"data:image/jpeg;base64,{b64}"
     return data_url, w, h
 
 
@@ -373,7 +372,7 @@ def build_mtp_package(image_files, ocr_results, output_mtp_path):
     project_data = {
         "version": "1.0.0",
         "savedAt": datetime.now(timezone.utc).isoformat(),
-        "currentMode": "typesetter",
+        "currentMode": "ocr",  # Open directly in OCR mode to display bounding boxes and text immediately
         "currentFileIndex": 0,
         "appSettings": {
             "readingDirection": "ttb",
@@ -393,17 +392,19 @@ def build_mtp_package(image_files, ocr_results, output_mtp_path):
         "originalImages": {},
     }
 
-    for img_path_str in image_files:
+    for idx, img_path_str in enumerate(image_files):
         p = Path(img_path_str)
-        fname = p.name
-        res = ocr_results.get(fname, {})
+        fname = f"{idx+1:03d}.jpg"
+        orig_key = p.name
+        res = ocr_results.get(orig_key, {})
         lines = res.get("lines", [])
+        boxes = res.get("boxes", [])
 
-        # 1. Image metadata & Base64
+        # 1. Image metadata & Base64 (Standard JPEG)
         data_url, width, height = image_to_data_url(p)
         project_data["files"].append({
             "name": fname,
-            "type": "image/jpeg" if p.suffix.lower() in [".jpg", ".jpeg"] else f"image/{p.suffix.lower().lstrip('.')}",
+            "type": "image/jpeg",
             "width": width,
             "height": height,
             "dataUrl": data_url
@@ -411,19 +412,22 @@ def build_mtp_package(image_files, ocr_results, output_mtp_path):
 
         # 2. ocrData
         project_data["ocrData"][fname] = [
-            {"text": l.get("text", ""), "box": l.get("box", [])}
+            {
+                "text": l.get("text", ""),
+                "box": [[float(pt[0]), float(pt[1])] for pt in l.get("box", [])]
+            }
             for l in lines
             if l.get("text")
         ]
 
-        # 3. tsData (Editable typesetter layers)
+        # 3. tsData (Editable typesetter / OCR layers)
         project_data["tsData"][fname] = [
             {
-                "id": f"ts_{p.stem}_{l_idx}",
+                "id": f"ts_{idx+1:03d}_{l_idx}",
                 "text": l.get("text", ""),
                 "originalText": l.get("text", ""),
                 "translation": "",
-                "box": l.get("box", []),
+                "box": [[float(pt[0]), float(pt[1])] for pt in l.get("box", [])],
                 "visible": True,
                 "selected": False,
                 "type": "text",
@@ -440,16 +444,32 @@ def build_mtp_package(image_files, ocr_results, output_mtp_path):
         ]
 
         # 4. detectedBubbles
-        project_data["detectedBubbles"][fname] = [
-            {
-                "box": [l.get("rect", [0, 0, 0, 0])[0], l.get("rect", [0, 0, 0, 0])[1],
-                        l.get("rect", [0, 0, 0, 0])[2] - l.get("rect", [0, 0, 0, 0])[0],
-                        l.get("rect", [0, 0, 0, 0])[3] - l.get("rect", [0, 0, 0, 0])[1]],
-                "polygon": l.get("box"),
-                "confidence": 0.95
-            }
-            for l in lines
-        ]
+        bubbles_list = []
+        if boxes:
+            for b in boxes:
+                bx1, by1, bx2, by2 = b
+                bw = bx2 - bx1
+                bh = by2 - by1
+                poly = [
+                    [float(bx1), float(by1)],
+                    [float(bx2), float(by1)],
+                    [float(bx2), float(by2)],
+                    [float(bx1), float(by2)]
+                ]
+                bubbles_list.append({
+                    "box": [int(bx1), int(by1), int(bw), int(bh)],
+                    "polygon": poly,
+                    "confidence": 0.95
+                })
+        elif lines:
+            for l in lines:
+                r = l.get("rect", [0, 0, 0, 0])
+                bubbles_list.append({
+                    "box": [int(r[0]), int(r[1]), int(r[2] - r[0]), int(r[3] - r[1])],
+                    "polygon": [[float(pt[0]), float(pt[1])] for pt in l.get("box", [])],
+                    "confidence": 0.95
+                })
+        project_data["detectedBubbles"][fname] = bubbles_list
 
     out_file = Path(output_mtp_path)
     out_file.parent.mkdir(parents=True, exist_ok=True)
@@ -537,6 +557,12 @@ def main():
     # 4. Build .mtp file
     mtp_path = out_dir / f"{args.manga_name}_ตอนที่_{args.chapter_num}.mtp"
     build_mtp_package(image_files, ocr_results, mtp_path)
+
+    # ASCII-safe copy to avoid CP874 mojibake in GitHub Actions zip downloads
+    import shutil
+    ascii_mtp = out_dir / f"chapter_{args.chapter_num}.mtp"
+    shutil.copy2(mtp_path, ascii_mtp)
+    print(f"📦 ASCII MTP Project: {ascii_mtp}")
 
     print("\n=================================================================")
     print(f"🏁 Finished OCR for {len(image_files)} pages in {total_time:.1f}s ({total_time/60:.2f} mins)!")
