@@ -74,9 +74,10 @@ jobs:
 
       - name: Upload Backup .MTP to GitHub Artifacts
         if: success()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: manga-ocr-${{ github.event.inputs.chapter_num || 'output' }}
+          name: manga-ocr-output-${{ github.event.inputs.chapter_num || 'mtp' }}
           path: ocr_output/
           retention-days: 7
 

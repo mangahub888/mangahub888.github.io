@@ -584,6 +584,19 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
         return None
 
 
+def sanitize_filename(name: str) -> str:
+    """
+    Sanitizes filenames by replacing illegal filesystem characters
+    (: " < > | * ? \r \n \\ /) with underscores to maintain NTFS/cross-platform
+    and GitHub Actions artifact compatibility.
+    """
+    import re
+    illegal_chars = set(':"<>|*?\r\n\\/')
+    cleaned = ''.join('_' if c in illegal_chars else c for c in (name or ''))
+    cleaned = re.sub(r'_+', '_', cleaned).strip('_ ')
+    return cleaned or 'chapter'
+
+
 def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", gas_url=None, passcode="10211032"):
     """
     Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' and attach .mtp link in WorkQueue.
@@ -653,13 +666,15 @@ def main():
     manga_title = args.manga_name.strip()
     chapter_num = args.chapter_num.strip()
     if not manga_title and folder_real_name:
-        base_filename = folder_real_name
+        raw_name = folder_real_name
     elif manga_title and chapter_num:
-        base_filename = f"{manga_title}_ตอนที่_{chapter_num}"
+        raw_name = f"{manga_title}_ตอนที่_{chapter_num}"
     elif manga_title:
-        base_filename = manga_title
+        raw_name = manga_title
     else:
-        base_filename = folder_real_name or f"chapter_{clean_folder_id[:8]}"
+        raw_name = folder_real_name or f"chapter_{clean_folder_id[:8]}"
+
+    base_filename = sanitize_filename(raw_name)
 
     # Resolve model path
     model_path = args.model_path
