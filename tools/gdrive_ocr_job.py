@@ -76,15 +76,53 @@ def get_paddle_ocr_engine(lang="ch"):
     """Initializes in-process PaddleOCR engine."""
     from paddleocr import PaddleOCR
     print(f"⚙️ Initializing PaddleOCR engine (lang='{lang}')...")
+    # For PaddleOCR 3.x / PaddleX: disable doc unwarping and doc orientation
+    # to avoid heavy downloads and unnecessary page-level warping on crops
+    init_kwargs = {
+        "lang": lang,
+        "use_doc_orientation_classify": False,
+        "use_doc_unwarping": False,
+        "use_textline_orientation": False,
+    }
     try:
-        ocr = PaddleOCR(lang=lang)
+        ocr = PaddleOCR(**init_kwargs)
+    except TypeError:
+        try:
+            ocr = PaddleOCR(lang=lang, use_angle_cls=False)
+        except Exception:
+            ocr = PaddleOCR(lang=lang)
     except Exception as e:
         print(f"⚠️ Fallback init PaddleOCR: {e}")
-        try:
-            ocr = PaddleOCR(lang=lang, use_textline_orientation=False)
-        except Exception:
-            ocr = PaddleOCR()
+        ocr = PaddleOCR(lang=lang)
     return ocr
+
+
+def box_iou(b1, b2):
+    """Calculates Intersection-over-Union (IoU) between two bounding boxes."""
+    x1 = max(b1[0], b2[0])
+    y1 = max(b1[1], b2[1])
+    x2 = min(b1[2], b2[2])
+    y2 = min(b1[3], b2[3])
+    inter = max(0, x2 - x1) * max(0, y2 - y1)
+    if inter == 0:
+        return 0.0
+    area1 = (b1[2] - b1[0]) * (b1[3] - b1[1])
+    area2 = (b2[2] - b2[0]) * (b2[3] - b2[1])
+    union = area1 + area2 - inter
+    return inter / union if union > 0 else 0.0
+
+
+def filter_overlapping_boxes(boxes, iou_thresh=0.4):
+    """Filters duplicate overlapping boxes keeping the most complete ones."""
+    if not boxes:
+        return []
+    boxes_sorted = sorted(boxes, key=lambda b: (b[2] - b[0]) * (b[3] - b[1]), reverse=True)
+    kept = []
+    for b in boxes_sorted:
+        if not any(box_iou(b, k) > iou_thresh for k in kept):
+            kept.append(b)
+    kept.sort(key=lambda b: (b[1], b[0]))
+    return kept
 
 
 def detect_text_boxes_yolo(img_path, model_path, tile_height=2000):
@@ -109,7 +147,7 @@ def detect_text_boxes_yolo(img_path, model_path, tile_height=2000):
         while y1 < img_h:
             y2 = min(img_h, y1 + tile_height)
             tile = img_np[y1:y2, :]
-            results = model.predict(tile, verbose=False, conf=0.15)
+            results = model.predict(tile, verbose=False, conf=0.2, iou=0.4)
             for r in results:
                 for b in r.boxes:
                     coords = b.xyxy[0].cpu().numpy().tolist()
@@ -119,16 +157,67 @@ def detect_text_boxes_yolo(img_path, model_path, tile_height=2000):
                 break
             y1 += step
     else:
-        results = model.predict(img_np, verbose=False, conf=0.15)
+        results = model.predict(img_np, verbose=False, conf=0.2, iou=0.4)
         for r in results:
             for b in r.boxes:
                 coords = b.xyxy[0].cpu().numpy().tolist()
                 bx1, by1, bx2, by2 = coords
                 boxes.append([int(bx1), int(by1), int(bx2), int(by2)])
 
-    # Sort boxes top to bottom, left to right
-    boxes.sort(key=lambda b: (b[1], b[0]))
+    boxes = filter_overlapping_boxes(boxes, iou_thresh=0.4)
     return boxes, img_w, img_h, img_np
+
+
+def extract_text_from_paddle(res, lang="ch"):
+    """
+    Extracts recognized text cleanly across all PaddleOCR versions (v2.x, v3.x, paddlex).
+    """
+    if not res:
+        return ""
+
+    texts = []
+    if isinstance(res, (list, tuple)) and len(res) > 0:
+        item = res[0]
+        rec = None
+        if hasattr(item, "get") and callable(item.get):
+            rec = item.get("rec_texts")
+        elif hasattr(item, "rec_texts"):
+            rec = getattr(item, "rec_texts")
+        elif isinstance(item, dict) and "rec_texts" in item:
+            rec = item["rec_texts"]
+
+        if rec is not None and isinstance(rec, (list, tuple)):
+            for t in rec:
+                s = str(t).strip()
+                if s:
+                    texts.append(s)
+        elif isinstance(item, (list, tuple)):
+            for line in item:
+                if isinstance(line, (list, tuple)) and len(line) > 1:
+                    sub = line[1]
+                    if isinstance(sub, (list, tuple)) and len(sub) > 0:
+                        s = str(sub[0]).strip()
+                        if s:
+                            texts.append(s)
+                    elif isinstance(sub, str):
+                        s = sub.strip()
+                        if s:
+                            texts.append(s)
+    elif hasattr(res, "get") and callable(res.get):
+        rec = res.get("rec_texts")
+        if rec and isinstance(rec, (list, tuple)):
+            for t in rec:
+                s = str(t).strip()
+                if s:
+                    texts.append(s)
+
+    if not texts:
+        return ""
+
+    if lang in ["ch", "japan", "chinese", "jp"]:
+        return "".join(texts)
+    else:
+        return " ".join(texts)
 
 
 def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
@@ -167,11 +256,11 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
 
             for b_idx, box in enumerate(boxes):
                 bx1, by1, bx2, by2 = box
-                # Expand box slightly (3px) for edge letters
-                cx1 = max(0, bx1 - 3)
-                cy1 = max(0, by1 - 3)
-                cx2 = min(img_w, bx2 + 3)
-                cy2 = min(img_h, by2 + 3)
+                # Expand box slightly (6px) for border letters
+                cx1 = max(0, bx1 - 6)
+                cy1 = max(0, by1 - 6)
+                cx2 = min(img_w, bx2 + 6)
+                cy2 = min(img_h, by2 + 6)
                 if cx2 <= cx1 or cy2 <= cy1:
                     continue
 
@@ -191,20 +280,26 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
                         if res.status_code == 200:
                             data = res.json()
                             parts = [item.get("text", "") for item in data.get("text_lines", []) if item.get("text")]
-                            text = "".join(parts).strip()
-                    except Exception as err:
+                            if lang in ["ch", "japan"]:
+                                text = "".join(parts).strip()
+                            else:
+                                text = " ".join(parts).strip()
+                    except Exception:
                         pass
                 elif ocr_engine:
                     try:
-                        res = ocr_engine.ocr(crop, cls=False)
-                        if res and res[0]:
-                            parts = [line[1][0] for line in res[0] if line and len(line) > 1 and line[1]]
-                            text = "".join(parts).strip()
-                    except Exception as ocr_err:
-                        try:
+                        # 1. Native PaddleOCR 3.x / PaddleX inference
+                        if hasattr(ocr_engine, "predict"):
                             res = ocr_engine.predict(crop)
-                            if res and len(res) > 0 and isinstance(res[0], dict) and "rec_texts" in res[0]:
-                                text = "".join(res[0]["rec_texts"]).strip()
+                            text = extract_text_from_paddle(res, lang=lang)
+                    except Exception:
+                        pass
+
+                    if not text:
+                        try:
+                            # 2. Fallback: ocr() call for PaddleOCR 2.x
+                            res = ocr_engine.ocr(crop)
+                            text = extract_text_from_paddle(res, lang=lang)
                         except Exception:
                             pass
 
@@ -224,6 +319,11 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
 
             elapsed = time.time() - t0
             print(f"  ✓ {p.name}: Found {len(boxes)} text regions -> {len(lines)} OCR lines ({elapsed:.2f}s)")
+            for l_idx, l_obj in enumerate(lines[:3]):
+                print(f"     [{l_idx+1}] {l_obj['text']}")
+            if len(lines) > 3:
+                print(f"     ... ({len(lines)-3} more lines)")
+
             results[p.name] = {
                 "file": p.name,
                 "lines_count": len(lines),
