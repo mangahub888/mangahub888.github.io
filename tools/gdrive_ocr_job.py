@@ -548,15 +548,17 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
     from googleapiclient.http import MediaFileUpload
     p = Path(file_path)
     file_name = p.name
-    size_mb = p.stat().st_size / (1024 * 1024)
-    print(f"📤 Uploading {file_name} ({size_mb:.2f} MB) directly into Drive source folder ({target_folder_id})...")
+    size_kb = p.stat().st_size / 1024
+    size_str = f"{size_kb / 1024:.2f} MB" if size_kb >= 1024 else f"{size_kb:.2f} KB"
+    print(f"📤 Uploading {file_name} ({size_str}) directly into Drive source folder ({target_folder_id})...")
 
     try:
         # Check if file with same name already exists in this folder
         query = f"'{target_folder_id}' in parents and name='{file_name}' and trashed=false"
         existing = drive_service.files().list(q=query, fields="files(id, name)").execute().get("files", [])
 
-        media = MediaFileUpload(str(p), mimetype="application/octet-stream", resumable=True)
+        mimetype = "text/plain; charset=utf-8" if p.suffix.lower() == ".txt" else "application/octet-stream"
+        media = MediaFileUpload(str(p), mimetype=mimetype, resumable=True)
 
         if existing:
             file_id = existing[0]["id"]
@@ -584,6 +586,44 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
         return None
 
 
+def format_ocr_text_blocks(image_files, ocr_results):
+    """
+    Formats recognized OCR lines across all chapter pages into sequential numbered blocks.
+
+    Format:
+    [#1] text line 1
+
+    [#2] text line 2
+
+    [#3] text line 3
+    """
+    import re
+    blocks = []
+    counter = 1
+
+    for img_path_str in image_files:
+        fname = Path(img_path_str).name
+        data = ocr_results.get(fname, {})
+        lines = data.get("lines", [])
+
+        for line_obj in lines:
+            raw_text = line_obj.get("text", "")
+            if not raw_text:
+                continue
+            # Normalize internal newlines to spaces while preserving original text & spacing
+            cleaned_text = re.sub(r"\s+", " ", str(raw_text)).strip()
+            if not cleaned_text:
+                continue
+
+            blocks.append(f"[#{counter}] {cleaned_text}")
+            counter += 1
+
+    if not blocks:
+        return ""
+
+    return "\n\n".join(blocks) + "\n"
+
+
 def sanitize_filename(name: str) -> str:
     """
     Sanitizes filenames by replacing illegal filesystem characters
@@ -597,9 +637,9 @@ def sanitize_filename(name: str) -> str:
     return cleaned or 'chapter'
 
 
-def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", gas_url=None, passcode="10211032"):
+def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", txt_file_id="", gas_url=None, passcode="10211032"):
     """
-    Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' and attach .mtp link in WorkQueue.
+    Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' and attach .mtp and .txt links in WorkQueue.
     """
     import urllib.request
     import json
@@ -613,7 +653,8 @@ def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", 
             "queueId": queue_id,
             "chapter": chapter,
             "mangaName": manga_name,
-            "mtpFileId": mtp_file_id
+            "mtpFileId": mtp_file_id,
+            "txtFileId": txt_file_id
         }
     }
     try:
@@ -639,6 +680,7 @@ def main():
     parser.add_argument("--folder-id", default="19P4c1nLybE1KshF-7HSbhfQPX2H60A54", help="Google Drive folder ID or URL")
     parser.add_argument("--manga-name", default="", help="Manga title")
     parser.add_argument("--chapter-num", default="", help="Chapter number")
+    parser.add_argument("--txt-filename", default="", help="Custom filename for the OCR text file")
     parser.add_argument("--queue-id", default="", help="WorkQueue item ID to update status in Google Sheet")
     parser.add_argument("--gas-url", default=None, help="GAS Web App exec URL")
     parser.add_argument("--gas-passcode", default="10211032", help="GAS Passcode")
@@ -716,13 +758,20 @@ def main():
     )
     total_time = time.time() - t_start
 
-    # 3. Save JSON and text summary
+    # 3. Save JSON, text summary, and formatted OCR text file
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     json_path = out_dir / f"{base_filename}_ocr.json"
     with open(json_path, "w", encoding="utf-8") as fp:
         json.dump(ocr_results, fp, ensure_ascii=False, indent=2)
+
+    # Export formatted OCR .txt file ([#1] line 1 \n\n [#2] line 2 ...)
+    ocr_txt_content = format_ocr_text_blocks(image_files, ocr_results)
+    txt_filename = args.txt_filename.strip() if args.txt_filename else f"{base_filename}_ocr.txt"
+    ocr_txt_path = out_dir / txt_filename
+    with open(ocr_txt_path, "w", encoding="utf-8") as fp:
+        fp.write(ocr_txt_content)
 
     summary_path = out_dir / f"{base_filename}_summary.txt"
     total_lines = sum(data.get("lines_count", 0) for data in ocr_results.values())
@@ -742,24 +791,31 @@ def main():
     mtp_path = out_dir / f"{base_filename}.mtp"
     build_mtp_package(image_files, ocr_results, mtp_path)
 
-    # ASCII-safe copy for cross-platform safety
+    # ASCII-safe copies for cross-platform safety
     import shutil
     ascii_mtp = out_dir / "chapter.mtp"
     shutil.copy2(mtp_path, ascii_mtp)
+    ascii_txt = out_dir / "chapter_ocr.txt"
+    shutil.copy2(ocr_txt_path, ascii_txt)
 
     print("\n=================================================================")
     print(f"🏁 Finished OCR for {len(image_files)} pages in {total_time:.1f}s ({total_time/60:.2f} mins)!")
-    print(f"📄 Text Summary: {summary_path}")
+    print(f"📄 OCR Text File: {ocr_txt_path}")
+    print(f"📄 Debug Summary: {summary_path}")
     print(f"📦 MTP Project: {mtp_path}")
     print("=================================================================")
 
-    # 5. Upload .MTP directly into source Google Drive folder
+    # 5. Upload .MTP and OCR .TXT directly into source Google Drive folder
     uploaded_mtp_id = None
+    uploaded_txt_id = None
     if args.upload_to_source and drive_service:
-        print("\n☁️ [Google Drive Upload] Uploading .mtp directly into source folder...")
+        print("\n☁️ [Google Drive Upload] 1/2 Uploading .mtp directly into source folder...")
         uploaded_mtp_id = upload_file_to_source_folder(drive_service, clean_folder_id, mtp_path)
+
+        print("\n☁️ [Google Drive Upload] 2/2 Uploading OCR .txt directly into source folder...")
+        uploaded_txt_id = upload_file_to_source_folder(drive_service, clean_folder_id, ocr_txt_path)
     elif not drive_service:
-        print("\n⚠️ Google Drive service not initialized. File saved locally in ocr_output/")
+        print("\n⚠️ Google Drive service not initialized. Files saved locally in ocr_output/")
 
     # Notify GAS WorkQueue that OCR has finished
     notify_gas_ocr_completed(
@@ -768,6 +824,7 @@ def main():
         chapter=args.chapter_num,
         manga_name=args.manga_name,
         mtp_file_id=uploaded_mtp_id or "",
+        txt_file_id=uploaded_txt_id or "",
         gas_url=args.gas_url,
         passcode=args.gas_passcode
     )

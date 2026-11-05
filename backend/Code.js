@@ -486,6 +486,11 @@ function doPost(e) {
         result = proxyThunderScansImage(payload);
         break;
 
+      case 'UPLOAD_TEXT_TO_DRIVE_FOLDER':
+      case 'UPLOAD_OCR_TXT_TO_DRIVE':
+        result = uploadTextToDriveFolder(payload);
+        break;
+
       default:
         return createJsonResponse({ status: 'error', message: 'Unknown action: ' + action });
     }
@@ -7440,6 +7445,7 @@ function completeMangaOcr(payload) {
     const folderId = String(payload.folderId || payload.folder_id || '').trim();
     const queueId = String(payload.queueId || payload.queue_id || '').trim();
     const mtpFileId = String(payload.mtpFileId || payload.mtp_file_id || '').trim();
+    const txtFileId = String(payload.txtFileId || payload.txt_file_id || '').trim();
     const now = new Date();
 
     let updatedRow = null;
@@ -7467,6 +7473,15 @@ function completeMangaOcr(payload) {
           const mtpUrl = 'https://drive.google.com/file/d/' + mtpFileId + '/view?usp=sharing';
           if (!rowLink.includes(mtpFileId)) {
             const newLink = rowLink + (rowLink ? '\n' : '') + '[mtp] ' + mtpUrl;
+            sheet.getRange(rowNum, workLinkCol).setValue(newLink);
+          }
+        }
+
+        if (txtFileId && workLinkCol > 0) {
+          const txtUrl = 'https://drive.google.com/file/d/' + txtFileId + '/view?usp=sharing';
+          const curVal = String(sheet.getRange(rowNum, workLinkCol).getValue() || rowLink);
+          if (!curVal.includes(txtFileId)) {
+            const newLink = curVal + (curVal ? '\n' : '') + '[ocr txt] ' + txtUrl;
             sheet.getRange(rowNum, workLinkCol).setValue(newLink);
           }
         }
@@ -7767,5 +7782,71 @@ function syncOcrStatusFromDrive() {
     return { error: err.toString() };
   } finally {
     lock.releaseLock();
+  }
+}
+
+
+/**
+ * อัปโหลดไฟล์ข้อความ (.txt) เข้า Google Drive โฟลเดอร์ที่ระบุ และอัปเดต WorkQueue
+ */
+function uploadTextToDriveFolder(payload) {
+  try {
+    payload = payload || {};
+    const folderId = String(payload.folderId || payload.folder_id || '').trim();
+    const fileName = String(payload.fileName || payload.file_name || '').trim();
+    const content = String(payload.content || '');
+    const queueId = String(payload.queueId || payload.queue_id || '').trim();
+
+    if (!folderId || !fileName) {
+      return { error: 'folderId and fileName are required' };
+    }
+
+    const folder = DriveApp.getFolderById(folderId);
+    const blob = Utilities.newBlob(content, 'text/plain; charset=utf-8', fileName);
+
+    // Trash existing file with same name to avoid duplicate copies
+    const existing = folder.getFilesByName(fileName);
+    while (existing.hasNext()) {
+      try {
+        existing.next().setTrashed(true);
+      } catch (e) {}
+    }
+
+    const created = folder.createFile(blob);
+    const fileId = created.getId();
+    const fileUrl = 'https://drive.google.com/file/d/' + fileId + '/view?usp=sharing';
+
+    // Update WorkQueue if queueId provided
+    if (queueId) {
+      try {
+        const sheet = getSheet(QUEUE_SHEET_NAME);
+        const data = sheet.getDataRange().getValues();
+        const headers = data[0].map(h => h.toString().toLowerCase().trim());
+        const workLinkCol = headers.indexOf('worklink') + 1;
+        if (workLinkCol > 0) {
+          for (let i = 1; i < data.length; i++) {
+            if (String(data[i][0]).trim() === queueId) {
+              const currentLink = String(data[i][workLinkCol - 1] || '');
+              if (!currentLink.includes(fileId)) {
+                sheet.getRange(i + 1, workLinkCol).setValue(currentLink + (currentLink ? '\n' : '') + '[ocr txt] ' + fileUrl);
+              }
+              break;
+            }
+          }
+        }
+      } catch (qErr) {
+        console.warn('Could not update worklink in WorkQueue:', qErr);
+      }
+    }
+
+    return {
+      status: 'success',
+      fileId: fileId,
+      fileUrl: fileUrl,
+      fileName: fileName
+    };
+  } catch (err) {
+    console.error('uploadTextToDriveFolder error:', err);
+    return { error: err.toString() };
   }
 }

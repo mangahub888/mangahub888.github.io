@@ -53,7 +53,7 @@ jobs:
           pip install paddlepaddle -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
           pip install paddleocr ultralytics gdown pillow opencv-python-headless requests google-api-python-client google-auth
 
-      - name: Run Manga OCR & Upload .MTP to Source Drive Folder
+      - name: Run Manga OCR & Upload .MTP + .TXT to Source Drive Folder
         env:
           GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_ACCESS_TOKEN: ${{ github.event.inputs.google_access_token }}
@@ -72,7 +72,7 @@ jobs:
             --output-dir "./ocr_output" \
             --upload-to-source
 
-      - name: Upload Backup .MTP to GitHub Artifacts
+      - name: Upload Backup .MTP & .TXT to GitHub Artifacts
         if: success()
         continue-on-error: true
         uses: actions/upload-artifact@v4
