@@ -4,21 +4,25 @@ on:
   workflow_dispatch:
     inputs:
       folder_id:
-        description: 'Google Drive Folder ID or URL'
+        description: 'Google Drive Source Folder ID or URL'
         required: true
-        default: '19P4c1nLybE1KshF-7HSbhfQPX2H60A54'
+        default: '1dkgOWrSqT6QoVoF4r2S6BieA8ratVpqj'
       manga_name:
         description: 'Manga Title'
         required: false
-        default: 'ราชันนักฆ่าเกิดใหม่เป็นลูกเขย'
+        default: ''
       chapter_num:
         description: 'Chapter Number'
         required: false
-        default: '35'
+        default: ''
       lang:
         description: 'OCR Language (ch / japan / korean / en)'
         required: true
         default: 'ch'
+      google_access_token:
+        description: 'Google OAuth Access Token (passed from GAS)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -43,10 +47,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install paddlepaddle -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
-          pip install paddleocr ultralytics gdown pillow opencv-python-headless requests
+          pip install paddleocr ultralytics gdown pillow opencv-python-headless requests google-api-python-client google-auth
 
-      - name: Run Manga OCR Pipeline
+      - name: Run Manga OCR & Upload .MTP to Source Drive Folder
         env:
+          GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}
+          GOOGLE_ACCESS_TOKEN: ${{ github.event.inputs.google_access_token }}
           PADDLE_PDX_ENABLE_MKLDNN_BYDEFAULT: "0"
           FLAGS_use_mkldnn: "0"
           FLAGS_enable_pir_api: "0"
@@ -57,10 +63,23 @@ jobs:
             --manga-name "${{ github.event.inputs.manga_name }}" \
             --chapter-num "${{ github.event.inputs.chapter_num }}" \
             --lang "${{ github.event.inputs.lang }}" \
-            --output-dir "./ocr_output"
+            --google-access-token "${{ github.event.inputs.google_access_token }}" \
+            --output-dir "./ocr_output" \
+            --upload-to-source
 
-      - name: Upload Results & .MTP to GitHub Artifacts
+      - name: Upload Backup .MTP to GitHub Artifacts
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: manga-ocr-${{ github.event.inputs.chapter_num }}
+          name: manga-ocr-${{ github.event.inputs.chapter_num || 'output' }}
           path: ocr_output/
+          retention-days: 7
+
+      - name: Clean Up Runner Workspace & Git Working Tree
+        if: always()
+        run: |
+          echo "🧹 Cleaning up downloaded raw images and local OCR files..."
+          rm -rf downloaded_manga ocr_output __pycache__ .pytest_cache
+          git clean -fdx -e models/best.pt
+          echo "✓ Git working tree cleaned:"
+          git status

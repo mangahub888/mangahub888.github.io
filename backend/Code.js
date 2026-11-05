@@ -19,6 +19,7 @@ const READREALM_GROWTH_SHEET_NAME = 'ReadRealmGrowth';
 const READREALM_TIMELINE_SHEET_NAME = 'ReadRealm_Timeline_Summary';
 const READREALM_WORKFLOW_FILE = 'readrealm_tracker.yml';
 const PROJECT_IDEAS_WORKFLOW_FILE = 'project_ideas_crawler.yml';
+const MANGA_OCR_WORKFLOW_FILE = 'gdrive_ocr.yml';
 const KAIREW_GROWTH_SHEET_NAME = 'KairewGrowth';
 const KAIREW_TIMELINE_SHEET_NAME = 'Kairew_Timeline_Summary';
 const CHAPLY_GROWTH_SHEET_NAME = 'ChaplyGrowth';
@@ -347,6 +348,20 @@ function doPost(e) {
         break;
       case 'GET_PROJECT_IDEAS_TRIGGER_STATUS':
         result = getProjectIdeasTriggerStatus();
+        break;
+
+      // --- MANGA OCR (6-HOUR AUTOMATION + AUTO .MTP) ---
+      case 'TRIGGER_MANGA_OCR':
+        result = triggerMangaOcrWorkflow(payload);
+        break;
+      case 'SETUP_MANGA_OCR_6H_TRIGGER':
+        result = { message: createMangaOcr6HourTrigger() };
+        break;
+      case 'DELETE_MANGA_OCR_6H_TRIGGER':
+        result = { message: deleteMangaOcr6HourTrigger() };
+        break;
+      case 'GET_MANGA_OCR_STATUS':
+        result = getMangaOcrStatus();
         break;
 
       case 'GET_READREALM_TRACKER_STATUS':
@@ -5738,6 +5753,131 @@ function getReadRealmTrackerStatus() {
     is6HourTriggerActive: is6HourTriggerActive,
     lastPipelineTrigger: lastTrigger,
     latestSummary: summary
+  };
+}
+
+// ========================================================
+// MANGA OCR WORKFLOW (6-HOUR AUTOMATION + AUTO .MTP EXPORT)
+// ========================================================
+
+function triggerMangaOcrWorkflow(params) {
+  params = params || {};
+  try {
+    const token = getGitHubToken();
+    if (!token) {
+      console.warn('triggerMangaOcrWorkflow: GITHUB_TOKEN not available');
+      return { success: false, error: 'GITHUB_TOKEN not available' };
+    }
+
+    const folderId = params.folderId || params.folder_id || '1dkgOWrSqT6QoVoF4r2S6BieA8ratVpqj';
+    const mangaName = params.mangaName || params.manga_name || '';
+    const chapterNum = params.chapterNum || params.chapter_num || '';
+    const lang = params.lang || 'ch';
+
+    // Injects Google OAuth Access Token with Drive permissions for GitHub Actions runner
+    let googleAccessToken = '';
+    try {
+      googleAccessToken = ScriptApp.getOAuthToken() || '';
+    } catch (e) {
+      console.warn('Could not retrieve ScriptApp OAuth token:', e);
+    }
+
+    const url = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/actions/workflows/' + MANGA_OCR_WORKFLOW_FILE + '/dispatches';
+    const payload = {
+      ref: 'main',
+      inputs: {
+        folder_id: folderId,
+        manga_name: mangaName,
+        chapter_num: chapterNum,
+        lang: lang,
+        google_access_token: googleAccessToken
+      }
+    };
+
+    const options = {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'MangaHub-GAS-AutoTracker'
+      },
+      muteHttpExceptions: true
+    };
+
+    const resp = UrlFetchApp.fetch(url, options);
+    const code = resp.getResponseCode();
+    const now = new Date().toISOString();
+
+    const resultStatus = {
+      lastTriggeredAt: now,
+      statusCode: code,
+      success: code === 204 || code === 200,
+      folderId: folderId,
+      response: resp.getContentText()
+    };
+
+    try {
+      PropertiesService.getScriptProperties().setProperty('MANGA_OCR_LAST_PIPELINE_TRIGGER', JSON.stringify(resultStatus));
+    } catch (e) {}
+
+    console.log('triggerMangaOcrWorkflow status:', code, resultStatus);
+    return resultStatus;
+  } catch (err) {
+    console.error('triggerMangaOcrWorkflow error:', err);
+    return { success: false, error: err.toString() };
+  }
+}
+
+function scheduledMangaOcr6HourJob() {
+  console.log('--- Executing scheduledMangaOcr6HourJob (Every 6 Hours) ---');
+  const folderId = PropertiesService.getScriptProperties().getProperty('MANGA_OCR_DEFAULT_FOLDER_ID') || '1dkgOWrSqT6QoVoF4r2S6BieA8ratVpqj';
+  return triggerMangaOcrWorkflow({
+    folderId: folderId,
+    source: 'gas_6h_cron'
+  });
+}
+
+function createMangaOcr6HourTrigger() {
+  deleteMangaOcr6HourTrigger();
+  const trigger = ScriptApp.newTrigger('scheduledMangaOcr6HourJob')
+    .timeBased()
+    .everyHours(6)
+    .create();
+  return '✓ สร้าง Trigger สั่งรัน Manga OCR บน GitHub Actions ทุกๆ 6 ชั่วโมงเรียบร้อยแล้ว (TriggerID: ' + trigger.getUniqueId() + ')';
+}
+
+function deleteMangaOcr6HourTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let deleted = 0;
+  triggers.forEach(t => {
+    if (t.getHandlerFunction() === 'scheduledMangaOcr6HourJob' || t.getHandlerFunction() === 'triggerMangaOcrWorkflow') {
+      ScriptApp.deleteTrigger(t);
+      deleted++;
+    }
+  });
+  return '✓ ลบ Trigger เก่าเรียบร้อยแล้ว (' + deleted + ' รายการ)';
+}
+
+function getMangaOcrStatus() {
+  let lastTrigger = null;
+  let is6HourTriggerActive = false;
+
+  try {
+    const rawTrigger = PropertiesService.getScriptProperties().getProperty('MANGA_OCR_LAST_PIPELINE_TRIGGER');
+    if (rawTrigger) lastTrigger = JSON.parse(rawTrigger);
+  } catch (e) {}
+
+  try {
+    const triggers = ScriptApp.getProjectTriggers();
+    is6HourTriggerActive = triggers.some(t => t.getHandlerFunction() === 'scheduledMangaOcr6HourJob');
+  } catch (e) {}
+
+  return {
+    success: true,
+    is6HourTriggerActive: is6HourTriggerActive,
+    lastPipelineTrigger: lastTrigger
   };
 }
 

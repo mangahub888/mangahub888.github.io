@@ -481,21 +481,149 @@ def build_mtp_package(image_files, ocr_results, output_mtp_path):
     return out_file
 
 
+def get_drive_service(google_access_token=None, service_account_json=None):
+    """
+    Initializes Google Drive API service using:
+    1. OAuth Bearer Token (passed directly from GAS or CLI)
+    2. Google Service Account JSON (env GDRIVE_SERVICE_ACCOUNT_KEY or file)
+    """
+    try:
+        from googleapiclient.discovery import build
+    except ImportError:
+        print("⚠️ googleapiclient not installed. Google Drive upload unavailable.")
+        return None
+
+    # 1. OAuth Access Token (e.g. from GAS ScriptApp.getOAuthToken())
+    token = google_access_token or os.environ.get("GOOGLE_ACCESS_TOKEN")
+    if token and token.strip():
+        try:
+            from google.oauth2.credentials import Credentials
+            creds = Credentials(token.strip())
+            service = build("drive", "v3", credentials=creds)
+            print("🔑 Authenticated Google Drive via OAuth Access Token (GAS)")
+            return service
+        except Exception as e:
+            print(f"⚠️ Failed to init with OAuth token: {e}")
+
+    # 2. Service Account JSON
+    sa = service_account_json or os.environ.get("GDRIVE_SERVICE_ACCOUNT_KEY")
+    if sa and sa.strip():
+        try:
+            from google.oauth2 import service_account
+            scopes = ["https://www.googleapis.com/auth/drive"]
+            if os.path.exists(sa):
+                creds = service_account.Credentials.from_service_account_file(sa, scopes=scopes)
+            else:
+                info = json.loads(sa)
+                creds = service_account.Credentials.from_service_account_info(info, scopes=scopes)
+            service = build("drive", "v3", credentials=creds)
+            print("🔑 Authenticated Google Drive via Service Account")
+            return service
+        except Exception as e:
+            print(f"⚠️ Failed to init with Service Account: {e}")
+
+    return None
+
+
+def get_source_folder_name(drive_service, folder_id):
+    """Retrieves the real folder name from Google Drive."""
+    if not drive_service:
+        return ""
+    try:
+        meta = drive_service.files().get(fileId=folder_id, fields="name").execute()
+        return meta.get("name", "")
+    except Exception:
+        return ""
+
+
+def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
+    """
+    Uploads a local file directly into target_folder_id (Source Google Drive folder).
+    If a file with the same name already exists in target_folder_id, updates it cleanly.
+    """
+    if not drive_service:
+        print(f"⚠️ No authenticated Google Drive service. Skipping cloud upload for {file_path}.")
+        return None
+
+    from googleapiclient.http import MediaFileUpload
+    p = Path(file_path)
+    file_name = p.name
+    size_mb = p.stat().st_size / (1024 * 1024)
+    print(f"📤 Uploading {file_name} ({size_mb:.2f} MB) directly into Drive source folder ({target_folder_id})...")
+
+    try:
+        # Check if file with same name already exists in this folder
+        query = f"'{target_folder_id}' in parents and name='{file_name}' and trashed=false"
+        existing = drive_service.files().list(q=query, fields="files(id, name)").execute().get("files", [])
+
+        media = MediaFileUpload(str(p), mimetype="application/octet-stream", resumable=True)
+
+        if existing:
+            file_id = existing[0]["id"]
+            print(f"   🔄 File already exists (ID: {file_id}). Updating existing file...")
+            updated = drive_service.files().update(
+                fileId=file_id,
+                media_body=media
+            ).execute()
+            print(f"   ✓ Successfully updated {file_name} in Google Drive source folder (ID: {updated.get('id')})")
+            return updated.get("id")
+        else:
+            meta = {
+                "name": file_name,
+                "parents": [target_folder_id]
+            }
+            uploaded = drive_service.files().create(
+                body=meta,
+                media_body=media,
+                fields="id"
+            ).execute()
+            print(f"   ✓ Successfully uploaded {file_name} directly to Google Drive source folder (ID: {uploaded.get('id')})")
+            return uploaded.get("id")
+    except Exception as e:
+        print(f"❌ Failed to upload {file_name} to Google Drive: {e}")
+        return None
+
+
 def main():
     parser = argparse.ArgumentParser(description="Manga OCR Pipeline (best.pt + PaddleOCR)")
     parser.add_argument("--folder-id", default="19P4c1nLybE1KshF-7HSbhfQPX2H60A54", help="Google Drive folder ID or URL")
-    parser.add_argument("--manga-name", default="ราชันนักฆ่าเกิดใหม่เป็นลูกเขย", help="Manga title")
-    parser.add_argument("--chapter-num", default="35", help="Chapter number")
+    parser.add_argument("--manga-name", default="", help="Manga title")
+    parser.add_argument("--chapter-num", default="", help="Chapter number")
     parser.add_argument("--lang", default="ch", help="OCR Language code (ch, japan, korean, en)")
     parser.add_argument("--output-dir", default="./ocr_output", help="Output directory")
     parser.add_argument("--model-path", default=None, help="Path to best.pt text detection model")
     parser.add_argument("--ocr-server-url", default="http://127.0.0.1:8080", help="Local PaddleOCR server URL")
+    parser.add_argument("--google-access-token", default="", help="Google OAuth Access Token from GAS")
+    parser.add_argument("--service-account", default=None, help="Path or raw JSON of Google Service Account")
+    parser.add_argument("--upload-to-source", action="store_true", default=True, help="Upload .mtp directly into source folder")
+    parser.add_argument("--cleanup", action="store_true", default=False, help="Clean up local images and files after upload")
     args = parser.parse_args()
+
+    # Clean folder ID
+    clean_folder_id = args.folder_id.split("/")[-1].split("?")[0].strip()
+
+    # Initialize Drive service early
+    drive_service = get_drive_service(
+        google_access_token=args.google_access_token,
+        service_account_json=args.service_account
+    )
+    folder_real_name = get_source_folder_name(drive_service, clean_folder_id) if drive_service else ""
+
+    # Resolve manga title & chapter name for file naming
+    manga_title = args.manga_name.strip()
+    chapter_num = args.chapter_num.strip()
+    if not manga_title and folder_real_name:
+        base_filename = folder_real_name
+    elif manga_title and chapter_num:
+        base_filename = f"{manga_title}_ตอนที่_{chapter_num}"
+    elif manga_title:
+        base_filename = manga_title
+    else:
+        base_filename = folder_real_name or f"chapter_{clean_folder_id[:8]}"
 
     # Resolve model path
     model_path = args.model_path
     if not model_path:
-        # Check standard locations
         candidates = [
             PROJECT_ROOT / "models" / "best.pt",
             Path("D:/MangaToolPlus_TEST/models/best.pt"),
@@ -511,7 +639,8 @@ def main():
         sys.exit(1)
 
     print("=================================================================")
-    print(f"📖 Manga OCR Pipeline: {args.manga_name} (ตอนที่ {args.chapter_num})")
+    print(f"📖 Manga OCR Pipeline: {base_filename}")
+    print(f"📁 Target Google Drive Folder: {clean_folder_id} ({folder_real_name or 'Source Folder'})")
     print(f"🧠 Model: {model_path} + PaddleOCR (lang='{args.lang}')")
     print("=================================================================\n")
 
@@ -536,14 +665,14 @@ def main():
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    json_path = out_dir / f"ocr_{args.manga_name}_ch{args.chapter_num}.json"
+    json_path = out_dir / f"{base_filename}_ocr.json"
     with open(json_path, "w", encoding="utf-8") as fp:
         json.dump(ocr_results, fp, ensure_ascii=False, indent=2)
 
-    summary_path = out_dir / f"ocr_{args.manga_name}_ch{args.chapter_num}_summary.txt"
+    summary_path = out_dir / f"{base_filename}_summary.txt"
     total_lines = sum(data.get("lines_count", 0) for data in ocr_results.values())
     with open(summary_path, "w", encoding="utf-8") as fp:
-        fp.write(f"=== {args.manga_name} ตอนที่ {args.chapter_num} OCR Summary ===\n")
+        fp.write(f"=== {base_filename} OCR Summary ===\n")
         fp.write(f"Total Pages: {len(image_files)} | Total Lines: {total_lines} | Time: {total_time:.1f}s\n")
         fp.write("=" * 60 + "\n\n")
         for f in image_files:
@@ -554,21 +683,39 @@ def main():
                 fp.write(f"  {line.get('text', '')}\n")
             fp.write("\n")
 
-    # 4. Build .mtp file
-    mtp_path = out_dir / f"{args.manga_name}_ตอนที่_{args.chapter_num}.mtp"
+    # 4. Build MangaToolPlus .mtp project file
+    mtp_path = out_dir / f"{base_filename}.mtp"
     build_mtp_package(image_files, ocr_results, mtp_path)
 
-    # ASCII-safe copy to avoid CP874 mojibake in GitHub Actions zip downloads
+    # ASCII-safe copy for cross-platform safety
     import shutil
-    ascii_mtp = out_dir / f"chapter_{args.chapter_num}.mtp"
+    ascii_mtp = out_dir / "chapter.mtp"
     shutil.copy2(mtp_path, ascii_mtp)
-    print(f"📦 ASCII MTP Project: {ascii_mtp}")
 
     print("\n=================================================================")
     print(f"🏁 Finished OCR for {len(image_files)} pages in {total_time:.1f}s ({total_time/60:.2f} mins)!")
     print(f"📄 Text Summary: {summary_path}")
     print(f"📦 MTP Project: {mtp_path}")
     print("=================================================================")
+
+    # 5. Upload .MTP directly into source Google Drive folder
+    if args.upload_to_source and drive_service:
+        print("\n☁️ [Google Drive Upload] Uploading .mtp directly into source folder...")
+        upload_file_to_source_folder(drive_service, clean_folder_id, mtp_path)
+    elif not drive_service:
+        print("\n⚠️ Google Drive service not initialized. File saved locally in ocr_output/")
+
+    # 6. Cleanup local files if requested
+    if args.cleanup:
+        print("\n🧹 [Cleanup] Clearing downloaded images and temporary OCR files from disk...")
+        try:
+            if download_dir.exists():
+                shutil.rmtree(download_dir, ignore_errors=True)
+            if out_dir.exists():
+                shutil.rmtree(out_dir, ignore_errors=True)
+            print("✓ Local disk cleanup completed successfully!")
+        except Exception as e:
+            print(f"⚠️ Cleanup warning: {e}")
 
 
 if __name__ == "__main__":
