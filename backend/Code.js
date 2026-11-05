@@ -354,6 +354,9 @@ function doPost(e) {
       case 'TRIGGER_MANGA_OCR':
         result = triggerMangaOcrWorkflow(payload);
         break;
+      case 'RUN_MANGA_OCR_SCHEDULED_JOB':
+        result = scheduledMangaOcr6HourJob();
+        break;
       case 'SETUP_MANGA_OCR_6H_TRIGGER':
         result = { message: createMangaOcr6HourTrigger() };
         break;
@@ -5860,21 +5863,111 @@ function triggerMangaOcrWorkflow(params) {
 }
 
 function scheduledMangaOcr6HourJob() {
-  console.log('--- Executing scheduledMangaOcr6HourJob (Every 6 Hours) ---');
-  const folderId = PropertiesService.getScriptProperties().getProperty('MANGA_OCR_DEFAULT_FOLDER_ID') || '1dkgOWrSqT6QoVoF4r2S6BieA8ratVpqj';
-  return triggerMangaOcrWorkflow({
-    folderId: folderId,
-    source: 'gas_6h_cron'
-  });
+  console.log('--- Executing scheduledMangaOcr6HourJob (GAS Scheduled Step 2 Trigger -> GitHub Actions) ---');
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const queue = getWorkQueue(true);
+    const mangaList = getMangaList();
+
+    // 1. ค้นหาคิวงานที่สเต็ป 1 (อัป raw) เสร็จแล้ว และสเต็ป 3 (QC ดึงคำ) กำลังรอเริ่ม
+    const pendingItems = queue.filter(q => {
+      const upDone = String(q.uploadstatus || '').trim() === 'เสร็จแล้ว';
+      const exWaiting = String(q.extractstatus || '').trim() === 'รอเริ่ม';
+      const hasLink = q.worklink && String(q.worklink).includes('drive.google.com/drive/folders/');
+      return upDone && exWaiting && hasLink;
+    });
+
+    console.log('พบ ' + pendingItems.length + ' ตอนที่ผ่านสเต็ป 1 (อัป raw) และรอรันสเต็ป 2 (ดึงคำออโต้)');
+
+    let triggeredCount = 0;
+    const triggeredList = [];
+
+    // ประมวลผลจากตอนใหม่สุดไปหาเก่าสุด ครั้งละไม่เกิน 3 ตอน เพื่อไม่ให้รันซ้อนกันเกินลิมิต
+    const reversed = [...pendingItems].reverse();
+    for (let i = 0; i < reversed.length && triggeredCount < 3; i++) {
+      const item = reversed[i];
+      const match = String(item.worklink).match(/folders\/([a-zA-Z0-9_-]+)/);
+      if (!match) continue;
+      const folderId = match[1];
+
+      // ตรวจสอบใน Google Drive ว่าโฟลเดอร์นี้มีไฟล์ .mtp หรือยัง
+      let hasMtp = false;
+      try {
+        const folder = DriveApp.getFolderById(folderId);
+        const files = folder.getFiles();
+        while (files.hasNext()) {
+          const fn = files.next().getName().toLowerCase();
+          if (fn.endsWith('.mtp')) {
+            hasMtp = true;
+            break;
+          }
+        }
+      } catch (err) {
+        console.warn('ไม่สามารถเข้าถึงโฟลเดอร์ Drive ' + folderId + ':', err);
+      }
+
+      if (hasMtp) {
+        console.log('โฟลเดอร์ ' + folderId + ' มีไฟล์ .mtp เรียบร้อยแล้ว (ข้ามการทำ OCR)');
+        continue;
+      }
+
+      const manga = mangaList.find(m => String(m.mangaid) === String(item.mangaid));
+      const mangaTitle = manga ? (manga.manganame || manga.originalname || '') : '';
+      const cleanChapter = String(item.chapter || '').replace(/[^\d.]/g, '');
+
+      console.log('🚀 สั่งรันสเต็ป 2 (ดึงคำออโต้) ไปยัง GitHub Actions:', mangaTitle, 'ตอนที่', cleanChapter, 'Folder:', folderId);
+      const res = triggerMangaOcrWorkflow({
+        folderId: folderId,
+        mangaName: mangaTitle,
+        chapterNum: cleanChapter,
+        lang: 'ch'
+      });
+
+      if (res && res.success) {
+        triggeredCount++;
+        triggeredList.push({
+          queueId: item.queueid,
+          mangaTitle: mangaTitle,
+          chapter: cleanChapter,
+          folderId: folderId,
+          triggeredAt: new Date().toISOString()
+        });
+        Utilities.sleep(2000);
+      }
+    }
+
+    const summaryResult = {
+      triggeredAt: new Date().toISOString(),
+      totalEligible: pendingItems.length,
+      triggeredCount: triggeredCount,
+      triggeredList: triggeredList
+    };
+
+    try {
+      PropertiesService.getScriptProperties().setProperty('MANGA_OCR_SCHEDULED_BATCH_LATEST', JSON.stringify(summaryResult));
+    } catch (e) {}
+
+    console.log('scheduledMangaOcr6HourJob summary:', summaryResult);
+    return summaryResult;
+  } catch (err) {
+    console.error('scheduledMangaOcr6HourJob error:', err);
+    return { error: err.toString() };
+  }
 }
 
-function createMangaOcr6HourTrigger() {
+function createMangaOcrScheduledTrigger(hours) {
+  const h = parseInt(hours) || 6;
   deleteMangaOcr6HourTrigger();
   const trigger = ScriptApp.newTrigger('scheduledMangaOcr6HourJob')
     .timeBased()
-    .everyHours(6)
+    .everyHours(h)
     .create();
-  return '✓ สร้าง Trigger สั่งรัน Manga OCR บน GitHub Actions ทุกๆ 6 ชั่วโมงเรียบร้อยแล้ว (TriggerID: ' + trigger.getUniqueId() + ')';
+  return '✓ สร้าง Trigger สั่งรัน Manga OCR (ข้อ 2 ดึงคำออโต้) ไปยัง GitHub Actions ทุกๆ ' + h + ' ชั่วโมงเรียบร้อยแล้ว (TriggerID: ' + trigger.getUniqueId() + ')';
+}
+
+function createMangaOcr6HourTrigger() {
+  return createMangaOcrScheduledTrigger(6);
 }
 
 function deleteMangaOcr6HourTrigger() {
