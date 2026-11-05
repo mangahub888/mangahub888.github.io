@@ -76,11 +76,14 @@ def get_paddle_ocr_engine(lang="ch"):
     """Initializes in-process PaddleOCR engine."""
     from paddleocr import PaddleOCR
     print(f"⚙️ Initializing PaddleOCR engine (lang='{lang}')...")
-    ocr = PaddleOCR(
-        lang=lang,
-        use_angle_cls=False,
-        show_log=False
-    )
+    try:
+        ocr = PaddleOCR(lang=lang)
+    except Exception as e:
+        print(f"⚠️ Fallback init PaddleOCR: {e}")
+        try:
+            ocr = PaddleOCR(lang=lang, use_textline_orientation=False)
+        except Exception:
+            ocr = PaddleOCR()
     return ocr
 
 
@@ -192,10 +195,18 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
                     except Exception as err:
                         pass
                 elif ocr_engine:
-                    res = ocr_engine.ocr(crop, cls=False)
-                    if res and res[0]:
-                        parts = [line[1][0] for line in res[0] if line and len(line) > 1 and line[1]]
-                        text = "".join(parts).strip()
+                    try:
+                        res = ocr_engine.ocr(crop, cls=False)
+                        if res and res[0]:
+                            parts = [line[1][0] for line in res[0] if line and len(line) > 1 and line[1]]
+                            text = "".join(parts).strip()
+                    except Exception as ocr_err:
+                        try:
+                            res = ocr_engine.predict(crop)
+                            if res and len(res) > 0 and isinstance(res[0], dict) and "rec_texts" in res[0]:
+                                text = "".join(res[0]["rec_texts"]).strip()
+                        except Exception:
+                            pass
 
                 if text:
                     # 4 corner coordinates [[x1, y1], [x2, y1], [x2, y2], [x1, y2]]
