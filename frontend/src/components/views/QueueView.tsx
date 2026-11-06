@@ -43,6 +43,7 @@ import {
   Eye,
   EyeOff,
   RefreshCw,
+  FileText,
 } from "lucide-react"
 
 interface QueueViewProps {
@@ -960,6 +961,22 @@ export function QueueView({
                       <div className="text-xs text-slate-400">
                         ตอนที่ {q.chapter}
                       </div>
+                      {manga?.translationdocurl && (
+                        <div className="mt-1">
+                          <a
+                            href={manga.translationdocurl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-400 hover:text-blue-300 hover:underline bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-800/50 transition-colors"
+                            title="เปิด Google Docs รวมงานแปลทุกตอน"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <FileText className="h-3 w-3 text-blue-400" />
+                            Docs รวมแปล
+                            <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+                          </a>
+                        </div>
+                      )}
                     </TableCell>
 
                     <TableCell>
