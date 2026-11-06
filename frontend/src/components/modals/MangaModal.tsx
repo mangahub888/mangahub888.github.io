@@ -16,7 +16,15 @@ import { SearchableSelect } from "@/components/ui/searchable-select"
 import { RELEASE_DAYS, isUrgentManga } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
-import { Bell, Flame, Link as LinkIcon, FileText, ExternalLink } from "lucide-react"
+import {
+  Bell,
+  Flame,
+  Link as LinkIcon,
+  FileText,
+  ExternalLink,
+  Users,
+  RefreshCw,
+} from "lucide-react"
 
 const mangaSchema = z.object({
   manganame: z.string().min(1, "กรุณาระบุชื่อมังงะ (ภาษาไทย)"),
@@ -24,6 +32,7 @@ const mangaSchema = z.object({
   originalurl: z.string().optional(),
   slug: z.string().optional(),
   translationdocurl: z.string().optional(),
+  scangroup: z.string().optional(),
   status: z.string().default("Ongoing"),
   lastchapter: z.union([z.string(), z.number()]).default("0"),
   costperchapter: z.union([z.string(), z.number()]).default(0),
@@ -52,6 +61,10 @@ export function MangaModal({
 }: MangaModalProps) {
   const [selectedDays, setSelectedDays] = React.useState<string[]>([])
   const [submitting, setSubmitting] = React.useState(false)
+  const [comixGroups, setComixGroups] = React.useState<
+    Array<{ id: string; name: string }>
+  >([])
+  const [loadingGroups, setLoadingGroups] = React.useState(false)
 
   const {
     register,
@@ -68,6 +81,7 @@ export function MangaModal({
       originalurl: "",
       slug: "",
       translationdocurl: "",
+      scangroup: "",
       status: "Ongoing",
       lastchapter: "0",
       costperchapter: 0,
@@ -78,15 +92,47 @@ export function MangaModal({
     },
   })
 
+  const fetchGroupsFromUrl = React.useCallback(
+    async (targetUrl: string, silent = false) => {
+      const clean = (targetUrl || "").trim()
+      if (!clean || !clean.toLowerCase().includes("comix.to")) {
+        if (!silent)
+          toast.error("กรุณาวางลิงก์เรื่องจาก comix.to ก่อนดึงรายชื่อค่ายแปล")
+        return
+      }
+      setLoadingGroups(true)
+      try {
+        const res = await callGasApi<any>("GET_COMIX_GROUPS", { url: clean })
+        if (res && res.success && Array.isArray(res.groups)) {
+          setComixGroups(res.groups)
+          if (!silent) {
+            toast.success(`พบค่ายแปลทั้งหมด ${res.groups.length} ค่าย`)
+          }
+        } else if (!silent) {
+          toast.error(res?.error || "ไม่พบข้อมูลค่ายแปลจากลิงก์นี้")
+        }
+      } catch (err: any) {
+        if (!silent) toast.error(err.message || "ดึงข้อมูลค่ายแปลไม่สำเร็จ")
+      } finally {
+        setLoadingGroups(false)
+      }
+    },
+    []
+  )
+
   React.useEffect(() => {
     if (open) {
+      setComixGroups([])
       if (editItem) {
+        const initUrl = editItem.originalurl || ""
         reset({
           manganame: editItem.manganame || "",
           originalname: editItem.originalname || "",
-          originalurl: editItem.originalurl || "",
+          originalurl: initUrl,
           slug: editItem.slug || "",
-          translationdocurl: editItem.translationdocurl || editItem.TranslationDocUrl || "",
+          translationdocurl:
+            editItem.translationdocurl || editItem.TranslationDocUrl || "",
+          scangroup: editItem.scangroup || editItem.ScanGroup || "",
           status: editItem.status || "Ongoing",
           lastchapter: editItem.lastchapter ?? "0",
           costperchapter: editItem.costperchapter ?? 0,
@@ -101,6 +147,9 @@ export function MangaModal({
             String(editItem.notifyonadd).toLowerCase() === "true",
           isurgent: isUrgentManga(editItem),
         })
+        if (initUrl.toLowerCase().includes("comix.to")) {
+          fetchGroupsFromUrl(initUrl, true)
+        }
         if (editItem.releaseday && editItem.releaseday !== "None") {
           setSelectedDays(
             String(editItem.releaseday)
@@ -117,6 +166,8 @@ export function MangaModal({
           originalname: "",
           originalurl: "",
           slug: "",
+          translationdocurl: "",
+          scangroup: "",
           status: "Ongoing",
           lastchapter: "0",
           costperchapter: 0,
@@ -128,7 +179,7 @@ export function MangaModal({
         setSelectedDays([])
       }
     }
-  }, [open, editItem, reset])
+  }, [open, editItem, reset, fetchGroupsFromUrl])
 
   const translatorOptions = React.useMemo(() => {
     const active = (teamList || []).filter(
@@ -185,7 +236,7 @@ export function MangaModal({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">
             {editItem ? "แก้ไขข้อมูลมังงะ" : "เพิ่มมังงะใหม่"}
@@ -225,6 +276,88 @@ export function MangaModal({
               <Label>URL ต้นฉบับ</Label>
               <Input placeholder="https://..." {...register("originalurl")} />
             </div>
+          </div>
+
+          {/* GROUP SCANNER FIELD (e.g., Comix.to CrowScans) */}
+          <div className="rounded-lg border border-purple-500/30 bg-purple-500/5 p-3.5 space-y-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <Label className="flex items-center gap-1.5 text-purple-300 font-medium">
+                <Users className="h-4 w-4 text-purple-400" />
+                ค่ายแปลต้นฉบับ / Group Scanner (เช่น Comix.to)
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={loadingGroups}
+                onClick={() => fetchGroupsFromUrl(watch("originalurl") || "")}
+                className="h-7 px-2.5 text-xs border-purple-500/40 bg-purple-950/30 text-purple-300 hover:bg-purple-900/40 hover:text-white cursor-pointer"
+              >
+                <RefreshCw
+                  className={`h-3 w-3 mr-1 ${loadingGroups ? "animate-spin" : ""}`}
+                />
+                {loadingGroups ? "กำลังดึงค่ายแปล..." : "ดึงค่ายแปลจาก URL"}
+              </Button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input
+                placeholder="เช่น CrowScans (เว้นว่างได้หากไม่เจาะจงค่าย)"
+                className="border-purple-500/40 bg-[#0b1120] text-sm focus:border-purple-400 flex-1"
+                {...register("scangroup")}
+              />
+              {comixGroups.length > 0 && (
+                <select
+                  className="h-10 rounded-lg border border-purple-500/40 bg-[#0b1120] px-3 py-1.5 text-xs text-purple-200"
+                  value={watch("scangroup") || ""}
+                  onChange={(e) =>
+                    setValue("scangroup", e.target.value, { shouldDirty: true })
+                  }
+                >
+                  <option value="">
+                    -- เลือกค่ายแปล ({comixGroups.length} ค่าย) --
+                  </option>
+                  {comixGroups.map((g) => (
+                    <option key={g.id} value={g.name}>
+                      {g.name} (ID: {g.id})
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            {comixGroups.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-0.5">
+                {comixGroups.map((g) => {
+                  const active =
+                    (watch("scangroup") || "").toLowerCase() ===
+                    g.name.toLowerCase()
+                  return (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() =>
+                        setValue("scangroup", g.name, { shouldDirty: true })
+                      }
+                      className={`px-2 py-0.5 rounded text-[11px] font-medium border transition-colors cursor-pointer ${
+                        active
+                          ? "bg-purple-600 text-white border-purple-400"
+                          : "bg-[#0b1120] text-purple-300 border-purple-500/30 hover:border-purple-400"
+                      }`}
+                    >
+                      {g.name}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            <p className="text-[11px] text-slate-400">
+              สำหรับเว็บที่มีหลายค่ายแปลในเรื่องเดียว (เช่น{" "}
+              <span className="text-purple-300 font-mono">comix.to</span>)
+              ระบบจะเช็คตอนล่าสุดและดึงภาพเฉพาะของค่ายที่เลือก เช่น{" "}
+              <span className="text-purple-300 font-semibold">CrowScans</span>
+            </p>
           </div>
 
           <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3.5 space-y-2">

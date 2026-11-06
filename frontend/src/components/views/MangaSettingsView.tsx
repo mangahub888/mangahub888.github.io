@@ -22,6 +22,7 @@ import {
   Link2,
   RotateCcw,
   FileText,
+  Users,
 } from "lucide-react"
 
 interface MangaSettingsViewProps {
@@ -96,12 +97,22 @@ export function MangaSettingsView({
             ) : (
               mangaList.map((m) => {
                 const urgent = isUrgentManga(m)
+                const scanGroup = m.scangroup || m.ScanGroup || ""
                 return (
                   <TableRow key={m.mangaid}>
                     <TableCell>
-                      <div className="font-semibold text-slate-100 flex items-center gap-1.5">
+                      <div className="font-semibold text-slate-100 flex items-center gap-1.5 flex-wrap">
                         {urgent && <span>🔥</span>}
-                        {m.manganame || "Untitled"}
+                        <span>{m.manganame || "Untitled"}</span>
+                        {scanGroup && (
+                          <span
+                            className="inline-flex items-center gap-1 rounded bg-purple-950/60 border border-purple-500/40 px-1.5 py-0.5 text-[10px] font-medium text-purple-300"
+                            title={`ค่ายแปลต้นฉบับ: ${scanGroup}`}
+                          >
+                            <Users className="h-2.5 w-2.5 text-purple-400" />
+                            {scanGroup}
+                          </span>
+                        )}
                       </div>
                       <div className="text-xs text-slate-400 mt-0.5 flex flex-wrap items-center gap-2">
                         {m.originalurl ? (

@@ -404,6 +404,17 @@ def main():
     except Exception as tc_err:
         print(f"   ⚠️ ไม่สามารถดึงคิวงาน Tencent Comic: {tc_err}")
 
+    # ดึงคิวตอนใหม่จาก Comix.to (Multi-Group Scanner เช่น CrowScans)
+    try:
+        from comix_purchaser import get_pending_comix_tasks, process_single_comix_chapter
+        comix_tasks = get_pending_comix_tasks()
+        if comix_tasks:
+            if target_tracker_id:
+                comix_tasks = [t for t in comix_tasks if str(t.get("trackerId")) == str(target_tracker_id)]
+            tasks.extend(comix_tasks)
+    except Exception as cx_err:
+        print(f"   ⚠️ ไม่สามารถดึงคิวงาน Comix.to: {cx_err}")
+
     max_chapters = int(os.environ.get("MAX_CHAPTERS", "0"))
     if max_chapters > 0 and len(tasks) > max_chapters:
         print(f"⚙️ จำกัดการรันสูงสุด {max_chapters} ตอน (จากทั้งหมด {len(tasks)} ตอน)")
@@ -428,6 +439,8 @@ def main():
 
         if conn == "thunderscans":
             success = process_single_thunderscans_chapter(task)
+        elif conn == "comix":
+            success = process_single_comix_chapter(task)
         elif conn in ["tencent", "qq"]:
             success = process_single_tencent_chapter(task)
         else:

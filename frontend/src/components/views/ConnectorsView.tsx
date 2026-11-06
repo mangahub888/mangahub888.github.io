@@ -46,6 +46,7 @@ import {
   loadImageElement,
 } from "@/components/modals/KuaiKanLoginModal"
 import { ThunderScansModal } from "@/components/modals/ThunderScansModal"
+import { ComixModal } from "@/components/modals/ComixModal"
 import { KuaikanCoinWarningBanner } from "@/components/ui/KuaikanCoinWarningBanner"
 import { useKuaikanCoinAlert } from "@/lib/kuaikanCoinAlert"
 
@@ -59,6 +60,7 @@ export function ConnectorsView({ mangaList }: ConnectorsViewProps) {
 
   // ThunderScans Modal State
   const [thunderModalOpen, setThunderModalOpen] = React.useState(false)
+  const [comixModalOpen, setComixModalOpen] = React.useState(false)
 
   // KuaiKan Coin & Wallet Alert Hook
   const {
@@ -643,6 +645,17 @@ export function ConnectorsView({ mangaList }: ConnectorsViewProps) {
   // List of Connectors
   const connectorsList = [
     {
+      id: "comix",
+      name: "🌐 Comix.to (Multi-Group Scanner)",
+      region: "en",
+      active: true,
+      status: "ready",
+      statusLabel: "🌐 พร้อมใช้งาน (ไม่ต้องล็อกอิน)",
+      desc: "ดึงมังงะอังกฤษแบบเลือกค่ายแปลได้ (เช่น CrowScans) ไม่ต้องล็อกอิน พร้อมระบบเย็บ 20 หน้าลง แปลจนเมื่อย อัตโนมัติ",
+      icon: Globe,
+      color: "from-purple-500/20 to-indigo-500/20 border-purple-500/40 text-purple-400",
+    },
+    {
       id: "thunderscans",
       name: "⚡ ThunderScans EN (en-thunderscans.com)",
       region: "en",
@@ -783,7 +796,7 @@ export function ConnectorsView({ mangaList }: ConnectorsViewProps) {
               : "bg-[#151d2f] text-slate-400 hover:text-slate-200 border border-[#26334d]"
           }`}
         >
-          ⚡ สแกนอังกฤษ (ThunderScans)
+          ⚡ สแกนอังกฤษ (Comix.to, ThunderScans)
         </button>
         <button
           onClick={() => setFilterCategory("cn")}
@@ -1363,6 +1376,69 @@ export function ConnectorsView({ mangaList }: ConnectorsViewProps) {
             </div>
           </CardContent>
         </Card>
+        {/* Dedicated Active Connector Card: 🌐 Comix.to (Multi-Group Scanner) */}
+        <Card className="border-purple-500/40 bg-[#0d1322] shadow-xl overflow-hidden mt-6">
+          <div className="border-b border-purple-500/20 bg-gradient-to-r from-purple-950/40 via-[#151d2f] to-[#0d1322] p-5 sm:p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-purple-500/20 border border-purple-500/40 text-purple-400 shadow-md">
+                  <Globe className="h-6 w-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <h3 className="text-lg font-bold text-white">🌐 Comix.to (Multi-Group Scanner)</h3>
+                    <Badge variant="outline" className="border-purple-500/40 bg-purple-500/10 text-purple-300 text-xs font-semibold">
+                      เลือกค่ายแปลได้ (เช่น CrowScans)
+                    </Badge>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      พร้อมใช้งาน (ไม่ต้องล็อกอิน)
+                    </span>
+                    <Badge variant="outline" className="border-slate-700 bg-slate-800/60 text-slate-300 text-[11px]">
+                      Root: แปลจนเมื่อย
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    รองรับมังงะที่มีหลายค่ายแปลในเรื่องเดียว • เลือกค่ายแปลในตั้งค่ามังงะได้ • รองรับทั้งดึงตรงและแกะจาก HTML (.reader-area / img.rpage-page__img)
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  onClick={() => setComixModalOpen(true)}
+                  className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md cursor-pointer"
+                >
+                  <Globe className="h-3.5 w-3.5 mr-1.5" />
+                  เปิดเครื่องมือ Comix.to (Open Comix)
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <CardContent className="p-4 sm:p-5 bg-[#0b0f19]/60">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-slate-300 flex-wrap">
+                <BookOpen className="h-4 w-4 text-purple-400 shrink-0" />
+                <span>
+                  เรื่องทดสอบหลัก: <strong className="text-white">นักฆ่าระดับเทพ ข้าคือเงามืด (God-level Assassin, I&apos;m the Shadow)</strong> • ค่าย: <strong className="text-purple-300">CrowScans</strong>
+                </span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setComixModalOpen(true)}
+                  className="h-8 border-[#26334d] bg-[#151d2f] text-slate-200 hover:text-white text-xs cursor-pointer"
+                >
+                  <Scissors className="h-3.5 w-3.5 mr-1.5 text-purple-400" />
+                  เลือกค่ายแปล & เย็บ 20 หน้า
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Upcoming Connectors Grid */}
@@ -1382,7 +1458,7 @@ export function ConnectorsView({ mangaList }: ConnectorsViewProps) {
             .filter((c) => c.id !== "kuaikan")
             .map((conn) => {
               const Icon = conn.icon
-              const isThunder = conn.id === "thunderscans"
+              const isThunder = conn.id === "thunderscans" || conn.id === "comix"
               return (
                 <Card
                   key={conn.id}
@@ -1420,7 +1496,7 @@ export function ConnectorsView({ mangaList }: ConnectorsViewProps) {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setThunderModalOpen(true)}
+                          onClick={() => conn.id === "comix" ? setComixModalOpen(true) : setThunderModalOpen(true)}
                           className="h-7 text-xs bg-amber-500/10 border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-semibold cursor-pointer"
                         >
                           <Zap className="h-3 w-3 mr-1" />
@@ -1448,6 +1524,10 @@ export function ConnectorsView({ mangaList }: ConnectorsViewProps) {
       <ThunderScansModal
         open={thunderModalOpen}
         onClose={() => setThunderModalOpen(false)}
+      />
+      <ComixModal
+        open={comixModalOpen}
+        onClose={() => setComixModalOpen(false)}
       />
     </div>
   )
