@@ -174,6 +174,7 @@ def call_api(endpoint_url: str, token: str, acc: Dict[str, Any], retries: int = 
             if e.code == 401:
                 print(f"⚠️ [{acc['name']}] Token หมดอายุ -> รีเฟรช Token ใหม่...")
                 new_token = refresh_account_token(acc)
+                acc["_cached_token"] = new_token
                 headers["Authorization"] = new_token
             elif attempt == retries:
                 print(f"❌ API Error {e.code} on {endpoint_url}")
@@ -199,7 +200,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
 
     while True:
         url = f"https://api-writer.readrealm.co/writer/comics/getComicsList?comic_subject=&comic_status=&comic_category=&comic_rating=&comic_publish=&per_page={per_page}&page={page}"
-        data = call_api(url, token, acc)
+        data = call_api(url, acc.get("_cached_token") or token, acc)
         total = data.get("total", 0)
         items = data.get("data", [])
         if not items:
@@ -444,6 +445,17 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     print(f"   • จุดอ้างอิง 7 วันก่อน: {'✓ พบข้อมูล (' + snap_7d['recorded_at'][:10] + ')' if snap_7d else '⚠️ ยังไม่มีประวัติ (เพิ่งเริ่มต้นเก็บ)'}")
     print(f"   • จุดอ้างอิง 30 วันก่อน: {'✓ พบข้อมูล (' + snap_30d['recorded_at'][:10] + ')' if snap_30d else '⚠️ ยังไม่มีประวัติ (เพิ่งเริ่มต้นเก็บ)'}")
 
+    # Load previous 7-chapter sales cache so we only re-fetch changed comics
+    prev_7ch_map = {}
+    if os.path.exists(LATEST_GROWTH_FILE):
+        try:
+            with open(LATEST_GROWTH_FILE, "r", encoding="utf-8") as pf:
+                prev_data = json.load(pf)
+            for pc in prev_data.get("comics", []):
+                prev_7ch_map[str(pc.get("comic_id"))] = pc
+        except Exception:
+            pass
+
     # 5. Calculate 7-day and 30-day delta and growth rate for each comic
     growth_results = []
     for c in all_current_comics:
@@ -496,7 +508,9 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                 "views_growth_pct": round(pct_v_30d, 2),
                 "sales_delta": round(d_s_30d, 2),
                 "sales_growth_pct": round(pct_s_30d, 2)
-            }
+            },
+            "sales_7_chapters": round(float(prev_7ch_map.get(str(cid), {}).get("sales_7_chapters") or 0.0), 2),
+            "views_7_chapters": int(prev_7ch_map.get(str(cid), {}).get("views_7_chapters") or 0)
         })
 
     # Sort by total sales descending

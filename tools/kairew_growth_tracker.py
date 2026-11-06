@@ -321,6 +321,17 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                 snap_30d = daily_snaps[alt_date]
                 break
 
+    # Load previous 7-chapter sales cache for Kairew
+    prev_kw_7ch = {}
+    if os.path.exists(LATEST_GROWTH_FILE):
+        try:
+            with open(LATEST_GROWTH_FILE, "r", encoding="utf-8") as pf:
+                prev_kw_data = json.load(pf)
+            for pc in prev_kw_data.get("comics", []):
+                prev_kw_7ch[str(pc.get("comic_id"))] = pc
+        except Exception:
+            pass
+
     # 5. Build enriched comic rows
     enriched_comics = []
     inactive_count_30d = 0
@@ -377,7 +388,9 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                 "views_growth_pct": views_pct_30d,
                 "sales_delta": sales_delta_30d,
                 "sales_growth_pct": sales_pct_30d
-            }
+            },
+            "sales_7_chapters": round(float(prev_kw_7ch.get(str(cid), {}).get("sales_7_chapters") or 0.0), 2),
+            "views_7_chapters": int(prev_kw_7ch.get(str(cid), {}).get("views_7_chapters") or 0)
         }
         enriched_comics.append(row)
 

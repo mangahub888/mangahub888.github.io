@@ -682,7 +682,8 @@ function ensureSheetHeaders(sheet, name) {
       ensureCol('NotifyOnAdd', false);
       ensureCol('Slug', '');
       ensureCol('IsUrgent', false);
-      ensureCol('TranslationDocUrl', '');
+      ensureCol('TranslationDocUrl', '');
+
       ensureCol('ScanGroup', '');
     }
   }
@@ -950,7 +951,8 @@ function addManga(manga) {
       if (header === 'notifyonadd') return manga.notifyonadd !== undefined ? manga.notifyonadd : false;
       if (header === 'slug') return manga.slug || '';
       if (header === 'isurgent') return manga.isurgent !== undefined ? manga.isurgent : false;
-      if (header === 'translationdocurl') return manga.translationdocurl || '';
+      if (header === 'translationdocurl') return manga.translationdocurl || '';
+
       if (header === 'scangroup') return manga.scangroup || manga.scanGroup || '';
       return '';
     });
@@ -1064,7 +1066,8 @@ function updateManga(id, updatedManga) {
           if (header === 'notifyonadd') sheet.getRange(rowNum, colNum).setValue(updatedManga.notifyonadd !== undefined ? updatedManga.notifyonadd : false);
           if (header === 'slug') sheet.getRange(rowNum, colNum).setValue(updatedManga.slug || '');
           if (header === 'isurgent') sheet.getRange(rowNum, colNum).setValue(updatedManga.isurgent !== undefined ? updatedManga.isurgent : false);
-          if (header === 'translationdocurl') sheet.getRange(rowNum, colNum).setValue(updatedManga.translationdocurl !== undefined ? updatedManga.translationdocurl : '');
+          if (header === 'translationdocurl') sheet.getRange(rowNum, colNum).setValue(updatedManga.translationdocurl !== undefined ? updatedManga.translationdocurl : '');
+
           if (header === 'scangroup') sheet.getRange(rowNum, colNum).setValue(updatedManga.scangroup !== undefined ? updatedManga.scangroup : (updatedManga.scanGroup !== undefined ? updatedManga.scanGroup : ''));
         });
         invalidateCache('mangaList');
@@ -6252,479 +6255,952 @@ function proxyThunderScansImage(payload) {
 }
 
 
-
-// ==========================================
-// COMIX.TO CONNECTOR (ไม่ต้องล็อกอิน + รองรับเลือกค่ายแปล Group Scanner)
-// ==========================================
-
-const COMIX_ZJ_HEX = "9d6ac7f7ea9d3bf702d61cc08139d4c69ce0e6a3298e030765416732344cfaeab1f0d0eed9c440fc1cbb0dd0858808e2640d4423450f040e32ec968bc1f1e6d5d86a390cc9081cc4488807eb1a46ac6da9b39297d1a8b6800edf6aaa0f786ead6212a321187e8effe09b672255b529bc8603d5240cefa75ec7045db6ff4a9f216e791dad3fb0c8f372321bb568b4f2f5a991115f4c2254802dc445f212141a4314b7c05b23aa04333b7c4255f65dec042bf85549a29b6a3f80dc4f416f6709af4045bd44ff02e2331619fc248acc0f2e937d838bb351173195519311f41badb3d7f40c01650f53ac5697744d66f954ad05b2af8961fc7ef2806f455d8e1cd852d62302fcd462805a038898c33fb1a25d9bb1c26c71cd0850e155c39f67cd74794917e0ffa12fe2624abaedceee20e26e7c4dd2b7beef102c2d004dc288c6a9e636a05843a1596f55d5426b86c9fdbc409d5e68fb3a0402d621318f662df07b0c0b3146fff75ca4cd9b13cdb8d799ce94c15e5da36feafa78cde2a417e96f0ea22a0f48813254b39bef5124dfbfdc5dc2157be542bb51acdc5ed9ad49cb2e8f4297a6828e956797d726ea9aa2447a94cfd1823ff0156c25f262b359f94fbc66930b7ffff15e76b42f4ee6f7b4d2be23e7da8e07c9296c1160d4adb2d5f8968c54a3cea12488fd37571c0ba1394237d9f21ff8f7a473ecb22f653a70243e05c82bc3b368d2b65c03ba8d4b87893e022e4d24b91a568426577794194b8fff7d09d16de20a64847afc6efd855fb1aca66326dd6f47fcad1e487eb3425d23b65248f7fb94136fdfdf09a124621326b397760d42f0430d52e4d9dfab9c97df62f687c6778f7485359d7b03d1584e58b560fe713b3c17061a5bc6f9a5d36d46c75a8d45d22862f6c58900ea3af7a3addd425d32ec00b667d6501b90df3dc69437bf36c0e74a457e1448de1dc0f15b45d2cfbb66d0a81ce71890a968c18c2ec72d05fa5a87340103110d6e6ef95360871ee1fee6a7e1971f386740302acb9d882455137cbce9c2f807455d7d8baf1a6f2f022bd6aec26a37b0f917252f70f87c346e380822de767ca008b39c38ca50e528ae2bb5bf7ed62b678bd6dd4a6ea123ff6ab249bda7bda434fb1d692fd82c114833ea5850b185a6203d97b6dd110298b8ff6e37c4628b8c9e0f456d78f1bcc2f4e3442551eaec64ea5e419370757b06771e5e6b2474bbb599ecfa0f37cd5618685f3b39c7b878dc209b32df3c9f79b2572ff434823ebd8a12aa14fb24e210c25e5d097d5da51e8733e5ddd94d03ff91cd3bdb9377452aa6f83f9d5489ce7b9ab8d3ae1c828683e9d52434650bdb1384de6c2eff5c37ef68541350660c948908068b5cc43616e2601a4c5508df58a317911ab3b018ed72c92ca2e8d2bc8e1fb56925e5c2a2aded2ae866914ba44349f77e6ca9fa58e01ea467be1f1c673856c2797ab4a926f7994370408fad43d2e72614e9539caaccd149416f430266ac599f27ce2256210849c3b57cd2e5b97db88fdee4cb18";
-
-let _comixZjCache = null;
-function getComixZjBytes() {
-  if (_comixZjCache) return _comixZjCache;
-  const bytes = new Uint8Array(COMIX_ZJ_HEX.length / 2);
-  for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = parseInt(COMIX_ZJ_HEX.substr(i * 2, 2), 16);
-  }
-  _comixZjCache = bytes;
-  return bytes;
-}
-
-const COMIX_SHA256_K = [
-  1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,
-  3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,
-  3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,
-  2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,
-  666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,
-  2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,
-  430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,
-  1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298
-];
-
-function comixRotr(L, l) {
-  return (L >>> l) | (L << (32 - l));
-}
-
-function comixSha256Transform(L, H, I) {
-  const P = new Int32Array(64);
-  for (let z = 0; z < 16; z++) {
-    const q = I + 4 * z;
-    P[z] = (H[q] << 24) | (H[q + 1] << 16) | (H[q + 2] << 8) | H[q + 3];
-  }
-  for (let Z = 16; Z < 64; Z++) {
-    const s = P[Z - 15];
-    const T = comixRotr(s, 7) ^ comixRotr(s, 18) ^ (s >>> 3);
-    const F = P[Z - 2];
-    const y = comixRotr(F, 17) ^ comixRotr(F, 19) ^ (F >>> 10);
-    P[Z] = (P[Z - 16] + T + P[Z - 7] + y) | 0;
-  }
-  let M = L[0], R = L[1], A = L[2], N = L[3], x = L[4], t = L[5], w = L[6], G = L[7];
-  for (let W = 0; W < 64; W++) {
-    const O = (G + (comixRotr(x, 6) ^ comixRotr(x, 11) ^ comixRotr(x, 25)) + ((x & t) ^ (~x & w)) + COMIX_SHA256_K[W] + P[W]) | 0;
-    const D = ((comixRotr(M, 2) ^ comixRotr(M, 13) ^ comixRotr(M, 22)) + ((M & R) ^ (M & A) ^ (R & A))) | 0;
-    G = w; w = t; t = x; x = (N + O) | 0; N = A; A = R; R = M; M = (O + D) | 0;
-  }
-  L[0] = (L[0] + M) | 0; L[1] = (L[1] + R) | 0; L[2] = (L[2] + A) | 0; L[3] = (L[3] + N) | 0;
-  L[4] = (L[4] + x) | 0; L[5] = (L[5] + t) | 0; L[6] = (L[6] + w) | 0; L[7] = (L[7] + G) | 0;
-}
-
-function comixSha256Continue(stateWords, msgBytes, prevLen) {
-  const P = new Int32Array(stateWords);
-  const M = prevLen + msgBytes.length;
-  let R = msgBytes.length + 1;
-  while (R % 64 !== 56) R++;
-  const A = new Uint8Array(R + 8);
-  for (let i = 0; i < msgBytes.length; i++) A[i] = msgBytes[i];
-  A[msgBytes.length] = 128;
-  const n = 8 * M;
-  const N = Math.floor(n / 4294967296);
-  const x = n >>> 0;
-  const t = A.length - 8;
-  A[t] = (N >>> 24) & 255; A[t + 1] = (N >>> 16) & 255; A[t + 2] = (N >>> 8) & 255; A[t + 3] = N & 255;
-  A[t + 4] = (x >>> 24) & 255; A[t + 5] = (x >>> 16) & 255; A[t + 6] = (x >>> 8) & 255; A[t + 7] = x & 255;
-  for (let G = 0; G < A.length; G += 64) comixSha256Transform(P, A, G);
-  const w = new Uint8Array(32);
-  for (let z = 0; z < 8; z++) {
-    w[4 * z] = (P[z] >>> 24) & 255;
-    w[4 * z + 1] = (P[z] >>> 16) & 255;
-    w[4 * z + 2] = (P[z] >>> 8) & 255;
-    w[4 * z + 3] = P[z] & 255;
-  }
-  return w;
-}
-
-function comixReadStateWords(zj, offset) {
-  const f = new Int32Array(8);
-  for (let H = 0; H < 8; H++) {
-    const I = offset + 4 * H;
-    f[H] = (zj[I] << 24) | (zj[I + 1] << 16) | (zj[I + 2] << 8) | zj[I + 3];
-  }
-  return f;
-}
-
-function comixSignRequest(canonicalPath) {
-  const zj = getComixZjBytes();
-  const msgBytes = [];
-  for (let i = 0; i < canonicalPath.length; i++) msgBytes.push(canonicalPath.charCodeAt(i) & 255);
-  const innerHash = comixSha256Continue(comixReadStateWords(zj, 0), msgBytes, 64);
-  const outerHash = comixSha256Continue(comixReadStateWords(zj, 32), innerHash, 64);
-  const B64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-  let out = "";
-  for (let H = 0; H < outerHash.length; H += 3) {
-    const I = outerHash[H], P = outerHash[H + 1], M = outerHash[H + 2];
-    out += B64_CHARS[I >> 2] + B64_CHARS[((3 & I) << 4) | (P >> 4)];
-    if (H + 1 < outerHash.length) out += B64_CHARS[((15 & P) << 2) | (M >> 6)];
-    if (H + 2 < outerHash.length) out += B64_CHARS[63 & M];
-  }
-  return "qbk." + out.slice(0, 16);
-}
-
-function comixDecryptResponse(eStr) {
-  const zj = getComixZjBytes();
-  const B64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-  const lut = [];
-  for (let i = 0; i < 256; i++) lut.push(-1);
-  for (let i = 0; i < 64; i++) lut[B64_CHARS.charCodeAt(i)] = i;
-  lut[43] = 62; lut[47] = 63;
-
-  const rawBytes = [];
-  let buf = 0, bits = 0;
-  for (let i = 0; i < eStr.length; i++) {
-    const v = lut[eStr.charCodeAt(i)];
-    if (v === undefined || v < 0) continue;
-    buf = (buf << 6) | v;
-    bits += 6;
-    if (bits >= 8) {
-      bits -= 8;
-      rawBytes.push((buf >> bits) & 255);
-    }
-  }
-  const offset = ((rawBytes[0] << 8) | rawBytes[1]) % 1024;
-  const payload = [];
-  for (let i = 0; i < rawBytes.length - 2; i++) {
-    payload.push(rawBytes[i + 2] ^ zj[64 + ((offset + i) % 1024)]);
-  }
-  const jsonStr = Utilities.newBlob(payload).getDataAsString('UTF-8');
-  return JSON.parse(jsonStr);
-}
-
-function callComixApiFromGas(path, params) {
-  const p = Object.assign({}, params || {});
-  if ((path.indexOf('/manga/') === 0 && path.indexOf('/chapters') !== -1) || path.indexOf('/chapters/') === 0) {
-    p.v = '0';
-    p.w = '0';
-  }
-  const keys = Object.keys(p).filter(function(k) { return k !== '_'; }).sort();
-  const qsParts = keys.map(function(k) { return k + '=' + String(p[k]); });
-  const qs = qsParts.join('&');
-  const canonical = qs ? (path + '?' + qs) : path;
-  p._ = comixSignRequest(canonical);
-  const fullQs = Object.keys(p).map(function(k) {
-    return encodeURIComponent(k) + '=' + encodeURIComponent(String(p[k]));
-  }).join('&');
-  const url = 'https://comix.to/api/v1' + path + '?' + fullQs;
-  const resp = UrlFetchApp.fetch(url, {
-    method: 'get',
-    muteHttpExceptions: true,
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-      'Accept': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-Rt': '0',
-      'Referer': 'https://comix.to/'
-    }
-  });
-  if (resp.getResponseCode() !== 200) {
-    throw new Error('Comix API HTTP ' + resp.getResponseCode() + ': ' + resp.getContentText());
-  }
-  const headers = resp.getHeaders();
-  const xEnc = headers['x-enc'] || headers['X-Enc'] || '';
-  const body = JSON.parse(resp.getContentText('UTF-8'));
-  if (String(xEnc) === '2' && body && typeof body.e === 'string') {
-    const dec = comixDecryptResponse(body.e);
-    if (dec && dec.status === 'ok' && dec.result !== undefined) return dec.result;
-    return dec;
-  }
-  if (body && body.status === 'ok' && body.result !== undefined) return body.result;
-  return body;
-}
-
-function parseComixInitialData(url) {
-  const resp = UrlFetchApp.fetch(url, {
-    method: 'get',
-    muteHttpExceptions: true,
-    followRedirects: true,
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    }
-  });
-  if (resp.getResponseCode() !== 200) {
-    throw new Error('HTTP ' + resp.getResponseCode());
-  }
-  const html = resp.getContentText('UTF-8');
-  const m = html.match(/<script[^>]*id="initial-data"[^>]*>([\s\S]*?)<\/script>/i);
-  if (!m) {
-    throw new Error('ไม่พบข้อมูล initial-data ในหน้าเว็บ Comix.to');
-  }
-  return JSON.parse(m[1]);
-}
-
-function extractComixHidFromUrl(url) {
-  if (!url) return '';
-  const m = String(url).match(/comix\.to\/title\/([a-z0-9]+)(?:-|\/|\?|$)/i);
-  return m ? m[1] : '';
-}
-
-function getComixGroups(url) {
-  try {
-    if (!url || String(url).indexOf('comix.to') === -1) {
-      return { error: 'กรุณาระบุลิงก์จาก https://comix.to/title/...' };
-    }
-    const hid = extractComixHidFromUrl(url);
-    const initData = parseComixInitialData(url);
-    const queries = (initData && initData.queries) ? initData.queries : {};
-    let detail = null;
-    let groups = [];
-
-    Object.keys(queries).forEach(function(k) {
-      if (k.indexOf('"manga","detail"') !== -1) {
-        detail = queries[k];
-      } else if (k.indexOf('"manga","groups"') !== -1 && Array.isArray(queries[k])) {
-        groups = queries[k];
-      }
-    });
-
-    if (groups.length === 0 && hid) {
-      try {
-        const apiGroups = callComixApiFromGas('/manga/' + hid + '/groups');
-        if (Array.isArray(apiGroups)) groups = apiGroups;
-        else if (apiGroups && Array.isArray(apiGroups.items)) groups = apiGroups.items;
-      } catch (ge) {}
-    }
-
-    return {
-      success: true,
-      hid: hid || (detail ? detail.hid : ''),
-      title: detail ? detail.title : '',
-      latestChapter: detail ? detail.latestChapter : 0,
-      groups: groups
-    };
-  } catch (err) {
-    return { error: err.toString() };
-  }
-}
-
-function scrapeComixTitleUrl(url, scanGroup) {
-  try {
-    const info = getComixGroups(url);
-    if (info.error) {
-      return { success: false, error: info.error };
-    }
-    const hid = info.hid;
-    const groups = info.groups || [];
-    const targetGroupStr = String(scanGroup || '').trim();
-
-    if (targetGroupStr && hid) {
-      const matchedGroup = groups.find(function(g) {
-        return String(g.name || '').trim().toLowerCase() === targetGroupStr.toLowerCase() ||
-               String(g.slug || '').trim().toLowerCase() === targetGroupStr.toLowerCase() ||
-               String(g.id) === targetGroupStr;
-      });
-      if (matchedGroup) {
-        const chapsRes = callComixApiFromGas('/manga/' + hid + '/chapters', {
-          page: 1,
-          limit: 5,
-          group_id: matchedGroup.id
-        });
-        const items = (chapsRes && Array.isArray(chapsRes.items)) ? chapsRes.items : [];
-        if (items.length > 0) {
-          const latestNum = parseFloat(items[0].number) || 0;
-          return {
-            success: true,
-            rawText: 'Chapter ' + latestNum + ' (' + matchedGroup.name + ')',
-            chapterCount: latestNum,
-            url: url,
-            scanGroup: matchedGroup.name,
-            timestamp: new Date().toISOString()
-          };
-        }
-      }
-    }
-
-    const overallLatest = parseFloat(info.latestChapter) || 0;
-    return {
-      success: true,
-      rawText: 'Chapter ' + overallLatest + (targetGroupStr ? ' (All Groups)' : ''),
-      chapterCount: overallLatest,
-      url: url,
-      timestamp: new Date().toISOString()
-    };
-  } catch (err) {
-    return {
-      success: false,
-      error: 'ดึงข้อมูล Comix.to ไม่สำเร็จ: ' + err.toString()
-    };
-  }
-}
-
-function testComixChapter(payload) {
-  try {
-    const targetUrl = payload ? String(payload.chapterUrl || payload.url || '').trim() : '';
-    const scanGroup = payload ? String(payload.scanGroup || payload.scangroup || '').trim() : '';
-    if (!targetUrl) {
-      return { error: 'กรุณาระบุ URL ของตอน หรือ URL เรื่องจาก Comix.to' };
-    }
-
-    let chapterId = '';
-    let hid = extractComixHidFromUrl(targetUrl);
-    const chapMatch = targetUrl.match(/\/title\/[^\/]+\/(\d+)-chapter-([\d.]+)/i) || targetUrl.match(/chapters\/(\d+)/i);
-    if (chapMatch) {
-      chapterId = chapMatch[1];
-    }
-
-    let mangaTitle = '';
-    let groupName = scanGroup;
-    let chapterNumber = '';
-    let actualChapterUrl = targetUrl;
-
-    // หากส่ง URL หน้าเรื่องมา ให้ดึงตอนล่าสุดของค่ายที่เลือก (หรือตอนล่าสุดรวม)
-    if (!chapterId && hid) {
-      const gInfo = getComixGroups(targetUrl);
-      if (gInfo && gInfo.title) mangaTitle = gInfo.title;
-      const groups = (gInfo && gInfo.groups) ? gInfo.groups : [];
-      let params = { page: 1, limit: 5 };
-      if (scanGroup) {
-        const gMatch = groups.find(function(g) {
-          return String(g.name || '').trim().toLowerCase() === scanGroup.toLowerCase() ||
-                 String(g.slug || '').trim().toLowerCase() === scanGroup.toLowerCase() ||
-                 String(g.id) === scanGroup;
-        });
-        if (gMatch) {
-          params.group_id = gMatch.id;
-          groupName = gMatch.name;
-        }
-      }
-      const chapsRes = callComixApiFromGas('/manga/' + hid + '/chapters', params);
-      const items = (chapsRes && Array.isArray(chapsRes.items)) ? chapsRes.items : [];
-      if (items.length === 0) {
-        return { error: 'ไม่พบตอนสำหรับค่าย ' + (scanGroup || 'ทั้งหมด') + ' ในเรื่องนี้' };
-      }
-      chapterId = String(items[0].id);
-      chapterNumber = String(items[0].number);
-      if (items[0].group && items[0].group.name) groupName = items[0].group.name;
-      if (items[0].url) actualChapterUrl = 'https://comix.to' + items[0].url;
-    }
-
-    if (!chapterId) {
-      return { error: 'ไม่สามารถระบุ Chapter ID จากลิงก์ที่ให้มาได้' };
-    }
-
-    const chapDetail = callComixApiFromGas('/chapters/' + chapterId);
-    const pagesItems = (chapDetail && chapDetail.pages && Array.isArray(chapDetail.pages.items))
-      ? chapDetail.pages.items
-      : [];
-    const images = pagesItems.map(function(p) { return p.url; }).filter(Boolean);
-
-    if (!chapterNumber && chapDetail && chapDetail.number !== undefined) {
-      chapterNumber = String(chapDetail.number);
-    }
-    if (chapDetail && chapDetail.group && chapDetail.group.name) {
-      groupName = chapDetail.group.name;
-    }
-    if (!mangaTitle && hid) {
-      try {
-        const gInfo2 = getComixGroups('https://comix.to/title/' + hid);
-        if (gInfo2 && gInfo2.title) mangaTitle = gInfo2.title;
-      } catch (e) {}
-    }
-
-    // Match Thai manga name in system
-    let thaiTitle = '';
-    let matchedMangaId = '';
-    try {
-      const mList = getMangaList();
-      const matched = mList.find(function(m) {
-        const origUrl = String(m.originalurl || '').toLowerCase();
-        return (hid && origUrl.indexOf(hid.toLowerCase()) !== -1) ||
-               (mangaTitle && String(m.originalname || '').toLowerCase() === mangaTitle.toLowerCase());
-      });
-      if (matched) {
-        thaiTitle = matched.manganame;
-        matchedMangaId = String(matched.mangaid);
-      }
-    } catch (e) {}
-
-    // Pre-proxy 6 sample images for preview
-    const rawSampleUrls = images.slice(0, 6);
-    let sampleDataUrls = rawSampleUrls;
-    if (rawSampleUrls.length > 0) {
-      try {
-        const sampleReqs = rawSampleUrls.map(function(u) {
-          return {
-            url: u,
-            method: 'get',
-            muteHttpExceptions: true,
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-            }
-          };
-        });
-        const sampleResps = UrlFetchApp.fetchAll(sampleReqs);
-        sampleDataUrls = sampleResps.map(function(r, idx) {
-          if (r.getResponseCode() === 200) {
-            const b = r.getBlob();
-            const mime = b.getContentType() || 'image/webp';
-            return 'data:' + mime + ';base64,' + Utilities.base64Encode(b.getBytes());
-          }
-          return rawSampleUrls[idx];
-        });
-      } catch (pe) {}
-    }
-
-    const displayTitle = (mangaTitle ? mangaTitle + ' ' : '') + 'Chapter ' + chapterNumber + (groupName ? ' [' + groupName + ']' : '');
-
-    return {
-      status: 'success',
-      data: {
-        success: true,
-        title: displayTitle,
-        mangaName: thaiTitle || mangaTitle || 'Comix Manga',
-        thaiTitle: thaiTitle,
-        mangaId: matchedMangaId,
-        chapterNumber: chapterNumber,
-        chapterId: chapterId,
-        scanGroup: groupName,
-        chapterUrl: actualChapterUrl,
-        imagesCount: images.length,
-        allImages: images,
-        sampleImages: sampleDataUrls,
-        rawSampleImages: rawSampleUrls,
-        isLocked: false
-      }
-    };
-  } catch (err) {
-    console.error('testComixChapter error:', err);
-    return { error: err.toString() };
-  }
-}
-
-function proxyComixImage(payload) {
-  try {
-    let imageUrl = '';
-    if (typeof payload === 'string') {
-      imageUrl = payload.trim();
-    } else if (payload && typeof payload === 'object') {
-      imageUrl = String(payload.imageUrl || payload.url || '').trim();
-    }
-    if (!imageUrl) return { error: 'No imageUrl provided' };
-    if (imageUrl.indexOf('data:') === 0) return { success: true, dataUrl: imageUrl };
-
-    // สำคัญ: CDN ของ Comix.to ใช้ referrerPolicy="no-referrer" (ห้ามส่ง Referer header มิฉะนั้นจะได้ 403)
-    const resp = UrlFetchApp.fetch(imageUrl, {
-      method: 'get',
-      muteHttpExceptions: true,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-      }
-    });
-    if (resp.getResponseCode() !== 200) {
-      return { error: 'Failed to fetch Comix image: HTTP ' + resp.getResponseCode() };
-    }
-    const blob = resp.getBlob();
-    const contentType = blob.getContentType() || 'image/webp';
-    const base64 = Utilities.base64Encode(blob.getBytes());
-    return {
-      success: true,
-      dataUrl: 'data:' + contentType + ';base64,' + base64,
-      contentType: contentType,
-      size: blob.getBytes().length
-    };
-  } catch (err) {
-    return { error: err.toString() };
-  }
-}
-
+
+
+// ==========================================
+
+// COMIX.TO CONNECTOR (ไม่ต้องล็อกอิน + รองรับเลือกค่ายแปล Group Scanner)
+
+// ==========================================
+
+
+
+const COMIX_ZJ_HEX = "9d6ac7f7ea9d3bf702d61cc08139d4c69ce0e6a3298e030765416732344cfaeab1f0d0eed9c440fc1cbb0dd0858808e2640d4423450f040e32ec968bc1f1e6d5d86a390cc9081cc4488807eb1a46ac6da9b39297d1a8b6800edf6aaa0f786ead6212a321187e8effe09b672255b529bc8603d5240cefa75ec7045db6ff4a9f216e791dad3fb0c8f372321bb568b4f2f5a991115f4c2254802dc445f212141a4314b7c05b23aa04333b7c4255f65dec042bf85549a29b6a3f80dc4f416f6709af4045bd44ff02e2331619fc248acc0f2e937d838bb351173195519311f41badb3d7f40c01650f53ac5697744d66f954ad05b2af8961fc7ef2806f455d8e1cd852d62302fcd462805a038898c33fb1a25d9bb1c26c71cd0850e155c39f67cd74794917e0ffa12fe2624abaedceee20e26e7c4dd2b7beef102c2d004dc288c6a9e636a05843a1596f55d5426b86c9fdbc409d5e68fb3a0402d621318f662df07b0c0b3146fff75ca4cd9b13cdb8d799ce94c15e5da36feafa78cde2a417e96f0ea22a0f48813254b39bef5124dfbfdc5dc2157be542bb51acdc5ed9ad49cb2e8f4297a6828e956797d726ea9aa2447a94cfd1823ff0156c25f262b359f94fbc66930b7ffff15e76b42f4ee6f7b4d2be23e7da8e07c9296c1160d4adb2d5f8968c54a3cea12488fd37571c0ba1394237d9f21ff8f7a473ecb22f653a70243e05c82bc3b368d2b65c03ba8d4b87893e022e4d24b91a568426577794194b8fff7d09d16de20a64847afc6efd855fb1aca66326dd6f47fcad1e487eb3425d23b65248f7fb94136fdfdf09a124621326b397760d42f0430d52e4d9dfab9c97df62f687c6778f7485359d7b03d1584e58b560fe713b3c17061a5bc6f9a5d36d46c75a8d45d22862f6c58900ea3af7a3addd425d32ec00b667d6501b90df3dc69437bf36c0e74a457e1448de1dc0f15b45d2cfbb66d0a81ce71890a968c18c2ec72d05fa5a87340103110d6e6ef95360871ee1fee6a7e1971f386740302acb9d882455137cbce9c2f807455d7d8baf1a6f2f022bd6aec26a37b0f917252f70f87c346e380822de767ca008b39c38ca50e528ae2bb5bf7ed62b678bd6dd4a6ea123ff6ab249bda7bda434fb1d692fd82c114833ea5850b185a6203d97b6dd110298b8ff6e37c4628b8c9e0f456d78f1bcc2f4e3442551eaec64ea5e419370757b06771e5e6b2474bbb599ecfa0f37cd5618685f3b39c7b878dc209b32df3c9f79b2572ff434823ebd8a12aa14fb24e210c25e5d097d5da51e8733e5ddd94d03ff91cd3bdb9377452aa6f83f9d5489ce7b9ab8d3ae1c828683e9d52434650bdb1384de6c2eff5c37ef68541350660c948908068b5cc43616e2601a4c5508df58a317911ab3b018ed72c92ca2e8d2bc8e1fb56925e5c2a2aded2ae866914ba44349f77e6ca9fa58e01ea467be1f1c673856c2797ab4a926f7994370408fad43d2e72614e9539caaccd149416f430266ac599f27ce2256210849c3b57cd2e5b97db88fdee4cb18";
+
+
+
+let _comixZjCache = null;
+
+function getComixZjBytes() {
+
+  if (_comixZjCache) return _comixZjCache;
+
+  const bytes = new Uint8Array(COMIX_ZJ_HEX.length / 2);
+
+  for (let i = 0; i < bytes.length; i++) {
+
+    bytes[i] = parseInt(COMIX_ZJ_HEX.substr(i * 2, 2), 16);
+
+  }
+
+  _comixZjCache = bytes;
+
+  return bytes;
+
+}
+
+
+
+const COMIX_SHA256_K = [
+
+  1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,
+
+  3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,
+
+  3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,
+
+  2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,
+
+  666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,
+
+  2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,
+
+  430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,
+
+  1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298
+
+];
+
+
+
+function comixRotr(L, l) {
+
+  return (L >>> l) | (L << (32 - l));
+
+}
+
+
+
+function comixSha256Transform(L, H, I) {
+
+  const P = new Int32Array(64);
+
+  for (let z = 0; z < 16; z++) {
+
+    const q = I + 4 * z;
+
+    P[z] = (H[q] << 24) | (H[q + 1] << 16) | (H[q + 2] << 8) | H[q + 3];
+
+  }
+
+  for (let Z = 16; Z < 64; Z++) {
+
+    const s = P[Z - 15];
+
+    const T = comixRotr(s, 7) ^ comixRotr(s, 18) ^ (s >>> 3);
+
+    const F = P[Z - 2];
+
+    const y = comixRotr(F, 17) ^ comixRotr(F, 19) ^ (F >>> 10);
+
+    P[Z] = (P[Z - 16] + T + P[Z - 7] + y) | 0;
+
+  }
+
+  let M = L[0], R = L[1], A = L[2], N = L[3], x = L[4], t = L[5], w = L[6], G = L[7];
+
+  for (let W = 0; W < 64; W++) {
+
+    const O = (G + (comixRotr(x, 6) ^ comixRotr(x, 11) ^ comixRotr(x, 25)) + ((x & t) ^ (~x & w)) + COMIX_SHA256_K[W] + P[W]) | 0;
+
+    const D = ((comixRotr(M, 2) ^ comixRotr(M, 13) ^ comixRotr(M, 22)) + ((M & R) ^ (M & A) ^ (R & A))) | 0;
+
+    G = w; w = t; t = x; x = (N + O) | 0; N = A; A = R; R = M; M = (O + D) | 0;
+
+  }
+
+  L[0] = (L[0] + M) | 0; L[1] = (L[1] + R) | 0; L[2] = (L[2] + A) | 0; L[3] = (L[3] + N) | 0;
+
+  L[4] = (L[4] + x) | 0; L[5] = (L[5] + t) | 0; L[6] = (L[6] + w) | 0; L[7] = (L[7] + G) | 0;
+
+}
+
+
+
+function comixSha256Continue(stateWords, msgBytes, prevLen) {
+
+  const P = new Int32Array(stateWords);
+
+  const M = prevLen + msgBytes.length;
+
+  let R = msgBytes.length + 1;
+
+  while (R % 64 !== 56) R++;
+
+  const A = new Uint8Array(R + 8);
+
+  for (let i = 0; i < msgBytes.length; i++) A[i] = msgBytes[i];
+
+  A[msgBytes.length] = 128;
+
+  const n = 8 * M;
+
+  const N = Math.floor(n / 4294967296);
+
+  const x = n >>> 0;
+
+  const t = A.length - 8;
+
+  A[t] = (N >>> 24) & 255; A[t + 1] = (N >>> 16) & 255; A[t + 2] = (N >>> 8) & 255; A[t + 3] = N & 255;
+
+  A[t + 4] = (x >>> 24) & 255; A[t + 5] = (x >>> 16) & 255; A[t + 6] = (x >>> 8) & 255; A[t + 7] = x & 255;
+
+  for (let G = 0; G < A.length; G += 64) comixSha256Transform(P, A, G);
+
+  const w = new Uint8Array(32);
+
+  for (let z = 0; z < 8; z++) {
+
+    w[4 * z] = (P[z] >>> 24) & 255;
+
+    w[4 * z + 1] = (P[z] >>> 16) & 255;
+
+    w[4 * z + 2] = (P[z] >>> 8) & 255;
+
+    w[4 * z + 3] = P[z] & 255;
+
+  }
+
+  return w;
+
+}
+
+
+
+function comixReadStateWords(zj, offset) {
+
+  const f = new Int32Array(8);
+
+  for (let H = 0; H < 8; H++) {
+
+    const I = offset + 4 * H;
+
+    f[H] = (zj[I] << 24) | (zj[I + 1] << 16) | (zj[I + 2] << 8) | zj[I + 3];
+
+  }
+
+  return f;
+
+}
+
+
+
+function comixSignRequest(canonicalPath) {
+
+  const zj = getComixZjBytes();
+
+  const msgBytes = [];
+
+  for (let i = 0; i < canonicalPath.length; i++) msgBytes.push(canonicalPath.charCodeAt(i) & 255);
+
+  const innerHash = comixSha256Continue(comixReadStateWords(zj, 0), msgBytes, 64);
+
+  const outerHash = comixSha256Continue(comixReadStateWords(zj, 32), innerHash, 64);
+
+  const B64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
+  let out = "";
+
+  for (let H = 0; H < outerHash.length; H += 3) {
+
+    const I = outerHash[H], P = outerHash[H + 1], M = outerHash[H + 2];
+
+    out += B64_CHARS[I >> 2] + B64_CHARS[((3 & I) << 4) | (P >> 4)];
+
+    if (H + 1 < outerHash.length) out += B64_CHARS[((15 & P) << 2) | (M >> 6)];
+
+    if (H + 2 < outerHash.length) out += B64_CHARS[63 & M];
+
+  }
+
+  return "qbk." + out.slice(0, 16);
+
+}
+
+
+
+function comixDecryptResponse(eStr) {
+
+  const zj = getComixZjBytes();
+
+  const B64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
+  const lut = [];
+
+  for (let i = 0; i < 256; i++) lut.push(-1);
+
+  for (let i = 0; i < 64; i++) lut[B64_CHARS.charCodeAt(i)] = i;
+
+  lut[43] = 62; lut[47] = 63;
+
+
+
+  const rawBytes = [];
+
+  let buf = 0, bits = 0;
+
+  for (let i = 0; i < eStr.length; i++) {
+
+    const v = lut[eStr.charCodeAt(i)];
+
+    if (v === undefined || v < 0) continue;
+
+    buf = (buf << 6) | v;
+
+    bits += 6;
+
+    if (bits >= 8) {
+
+      bits -= 8;
+
+      rawBytes.push((buf >> bits) & 255);
+
+    }
+
+  }
+
+  const offset = ((rawBytes[0] << 8) | rawBytes[1]) % 1024;
+
+  const payload = [];
+
+  for (let i = 0; i < rawBytes.length - 2; i++) {
+
+    payload.push(rawBytes[i + 2] ^ zj[64 + ((offset + i) % 1024)]);
+
+  }
+
+  const jsonStr = Utilities.newBlob(payload).getDataAsString('UTF-8');
+
+  return JSON.parse(jsonStr);
+
+}
+
+
+
+function callComixApiFromGas(path, params) {
+
+  const p = Object.assign({}, params || {});
+
+  if ((path.indexOf('/manga/') === 0 && path.indexOf('/chapters') !== -1) || path.indexOf('/chapters/') === 0) {
+
+    p.v = '0';
+
+    p.w = '0';
+
+  }
+
+  const keys = Object.keys(p).filter(function(k) { return k !== '_'; }).sort();
+
+  const qsParts = keys.map(function(k) { return k + '=' + String(p[k]); });
+
+  const qs = qsParts.join('&');
+
+  const canonical = qs ? (path + '?' + qs) : path;
+
+  p._ = comixSignRequest(canonical);
+
+  const fullQs = Object.keys(p).map(function(k) {
+
+    return encodeURIComponent(k) + '=' + encodeURIComponent(String(p[k]));
+
+  }).join('&');
+
+  const url = 'https://comix.to/api/v1' + path + '?' + fullQs;
+
+  const resp = UrlFetchApp.fetch(url, {
+
+    method: 'get',
+
+    muteHttpExceptions: true,
+
+    headers: {
+
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+
+      'Accept': 'application/json',
+
+      'X-Requested-With': 'XMLHttpRequest',
+
+      'X-Rt': '0',
+
+      'Referer': 'https://comix.to/'
+
+    }
+
+  });
+
+  if (resp.getResponseCode() !== 200) {
+
+    throw new Error('Comix API HTTP ' + resp.getResponseCode() + ': ' + resp.getContentText());
+
+  }
+
+  const headers = resp.getHeaders();
+
+  const xEnc = headers['x-enc'] || headers['X-Enc'] || '';
+
+  const body = JSON.parse(resp.getContentText('UTF-8'));
+
+  if (String(xEnc) === '2' && body && typeof body.e === 'string') {
+
+    const dec = comixDecryptResponse(body.e);
+
+    if (dec && dec.status === 'ok' && dec.result !== undefined) return dec.result;
+
+    return dec;
+
+  }
+
+  if (body && body.status === 'ok' && body.result !== undefined) return body.result;
+
+  return body;
+
+}
+
+
+
+function parseComixInitialData(url) {
+
+  const resp = UrlFetchApp.fetch(url, {
+
+    method: 'get',
+
+    muteHttpExceptions: true,
+
+    followRedirects: true,
+
+    headers: {
+
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+
+    }
+
+  });
+
+  if (resp.getResponseCode() !== 200) {
+
+    throw new Error('HTTP ' + resp.getResponseCode());
+
+  }
+
+  const html = resp.getContentText('UTF-8');
+
+  const m = html.match(/<script[^>]*id="initial-data"[^>]*>([\s\S]*?)<\/script>/i);
+
+  if (!m) {
+
+    throw new Error('ไม่พบข้อมูล initial-data ในหน้าเว็บ Comix.to');
+
+  }
+
+  return JSON.parse(m[1]);
+
+}
+
+
+
+function extractComixHidFromUrl(url) {
+
+  if (!url) return '';
+
+  const m = String(url).match(/comix\.to\/title\/([a-z0-9]+)(?:-|\/|\?|$)/i);
+
+  return m ? m[1] : '';
+
+}
+
+
+
+function getComixGroups(url) {
+
+  try {
+
+    if (!url || String(url).indexOf('comix.to') === -1) {
+
+      return { error: 'กรุณาระบุลิงก์จาก https://comix.to/title/...' };
+
+    }
+
+    const hid = extractComixHidFromUrl(url);
+
+    const initData = parseComixInitialData(url);
+
+    const queries = (initData && initData.queries) ? initData.queries : {};
+
+    let detail = null;
+
+    let groups = [];
+
+
+
+    Object.keys(queries).forEach(function(k) {
+
+      if (k.indexOf('"manga","detail"') !== -1) {
+
+        detail = queries[k];
+
+      } else if (k.indexOf('"manga","groups"') !== -1 && Array.isArray(queries[k])) {
+
+        groups = queries[k];
+
+      }
+
+    });
+
+
+
+    if (groups.length === 0 && hid) {
+
+      try {
+
+        const apiGroups = callComixApiFromGas('/manga/' + hid + '/groups');
+
+        if (Array.isArray(apiGroups)) groups = apiGroups;
+
+        else if (apiGroups && Array.isArray(apiGroups.items)) groups = apiGroups.items;
+
+      } catch (ge) {}
+
+    }
+
+
+
+    return {
+
+      success: true,
+
+      hid: hid || (detail ? detail.hid : ''),
+
+      title: detail ? detail.title : '',
+
+      latestChapter: detail ? detail.latestChapter : 0,
+
+      groups: groups
+
+    };
+
+  } catch (err) {
+
+    return { error: err.toString() };
+
+  }
+
+}
+
+
+
+function scrapeComixTitleUrl(url, scanGroup) {
+
+  try {
+
+    const info = getComixGroups(url);
+
+    if (info.error) {
+
+      return { success: false, error: info.error };
+
+    }
+
+    const hid = info.hid;
+
+    const groups = info.groups || [];
+
+    const targetGroupStr = String(scanGroup || '').trim();
+
+
+
+    if (targetGroupStr && hid) {
+
+      const matchedGroup = groups.find(function(g) {
+
+        return String(g.name || '').trim().toLowerCase() === targetGroupStr.toLowerCase() ||
+
+               String(g.slug || '').trim().toLowerCase() === targetGroupStr.toLowerCase() ||
+
+               String(g.id) === targetGroupStr;
+
+      });
+
+      if (matchedGroup) {
+
+        const chapsRes = callComixApiFromGas('/manga/' + hid + '/chapters', {
+
+          page: 1,
+
+          limit: 5,
+
+          group_id: matchedGroup.id
+
+        });
+
+        const items = (chapsRes && Array.isArray(chapsRes.items)) ? chapsRes.items : [];
+
+        if (items.length > 0) {
+
+          const latestNum = parseFloat(items[0].number) || 0;
+
+          return {
+
+            success: true,
+
+            rawText: 'Chapter ' + latestNum + ' (' + matchedGroup.name + ')',
+
+            chapterCount: latestNum,
+
+            url: url,
+
+            scanGroup: matchedGroup.name,
+
+            timestamp: new Date().toISOString()
+
+          };
+
+        }
+
+      }
+
+    }
+
+
+
+    const overallLatest = parseFloat(info.latestChapter) || 0;
+
+    return {
+
+      success: true,
+
+      rawText: 'Chapter ' + overallLatest + (targetGroupStr ? ' (All Groups)' : ''),
+
+      chapterCount: overallLatest,
+
+      url: url,
+
+      timestamp: new Date().toISOString()
+
+    };
+
+  } catch (err) {
+
+    return {
+
+      success: false,
+
+      error: 'ดึงข้อมูล Comix.to ไม่สำเร็จ: ' + err.toString()
+
+    };
+
+  }
+
+}
+
+
+
+function testComixChapter(payload) {
+
+  try {
+
+    const targetUrl = payload ? String(payload.chapterUrl || payload.url || '').trim() : '';
+
+    const scanGroup = payload ? String(payload.scanGroup || payload.scangroup || '').trim() : '';
+
+    if (!targetUrl) {
+
+      return { error: 'กรุณาระบุ URL ของตอน หรือ URL เรื่องจาก Comix.to' };
+
+    }
+
+
+
+    let chapterId = '';
+
+    let hid = extractComixHidFromUrl(targetUrl);
+
+    const chapMatch = targetUrl.match(/\/title\/[^\/]+\/(\d+)-chapter-([\d.]+)/i) || targetUrl.match(/chapters\/(\d+)/i);
+
+    if (chapMatch) {
+
+      chapterId = chapMatch[1];
+
+    }
+
+
+
+    let mangaTitle = '';
+
+    let groupName = scanGroup;
+
+    let chapterNumber = '';
+
+    let actualChapterUrl = targetUrl;
+
+
+
+    // หากส่ง URL หน้าเรื่องมา ให้ดึงตอนล่าสุดของค่ายที่เลือก (หรือตอนล่าสุดรวม)
+
+    if (!chapterId && hid) {
+
+      const gInfo = getComixGroups(targetUrl);
+
+      if (gInfo && gInfo.title) mangaTitle = gInfo.title;
+
+      const groups = (gInfo && gInfo.groups) ? gInfo.groups : [];
+
+      let params = { page: 1, limit: 5 };
+
+      if (scanGroup) {
+
+        const gMatch = groups.find(function(g) {
+
+          return String(g.name || '').trim().toLowerCase() === scanGroup.toLowerCase() ||
+
+                 String(g.slug || '').trim().toLowerCase() === scanGroup.toLowerCase() ||
+
+                 String(g.id) === scanGroup;
+
+        });
+
+        if (gMatch) {
+
+          params.group_id = gMatch.id;
+
+          groupName = gMatch.name;
+
+        }
+
+      }
+
+      const chapsRes = callComixApiFromGas('/manga/' + hid + '/chapters', params);
+
+      const items = (chapsRes && Array.isArray(chapsRes.items)) ? chapsRes.items : [];
+
+      if (items.length === 0) {
+
+        return { error: 'ไม่พบตอนสำหรับค่าย ' + (scanGroup || 'ทั้งหมด') + ' ในเรื่องนี้' };
+
+      }
+
+      chapterId = String(items[0].id);
+
+      chapterNumber = String(items[0].number);
+
+      if (items[0].group && items[0].group.name) groupName = items[0].group.name;
+
+      if (items[0].url) actualChapterUrl = 'https://comix.to' + items[0].url;
+
+    }
+
+
+
+    if (!chapterId) {
+
+      return { error: 'ไม่สามารถระบุ Chapter ID จากลิงก์ที่ให้มาได้' };
+
+    }
+
+
+
+    const chapDetail = callComixApiFromGas('/chapters/' + chapterId);
+
+    const pagesItems = (chapDetail && chapDetail.pages && Array.isArray(chapDetail.pages.items))
+
+      ? chapDetail.pages.items
+
+      : [];
+
+    const images = pagesItems.map(function(p) { return p.url; }).filter(Boolean);
+
+
+
+    if (!chapterNumber && chapDetail && chapDetail.number !== undefined) {
+
+      chapterNumber = String(chapDetail.number);
+
+    }
+
+    if (chapDetail && chapDetail.group && chapDetail.group.name) {
+
+      groupName = chapDetail.group.name;
+
+    }
+
+    if (!mangaTitle && hid) {
+
+      try {
+
+        const gInfo2 = getComixGroups('https://comix.to/title/' + hid);
+
+        if (gInfo2 && gInfo2.title) mangaTitle = gInfo2.title;
+
+      } catch (e) {}
+
+    }
+
+
+
+    // Match Thai manga name in system
+
+    let thaiTitle = '';
+
+    let matchedMangaId = '';
+
+    try {
+
+      const mList = getMangaList();
+
+      const matched = mList.find(function(m) {
+
+        const origUrl = String(m.originalurl || '').toLowerCase();
+
+        return (hid && origUrl.indexOf(hid.toLowerCase()) !== -1) ||
+
+               (mangaTitle && String(m.originalname || '').toLowerCase() === mangaTitle.toLowerCase());
+
+      });
+
+      if (matched) {
+
+        thaiTitle = matched.manganame;
+
+        matchedMangaId = String(matched.mangaid);
+
+      }
+
+    } catch (e) {}
+
+
+
+    // Pre-proxy 6 sample images for preview
+
+    const rawSampleUrls = images.slice(0, 6);
+
+    let sampleDataUrls = rawSampleUrls;
+
+    if (rawSampleUrls.length > 0) {
+
+      try {
+
+        const sampleReqs = rawSampleUrls.map(function(u) {
+
+          return {
+
+            url: u,
+
+            method: 'get',
+
+            muteHttpExceptions: true,
+
+            headers: {
+
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+
+            }
+
+          };
+
+        });
+
+        const sampleResps = UrlFetchApp.fetchAll(sampleReqs);
+
+        sampleDataUrls = sampleResps.map(function(r, idx) {
+
+          if (r.getResponseCode() === 200) {
+
+            const b = r.getBlob();
+
+            const mime = b.getContentType() || 'image/webp';
+
+            return 'data:' + mime + ';base64,' + Utilities.base64Encode(b.getBytes());
+
+          }
+
+          return rawSampleUrls[idx];
+
+        });
+
+      } catch (pe) {}
+
+    }
+
+
+
+    const displayTitle = (mangaTitle ? mangaTitle + ' ' : '') + 'Chapter ' + chapterNumber + (groupName ? ' [' + groupName + ']' : '');
+
+
+
+    return {
+
+      status: 'success',
+
+      data: {
+
+        success: true,
+
+        title: displayTitle,
+
+        mangaName: thaiTitle || mangaTitle || 'Comix Manga',
+
+        thaiTitle: thaiTitle,
+
+        mangaId: matchedMangaId,
+
+        chapterNumber: chapterNumber,
+
+        chapterId: chapterId,
+
+        scanGroup: groupName,
+
+        chapterUrl: actualChapterUrl,
+
+        imagesCount: images.length,
+
+        allImages: images,
+
+        sampleImages: sampleDataUrls,
+
+        rawSampleImages: rawSampleUrls,
+
+        isLocked: false
+
+      }
+
+    };
+
+  } catch (err) {
+
+    console.error('testComixChapter error:', err);
+
+    return { error: err.toString() };
+
+  }
+
+}
+
+
+
+function proxyComixImage(payload) {
+
+  try {
+
+    let imageUrl = '';
+
+    if (typeof payload === 'string') {
+
+      imageUrl = payload.trim();
+
+    } else if (payload && typeof payload === 'object') {
+
+      imageUrl = String(payload.imageUrl || payload.url || '').trim();
+
+    }
+
+    if (!imageUrl) return { error: 'No imageUrl provided' };
+
+    if (imageUrl.indexOf('data:') === 0) return { success: true, dataUrl: imageUrl };
+
+
+
+    // สำคัญ: CDN ของ Comix.to ใช้ referrerPolicy="no-referrer" (ห้ามส่ง Referer header มิฉะนั้นจะได้ 403)
+
+    const resp = UrlFetchApp.fetch(imageUrl, {
+
+      method: 'get',
+
+      muteHttpExceptions: true,
+
+      headers: {
+
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+
+      }
+
+    });
+
+    if (resp.getResponseCode() !== 200) {
+
+      return { error: 'Failed to fetch Comix image: HTTP ' + resp.getResponseCode() };
+
+    }
+
+    const blob = resp.getBlob();
+
+    const contentType = blob.getContentType() || 'image/webp';
+
+    const base64 = Utilities.base64Encode(blob.getBytes());
+
+    return {
+
+      success: true,
+
+      dataUrl: 'data:' + contentType + ';base64,' + base64,
+
+      contentType: contentType,
+
+      size: blob.getBytes().length
+
+    };
+
+  } catch (err) {
+
+    return { error: err.toString() };
+
+  }
+
+}
+
+
+
 // ==========================================
 // PAYOUT CLAIMS (ระบบตัดยอดขอเบิกเงินและอนุมัติการจ่าย)
 // ==========================================
@@ -6936,7 +7412,7 @@ function triggerGitHubReadRealmTrackerPipeline(triggerSource) {
     const payload = {
       ref: 'main',
       inputs: {
-        force_refresh: 'false'
+        platform: 'all'
       }
     };
 
@@ -6952,8 +7428,13 @@ function triggerGitHubReadRealmTrackerPipeline(triggerSource) {
       muteHttpExceptions: true
     };
 
-    const resp = UrlFetchApp.fetch(url, options);
-    const code = resp.getResponseCode();
+    let resp = UrlFetchApp.fetch(url, options);
+    let code = resp.getResponseCode();
+    if (code === 422) {
+      options.payload = JSON.stringify({ ref: 'main' });
+      resp = UrlFetchApp.fetch(url, options);
+      code = resp.getResponseCode();
+    }
     const now = new Date().toISOString();
 
     const resultStatus = {

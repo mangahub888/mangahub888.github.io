@@ -1,10 +1,10 @@
 {
   "platform": "kairew",
-  "pipeline_recorded_at": "2026-11-04T14:06:34.758744",
-  "date_reference": "2026-11-04",
+  "pipeline_recorded_at": "2026-11-06T16:40:19.453962",
+  "date_reference": "2026-11-06",
   "total_comics": 79,
-  "total_sales_portfolio": 142824.30000000002,
-  "total_views_portfolio": 2516917,
+  "total_sales_portfolio": 144044.69999999998,
+  "total_views_portfolio": 2527592,
   "top_sales_comic": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ",
   "total_inactive_30d": 30,
   "total_active_30d": 49,
@@ -18,114 +18,10 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 123,
-      "total_views": 459715,
+      "total_views": 460273,
       "total_sales": 30770.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-22 20:22:03",
-      "days_inactive": 12,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "443",
-      "subject": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 63,
-      "total_views": 78244,
-      "total_sales": 20822.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-02 23:34:30",
-      "days_inactive": 1,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "344",
-      "subject": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 73,
-      "total_views": 78347,
-      "total_sales": 14562.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-03 16:07:35",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "328",
-      "subject": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 129,
-      "total_views": 170910,
-      "total_sales": 9559.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-03 13:21:15",
-      "days_inactive": 1,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "766",
-      "subject": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 62,
-      "total_views": 93159,
-      "total_sales": 6730.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-20 15:04:09",
       "days_inactive": 14,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -139,45 +35,21 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "341",
-      "subject": "เจ้าแห่งกงล้อหมุนฝืนโชคชะตา",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 275,
-      "total_views": 597990,
-      "total_sales": 6244.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-26 01:41:11",
-      "days_inactive": 9,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
       },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
+      "sales_7_chapters": 237.6,
+      "views_7_chapters": 250
     },
     {
-      "comic_id": "421",
-      "subject": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+      "comic_id": "443",
+      "subject": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
       "platform": "kairew",
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
-      "chapters_count": 113,
-      "total_views": 75656,
-      "total_sales": 4282.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-04 01:16:12",
+      "chapters_count": 64,
+      "total_views": 78681,
+      "total_sales": 21031.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-06 02:21:34",
       "days_inactive": 0,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -191,7 +63,149 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 2586.6,
+      "views_7_chapters": 2479
+    },
+    {
+      "comic_id": "344",
+      "subject": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 73,
+      "total_views": 80587,
+      "total_sales": 14790.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-03 16:07:35",
+      "days_inactive": 3,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 937.8,
+      "views_7_chapters": 1033
+    },
+    {
+      "comic_id": "328",
+      "subject": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 130,
+      "total_views": 171044,
+      "total_sales": 9577.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-05 12:42:55",
+      "days_inactive": 1,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 99.0,
+      "views_7_chapters": 126
+    },
+    {
+      "comic_id": "766",
+      "subject": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 62,
+      "total_views": 93299,
+      "total_sales": 6760.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-20 15:04:09",
+      "days_inactive": 17,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 361.8,
+      "views_7_chapters": 397
+    },
+    {
+      "comic_id": "341",
+      "subject": "เจ้าแห่งกงล้อหมุนฝืนโชคชะตา",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 275,
+      "total_views": 600356,
+      "total_sales": 6289.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-26 01:41:11",
+      "days_inactive": 11,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 192.6,
+      "views_7_chapters": 182
+    },
+    {
+      "comic_id": "421",
+      "subject": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 113,
+      "total_views": 76590,
+      "total_sales": 4370.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-04 01:16:12",
+      "days_inactive": 2,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 316.8,
+      "views_7_chapters": 300
     },
     {
       "comic_id": "334",
@@ -199,11 +213,291 @@
       "platform": "kairew",
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
-      "chapters_count": 152,
-      "total_views": 56934,
-      "total_sales": 3432.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-29 23:44:10",
+      "chapters_count": 154,
+      "total_views": 57208,
+      "total_sales": 3470.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-06 02:16:15",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 253.8,
+      "views_7_chapters": 248
+    },
+    {
+      "comic_id": "578",
+      "subject": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 102,
+      "total_views": 52141,
+      "total_sales": 3430.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-28 01:23:00",
+      "days_inactive": 9,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 133.2,
+      "views_7_chapters": 152
+    },
+    {
+      "comic_id": "343",
+      "subject": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 56,
+      "total_views": 39288,
+      "total_sales": 3342.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-04 23:29:03",
+      "days_inactive": 1,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 216.0,
+      "views_7_chapters": 263
+    },
+    {
+      "comic_id": "661",
+      "subject": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 71,
+      "total_views": 19911,
+      "total_sales": 3184.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-04 23:43:13",
+      "days_inactive": 1,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 289.8,
+      "views_7_chapters": 294
+    },
+    {
+      "comic_id": "765",
+      "subject": "การกลับมาของจักรพรรดิเขมือบล้างโลก | Return of the Devourer",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 22,
+      "total_views": 83075,
+      "total_sales": 3078.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-04-07 22:09:36",
+      "days_inactive": 212,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 1069.2,
+      "views_7_chapters": 1174
+    },
+    {
+      "comic_id": "335",
+      "subject": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 368,
+      "total_views": 33420,
+      "total_sales": 2811.3,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-04 00:56:19",
+      "days_inactive": 2,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 406.8,
+      "views_7_chapters": 412
+    },
+    {
+      "comic_id": "365",
+      "subject": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 130,
+      "total_views": 65463,
+      "total_sales": 2149.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-06-13 10:59:22",
+      "days_inactive": 146,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 324.0,
+      "views_7_chapters": 451
+    },
+    {
+      "comic_id": "486",
+      "subject": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 60,
+      "total_views": 29522,
+      "total_sales": 2068.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-06 02:22:26",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 50.4,
+      "views_7_chapters": 54
+    },
+    {
+      "comic_id": "5076",
+      "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 29,
+      "total_views": 8930,
+      "total_sales": 1893.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 21:34:52",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 453.6,
+      "views_7_chapters": 468
+    },
+    {
+      "comic_id": "730",
+      "subject": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์ | Absolute Domination at Level 0 with My Analysis Skill",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 44,
+      "total_views": 24354,
+      "total_sales": 1492.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-06-07 14:21:09",
+      "days_inactive": 152,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 210.6,
+      "views_7_chapters": 206
+    },
+    {
+      "comic_id": "389",
+      "subject": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 149,
+      "total_views": 56875,
+      "total_sales": 1468.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-01 01:19:42",
       "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -217,267 +511,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "578",
-      "subject": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 102,
-      "total_views": 51997,
-      "total_sales": 3418.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-28 01:23:00",
-      "days_inactive": 7,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
       },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "343",
-      "subject": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 55,
-      "total_views": 39141,
-      "total_sales": 3295.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-25 01:32:00",
-      "days_inactive": 10,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "661",
-      "subject": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 70,
-      "total_views": 19723,
-      "total_sales": 3133.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-27 01:32:22",
-      "days_inactive": 8,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "765",
-      "subject": "การกลับมาของจักรพรรดิเขมือบล้างโลก | Return of the Devourer",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 22,
-      "total_views": 83027,
-      "total_sales": 3078.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-04-07 22:09:36",
-      "days_inactive": 210,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "335",
-      "subject": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 368,
-      "total_views": 33244,
-      "total_sales": 2771.7,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-04 00:56:19",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "365",
-      "subject": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 130,
-      "total_views": 65377,
-      "total_sales": 2113.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-06-13 10:59:22",
-      "days_inactive": 144,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "486",
-      "subject": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 59,
-      "total_views": 29473,
-      "total_sales": 2055.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-28 13:15:20",
-      "days_inactive": 7,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "5076",
-      "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 29,
-      "total_views": 8807,
-      "total_sales": 1868.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 21:34:52",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "730",
-      "subject": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์ | Absolute Domination at Level 0 with My Analysis Skill",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 44,
-      "total_views": 24328,
-      "total_sales": 1492.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-06-07 14:21:09",
-      "days_inactive": 149,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "389",
-      "subject": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 149,
-      "total_views": 56840,
-      "total_sales": 1468.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-01 01:19:42",
-      "days_inactive": 3,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
+      "sales_7_chapters": 23.4,
+      "views_7_chapters": 25
     },
     {
       "comic_id": "333",
@@ -486,11 +522,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 67,
-      "total_views": 10197,
-      "total_sales": 1276.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "total_views": 10237,
+      "total_sales": 1346.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-03-15 21:45:25",
-      "days_inactive": 233,
+      "days_inactive": 235,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -503,85 +539,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "4674",
-      "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 25,
-      "total_views": 9857,
-      "total_sales": 1175.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 21:37:31",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
       },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "784",
-      "subject": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 43,
-      "total_views": 17322,
-      "total_sales": 1161.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-04 13:59:56",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "431",
-      "subject": "ผนึกสวรรค์ สยบมาร สะท้านเทพ I Shall Seal the Heavens",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 53,
-      "total_views": 9186,
-      "total_sales": 1160.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 17:01:52",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
+      "sales_7_chapters": 198.0,
+      "views_7_chapters": 198
     },
     {
       "comic_id": "348",
@@ -590,10 +550,38 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 129,
-      "total_views": 40194,
-      "total_sales": 1126.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "total_views": 40341,
+      "total_sales": 1198.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-11-04 01:02:53",
+      "days_inactive": 2,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 109.8,
+      "views_7_chapters": 118
+    },
+    {
+      "comic_id": "4674",
+      "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 27,
+      "total_views": 9922,
+      "total_sales": 1191.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-06 02:31:18",
       "days_inactive": 0,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -607,7 +595,65 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 250.2,
+      "views_7_chapters": 254
+    },
+    {
+      "comic_id": "784",
+      "subject": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 43,
+      "total_views": 17433,
+      "total_sales": 1170.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-04 13:59:56",
+      "days_inactive": 2,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 52.2,
+      "views_7_chapters": 96
+    },
+    {
+      "comic_id": "431",
+      "subject": "ผนึกสวรรค์ สยบมาร สะท้านเทพ I Shall Seal the Heavens",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 53,
+      "total_views": 9204,
+      "total_sales": 1160.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 17:01:52",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 135.0,
+      "views_7_chapters": 127
     },
     {
       "comic_id": "5077",
@@ -616,11 +662,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 32,
-      "total_views": 5143,
+      "total_views": 5158,
       "total_sales": 1026.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-23 21:36:12",
-      "days_inactive": 11,
+      "days_inactive": 13,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -633,7 +679,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 237.6,
+      "views_7_chapters": 229
     },
     {
       "comic_id": "3569",
@@ -642,140 +690,10 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 33,
-      "total_views": 7242,
+      "total_views": 7249,
       "total_sales": 959.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-28 13:35:30",
-      "days_inactive": 7,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "768",
-      "subject": "ผู้ฝึกกระบี่เต็มเวลา | Full-Time Swordsman",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 126,
-      "total_views": 14326,
-      "total_sales": 946.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-01 01:45:26",
-      "days_inactive": 3,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "349",
-      "subject": "ฟ้าประทานแหวนทะลุมิติพิชิตต่างโลก",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 101,
-      "total_views": 56745,
-      "total_sales": 912.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-02-12 12:48:56",
-      "days_inactive": 265,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "729",
-      "subject": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 50,
-      "total_views": 13027,
-      "total_sales": 871.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-04-10 18:43:08",
-      "days_inactive": 207,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "613",
-      "subject": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 46,
-      "total_views": 8161,
-      "total_sales": 826.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-05-07 21:56:21",
-      "days_inactive": 180,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "391",
-      "subject": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 142,
-      "total_views": 49003,
-      "total_sales": 802.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-26 02:15:22",
       "days_inactive": 9,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -789,7 +707,93 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 90.0,
+      "views_7_chapters": 87
+    },
+    {
+      "comic_id": "768",
+      "subject": "ผู้ฝึกกระบี่เต็มเวลา | Full-Time Swordsman",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 126,
+      "total_views": 14343,
+      "total_sales": 946.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-01 01:45:26",
+      "days_inactive": 5,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 55.8,
+      "views_7_chapters": 53
+    },
+    {
+      "comic_id": "349",
+      "subject": "ฟ้าประทานแหวนทะลุมิติพิชิตต่างโลก",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 101,
+      "total_views": 56754,
+      "total_sales": 912.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-02-12 12:48:56",
+      "days_inactive": 267,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 147.6,
+      "views_7_chapters": 177
+    },
+    {
+      "comic_id": "729",
+      "subject": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 50,
+      "total_views": 13040,
+      "total_sales": 871.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-04-10 18:43:08",
+      "days_inactive": 209,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 147.6,
+      "views_7_chapters": 178
     },
     {
       "comic_id": "346",
@@ -798,11 +802,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 120,
-      "total_views": 25271,
-      "total_sales": 786.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "total_views": 25421,
+      "total_sales": 829.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-28 00:45:40",
-      "days_inactive": 7,
+      "days_inactive": 9,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -815,21 +819,23 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 21.6,
+      "views_7_chapters": 23
     },
     {
-      "comic_id": "2607",
-      "subject": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+      "comic_id": "613",
+      "subject": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
       "platform": "kairew",
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
-      "chapters_count": 34,
-      "total_views": 14332,
-      "total_sales": 707.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-27 01:35:38",
-      "days_inactive": 8,
-      "is_inactive_30d": false,
+      "chapters_count": 46,
+      "total_views": 8179,
+      "total_sales": 826.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-05-07 21:56:21",
+      "days_inactive": 182,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -841,45 +847,21 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "345",
-      "subject": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 70,
-      "total_views": 8074,
-      "total_sales": 624.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 18:05:39",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
       },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
+      "sales_7_chapters": 19.8,
+      "views_7_chapters": 24
     },
     {
-      "comic_id": "390",
-      "subject": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+      "comic_id": "391",
+      "subject": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
       "platform": "kairew",
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
-      "chapters_count": 212,
-      "total_views": 15535,
-      "total_sales": 516.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-04 01:19:21",
+      "chapters_count": 143,
+      "total_views": 49075,
+      "total_sales": 802.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-06 02:17:47",
       "days_inactive": 0,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -893,7 +875,93 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 54.0,
+      "views_7_chapters": 51
+    },
+    {
+      "comic_id": "2607",
+      "subject": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 35,
+      "total_views": 14413,
+      "total_sales": 716.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-06 02:23:34",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 100.8,
+      "views_7_chapters": 116
+    },
+    {
+      "comic_id": "345",
+      "subject": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 70,
+      "total_views": 8079,
+      "total_sales": 624.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 18:05:39",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 28.8,
+      "views_7_chapters": 30
+    },
+    {
+      "comic_id": "390",
+      "subject": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 212,
+      "total_views": 15655,
+      "total_sales": 520.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-04 01:19:21",
+      "days_inactive": 2,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 68.4,
+      "views_7_chapters": 69
     },
     {
       "comic_id": "366",
@@ -902,11 +970,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 81,
-      "total_views": 19624,
+      "total_views": 19635,
       "total_sales": 504.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-05-21 23:05:26",
-      "days_inactive": 166,
+      "days_inactive": 168,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -919,7 +987,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 61.2,
+      "views_7_chapters": 58
     },
     {
       "comic_id": "5079",
@@ -928,478 +998,10 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 31,
-      "total_views": 5224,
+      "total_views": 5240,
       "total_sales": 493.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-23 16:38:23",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "588",
-      "subject": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 239,
-      "total_views": 17571,
-      "total_sales": 439.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 17:06:21",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "6682",
-      "subject": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 37,
-      "total_views": 2450,
-      "total_sales": 405.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 16:39:35",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "7300",
-      "subject": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead Army",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 26,
-      "total_views": 1777,
-      "total_sales": 405.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-28 13:11:48",
-      "days_inactive": 7,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "367",
-      "subject": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 42,
-      "total_views": 13483,
-      "total_sales": 374.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-03-04 23:25:19",
-      "days_inactive": 244,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "7301",
-      "subject": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 14,
-      "total_views": 6292,
-      "total_sales": 302.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-14 12:20:58",
-      "days_inactive": 21,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "897",
-      "subject": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 28,
-      "total_views": 4967,
-      "total_sales": 286.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-03-13 01:47:02",
-      "days_inactive": 236,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "388",
-      "subject": "นายท่านซอมบี้ | Mr.Zombie",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 182,
-      "total_views": 15244,
-      "total_sales": 284.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2025-12-19 12:38:54",
-      "days_inactive": 320,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "6065",
-      "subject": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark Creatures",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 18,
-      "total_views": 12054,
-      "total_sales": 271.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-28 13:14:03",
-      "days_inactive": 7,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "4388",
-      "subject": "เกิดใหม่เป็นกบฏแห่งตระกูลขุนนางทรราช| The Rebel of the Tyrant Noble Hous",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 31,
-      "total_views": 1609,
-      "total_sales": 268.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-07-31 21:38:55",
-      "days_inactive": 95,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "339",
-      "subject": "จากศัตรูคู่อาฆาตกลายมาเป็นศัตรูคู่บำเพ็ญรัก",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 41,
-      "total_views": 10670,
-      "total_sales": 264.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-03-31 11:13:02",
-      "days_inactive": 218,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "6062",
-      "subject": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upgrades",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 20,
-      "total_views": 3939,
-      "total_sales": 257.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 20:17:08",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "609",
-      "subject": "ผู้รอดเพียงหนึ่ง—ไร้เทียมทานในเกมตายครั้งที่สอง | The Surviving Player: Unrivaled in the Second Death Game",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 46,
-      "total_views": 7036,
-      "total_sales": 241.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-06-12 17:04:08",
-      "days_inactive": 144,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "3379",
-      "subject": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 44,
-      "total_views": 3052,
-      "total_sales": 241.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 16:58:46",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "5356",
-      "subject": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 28,
-      "total_views": 4573,
-      "total_sales": 219.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-11-02 23:35:05",
-      "days_inactive": 1,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "1104",
-      "subject": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 39,
-      "total_views": 5857,
-      "total_sales": 214.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-09-04 11:20:27",
-      "days_inactive": 61,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "542",
-      "subject": "ข้า…ชาวนา ผู้ปลูกวิญญาณแห่งความตาย | I, Farmer, Plant the Undead",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 22,
-      "total_views": 7442,
-      "total_sales": 198.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-04-07 15:07:30",
-      "days_inactive": 210,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "4673",
-      "subject": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 24,
-      "total_views": 4675,
-      "total_sales": 180.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-25 02:04:45",
-      "days_inactive": 10,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "6063",
-      "subject": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 13,
-      "total_views": 1883,
-      "total_sales": 147.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-20 14:26:51",
       "days_inactive": 14,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -1413,7 +1015,485 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 66.6,
+      "views_7_chapters": 73
+    },
+    {
+      "comic_id": "588",
+      "subject": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 239,
+      "total_views": 17786,
+      "total_sales": 439.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 17:06:21",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 63.0,
+      "views_7_chapters": 67
+    },
+    {
+      "comic_id": "367",
+      "subject": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 42,
+      "total_views": 13523,
+      "total_sales": 405.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-03-04 23:25:19",
+      "days_inactive": 246,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 88.2,
+      "views_7_chapters": 88
+    },
+    {
+      "comic_id": "6682",
+      "subject": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 37,
+      "total_views": 2459,
+      "total_sales": 405.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 16:39:35",
+      "days_inactive": 14,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 32.4,
+      "views_7_chapters": 29
+    },
+    {
+      "comic_id": "7300",
+      "subject": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead Army",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 26,
+      "total_views": 1787,
+      "total_sales": 405.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-28 13:11:48",
+      "days_inactive": 9,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 23.4,
+      "views_7_chapters": 27
+    },
+    {
+      "comic_id": "7301",
+      "subject": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 14,
+      "total_views": 6403,
+      "total_sales": 302.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-14 12:20:58",
+      "days_inactive": 23,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 302.4,
+      "views_7_chapters": 1772
+    },
+    {
+      "comic_id": "897",
+      "subject": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 28,
+      "total_views": 4977,
+      "total_sales": 300.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-03-13 01:47:02",
+      "days_inactive": 238,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 106.2,
+      "views_7_chapters": 103
+    },
+    {
+      "comic_id": "388",
+      "subject": "นายท่านซอมบี้ | Mr.Zombie",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 182,
+      "total_views": 15300,
+      "total_sales": 284.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2025-12-19 12:38:54",
+      "days_inactive": 322,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 12.6,
+      "views_7_chapters": 2
+    },
+    {
+      "comic_id": "6065",
+      "subject": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark Creatures",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 18,
+      "total_views": 12071,
+      "total_sales": 271.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-28 13:14:03",
+      "days_inactive": 9,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 199.8,
+      "views_7_chapters": 194
+    },
+    {
+      "comic_id": "4388",
+      "subject": "เกิดใหม่เป็นกบฏแห่งตระกูลขุนนางทรราช| The Rebel of the Tyrant Noble Hous",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 31,
+      "total_views": 1612,
+      "total_sales": 268.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-07-31 21:38:55",
+      "days_inactive": 97,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 93.6,
+      "views_7_chapters": 118
+    },
+    {
+      "comic_id": "339",
+      "subject": "จากศัตรูคู่อาฆาตกลายมาเป็นศัตรูคู่บำเพ็ญรัก",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 41,
+      "total_views": 10677,
+      "total_sales": 264.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-03-31 11:13:02",
+      "days_inactive": 220,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 61.2,
+      "views_7_chapters": 71
+    },
+    {
+      "comic_id": "6062",
+      "subject": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upgrades",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 20,
+      "total_views": 3955,
+      "total_sales": 257.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 20:17:08",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 153.0,
+      "views_7_chapters": 169
+    },
+    {
+      "comic_id": "3379",
+      "subject": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 44,
+      "total_views": 3077,
+      "total_sales": 255.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 16:58:46",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 52.2,
+      "views_7_chapters": 55
+    },
+    {
+      "comic_id": "5356",
+      "subject": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 28,
+      "total_views": 4602,
+      "total_sales": 244.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-02 23:35:05",
+      "days_inactive": 3,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 48.6,
+      "views_7_chapters": 44
+    },
+    {
+      "comic_id": "609",
+      "subject": "ผู้รอดเพียงหนึ่ง—ไร้เทียมทานในเกมตายครั้งที่สอง | The Surviving Player: Unrivaled in the Second Death Game",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 46,
+      "total_views": 7042,
+      "total_sales": 241.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-06-12 17:04:08",
+      "days_inactive": 146,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 14.4,
+      "views_7_chapters": 36
+    },
+    {
+      "comic_id": "1104",
+      "subject": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 39,
+      "total_views": 5878,
+      "total_sales": 214.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-09-04 11:20:27",
+      "days_inactive": 63,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 18.0,
+      "views_7_chapters": 44
+    },
+    {
+      "comic_id": "542",
+      "subject": "ข้า…ชาวนา ผู้ปลูกวิญญาณแห่งความตาย | I, Farmer, Plant the Undead",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 22,
+      "total_views": 7450,
+      "total_sales": 198.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-04-07 15:07:30",
+      "days_inactive": 213,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 36.0,
+      "views_7_chapters": 256
+    },
+    {
+      "comic_id": "4673",
+      "subject": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 25,
+      "total_views": 4694,
+      "total_sales": 190.8,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-11-06 02:25:42",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 52.2,
+      "views_7_chapters": 63
     },
     {
       "comic_id": "595",
@@ -1422,11 +1502,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 20,
-      "total_views": 3517,
-      "total_sales": 144.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "total_views": 3527,
+      "total_sales": 149.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-12-10 21:58:07",
-      "days_inactive": 328,
+      "days_inactive": 330,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1439,7 +1519,37 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 99.0,
+      "views_7_chapters": 104
+    },
+    {
+      "comic_id": "6063",
+      "subject": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 13,
+      "total_views": 1894,
+      "total_sales": 147.6,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-20 14:26:51",
+      "days_inactive": 17,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 147.6,
+      "views_7_chapters": 426
     },
     {
       "comic_id": "8126",
@@ -1448,11 +1558,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 19,
-      "total_views": 1244,
+      "total_views": 1264,
       "total_sales": 129.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-14 12:29:28",
-      "days_inactive": 21,
+      "days_inactive": 23,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1465,7 +1575,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 93.6,
+      "views_7_chapters": 92
     },
     {
       "comic_id": "7303",
@@ -1474,11 +1586,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 25,
-      "total_views": 1385,
+      "total_views": 1444,
       "total_sales": 95.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-11-02 22:14:32",
-      "days_inactive": 1,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1491,7 +1603,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 23.4,
+      "views_7_chapters": 25
     },
     {
       "comic_id": "783",
@@ -1500,11 +1614,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 31,
-      "total_views": 5412,
+      "total_views": 5414,
       "total_sales": 93.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-08-28 09:50:16",
-      "days_inactive": 68,
+      "days_inactive": 70,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1517,7 +1631,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 9.0,
+      "views_7_chapters": 16
     },
     {
       "comic_id": "8124",
@@ -1526,11 +1642,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 12,
-      "total_views": 2145,
-      "total_sales": 82.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "total_views": 2203,
+      "total_sales": 86.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-28 13:32:56",
-      "days_inactive": 7,
+      "days_inactive": 9,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1543,7 +1659,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 86.4,
+      "views_7_chapters": 721
     },
     {
       "comic_id": "332",
@@ -1552,11 +1670,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 34,
-      "total_views": 492,
+      "total_views": 494,
       "total_sales": 63.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-10-20 22:48:36",
-      "days_inactive": 379,
+      "days_inactive": 381,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1569,7 +1687,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 14.4,
+      "views_7_chapters": 13
     },
     {
       "comic_id": "2679",
@@ -1578,11 +1698,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 27,
-      "total_views": 774,
+      "total_views": 785,
       "total_sales": 59.4,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-04-30 12:22:25",
-      "days_inactive": 188,
+      "days_inactive": 190,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1595,7 +1715,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 0
     },
     {
       "comic_id": "7302",
@@ -1604,11 +1726,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 12,
-      "total_views": 6716,
-      "total_sales": 45.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "total_views": 6809,
+      "total_sales": 52.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-19 16:22:27",
-      "days_inactive": 15,
+      "days_inactive": 18,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1621,7 +1743,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 52.2,
+      "views_7_chapters": 2270
     },
     {
       "comic_id": "7304",
@@ -1630,11 +1754,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 17,
-      "total_views": 1246,
+      "total_views": 1247,
       "total_sales": 30.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-28 13:23:11",
-      "days_inactive": 7,
+      "days_inactive": 9,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1647,7 +1771,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 30.6,
+      "views_7_chapters": 25
     },
     {
       "comic_id": "589",
@@ -1656,11 +1782,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 22,
-      "total_views": 709,
+      "total_views": 710,
       "total_sales": 28.8,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-12-27 21:40:45",
-      "days_inactive": 311,
+      "days_inactive": 313,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1673,7 +1799,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 28.8,
+      "views_7_chapters": 27
     },
     {
       "comic_id": "397",
@@ -1682,11 +1810,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 15,
-      "total_views": 1194,
+      "total_views": 1226,
       "total_sales": 25.2,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-11-27 21:47:09",
-      "days_inactive": 341,
+      "days_inactive": 343,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1699,7 +1827,37 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 21.6,
+      "views_7_chapters": 54
+    },
+    {
+      "comic_id": "659",
+      "subject": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 11,
+      "total_views": 1455,
+      "total_sales": 25.2,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2025-12-11 12:01:59",
+      "days_inactive": 330,
+      "is_inactive_30d": true,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 25.2,
+      "views_7_chapters": 243
     },
     {
       "comic_id": "342",
@@ -1710,9 +1868,9 @@
       "chapters_count": 14,
       "total_views": 915,
       "total_sales": 21.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-11-22 19:10:30",
-      "days_inactive": 346,
+      "days_inactive": 348,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1725,33 +1883,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "659",
-      "subject": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 11,
-      "total_views": 1449,
-      "total_sales": 21.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2025-12-11 12:01:59",
-      "days_inactive": 328,
-      "is_inactive_30d": true,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
       },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
+      "sales_7_chapters": 21.6,
+      "views_7_chapters": 24
     },
     {
       "comic_id": "435",
@@ -1760,11 +1894,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 11,
-      "total_views": 4506,
-      "total_sales": 3.6,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "total_views": 4515,
+      "total_sales": 5.4,
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-11-23 20:14:13",
-      "days_inactive": 345,
+      "days_inactive": 347,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1777,7 +1911,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 5.4,
+      "views_7_chapters": 661
     },
     {
       "comic_id": "364",
@@ -1786,11 +1922,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 13,
-      "total_views": 804,
+      "total_views": 806,
       "total_sales": 3.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-09-28 20:53:20",
-      "days_inactive": 401,
+      "days_inactive": 403,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1803,7 +1939,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 0
     },
     {
       "comic_id": "414",
@@ -1812,11 +1950,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 9,
-      "total_views": 918,
+      "total_views": 919,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2025-11-17 22:48:59",
-      "days_inactive": 351,
+      "days_inactive": 353,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1829,7 +1967,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 115
     },
     {
       "comic_id": "2062",
@@ -1838,11 +1978,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 6,
-      "total_views": 3062,
+      "total_views": 3068,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-03-25 21:58:32",
-      "days_inactive": 223,
+      "days_inactive": 225,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1855,7 +1995,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 1090
     },
     {
       "comic_id": "4675",
@@ -1864,11 +2006,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 4,
-      "total_views": 610,
+      "total_views": 614,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-06-06 15:42:08",
-      "days_inactive": 150,
+      "days_inactive": 153,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
@@ -1881,7 +2023,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 122
     },
     {
       "comic_id": "6059",
@@ -1890,11 +2034,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 3,
-      "total_views": 734,
+      "total_views": 765,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-23 17:30:53",
-      "days_inactive": 11,
+      "days_inactive": 13,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1907,7 +2051,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 133
     },
     {
       "comic_id": "6060",
@@ -1916,9 +2062,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 0,
-      "total_views": 184,
+      "total_views": 186,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "",
       "days_inactive": 999,
       "is_inactive_30d": true,
@@ -1933,7 +2079,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 0
     },
     {
       "comic_id": "6061",
@@ -1942,62 +2090,10 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 6,
-      "total_views": 1507,
+      "total_views": 1517,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-22 20:52:00",
-      "days_inactive": 12,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "6064",
-      "subject": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack Speed",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 7,
-      "total_views": 471,
-      "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-23 17:57:49",
-      "days_inactive": 11,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "8123",
-      "subject": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
-      "platform": "kairew",
-      "account": "แปลจนเมื่อย (Kairew)",
-      "account_id": "kairew_adieu",
-      "chapters_count": 4,
-      "total_views": 391,
-      "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
-      "last_chapter_updated_at": "2026-10-20 14:16:19",
       "days_inactive": 14,
       "is_inactive_30d": false,
       "growth_7d": {
@@ -2011,7 +2107,65 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 549
+    },
+    {
+      "comic_id": "6064",
+      "subject": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack Speed",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 7,
+      "total_views": 473,
+      "total_sales": 0.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-23 17:57:49",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 254
+    },
+    {
+      "comic_id": "8123",
+      "subject": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+      "platform": "kairew",
+      "account": "แปลจนเมื่อย (Kairew)",
+      "account_id": "kairew_adieu",
+      "chapters_count": 4,
+      "total_views": 406,
+      "total_sales": 0.0,
+      "recorded_at": "2026-11-06T16:40:19.453962",
+      "last_chapter_updated_at": "2026-10-20 14:16:19",
+      "days_inactive": 17,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "growth_30d": {
+        "views_delta": 0,
+        "views_growth_pct": 0.0,
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 255
     },
     {
       "comic_id": "8127",
@@ -2020,11 +2174,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 7,
-      "total_views": 305,
+      "total_views": 964,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-11-04 01:29:33",
-      "days_inactive": 0,
+      "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -2037,7 +2191,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 831
     },
     {
       "comic_id": "8128",
@@ -2046,11 +2202,11 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 6,
-      "total_views": 278,
+      "total_views": 284,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-04T14:06:34.758744",
+      "recorded_at": "2026-11-06T16:40:19.453962",
       "last_chapter_updated_at": "2026-10-23 17:27:53",
-      "days_inactive": 11,
+      "days_inactive": 13,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -2063,7 +2219,9 @@
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
-      }
+      },
+      "sales_7_chapters": 0.0,
+      "views_7_chapters": 198
     }
   ]
 }

@@ -47,7 +47,7 @@ import {
 
 import { SearchableSelect } from "@/components/ui/searchable-select";
 
-import { THAI_SHORT_MONTHS, getChapterCount } from "@/lib/utils";
+import { THAI_SHORT_MONTHS, getChapterCount, isUrgentManga } from "@/lib/utils";
 
 import initialGrowthData from "@/data/multi_platform_growth_latest.json";
 
@@ -128,6 +128,11 @@ function normalizeMangaTitle(title: string): string {
 
   let t = title.split("|")[0].trim();
 
+  // If title contains Thai characters and has a trailing English subtitle without '|', strip trailing English words
+  if (/[\u0E00-\u0E7F]/.test(t)) {
+    t = t.replace(/\s+[A-Za-z][A-Za-z0-9\s:'’,-]{5,}$/g, "").trim();
+  }
+
   t = t.toLowerCase().replace(/[\s\-_–—()[\]{}:：.,!！?？"']+/g, "");
 
   if (
@@ -142,6 +147,13 @@ function normalizeMangaTitle(title: string): string {
     t.includes("กบฏแห่งตระกูลขุนนางทรราช")
   ) {
     return "กบฏแห่งตระกูลขุนนางทรราช";
+  }
+
+  if (
+    t.includes("จอมมารแสนดีขนาดนี้") ||
+    t.includes("จอมมารแสนดีเช่นข้า")
+  ) {
+    return "จอมมารแสนดี";
   }
 
   return t;
@@ -239,8 +251,68 @@ export function FinancialsView({
   const [accountFilter, setAccountFilter] = React.useState<string>("all");
 
   const [statusFilter, setStatusFilter] = React.useState<
-    "all" | "inactive30" | "active30" | "inactive90" | "mismatch"
+    "all" | "inactive30" | "active30" | "inactive90" | "mismatch" | "urgent"
   >("all");
+
+  // Urgent Manga lookup from system mangaList + fallback known urgent titles
+  const { urgentNormalizedTitles, urgentMangaIds } = React.useMemo(() => {
+    const normSet = new Set<string>([
+      normalizeMangaTitle("ข้าคือจอมวายร้ายผู้ยิ่งใหญ่"),
+      normalizeMangaTitle("อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ"),
+      normalizeMangaTitle("อาจารย์ ศิษย์บ้าขอกบฏนะขอรับ"),
+      normalizeMangaTitle("อิสระทางทรัพย์ พันธะทางใจ"),
+      normalizeMangaTitle("นักฆ่าระดับเทพ ข้าคือเงามืด"),
+      normalizeMangaTitle("จอมมารแสนดีขนาดนี้ แต่ศิษย์สตรีทั้งหลายกลับต้องการชีวิตข้า"),
+      normalizeMangaTitle("จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต"),
+      normalizeMangaTitle("ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน"),
+      normalizeMangaTitle("ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ"),
+      normalizeMangaTitle("หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์"),
+      normalizeMangaTitle("เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก"),
+      normalizeMangaTitle("ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่"),
+      normalizeMangaTitle("การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา"),
+      normalizeMangaTitle("ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ!"),
+      normalizeMangaTitle("จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์"),
+      normalizeMangaTitle("ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง"),
+      normalizeMangaTitle("เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ!"),
+      normalizeMangaTitle("จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์"),
+      normalizeMangaTitle("เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า"),
+      normalizeMangaTitle("หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด!"),
+    ]);
+    const idSet = new Set<string>();
+
+    if (Array.isArray(mangaList) && mangaList.length > 0) {
+      // If mangaList has urgent flags, rebuild from live mangaList
+      const liveUrgent = mangaList.filter((m) => isUrgentManga(m));
+      if (liveUrgent.length > 0) {
+        normSet.clear();
+        for (const m of liveUrgent) {
+          if (m.mangaid != null) idSet.add(String(m.mangaid));
+          const nt = normalizeMangaTitle(m.manganame || "");
+          if (nt) normSet.add(nt);
+          if (nt.includes("ขอกบฎ")) normSet.add(nt.replace("ขอกบฎ", "ขอกบฏ"));
+          if (nt.includes("ขอกบฏ")) normSet.add(nt.replace("ขอกบฏ", "ขอกบฎ"));
+        }
+      }
+    }
+    return { urgentNormalizedTitles: normSet, urgentMangaIds: idSet };
+  }, [mangaList]);
+
+  const isTitleUrgent = React.useCallback(
+    (title?: string, mangaId?: any): boolean => {
+      if (mangaId != null && urgentMangaIds.has(String(mangaId))) return true;
+      if (!title) return false;
+      const nt = normalizeMangaTitle(title);
+      if (!nt) return false;
+      if (urgentNormalizedTitles.has(nt)) return true;
+      for (const u of urgentNormalizedTitles) {
+        if (u && u.length >= 8 && (nt.includes(u) || u.includes(nt))) {
+          return true;
+        }
+      }
+      return false;
+    },
+    [urgentNormalizedTitles, urgentMangaIds],
+  );
 
   const [searchQuery, setSearchQuery] = React.useState<string>("");
 
@@ -538,6 +610,10 @@ export function FinancialsView({
     }).length;
   }, [unifiedComics]);
 
+  const urgentCount = React.useMemo(() => {
+    return unifiedComics.filter((c) => isTitleUrgent(c.subject)).length;
+  }, [unifiedComics, isTitleUrgent]);
+
   // Dynamic KPI Aggregations based on platform filter
 
   const kpiStats = React.useMemo(() => {
@@ -686,6 +762,8 @@ export function FinancialsView({
             )
           );
         });
+      } else if (statusFilter === "urgent") {
+        list = list.filter((c) => isTitleUrgent(c.subject));
       }
 
       // Search query
@@ -821,6 +899,8 @@ export function FinancialsView({
       list = list.filter(
         (c) => (c.days_inactive != null ? c.days_inactive : 0) > 90,
       );
+    } else if (statusFilter === "urgent") {
+      list = list.filter((c) => isTitleUrgent(c.subject));
     }
 
     if (searchQuery.trim()) {
@@ -932,6 +1012,7 @@ export function FinancialsView({
     statusFilter,
     searchQuery,
     sortBy,
+    isTitleUrgent,
   ]);
 
   // --- Traditional P&L Manual Ledger State ---
@@ -1980,6 +2061,21 @@ export function FinancialsView({
               </button>
 
               <button
+                onClick={() => setStatusFilter("urgent")}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
+                  statusFilter === "urgent"
+                    ? "bg-red-500/25 text-red-300 border-red-500/70 shadow-sm shadow-red-500/10 font-semibold"
+                    : "bg-[#0f172a] text-red-400 border-red-900/50 hover:text-red-300"
+                }`}
+                title="แสดงเฉพาะมังงะที่ตั้งค่าสถานะด่วน (🔥) ในระบบ"
+              >
+                <span>🔥 เรื่องด่วน</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-red-500/20 text-[10px] font-mono">
+                  {urgentCount}
+                </span>
+              </button>
+
+              <button
                 onClick={() => setStatusFilter("mismatch")}
                 className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
                   statusFilter === "mismatch"
@@ -2031,10 +2127,10 @@ export function FinancialsView({
 
                     <TableHead className="text-right">ยอดขายรวม</TableHead>
 
-                    <TableHead className="text-right min-w-[160px] text-amber-300">
+                    <TableHead className="text-right min-w-[175px] text-amber-300">
                       <div>ยอดขายรายตอน 7 ตอนล่าสุด</div>
                       <div className="text-[10px] text-slate-400 font-normal">
-                        หารเฉลี่ย / ตอน
+                        รวมทุกแพลตฟอร์ม (ชี้ดูแยกเว็บ)
                       </div>
                     </TableHead>
 
@@ -2098,12 +2194,16 @@ export function FinancialsView({
                       const g30Pct = c.growth_30d?.sales_growth_pct || 0;
 
                       const g30Delta = c.growth_30d?.sales_delta || 0;
+                      const isUrgent = isTitleUrgent(c.subject);
 
                       return (
                         <TableRow
                           key={c.comic_id || idx}
-
-                          className="border-slate-800/60 hover:bg-[#151d2f]/50 transition-colors"
+                          className={`border-slate-800/60 hover:bg-[#151d2f]/50 transition-colors ${
+                            isUrgent
+                              ? "bg-red-950/20 border-l-2 border-l-red-500 hover:bg-red-950/30"
+                              : ""
+                          }`}
                         >
                           <TableCell className="text-center font-mono font-medium text-xs">
                             {isTop3 ? (
@@ -2213,13 +2313,24 @@ export function FinancialsView({
 
                           <TableCell>
                             <div className="flex flex-col">
-                              <span
-                                className="text-xs font-semibold text-slate-100 hover:text-indigo-300 transition-colors line-clamp-1"
-
-                                title={c.subject}
-                              >
-                                {c.subject}
-                              </span>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                  className={`text-xs font-semibold transition-colors line-clamp-1 ${
+                                    isUrgent
+                                      ? "text-red-400 font-bold hover:text-red-300"
+                                      : "text-slate-100 hover:text-indigo-300"
+                                  }`}
+                                  title={c.subject}
+                                >
+                                  {isUrgent && "🔥 "}
+                                  {c.subject}
+                                </span>
+                                {isUrgent && (
+                                  <span className="rounded bg-red-500/20 border border-red-500/40 px-1.5 py-0.2 text-[10px] font-bold text-red-300 shrink-0">
+                                    ด่วน
+                                  </span>
+                                )}
+                              </div>
 
                               <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1.5 flex-wrap">
                                 {c.readrealm?.exists && c.readrealm.id && (
@@ -2303,47 +2414,172 @@ export function FinancialsView({
                           </TableCell>
 
                           <TableCell className="text-right">
-                            <div className="font-mono text-xs font-bold text-amber-300">
-                              {(c.display_sales_7_chapters || 0) > 0 ? (
-                                <>
-                                  ฿
-                                  {(
-                                    (c.display_sales_7_chapters || 0) /
-                                    Math.max(
-                                      1,
-                                      Math.min(7, c.chapters_count || 7),
-                                    )
-                                  ).toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  })}
-                                </>
-                              ) : (
-                                <span className="font-normal text-slate-500">
-                                  -
-                                </span>
-                              )}
-                            </div>
+                            {(() => {
+                              const total7 = Number(c.display_sales_7_chapters) || 0;
+                              const divAll = Math.max(1, Math.min(7, c.chapters_count || 7));
+                              const avgAll = total7 / divAll;
 
-                            <div className="mt-0.5 text-[10px] font-mono text-slate-400">
-                              {(c.display_sales_7_chapters || 0) > 0 ? (
-                                <>
-                                  รวม ฿
-                                  {(
-                                    c.display_sales_7_chapters || 0
-                                  ).toLocaleString(undefined, {
-                                    maximumFractionDigits: 0,
-                                  })}{" "}
-                                  • วิว{" "}
-                                  {(c.display_views || 0).toLocaleString()}
-                                </>
-                              ) : (
-                                <>
-                                  วิวรวม:{" "}
-                                  {(c.display_views || 0).toLocaleString()}
-                                </>
-                              )}
-                            </div>
+                              const rr7 = Number(c.readrealm?.sales_7_chapters) || 0;
+                              const rrDiv = Math.max(1, Math.min(7, c.readrealm?.chapters || c.chapters_count || 7));
+                              const rrAvg = rr7 / rrDiv;
+
+                              const kw7 = Number(c.kairew?.sales_7_chapters) || 0;
+                              const kwDiv = Math.max(1, Math.min(7, c.kairew?.chapters || c.chapters_count || 7));
+                              const kwAvg = kw7 / kwDiv;
+
+                              const ch7 = Number(c.chaply?.sales_7_chapters) || 0;
+                              const chDiv = Math.max(1, Math.min(7, c.chaply?.chapters || c.chapters_count || 7));
+                              const chAvg = ch7 / chDiv;
+
+                              const nativeTooltipLines: string[] = [
+                                `ยอดขายรายตอน 7 ตอนล่าสุด (${c.subject})`,
+                                `รวมทุกแพลตฟอร์ม: ฿${total7.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (เฉลี่ย ฿${avgAll.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/ตอน)`,
+                              ];
+                              if (c.readrealm?.exists) {
+                                nativeTooltipLines.push(
+                                  `• ReadRealm: ฿${rr7.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (เฉลี่ย ฿${rrAvg.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/ตอน)`,
+                                );
+                              }
+                              if (c.kairew?.exists) {
+                                nativeTooltipLines.push(
+                                  `• Kairew: ฿${kw7.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (เฉลี่ย ฿${kwAvg.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/ตอน)`,
+                                );
+                              }
+                              if (c.chaply?.exists) {
+                                nativeTooltipLines.push(
+                                  `• Chaply: ฿${ch7.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (เฉลี่ย ฿${chAvg.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/ตอน)`,
+                                );
+                              }
+
+                              return (
+                                <div
+                                  className="group relative inline-flex flex-col items-end cursor-help"
+                                  title={nativeTooltipLines.join("\n")}
+                                >
+                                  <div className="font-mono text-xs font-bold text-amber-300">
+                                    {total7 > 0 ? (
+                                      <>
+                                        ฿
+                                        {total7.toLocaleString(undefined, {
+                                          minimumFractionDigits: 2,
+                                          maximumFractionDigits: 2,
+                                        })}
+                                      </>
+                                    ) : (
+                                      <span className="font-normal text-slate-500">
+                                        -
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {total7 > 0 && (
+                                    <div className="mt-0.5 text-[10px] font-mono text-slate-400">
+                                      เฉลี่ย ฿
+                                      {avgAll.toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      })}
+                                      /ตอน
+                                    </div>
+                                  )}
+
+                                  {/* Hover Tooltip Breakdown by Platform */}
+                                  <div
+                                    className={`hidden group-hover:block absolute right-0 ${
+                                      idx < 3 ? "top-full mt-1.5" : "bottom-full mb-1.5"
+                                    } z-50 w-64 rounded-xl border border-slate-700 bg-[#0b1120] p-3 text-left shadow-2xl pointer-events-none`}
+                                  >
+                                    <div className="text-[11px] font-semibold text-amber-300 border-b border-slate-800 pb-1.5 mb-2">
+                                      📊 ยอดขาย 7 ตอนล่าสุด (แยกแพลตฟอร์ม)
+                                    </div>
+                                    <div className="space-y-1.5 text-[11px] font-mono">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-blue-300 font-sans font-medium">
+                                          ReadRealm:
+                                        </span>
+                                        {c.readrealm?.exists ? (
+                                          <span className="text-slate-100">
+                                            ฿
+                                            {rr7.toLocaleString(undefined, {
+                                              minimumFractionDigits: 2,
+                                              maximumFractionDigits: 2,
+                                            })}{" "}
+                                            <span className="text-[10px] text-slate-400">
+                                              (฿
+                                              {rrAvg.toLocaleString(undefined, {
+                                                maximumFractionDigits: 0,
+                                              })}
+                                              /ตอน)
+                                            </span>
+                                          </span>
+                                        ) : (
+                                          <span className="text-slate-500">ไม่ได้ลง</span>
+                                        )}
+                                      </div>
+
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-emerald-300 font-sans font-medium">
+                                          Kairew:
+                                        </span>
+                                        {c.kairew?.exists ? (
+                                          <span className="text-slate-100">
+                                            ฿
+                                            {kw7.toLocaleString(undefined, {
+                                              minimumFractionDigits: 2,
+                                              maximumFractionDigits: 2,
+                                            })}{" "}
+                                            <span className="text-[10px] text-slate-400">
+                                              (฿
+                                              {kwAvg.toLocaleString(undefined, {
+                                                maximumFractionDigits: 0,
+                                              })}
+                                              /ตอน)
+                                            </span>
+                                          </span>
+                                        ) : (
+                                          <span className="text-slate-500">ไม่ได้ลง</span>
+                                        )}
+                                      </div>
+
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-amber-300 font-sans font-medium">
+                                          Chaply:
+                                        </span>
+                                        {c.chaply?.exists ? (
+                                          <span className="text-slate-100">
+                                            ฿
+                                            {ch7.toLocaleString(undefined, {
+                                              minimumFractionDigits: 2,
+                                              maximumFractionDigits: 2,
+                                            })}{" "}
+                                            <span className="text-[10px] text-slate-400">
+                                              (฿
+                                              {chAvg.toLocaleString(undefined, {
+                                                maximumFractionDigits: 0,
+                                              })}
+                                              /ตอน)
+                                            </span>
+                                          </span>
+                                        ) : (
+                                          <span className="text-slate-500">ไม่ได้ลง</span>
+                                        )}
+                                      </div>
+
+                                      <div className="pt-1.5 mt-1.5 border-t border-slate-800 flex items-center justify-between font-bold text-amber-300">
+                                        <span className="font-sans">รวม 7 ตอนล่าสุด:</span>
+                                        <span>
+                                          ฿
+                                          {total7.toLocaleString(undefined, {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                          })}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </TableCell>
 
                           <TableCell className="text-center">
@@ -2775,19 +3011,38 @@ export function FinancialsView({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredGroupedComics.map((g, idx) => (
+                    filteredGroupedComics.map((g, idx) => {
+                      const isUrgent = isTitleUrgent(g.title);
+                      return (
                       <TableRow
                         key={g.key}
-
-                        className="border-slate-800/60 hover:bg-slate-800/30 transition-colors"
+                        className={`border-slate-800/60 hover:bg-slate-800/30 transition-colors ${
+                          isUrgent
+                            ? "bg-red-950/20 border-l-2 border-l-red-500 hover:bg-red-950/30"
+                            : ""
+                        }`}
                       >
                         <TableCell className="text-slate-400 text-xs font-mono">
                           {idx + 1}
                         </TableCell>
 
                         <TableCell>
-                          <div className="font-medium text-slate-100 text-xs leading-snug">
-                            {g.title}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span
+                              className={`text-xs leading-snug ${
+                                isUrgent
+                                  ? "font-bold text-red-400"
+                                  : "font-medium text-slate-100"
+                              }`}
+                            >
+                              {isUrgent && "🔥 "}
+                              {g.title}
+                            </span>
+                            {isUrgent && (
+                              <span className="rounded bg-red-500/20 border border-red-500/40 px-1.5 py-0.2 text-[10px] font-bold text-red-300">
+                                ด่วน
+                              </span>
+                            )}
                           </div>
                         </TableCell>
 
@@ -2877,7 +3132,8 @@ export function FinancialsView({
                           {g.max_eps}
                         </TableCell>
                       </TableRow>
-                    ))
+                      );
+                    })
                   )}
                 </TableBody>
               </Table>
@@ -3075,27 +3331,43 @@ export function FinancialsView({
                     {summary.topProfits.length === 0 ? (
                       <p className="text-slate-500 text-xs">ไม่มีข้อมูลกำไร</p>
                     ) : (
-                      summary.topProfits.map((item, idx) => (
+                      summary.topProfits.map((item, idx) => {
+                        const isUrgent = isTitleUrgent(item.name);
+                        return (
                         <div
                           key={item.name}
-
-                          className="flex items-center justify-between text-xs p-2 rounded-lg bg-slate-900/50 border border-slate-800"
+                          className={`flex items-center justify-between text-xs p-2 rounded-lg border ${
+                            isUrgent
+                              ? "bg-red-950/25 border-red-500/40"
+                              : "bg-slate-900/50 border-slate-800"
+                          }`}
                         >
                           <div className="flex items-center gap-2 overflow-hidden">
                             <span className="font-bold text-slate-400">
                               {idx + 1}.
                             </span>
 
-                            <span className="truncate text-slate-200">
+                            <span
+                              className={`truncate ${
+                                isUrgent ? "font-bold text-red-400" : "text-slate-200"
+                              }`}
+                            >
+                              {isUrgent && "🔥 "}
                               {item.name}
                             </span>
+                            {isUrgent && (
+                              <span className="rounded bg-red-500/20 border border-red-500/40 px-1 py-0 text-[9px] font-bold text-red-300 shrink-0">
+                                ด่วน
+                              </span>
+                            )}
                           </div>
 
                           <span className="font-semibold text-emerald-400 shrink-0">
                             +฿{item.profit.toLocaleString()}
                           </span>
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
 
@@ -3109,27 +3381,43 @@ export function FinancialsView({
                         ไม่มีรายการขาดทุน
                       </p>
                     ) : (
-                      summary.topLosses.map((item, idx) => (
+                      summary.topLosses.map((item, idx) => {
+                        const isUrgent = isTitleUrgent(item.name);
+                        return (
                         <div
                           key={item.name}
-
-                          className="flex items-center justify-between text-xs p-2 rounded-lg bg-slate-900/50 border border-slate-800"
+                          className={`flex items-center justify-between text-xs p-2 rounded-lg border ${
+                            isUrgent
+                              ? "bg-red-950/25 border-red-500/40"
+                              : "bg-slate-900/50 border-slate-800"
+                          }`}
                         >
                           <div className="flex items-center gap-2 overflow-hidden">
                             <span className="font-bold text-slate-400">
                               {idx + 1}.
                             </span>
 
-                            <span className="truncate text-slate-200">
+                            <span
+                              className={`truncate ${
+                                isUrgent ? "font-bold text-red-400" : "text-slate-200"
+                              }`}
+                            >
+                              {isUrgent && "🔥 "}
                               {item.name}
                             </span>
+                            {isUrgent && (
+                              <span className="rounded bg-red-500/20 border border-red-500/40 px-1 py-0 text-[9px] font-bold text-red-300 shrink-0">
+                                ด่วน
+                              </span>
+                            )}
                           </div>
 
                           <span className="font-semibold text-red-400 shrink-0">
                             ฿{item.profit.toLocaleString()}
                           </span>
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>
@@ -3219,15 +3507,39 @@ export function FinancialsView({
                       const cost = parseFloat(sale.totalcost) || 0;
 
                       const profit = rev - cost;
+                      const isUrgent = isTitleUrgent(sale.seriesname, sale.mangaid);
 
                       return (
-                        <TableRow key={sale._rowIndex || idx}>
+                        <TableRow
+                          key={sale._rowIndex || idx}
+                          className={
+                            isUrgent
+                              ? "bg-red-950/20 border-l-2 border-l-red-500"
+                              : ""
+                          }
+                        >
                           <TableCell className="text-xs text-slate-400">
                             {sale.date ? sale.date.split("T")[0] : "-"}
                           </TableCell>
 
-                          <TableCell className="font-medium text-slate-200">
-                            {sale.seriesname}
+                          <TableCell
+                            className={
+                              isUrgent
+                                ? "font-bold text-red-400"
+                                : "font-medium text-slate-200"
+                            }
+                          >
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span>
+                                {isUrgent && "🔥 "}
+                                {sale.seriesname}
+                              </span>
+                              {isUrgent && (
+                                <span className="rounded bg-red-500/20 border border-red-500/40 px-1.5 py-0.2 text-[10px] font-bold text-red-300">
+                                  ด่วน
+                                </span>
+                              )}
+                            </div>
                           </TableCell>
 
                           <TableCell>

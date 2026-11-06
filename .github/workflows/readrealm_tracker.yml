@@ -1,14 +1,19 @@
 name: Multi-Platform 6-Hour Growth Tracker Pipeline (ReadRealm + Kairew + Chaply)
 
 on:
-  # สั่งรันตามเวลาจาก Google Apps Script (GAS Time-driven Trigger ทุก 6 ชม.)
-  # ป้องกันปัญหา GitHub Actions cron ดีเลย์หรือโดนแย่งคิว
+  # รันอัตโนมัติทุกๆ 6 ชั่วโมง (และรองรับการสั่งรันจาก Google Apps Script 6h Trigger)
+  schedule:
+    - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       platform:
         description: 'Target platform (all, readrealm, kairew, chaply)'
         required: false
         default: 'all'
+      force_refresh:
+        description: 'Force refresh tokens (true/false)'
+        required: false
+        default: 'false'
 
 concurrency:
   group: multi-platform-growth-tracker-pipeline
@@ -66,5 +71,6 @@ jobs:
             echo "No data changes to commit."
           else
             git commit -m "chore(tracker): update multi-platform 6h sales & views snapshots [skip ci]"
+            git pull --rebase origin main || true
             git push origin main
           fi
