@@ -703,7 +703,7 @@ def get_pending_comix_tasks():
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    group_arg = "CrowScans"
+    group_arg = ""
     chap_arg = None
     use_dom_flag = "--dom" in sys.argv
 

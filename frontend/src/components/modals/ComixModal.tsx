@@ -18,7 +18,6 @@ import {
   ExternalLink,
   FolderOpen,
   Image as ImageIcon,
-  BookOpen,
   Scissors,
   Layers,
   AlertTriangle,
@@ -37,7 +36,6 @@ interface ComixModalProps {
 
 const DEFAULT_COMIX_URL =
   "https://comix.to/title/z0l20-god-level-assassin-im-the-shadow"
-const DEFAULT_SCAN_GROUP = "CrowScans"
 const DRIVE_ROOT_FOLDER_ID = "1hA_5XjT1gLnzrAOFpT-COVfIbuSfVG6_"
 
 const proxyCache = new Map<string, string>()
@@ -174,12 +172,10 @@ export function ComixModal({
   const [targetUrl, setTargetUrl] = React.useState(
     initialUrl || DEFAULT_COMIX_URL
   )
-  const [scanGroup, setScanGroup] = React.useState(
-    initialScanGroup || DEFAULT_SCAN_GROUP
-  )
+  const [scanGroup, setScanGroup] = React.useState(initialScanGroup || "")
   const [chapterNumInput, setChapterNumInput] = React.useState("")
 
-  // Available Scan Groups
+  // Available Scan Groups (fetched on-demand when user clicks button)
   const [groups, setGroups] = React.useState<
     Array<{ id: string; name: string }>
   >([])
@@ -213,40 +209,46 @@ export function ComixModal({
     null
   )
 
-  const handleLoadGroups = React.useCallback(
-    async (urlOverride?: string, silent = false) => {
-      const u = (urlOverride ?? targetUrl).trim()
-      if (!u) return
-      setLoadingGroups(true)
-      try {
-        const res = await callGasApi<any>("GET_COMIX_GROUPS", { url: u })
-        if (res && res.success && Array.isArray(res.groups)) {
-          setGroups(res.groups)
-          if (!silent) {
-            toast.success(
-              `ดึงรายชื่อค่ายแปลสำเร็จ (${res.groups.length} ค่าย)`
-            )
-          }
-        } else if (!silent) {
-          toast.error(res?.error || "ไม่พบรายชื่อค่ายแปล")
-        }
-      } catch (err: any) {
-        if (!silent) toast.error(err.message || "ดึงค่ายแปลไม่สำเร็จ")
-      } finally {
-        setLoadingGroups(false)
+  // ดึงรายชื่อค่ายแปลแบบรายครั้งเมื่อผู้ใช้กดปุ่ม
+  const handleLoadGroups = async (urlOverride?: string) => {
+    const u = (urlOverride ?? targetUrl).trim()
+    if (!u) {
+      toast.error("กรุณาวางลิงก์เรื่องจาก comix.to ก่อนกดดึงชื่อค่ายแปล")
+      return
+    }
+    setLoadingGroups(true)
+    try {
+      const res = await callGasApi<any>("GET_COMIX_GROUPS", { url: u })
+      if (
+        res &&
+        res.success &&
+        Array.isArray(res.groups) &&
+        res.groups.length > 0
+      ) {
+        setGroups(res.groups)
+        toast.success(
+          `ดึงรายชื่อค่ายแปลใส่ Dropdown แล้ว (${res.groups.length} ค่าย)`
+        )
+      } else {
+        toast.error(
+          res?.error ||
+            "ไม่พบรายชื่อค่ายแปลจากลิงก์นี้ (คุณสามารถพิมพ์ชื่อค่ายเองได้)"
+        )
       }
-    },
-    [targetUrl]
-  )
+    } catch (err: any) {
+      toast.error(err.message || "ดึงค่ายแปลไม่สำเร็จ")
+    } finally {
+      setLoadingGroups(false)
+    }
+  }
 
   React.useEffect(() => {
     if (open) {
-      const u = initialUrl || DEFAULT_COMIX_URL
-      setTargetUrl(u)
-      if (initialScanGroup) setScanGroup(initialScanGroup)
-      handleLoadGroups(u, true)
+      setGroups([])
+      if (initialUrl) setTargetUrl(initialUrl)
+      if (initialScanGroup !== undefined) setScanGroup(initialScanGroup)
     }
-  }, [open, initialUrl, initialScanGroup, handleLoadGroups])
+  }, [open, initialUrl, initialScanGroup])
 
   const handleFetchChapter = async (overrideParams?: {
     url?: string
@@ -313,7 +315,6 @@ export function ComixModal({
     setParsingHtml(true)
     try {
       const urls: string[] = []
-      // 1. จับ <img class="rpage-page__img" src="..."> หรือ <img> ทั่วไปใน reader-area
       const imgRegex =
         /<img[^>]+(?:data-src|src)=["'](https?:\/\/[^"'>\s]+)["'][^>]*>/gi
       let m: RegExpExecArray | null
@@ -367,7 +368,7 @@ export function ComixModal({
         mangaId: testResult?.mangaId || "4",
         chapter: chapLabel,
         chapterNumber: chapMatch ? Number(chapMatch[1]) : 111,
-        scanGroup: scanGroup || "CrowScans",
+        scanGroup: scanGroup || "",
         isLocked: false,
         imagesCount: urls.length,
         allImages: urls,
@@ -791,7 +792,7 @@ export function ComixModal({
                   </Badge>
                 </DialogTitle>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  รองรับการเลือกค่ายแปล (Group Scanner เช่น CrowScans) • ดึงภาพความละเอียดสูง • เย็บ 20 หน้าลง Google Drive
+                  พิมพ์ชื่อค่ายแปลเอง หรือกดปุ่มดึงชื่อค่ายมาใส่ Dropdown แบบรายครั้ง • เย็บ 20 หน้าลง Google Drive
                 </p>
               </div>
             </div>
@@ -828,53 +829,88 @@ export function ComixModal({
           <div className="space-y-4 mt-2">
             {/* Target URL & Group Scanner Input */}
             <div className="rounded-xl border border-[#26334d] bg-[#151d2f]/70 p-4 space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-                <div className="md:col-span-7 space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
-                    ลิงก์เรื่อง (Title URL) หรือ ลิงก์ตอน (Chapter URL) บน Comix.to:
-                  </label>
-                  <div className="flex gap-1.5">
-                    <Input
-                      value={targetUrl}
-                      onChange={(e) => setTargetUrl(e.target.value)}
-                      placeholder="https://comix.to/title/z0l20-god-level-assassin-im-the-shadow"
-                      className="bg-[#0b0f19] border-[#26334d] text-xs font-mono text-slate-100"
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-300">
+                  1. วางลิงก์เรื่อง (Title URL) หรือ ลิงก์ตอน (Chapter URL) บน Comix.to:
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Input
+                    value={targetUrl}
+                    onChange={(e) => setTargetUrl(e.target.value)}
+                    placeholder="https://comix.to/title/z0l20-god-level-assassin-im-the-shadow"
+                    className="bg-[#0b0f19] border-[#26334d] text-xs font-mono text-slate-100 flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleLoadGroups(targetUrl)}
+                    disabled={loadingGroups}
+                    className="shrink-0 border-purple-500/40 bg-purple-950/30 text-purple-300 hover:bg-purple-900/40 text-xs cursor-pointer"
+                  >
+                    <RefreshCw
+                      className={`h-3.5 w-3.5 mr-1.5 ${
+                        loadingGroups ? "animate-spin" : ""
+                      }`}
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleLoadGroups(targetUrl)}
-                      disabled={loadingGroups}
-                      className="shrink-0 border-purple-500/40 bg-purple-950/30 text-purple-300 hover:bg-purple-900/40 text-xs cursor-pointer"
-                      title="ดึงรายชื่อค่ายแปลทั้งหมดของเรื่องนี้"
-                    >
-                      <Users
-                        className={`h-3.5 w-3.5 mr-1 ${
-                          loadingGroups ? "animate-spin" : ""
-                        }`}
-                      />
-                      ดึงค่ายแปล
-                    </Button>
-                  </div>
+                    {loadingGroups
+                      ? "กำลังดึงรายชื่อค่าย..."
+                      : "ดึงชื่อค่ายมาใส่ Dropdown"}
+                  </Button>
                 </div>
+              </div>
 
-                <div className="md:col-span-3 space-y-1">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-1">
+                <div className="md:col-span-5 space-y-1">
                   <label className="text-xs font-semibold text-purple-300 flex items-center gap-1">
                     <Users className="h-3.5 w-3.5 text-purple-400" />
-                    ค่ายแปล (Group Scanner):
+                    2. ค่ายแปล (พิมพ์เองได้อิสระ):
                   </label>
                   <Input
                     value={scanGroup}
                     onChange={(e) => setScanGroup(e.target.value)}
-                    placeholder="เช่น CrowScans"
+                    placeholder="พิมพ์ชื่อค่ายแปลเอง (เว้นว่าง = ทุกค่าย)"
                     className="bg-[#0b0f19] border-purple-500/40 text-xs text-purple-200 font-semibold"
                   />
                 </div>
 
+                <div className="md:col-span-5 space-y-1">
+                  <label className="text-xs font-semibold text-purple-300">
+                    หรือเลือกจาก Dropdown (ที่ดึงมาจากลิงก์):
+                  </label>
+                  <select
+                    className="flex h-9 w-full rounded-md border border-purple-500/40 bg-[#0b0f19] px-3 py-1 text-xs text-purple-200 disabled:opacity-50"
+                    value={
+                      groups.some(
+                        (g) =>
+                          g.name.toLowerCase() ===
+                          scanGroup.trim().toLowerCase()
+                      )
+                        ? scanGroup
+                        : ""
+                    }
+                    disabled={groups.length === 0}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setScanGroup(val)
+                    }}
+                  >
+                    <option value="">
+                      {groups.length > 0
+                        ? `-- เลือกค่ายแปลจากลิงก์นี้ (${groups.length} ค่าย) --`
+                        : "-- กดปุ่ม 'ดึงชื่อค่ายมาใส่ Dropdown' ด้านบน --"}
+                    </option>
+                    {groups.map((g) => (
+                      <option key={g.id} value={g.name}>
+                        {g.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="md:col-span-2 space-y-1">
                   <label className="text-xs font-semibold text-slate-300">
-                    เลขตอน (เว้นว่าง=ล่าสุด):
+                    เลขตอน (ว่าง=ล่าสุด):
                   </label>
                   <Input
                     value={chapterNumInput}
@@ -885,59 +921,11 @@ export function ComixModal({
                 </div>
               </div>
 
-              {/* Group Scanner Pills */}
-              {groups.length > 0 && (
-                <div className="space-y-1.5 pt-1">
-                  <span className="text-[11px] text-slate-400">
-                    คลิกเลือกค่ายแปลที่พบในเรื่องนี้ ({groups.length} ค่าย):
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => setScanGroup("")}
-                      className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer ${
-                        !scanGroup
-                          ? "bg-indigo-600 text-white border-indigo-400"
-                          : "bg-[#0b0f19] text-slate-400 border-[#26334d] hover:text-white"
-                      }`}
-                    >
-                      ทุกค่าย (ตอนล่าสุดรวม)
-                    </button>
-                    {groups.map((g) => {
-                      const active =
-                        scanGroup.trim().toLowerCase() ===
-                        g.name.trim().toLowerCase()
-                      return (
-                        <button
-                          key={g.id}
-                          type="button"
-                          onClick={() => {
-                            setScanGroup(g.name)
-                            handleFetchChapter({ group: g.name })
-                          }}
-                          className={`px-2.5 py-1 rounded-md text-xs font-semibold border transition-colors cursor-pointer ${
-                            active
-                              ? "bg-purple-600 text-white border-purple-400 shadow-xs"
-                              : "bg-[#0b0f19] text-purple-300 border-purple-500/30 hover:border-purple-400"
-                          }`}
-                        >
-                          {g.name}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
               <div className="flex items-center justify-between pt-2 border-t border-[#26334d]/60">
                 <div className="text-[11px] text-slate-400">
-                  เรื่องทดสอบ:{" "}
-                  <strong className="text-white">
-                    นักฆ่าระดับเทพ ข้าคือเงามืด (God-level Assassin, I&apos;m the Shadow)
-                  </strong>{" "}
-                  • ค่าย:{" "}
+                  ค่ายที่ระบุ:{" "}
                   <span className="text-purple-300 font-semibold">
-                    {scanGroup || "ทุกค่าย"}
+                    {scanGroup.trim() || "ไม่เจาะจงค่าย (ดึงตอนล่าสุดรวม)"}
                   </span>
                 </div>
                 <Button
