@@ -16,13 +16,14 @@ import { SearchableSelect } from "@/components/ui/searchable-select"
 import { RELEASE_DAYS, isUrgentManga } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
-import { Bell, Flame, Link as LinkIcon, FileText } from "lucide-react"
+import { Bell, Flame, Link as LinkIcon, FileText, ExternalLink } from "lucide-react"
 
 const mangaSchema = z.object({
   manganame: z.string().min(1, "กรุณาระบุชื่อมังงะ (ภาษาไทย)"),
   originalname: z.string().optional(),
   originalurl: z.string().optional(),
   slug: z.string().optional(),
+  translationdocurl: z.string().optional(),
   status: z.string().default("Ongoing"),
   lastchapter: z.union([z.string(), z.number()]).default("0"),
   costperchapter: z.union([z.string(), z.number()]).default(0),
@@ -66,6 +67,7 @@ export function MangaModal({
       originalname: "",
       originalurl: "",
       slug: "",
+      translationdocurl: "",
       status: "Ongoing",
       lastchapter: "0",
       costperchapter: 0,
@@ -84,6 +86,7 @@ export function MangaModal({
           originalname: editItem.originalname || "",
           originalurl: editItem.originalurl || "",
           slug: editItem.slug || "",
+          translationdocurl: editItem.translationdocurl || editItem.TranslationDocUrl || "",
           status: editItem.status || "Ongoing",
           lastchapter: editItem.lastchapter ?? "0",
           costperchapter: editItem.costperchapter ?? 0,
@@ -222,6 +225,33 @@ export function MangaModal({
               <Label>URL ต้นฉบับ</Label>
               <Input placeholder="https://..." {...register("originalurl")} />
             </div>
+          </div>
+
+          <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-1.5 text-blue-300 font-medium">
+                <FileText className="h-4 w-4 text-blue-400" />
+                Google Docs เก็บงานแปล (ทุกตอน)
+              </Label>
+              {watch("translationdocurl") && (
+                <a
+                  href={watch("translationdocurl")}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1 font-medium"
+                >
+                  เปิดไฟล์ Docs <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+            <Input
+              placeholder="https://docs.google.com/document/d/.../edit"
+              className="border-blue-500/40 bg-[#0b1120] text-sm focus:border-blue-400"
+              {...register("translationdocurl")}
+            />
+            <p className="text-[11px] text-slate-400">
+              ลิงก์ Google Docs กลางสำหรับรวบรวมงานแปลทุกตอนของเรื่องนี้ (1 เรื่อง ต่อ 1 ลิ้งก์)
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

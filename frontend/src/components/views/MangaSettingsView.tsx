@@ -21,6 +21,7 @@ import {
   ExternalLink,
   Link2,
   RotateCcw,
+  FileText,
 } from "lucide-react"
 
 interface MangaSettingsViewProps {
@@ -101,7 +102,7 @@ export function MangaSettingsView({
                         {urgent && <span>🔥</span>}
                         {m.manganame || "Untitled"}
                       </div>
-                      <div className="text-xs text-slate-400 mt-0.5">
+                      <div className="text-xs text-slate-400 mt-0.5 flex flex-wrap items-center gap-2">
                         {m.originalurl ? (
                           <a
                             href={m.originalurl}
@@ -114,6 +115,19 @@ export function MangaSettingsView({
                           </a>
                         ) : (
                           m.originalname || "-"
+                        )}
+                        {m.translationdocurl && (
+                          <a
+                            href={m.translationdocurl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 hover:underline bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-800/50"
+                            title="เปิด Google Docs เก็บงานแปลทุกตอน"
+                          >
+                            <FileText className="h-3 w-3" />
+                            Docs รวมแปล
+                            <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+                          </a>
                         )}
                       </div>
                     </TableCell>

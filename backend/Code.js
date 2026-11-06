@@ -155,6 +155,9 @@ function doPost(e) {
       case 'UPDATE_MANGA':
         result = updateManga(payload.id, payload.data);
         break;
+      case 'BATCH_UPDATE_MANGA_DOC_LINKS':
+        result = batchUpdateMangaDocLinks(payload.linksMap);
+        break;
       case 'DELETE_MANGA':
         result = deleteManga(payload.id);
         break;
@@ -668,6 +671,7 @@ function ensureSheetHeaders(sheet, name) {
       ensureCol('NotifyOnAdd', false);
       ensureCol('Slug', '');
       ensureCol('IsUrgent', false);
+      ensureCol('TranslationDocUrl', '');
     }
   }
 
@@ -738,9 +742,9 @@ function getSheet(name = SHEET_NAME) {
       sheet.appendRow([
         'MangaID', 'MangaName', 'OriginalName', 'OriginalUrl', 'Status',
         'LastChapter', 'LastUpdated', 'NeedsExtract', 'ReleaseDay',
-        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent'
+        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl'
       ]);
-      sheet.getRange(1, 1, 1, 14).setFontWeight('bold').setBackground('#4f46e5').setFontColor('#ffffff');
+      sheet.getRange(1, 1, 1, 15).setFontWeight('bold').setBackground('#4f46e5').setFontColor('#ffffff');
     } else if (name === QUEUE_SHEET_NAME) {
       const headers = [
         'QueueID', 'CreatedAt', 'MangaID', 'Chapter', 
@@ -934,6 +938,7 @@ function addManga(manga) {
       if (header === 'notifyonadd') return manga.notifyonadd !== undefined ? manga.notifyonadd : false;
       if (header === 'slug') return manga.slug || '';
       if (header === 'isurgent') return manga.isurgent !== undefined ? manga.isurgent : false;
+      if (header === 'translationdocurl') return manga.translationdocurl || '';
       return '';
     });
 
@@ -1046,6 +1051,7 @@ function updateManga(id, updatedManga) {
           if (header === 'notifyonadd') sheet.getRange(rowNum, colNum).setValue(updatedManga.notifyonadd !== undefined ? updatedManga.notifyonadd : false);
           if (header === 'slug') sheet.getRange(rowNum, colNum).setValue(updatedManga.slug || '');
           if (header === 'isurgent') sheet.getRange(rowNum, colNum).setValue(updatedManga.isurgent !== undefined ? updatedManga.isurgent : false);
+          if (header === 'translationdocurl') sheet.getRange(rowNum, colNum).setValue(updatedManga.translationdocurl !== undefined ? updatedManga.translationdocurl : '');
         });
         invalidateCache('mangaList');
         
@@ -1070,6 +1076,50 @@ function updateManga(id, updatedManga) {
 /**
  * DELETE: ลบข้อมูลมังงะ
  */
+
+/**
+ * BATCH UPDATE: อัปเดตลิงก์ Google Docs รวมงานแปลสำหรับหลายมังงะพร้อมกัน
+ */
+function batchUpdateMangaDocLinks(docLinksMap) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet();
+    ensureSheetHeaders(sheet, SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: false, message: 'No manga found' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    let docUrlCol = headers.indexOf('translationdocurl');
+    if (docUrlCol === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('TranslationDocUrl');
+      docUrlCol = newCol - 1;
+    }
+
+    let updatedCount = 0;
+    for (let i = 1; i < data.length; i++) {
+      const mid = String(data[i][0]).trim();
+      if (docLinksMap && docLinksMap.hasOwnProperty(mid)) {
+        const link = docLinksMap[mid];
+        sheet.getRange(i + 1, docUrlCol + 1).setValue(link || '');
+        updatedCount++;
+      }
+    }
+
+    invalidateCache('mangaList');
+    return {
+      success: true,
+      updatedCount: updatedCount,
+      list: getMangaList()
+    };
+  } catch (err) {
+    return { error: 'Batch Update Manga Doc Links Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function deleteManga(id) {
   const lock = LockService.getScriptLock();
   try {
@@ -6505,6 +6555,24 @@ function triggerMangaOcrWorkflow(params) {
       console.warn('Could not retrieve ScriptApp OAuth token:', e);
     }
 
+    let docUrl = params.docUrl || params.doc_url || '';
+    if (!docUrl && (mangaName || params.queueId)) {
+      try {
+        const mangaList = getMangaList();
+        const mClean = mangaName.toLowerCase().replace(/[^\w\u0e00-\u0e7f]+/g, '');
+        const matched = mangaList.find(m => {
+          if (m.manganame === mangaName) return true;
+          const targetClean = (m.manganame || '').toLowerCase().replace(/[^\w\u0e00-\u0e7f]+/g, '');
+          return (mClean && targetClean && (targetClean.includes(mClean) || mClean.includes(targetClean)));
+        });
+        if (matched && matched.translationdocurl) {
+          docUrl = matched.translationdocurl;
+        }
+      } catch (e) {
+        console.warn('Could not resolve manga translationdocurl:', e);
+      }
+    }
+
     const url = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/actions/workflows/' + MANGA_OCR_WORKFLOW_FILE + '/dispatches';
     const payload = {
       ref: 'main',
@@ -6513,6 +6581,7 @@ function triggerMangaOcrWorkflow(params) {
         manga_name: mangaName,
         chapter_num: chapterNum,
         queue_id: String(params.queueId || params.queue_id || ''),
+        doc_url: String(docUrl || ''),
         lang: lang,
         google_access_token: googleAccessToken
       }
@@ -7648,6 +7717,7 @@ function completeMangaOcr(payload) {
     const queueId = String(payload.queueId || payload.queue_id || '').trim();
     const mtpFileId = String(payload.mtpFileId || payload.mtp_file_id || '').trim();
     const txtFileId = String(payload.txtFileId || payload.txt_file_id || '').trim();
+    const promptFileId = String(payload.promptFileId || payload.prompt_file_id || '').trim();
     const now = new Date();
 
     let updatedRow = null;
@@ -7684,6 +7754,15 @@ function completeMangaOcr(payload) {
           const curVal = String(sheet.getRange(rowNum, workLinkCol).getValue() || rowLink);
           if (!curVal.includes(txtFileId)) {
             const newLink = curVal + (curVal ? '\n' : '') + '[ocr txt] ' + txtUrl;
+            sheet.getRange(rowNum, workLinkCol).setValue(newLink);
+          }
+        }
+
+        if (promptFileId && workLinkCol > 0) {
+          const promptUrl = 'https://drive.google.com/file/d/' + promptFileId + '/view?usp=sharing';
+          const curVal = String(sheet.getRange(rowNum, workLinkCol).getValue() || rowLink);
+          if (!curVal.includes(promptFileId)) {
+            const newLink = curVal + (curVal ? '\n' : '') + '[prompt] ' + promptUrl;
             sheet.getRange(rowNum, workLinkCol).setValue(newLink);
           }
         }

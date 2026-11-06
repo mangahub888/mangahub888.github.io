@@ -19,6 +19,10 @@ on:
         description: 'WorkQueue Item ID'
         required: false
         default: ''
+      doc_url:
+        description: 'Google Docs Reference URL'
+        required: false
+        default: ''
       lang:
         description: 'OCR Language (ch / japan / korean / en)'
         required: true
@@ -67,6 +71,7 @@ jobs:
             --manga-name "${{ github.event.inputs.manga_name }}" \
             --chapter-num "${{ github.event.inputs.chapter_num }}" \
             --queue-id "${{ github.event.inputs.queue_id }}" \
+            --doc-url "${{ github.event.inputs.doc_url }}" \
             --lang "${{ github.event.inputs.lang }}" \
             --google-access-token "${{ github.event.inputs.google_access_token }}" \
             --output-dir "./ocr_output" \

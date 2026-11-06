@@ -557,7 +557,7 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
         query = f"'{target_folder_id}' in parents and name='{file_name}' and trashed=false"
         existing = drive_service.files().list(q=query, fields="files(id, name)").execute().get("files", [])
 
-        mimetype = "text/plain; charset=utf-8" if p.suffix.lower() == ".txt" else "application/octet-stream"
+        mimetype = "text/plain; charset=utf-8" if (p.suffix.lower() == ".txt" or "PROMPT" in p.name.upper()) else "application/octet-stream"
         media = MediaFileUpload(str(p), mimetype=mimetype, resumable=True)
 
         if existing:
@@ -637,7 +637,128 @@ def sanitize_filename(name: str) -> str:
     return cleaned or 'chapter'
 
 
-def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", txt_file_id="", gas_url=None, passcode="10211032"):
+def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", ocr_text="", queue_id="", doc_url="", gas_url=None, passcode="10211032"):
+    """
+    Constructs the PROMPT2 TEMPT content according to MangaHub AI Translation spec:
+    1. ลิงก์ Google Docs ของเอกสารอ้างอิง (แท็บแรกเป็น Glossary)
+    2. ตอนที่ให้ใช้เป็นข้อมูลอ้างอิง 5 ตอนล่าสุด
+    3. เลขตอนที่กำลังจะแปล เลขตอนดึงจากชื่อตอนที่ทำการอัพโหลดหน้ามาจากชื่อโฟลเดอร์มาใส่ตรงนี้
+    4. เนื้อหาต้นฉบับที่ต้องแปล (วางข้อความได้เลย) : เอาเนื้อหาจาก txt มาแนบวางใต้ข้อ 4
+    """
+    import urllib.request
+    import json
+    import re
+
+    final_doc_url = str(doc_url or "").strip()
+    ref_chapters_str = ""
+    gas_api_url = gas_url or "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
+
+    # Extract numerical chapter value
+    curr_ch_val = None
+    num_match = re.search(r"([0-9]+(?:\.[0-9]+)?)", str(chapter_num) or str(folder_name))
+    if num_match:
+        try:
+            curr_ch_val = float(num_match.group(1)) if "." in num_match.group(1) else int(num_match.group(1))
+        except Exception:
+            pass
+
+    # If doc_url not provided, fetch from GAS MangaList
+    manga_id = None
+    if not final_doc_url or curr_ch_val is not None:
+        try:
+            payload = {"action": "GET_MANGA_LIST", "passcode": passcode, "payload": {}}
+            req = urllib.request.Request(gas_api_url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                res_data = json.loads(resp.read().decode("utf-8"))
+                manga_list = res_data.get("data", [])
+                
+                # Match manga
+                matched = None
+                m_clean = re.sub(r"[^\w\u0e00-\u0e7f]+", "", str(manga_name).lower())
+                for m in manga_list:
+                    m_name_clean = re.sub(r"[^\w\u0e00-\u0e7f]+", "", str(m.get("manganame", "")).lower())
+                    if m.get("manganame") == manga_name or (m_clean and m_clean in m_name_clean) or (m_name_clean and m_name_clean in m_clean):
+                        matched = m
+                        break
+
+                if matched:
+                    manga_id = matched.get("mangaid")
+                    if not final_doc_url:
+                        final_doc_url = str(matched.get("translationdocurl") or "").strip()
+        except Exception as e:
+            print(f"⚠️ Could not fetch manga info from GAS: {e}")
+
+    # Fetch previous chapters from WorkQueue if possible
+    if manga_id and curr_ch_val is not None:
+        try:
+            payload = {"action": "GET_WORK_QUEUE", "passcode": passcode, "payload": {"month": "all", "year": "all"}}
+            req = urllib.request.Request(gas_api_url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                q_data = json.loads(resp.read().decode("utf-8"))
+                q_items = q_data.get("data", [])
+                prev_chaps = []
+                for q in q_items:
+                    if str(q.get("mangaid")) == str(manga_id):
+                        ch_str = str(q.get("chapter", ""))
+                        c_match = re.search(r"([0-9]+(?:\.[0-9]+)?)", ch_str)
+                        if c_match:
+                            try:
+                                c_num = float(c_match.group(1)) if "." in c_match.group(1) else int(c_match.group(1))
+                                if c_num < curr_ch_val:
+                                    prev_chaps.append(c_num)
+                            except Exception:
+                                pass
+                prev_chaps = sorted(list(set(prev_chaps)))
+                if prev_chaps:
+                    last5 = prev_chaps[-5:]
+                    ref_chapters_str = "ตอนที่ " + ", ".join(str(c) for c in last5)
+        except Exception as e:
+            print(f"⚠️ Could not fetch queue history: {e}")
+
+    # Fallback calculation if queue didn't return previous chapters
+    if not ref_chapters_str and curr_ch_val is not None:
+        if curr_ch_val > 5:
+            last5 = list(range(int(curr_ch_val) - 5, int(curr_ch_val)))
+            ref_chapters_str = "ตอนที่ " + ", ".join(str(c) for c in last5)
+        elif curr_ch_val > 1:
+            last5 = list(range(1, int(curr_ch_val)))
+            ref_chapters_str = "ตอนที่ " + ", ".join(str(c) for c in last5)
+        else:
+            ref_chapters_str = "ไม่มี (ตอนแรก)"
+
+    # Resolve chapter display for item 3
+    # "เลขตอนดึงจากชื่อตอนที่ทำการอัพโหลดหน้ามาจากชื่อโฟลเดอร์มาใส่ตรงนี้"
+    ch_display = ""
+    if folder_name and folder_name.strip():
+        f_clean = folder_name.strip()
+        ch_display = f_clean
+    elif chapter_num and str(chapter_num).strip():
+        c_str = str(chapter_num).strip()
+        ch_display = f"ตอนที่ {c_str}" if not c_str.startswith("ตอน") else c_str
+    elif curr_ch_val is not None:
+        ch_display = f"ตอนที่ {curr_ch_val}"
+    else:
+        ch_display = "-"
+
+    # Build prompt content
+    content_lines = [
+        "1.ลิงก์ Google Docs ของเอกสารอ้างอิง (แท็บแรกเป็น Glossary)",
+        final_doc_url,
+        "",
+        "2. ตอนที่ให้ใช้เป็นข้อมูลอ้างอิง 5 ตอนล่าสุด",
+        ref_chapters_str or "-",
+        "",
+        "3. เลขตอนที่กำลังจะแปล",
+        ch_display,
+        "",
+        "4. เนื้อหาต้นฉบับที่ต้องแปล (วางข้อความได้เลย) :",
+        (ocr_text or "").strip()
+    ]
+
+    return "\n".join(content_lines) + "\n"
+
+
+def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", txt_file_id="", prompt_file_id="", gas_url=None, passcode="10211032"):
     """
     Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' and attach .mtp and .txt links in WorkQueue.
     """
@@ -654,7 +775,8 @@ def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", 
             "chapter": chapter,
             "mangaName": manga_name,
             "mtpFileId": mtp_file_id,
-            "txtFileId": txt_file_id
+            "txtFileId": txt_file_id,
+            "promptFileId": prompt_file_id
         }
     }
     try:
@@ -690,6 +812,8 @@ def main():
     parser.add_argument("--ocr-server-url", default="http://127.0.0.1:8080", help="Local PaddleOCR server URL")
     parser.add_argument("--google-access-token", default="", help="Google OAuth Access Token from GAS")
     parser.add_argument("--service-account", default=None, help="Path or raw JSON of Google Service Account")
+    parser.add_argument("--prompt-filename", default="PROMPT2 TEMPT", help="Custom filename for the AI translation prompt template")
+    parser.add_argument("--doc-url", default="", help="Google Docs reference URL from manga settings")
     parser.add_argument("--upload-to-source", action="store_true", default=True, help="Upload .mtp directly into source folder")
     parser.add_argument("--cleanup", action="store_true", default=False, help="Clean up local images and files after upload")
     args = parser.parse_args()
@@ -787,6 +911,29 @@ def main():
                 fp.write(f"  {line.get('text', '')}\n")
             fp.write("\n")
 
+    # Build AI Translation Prompt File (PROMPT2 TEMPT)
+    prompt_filename = args.prompt_filename.strip() if args.prompt_filename else "PROMPT2 TEMPT"
+    prompt_content = build_prompt2_tempt_content(
+        manga_name=manga_title,
+        chapter_num=chapter_num,
+        folder_name=folder_real_name,
+        ocr_text=ocr_txt_content,
+        queue_id=args.queue_id,
+        doc_url=args.doc_url,
+        gas_url=args.gas_url,
+        gas_passcode=args.gas_passcode
+    )
+    prompt_path = out_dir / prompt_filename
+    with open(prompt_path, "w", encoding="utf-8") as fp:
+        fp.write(prompt_content)
+    
+    # Save a backup copy with .txt extension as well
+    ascii_prompt = out_dir / f"{prompt_filename}.txt"
+    with open(ascii_prompt, "w", encoding="utf-8") as fp:
+        fp.write(prompt_content)
+
+    print(f"📄 AI Translation Prompt File: {prompt_path}")
+
     # 4. Build MangaToolPlus .mtp project file
     mtp_path = out_dir / f"{base_filename}.mtp"
     build_mtp_package(image_files, ocr_results, mtp_path)
@@ -812,8 +959,11 @@ def main():
         print("\n☁️ [Google Drive Upload] 1/2 Uploading .mtp directly into source folder...")
         uploaded_mtp_id = upload_file_to_source_folder(drive_service, clean_folder_id, mtp_path)
 
-        print("\n☁️ [Google Drive Upload] 2/2 Uploading OCR .txt directly into source folder...")
+        print("\n☁️ [Google Drive Upload] 2/3 Uploading OCR .txt directly into source folder...")
         uploaded_txt_id = upload_file_to_source_folder(drive_service, clean_folder_id, ocr_txt_path)
+
+        print(f"\n☁️ [Google Drive Upload] 3/3 Uploading {prompt_filename} directly into source folder...")
+        uploaded_prompt_id = upload_file_to_source_folder(drive_service, clean_folder_id, prompt_path)
     elif not drive_service:
         print("\n⚠️ Google Drive service not initialized. Files saved locally in ocr_output/")
 
@@ -825,6 +975,7 @@ def main():
         manga_name=args.manga_name,
         mtp_file_id=uploaded_mtp_id or "",
         txt_file_id=uploaded_txt_id or "",
+        prompt_file_id=uploaded_prompt_id or "",
         gas_url=args.gas_url,
         passcode=args.gas_passcode
     )
