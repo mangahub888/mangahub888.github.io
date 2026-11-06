@@ -344,7 +344,31 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         except Exception as e:
             print(f"❌ Error fetching {acc['name']}: {e}")
 
-    # Fallback to cached stats if live fetch returned 0
+    # Fallback to LATEST_GROWTH_FILE first if live fetch returned 0 (prevents overwriting 368 chapters with old 200-cap cache)
+    if not all_current_comics and os.path.exists(LATEST_GROWTH_FILE):
+        print("⚠️ Live fetch returned 0 comics. Preserving latest growth snapshot...")
+        try:
+            with open(LATEST_GROWTH_FILE, "r", encoding="utf-8") as lf:
+                latest_snap = json.load(lf)
+            for c in latest_snap.get("comics", []):
+                all_current_comics.append({
+                    "comic_id": str(c.get("comic_id")),
+                    "subject": c.get("subject", ""),
+                    "account": c.get("account", ""),
+                    "account_id": c.get("account_id", ""),
+                    "total_views": int(c.get("total_views") or 0),
+                    "total_sales": float(c.get("total_sales") or 0.0),
+                    "chapters_count": int(c.get("chapters_count") or 0),
+                    "last_chapter_updated_at": c.get("last_chapter_updated_at") or "",
+                    "days_inactive": int(c.get("days_inactive") if c.get("days_inactive") is not None else 0),
+                    "is_inactive_30d": bool(c.get("is_inactive_30d", False)),
+                    "sales_7_chapters": float(c.get("sales_7_chapters") or 0.0),
+                    "views_7_chapters": int(c.get("views_7_chapters") or 0),
+                })
+        except Exception as e:
+            print(f"Error loading {LATEST_GROWTH_FILE}: {e}")
+
+    # Secondary fallback to cached stats if LATEST_GROWTH_FILE was also empty
     if not all_current_comics:
         print("⚠️ Live fetch returned 0 comics. Checking cached stats files...")
         cached_lk = os.path.join(DATA_DIR, "readrealm_stats_lionking.json")

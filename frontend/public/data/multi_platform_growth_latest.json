@@ -1,5 +1,5 @@
 {
-  "pipeline_recorded_at": "2026-11-06T16:50:50.895039",
+  "pipeline_recorded_at": "2026-11-06T17:18:03.385015",
   "date_reference": "2026-11-06",
   "total_sales_portfolio": 5929386.86,
   "total_views_portfolio": 23305826,
@@ -42,7 +42,7 @@
       "subject": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 211,
+      "chapters_count": 212,
       "total_views": 1339056,
       "total_sales": 496885.4,
       "recorded_at": "2026-11-06T16:39:28.644779",
@@ -61,8 +61,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 3245.4,
-      "views_7_chapters": 2807,
+      "sales_7_chapters": 2140.2,
+      "views_7_chapters": 1703,
       "platform": "readrealm"
     },
     {
@@ -89,8 +89,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 18804.6,
-      "views_7_chapters": 25858,
+      "sales_7_chapters": 5383.8,
+      "views_7_chapters": 5867,
       "platform": "readrealm"
     },
     {
@@ -98,7 +98,7 @@
       "subject": "ที่แท้ข้าก็ไร้เทียมทานมาตั้งนานแล้วนี่เอง",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 323,
+      "chapters_count": 324,
       "total_views": 1787209,
       "total_sales": 425872.0,
       "recorded_at": "2026-11-06T16:39:28.644779",
@@ -117,8 +117,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 8532.4,
-      "views_7_chapters": 22447,
+      "sales_7_chapters": 4415.4,
+      "views_7_chapters": 4548,
       "platform": "readrealm"
     },
     {
@@ -126,7 +126,7 @@
       "subject": "เจ้าแห่งกงล้อโชคชะตา",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 274,
+      "chapters_count": 275,
       "total_views": 1859726,
       "total_sales": 328588.4,
       "recorded_at": "2026-11-06T16:39:28.644779",
@@ -145,8 +145,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 3585.6,
-      "views_7_chapters": 10879,
+      "sales_7_chapters": 828.0,
+      "views_7_chapters": 601,
       "platform": "readrealm"
     },
     {
@@ -294,7 +294,7 @@
       "subject": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 238,
+      "chapters_count": 239,
       "total_views": 638588,
       "total_sales": 127528.6,
       "recorded_at": "2026-11-06T16:39:28.644779",
@@ -313,8 +313,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 2455.2,
-      "views_7_chapters": 3961,
+      "sales_7_chapters": 705.6,
+      "views_7_chapters": 585,
       "platform": "readrealm"
     },
     {
@@ -3010,7 +3010,7 @@
       "subject": "สุดยอดยีนเทพเจ้า | Super God Gene",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 226,
+      "chapters_count": 230,
       "total_views": 23455,
       "total_sales": 5418.0,
       "recorded_at": "2026-11-06T16:39:28.644779",
@@ -3029,8 +3029,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 0.0,
-      "views_7_chapters": 333,
+      "sales_7_chapters": 345.6,
+      "views_7_chapters": 246,
       "platform": "readrealm"
     },
     {
@@ -7425,7 +7425,7 @@
       "subject": "เซียนกระบี่พลังนิวเคลียร์",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 41,
+      "chapters_count": 137,
       "total_views": 9970,
       "total_sales": 149.4,
       "recorded_at": "2026-11-06T16:39:28.644779",

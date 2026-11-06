@@ -274,7 +274,7 @@ def sync_readrealm_data(target_comic_only: Optional[str] = None) -> Dict[str, An
             "total_sales": sales,
             "year_sales": year_sum_sales,
             "monthly_sales": monthly_sales_dict,
-            "chapters_count": len(chapters_processed),
+            "chapters_count": max(publish_count, int(chap_data.get("total") or 0), len(chapters_processed)),
             "paid_chapters_count": len(paid_chapters),
             "free_chapters_count": len(free_chapters),
             "avg_views_per_chapter": round(avg_views_per_chapter, 1),
