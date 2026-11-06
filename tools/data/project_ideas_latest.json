@@ -1,66 +1,65 @@
 {
-  "crawled_at": "2026-11-06T05:11:11.630661",
+  "crawled_at": "2026-11-06T11:11:12.781433",
   "source_url": "https://www.mgeko.cc/jumbo/manga/",
   "filter_rule": "chapter_count <= 30",
   "sort_order": "views_count_desc",
   "max_chapters_threshold": 30,
-  "total_scanned": 238,
-  "total_candidates": 47,
-  "total_views_sum": 21676000,
+  "total_scanned": 237,
+  "total_candidates": 53,
+  "total_views_sum": 22346000,
   "origin_distribution": {
-    "JP (Manga)": 20,
-    "KR (Manhwa)": 15,
-    "CN (Manhua)": 11,
-    "Manga": 1
+    "JP (Manga)": 23,
+    "KR (Manhwa)": 17,
+    "CN (Manhua)": 13
   },
   "top_genres": {
-    "Action": 35,
-    "Fantasy": 33,
-    "Long Strip": 18,
-    "Adventure": 17,
-    "Drama": 15,
-    "Full Color": 15,
-    "Manga": 13,
-    "Manhwa": 11,
-    "Shounen": 10,
-    "Isekai": 8,
-    "Manhua": 8,
-    "Supernatural": 6,
-    "Web Comic": 6,
-    "Comedy": 5,
+    "Fantasy": 40,
+    "Action": 39,
+    "Adventure": 23,
+    "Long Strip": 20,
+    "Drama": 18,
+    "Full Color": 17,
+    "Manga": 15,
+    "Shounen": 12,
+    "Manhwa": 12,
+    "Isekai": 9,
+    "Manhua": 9,
+    "Comedy": 7,
+    "Supernatural": 7,
+    "Web Comic": 7,
+    "Romance": 6,
     "Mystery": 5,
-    "Romance": 5,
-    "manhwa": 4,
-    "manga": 4,
-    "manhua": 3,
+    "manhwa": 5,
+    "manga": 5,
+    "manhua": 4,
     "mangatoon": 3,
     "Sci-Fi": 3,
     "Psychological": 2,
+    "Tragedy": 2,
     "Magic": 2,
     "Survival": 2,
-    "Martial Arts": 2,
     "Seinen": 2,
+    "Martial Arts": 2,
     "Ecchi": 2,
     "Slice of Life": 2,
     "Urban Fantasy": 2,
     "Reincarnation": 2,
     "Horror": 2,
-    "Tragedy": 1,
     "Monsters": 1,
     "Post-Apocalyptic": 1,
     "Adaptation": 1,
-    "Murim": 1,
     "Demons": 1,
     "Super Power": 1,
     "School": 1,
     "School Life": 1,
     "Mature": 1,
-    "Si-fi": 1,
     "Video Game": 1,
     "Time Travel": 1,
     "Virtual Reality": 1,
+    "Fight": 1,
     "High Stakes Game": 1,
-    "Thriller": 1
+    "Thriller": 1,
+    "Historical": 1
   },
   "items": [
     {
@@ -73,9 +72,9 @@
       "score": "4.4",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1 2   h o u r s ,   2 0   m i n u t e s",
-      "views_count": 1800000,
-      "views_text": "1.8 M",
+      "time_updated": "อัปเดตเมื่อ 1 8   h o u r s ,   2 1   m i n u t e s",
+      "views_count": 1900000,
+      "views_text": "1.9 M",
       "genres": [
         "Shounen",
         "Action",
@@ -97,7 +96,7 @@
       "score": "3.3",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   9   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 5   h o u r s",
       "views_count": 1600000,
       "views_text": "1.6 M",
       "genres": [
@@ -119,7 +118,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1   h o u r",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   7   h o u r s",
       "views_count": 1500000,
       "views_text": "1.5 M",
       "genres": [
@@ -144,6 +143,34 @@
       "bookmarks_text": "9.1 K"
     },
     {
+      "id": "reincarnated-as-the-lazy-and-villainous-noble-i-broke-the-scenario-and-became-the-most-formidable-with-extraordinary-magic",
+      "title": "Taida na Akujoku Kizoku ni Tensei shita Ore, Scenario o Bukkowashitara Kikakugai no Maryoku de Saikyou ni Natta",
+      "url": "https://www.mgeko.cc/manga/reincarnated-as-the-lazy-and-villainous-noble-i-broke-the-scenario-and-became-the-most-formidable-with-extraordinary-magic/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/0Zo1kq-m.jpg",
+      "chapter_count": 28,
+      "latest_chapter_text": "Chapter 28-eng-li",
+      "score": "4.7",
+      "status": "Ongoing",
+      "origin": "JP (Manga)",
+      "time_updated": "อัปเดตเมื่อ 1 4   m i n u t e s",
+      "views_count": 1200000,
+      "views_text": "1.2 M",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "Fantasy",
+        "Romance",
+        "Tragedy",
+        "Isekai",
+        "Manga"
+      ],
+      "summary": "I've been reincarnated as the villainous noble Weiss from my favorite academy game, and the fate that awaits me is nothing but the worst possible ruin, with no salvation. I absolutely have to avoid that at all costs! Then the only way out is to gain overwhelming power that even surpasses the game's protagonist and become the strongest!",
+      "summary_th": "ฉันกลับมาเกิดใหม่เป็น Weiss ผู้ชั่วร้ายจากเกมอะคาเดมี่สุดโปรดของฉัน และชะตากรรมที่รอฉันอยู่นั้นไม่มีอะไรนอกจากความพินาศที่เลวร้ายที่สุดเท่าที่จะเป็นไปได้ โดยไม่มีความรอด ฉันต้องหลีกเลี่ยงมันให้ได้เด็ดขาด! ทางออกเดียวคือการได้รับพลังอันท่วมท้นที่เกินกว่าตัวเอกของเกมและกลายเป็นผู้แข็งแกร่งที่สุด!",
+      "bookmarks_text": "2.5 K"
+    },
+    {
       "id": "n67k-the-academy-s-weapon-replicator",
       "title": "The Academy's Weapon Replicator",
       "url": "https://www.mgeko.cc/manga/n67k-the-academy-s-weapon-replicator/",
@@ -153,7 +180,7 @@
       "score": "4.1",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 4   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   2 0   h o u r s",
       "views_count": 1100000,
       "views_text": "1.1 M",
       "genres": [
@@ -172,30 +199,6 @@
       "bookmarks_text": "4.8 K"
     },
     {
-      "id": "murims-dept-king",
-      "title": "Murim’s Dept King",
-      "url": "https://www.mgeko.cc/manga/murims-dept-king/",
-      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/sakr.jpg",
-      "chapter_count": 25,
-      "latest_chapter_text": "Chapter 25-eng-li",
-      "score": "4.6",
-      "status": "Ongoing",
-      "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 8   h o u r s",
-      "views_count": 1100000,
-      "views_text": "1.1 M",
-      "genres": [
-        "Action",
-        "Fantasy",
-        "Martial Arts",
-        "Murim",
-        "Manhwa"
-      ],
-      "summary": "Whether it’s forging a single sword, feeding and clothing your disciples, or even just breathing…everything costs money in the Murim. Need cash? Has your credit score tanked? Then come to the Continental Bank. Same-day approval, no collateral required. Can’t pay us back? Oh, don’t you worry. We’ll take it out of your hide. Now, relax! If you tense up, you’ll just give yourself internal injuries! Thank you for your business, valued customer!",
-      "summary_th": "ไม่ว่าจะเป็นการตีดาบเพียงเล่มเดียว การให้อาหารและสวมเสื้อผ้าให้เหล่าสาวกของคุณ หรือแม้แต่แค่การหายใจ… ทุกอย่างต้องแลกด้วยเงินในมูริม ต้องการเงินสด? คะแนนเครดิตของคุณลดลงหรือไม่? จากนั้นมาที่ธนาคารคอนติเนนตัล อนุมัติภายในวันเดียว ไม่ต้องใช้หลักประกัน ไม่สามารถจ่ายเงินคืนให้เราได้หรือ? โอ้คุณไม่ต้องกังวล เราจะนำมันออกจากที่ซ่อนของคุณ ตอนนี้ผ่อนคลาย! หากคุณเกร็ง คุณจะได้รับบาดเจ็บภายใน! ขอบคุณสำหรับธุรกิจของคุณลูกค้าคนสำคัญ!",
-      "bookmarks_text": "4.2 K"
-    },
-    {
       "id": "becoming-necromancer-god",
       "title": "Becoming Necromancer God Through a Skeleton Clone",
       "url": "https://www.mgeko.cc/manga/becoming-necromancer-god/",
@@ -205,7 +208,7 @@
       "score": "4.1",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 6   h o u r s ,   2 0   m i n u t e s",
+      "time_updated": "อัปเดตเมื่อ 1 2   h o u r s ,   2 0   m i n u t e s",
       "views_count": 1000000,
       "views_text": "1.0 M",
       "genres": [
@@ -225,10 +228,10 @@
       "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/JnqMQ0.png",
       "chapter_count": 20,
       "latest_chapter_text": "Chapter 20-eng-li",
-      "score": "4.4",
+      "score": "4.3",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1 3   h o u r s ,   5 0   m i n u t e s",
+      "time_updated": "อัปเดตเมื่อ 1 9   h o u r s ,   5 0   m i n u t e s",
       "views_count": 1000000,
       "views_text": "1.0 M",
       "genres": [
@@ -253,7 +256,7 @@
       "score": "4.0",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 1   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 8   h o u r s",
       "views_count": 1000000,
       "views_text": "1.0 M",
       "genres": [
@@ -279,9 +282,9 @@
       "score": "3.5",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 2   h o u r s",
-      "views_count": 798000,
-      "views_text": "798 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 8   h o u r s",
+      "views_count": 799000,
+      "views_text": "799 K",
       "genres": [
         "Action",
         "Fantasy",
@@ -303,9 +306,9 @@
       "score": "3.8",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1 3   h o u r s ,   1   m i n u t e",
-      "views_count": 772000,
-      "views_text": "772 K",
+      "time_updated": "อัปเดตเมื่อ 1 9   h o u r s ,   2   m i n u t e s",
+      "views_count": 776000,
+      "views_text": "776 K",
       "genres": [
         "Seinen",
         "Action",
@@ -326,9 +329,9 @@
       "score": "4.4",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   5   h o u r s",
-      "views_count": 662000,
-      "views_text": "662 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 1   h o u r s",
+      "views_count": 663000,
+      "views_text": "663 K",
       "genres": [
         "Action",
         "Fantasy",
@@ -350,9 +353,9 @@
       "score": "3.7",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   9   h o u r s",
-      "views_count": 621000,
-      "views_text": "621 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 5   h o u r s",
+      "views_count": 622000,
+      "views_text": "622 K",
       "genres": [
         "Action",
         "Fantasy",
@@ -374,9 +377,9 @@
       "score": "4.1",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1 0   h o u r s ,   4 1   m i n u t e s",
-      "views_count": 606000,
-      "views_text": "606 K",
+      "time_updated": "อัปเดตเมื่อ 1 6   h o u r s ,   4 3   m i n u t e s",
+      "views_count": 611000,
+      "views_text": "611 K",
       "genres": [
         "Action",
         "Adventure",
@@ -400,9 +403,9 @@
       "score": "3.4",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   2 6   m i n u t e s",
-      "views_count": 573000,
-      "views_text": "573 K",
+      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   2 7   m i n u t e s",
+      "views_count": 576000,
+      "views_text": "576 K",
       "genres": [
         "Seinen",
         "Super Power",
@@ -426,9 +429,9 @@
       "score": "3.6",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 5   h o u r s ,   5 4   m i n u t e s",
-      "views_count": 571000,
-      "views_text": "571 K",
+      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   5 5   m i n u t e s",
+      "views_count": 575000,
+      "views_text": "575 K",
       "genres": [
         "Action",
         "Adventure",
@@ -452,9 +455,9 @@
       "score": "4.4",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1 2   h o u r s ,   2 4   m i n u t e s",
-      "views_count": 480000,
-      "views_text": "480 K",
+      "time_updated": "อัปเดตเมื่อ 1 8   h o u r s ,   2 5   m i n u t e s",
+      "views_count": 482000,
+      "views_text": "482 K",
       "genres": [
         "Action",
         "Adventure",
@@ -475,9 +478,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   4 8   m i n u t e s",
-      "views_count": 461000,
-      "views_text": "461 K",
+      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   4 9   m i n u t e s",
+      "views_count": 464000,
+      "views_text": "464 K",
       "genres": [
         "Shounen",
         "Action",
@@ -487,7 +490,7 @@
         "mangatoon"
       ],
       "summary": "A global cataclysm erupts, monsters ravage the land, and everyone at eighteen undergoes an awakening process to choose between combat and support classes. Lü Yan awakens the weakest combat class, the necromancer, and quietly departs amidst the ridicule of others. Soon after, Lü Yan reappears, clad in undead armor, wielding the Netherworld Scythe, and leading an army of 100,000 undead, casually cleaving an epic-level monster in two. “You say necromancers are weak? What does that have to do with me, the Undead Lord?” **Original Webtoon:** [AC.QQ](https://ac.qq.com/Comic/comicInfo/id/657705)",
-      "summary_th": "ความหายนะระดับโลกปะทุขึ้น สัตว์ประหลาดทำลายล้างแผ่นดิน และทุกคนที่อายุสิบแปดปีจะต้องผ่านกระบวนการตื่นขึ้นเพื่อเลือกระหว่างคลาสการต่อสู้และคลาสสนับสนุน Lü Yan ปลุกคลาสการต่อสู้ที่อ่อนแอที่สุด นั่นคือเนโครแมนเซอร์ และจากไปอย่างเงียบๆ ท่ามกลางการเยาะเย้ยของผู้อื่น หลังจากนั้นไม่นาน Lü Yan ก็ปรากฏตัวอีกครั้ง สวมชุดเกราะอันเดด กวัดแกว่งเคียวแห่งแดนมรณะ และนำกองทัพอันเดดจำนวน 100,000 ตัว โดยแยกสัตว์ประหลาดระดับมหากาพย์ออกเป็นสองส่วนอย่างไม่ได้ตั้งใจ “คุณบอกว่าเนโครแมนเซอร์อ่อนแอเหรอ? แล้วเกี่ยวอะไรกับฉันล่ะ ท่าน Undead Lord?” **เว็บตูนต้นฉบับ:** [AC.QQ](https://ac.qq.com/Comic/comicInfo/id/657705)",
+      "summary_th": "ความหายนะระดับโลกปะทุขึ้น สัตว์ประหลาดทำลายล้างแผ่นดิน และทุกคนที่อายุสิบแปดปีจะต้องผ่านกระบวนการตื่นขึ้นเพื่อเลือกระหว่างคลาสการต่อสู้และคลาสสนับสนุน Lü Yan ปลุกคลาสการต่อสู้ที่อ่อนแอที่สุด นั่นคือเนโครแมนเซอร์ และจากไปอย่างเงียบๆ ท่ามกลางการเยาะเย้ยของผู้อื่น หลังจากนั้นไม่นาน Lü Yan ก็ปรากฏตัวอีกครั้ง สวมชุดเกราะอันเดด กวัดแกว่งเคียวแห่งแดนมรณะ และนำกองทัพอันเดดจำนวน 100,000 ตัว โดยแยกสัตว์ประหลาดระดับมหากาพย์ออกเป็นสองส่วนอย่างตั้งใจ “คุณบอกว่าเนโครแมนเซอร์อ่อนแอเหรอ? แล้วเกี่ยวอะไรกับฉันล่ะ ท่าน Undead Lord” **เว็บตูนต้นฉบับ:** [AC.QQ](https://ac.qq.com/Comic/comicInfo/id/657705)",
       "bookmarks_text": "2.2 K"
     },
     {
@@ -500,9 +503,9 @@
       "score": "3.1",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   4 9   m i n u t e s",
-      "views_count": 425000,
-      "views_text": "425 K",
+      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   5 0   m i n u t e s",
+      "views_count": 426000,
+      "views_text": "426 K",
       "genres": [
         "Action",
         "Adventure",
@@ -524,9 +527,9 @@
       "score": "3.9",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 1   h o u r s",
-      "views_count": 415000,
-      "views_text": "415 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 8   h o u r s",
+      "views_count": 416000,
+      "views_text": "416 K",
       "genres": [
         "Comedy",
         "Drama",
@@ -549,9 +552,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 5   h o u r s",
-      "views_count": 397000,
-      "views_text": "397 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   2 1   h o u r s",
+      "views_count": 398000,
+      "views_text": "398 K",
       "genres": [
         "Action",
         "Adventure",
@@ -572,9 +575,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   3 5   m i n u t e s",
-      "views_count": 352000,
-      "views_text": "352 K",
+      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   3 6   m i n u t e s",
+      "views_count": 354000,
+      "views_text": "354 K",
       "genres": [
         "Manhua",
         "Action",
@@ -594,9 +597,9 @@
       "score": "4.0",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 6   h o u r s ,   1 1   m i n u t e s",
-      "views_count": 317000,
-      "views_text": "317 K",
+      "time_updated": "อัปเดตเมื่อ 1 2   h o u r s ,   1 2   m i n u t e s",
+      "views_count": 319000,
+      "views_text": "319 K",
       "genres": [
         "School",
         "Action",
@@ -607,7 +610,7 @@
       ],
       "summary": "\"Get accepted into my college, and I'll grant you any wish.\" Fueled by the vow of his first love, Yong beom a delinquent who only ever let his fists do the talking cracks open a book for the very first time. Without a single clue on how to actually learn, he goes on a quest to track down elite, rank-one tutors for every single subject... Thus begins the wildly unpredictable exam-prep saga of the ultimate street fighter, Yong-beom, and his squad of master instructors!",
       "summary_th": "“รับเข้าวิทยาลัยของฉัน แล้วฉันจะให้ความปรารถนาแก่คุณ” ด้วยคำมั่นสัญญาเรื่องรักแรกของเขา ยงบอมเป็นคนกระทำความผิดที่ยอมให้หมัดของเขาพูดเปิดหนังสือเป็นครั้งแรกเท่านั้น โดยไม่มีเบาะแสเกี่ยวกับวิธีการเรียนรู้จริง ๆ เขาออกเดินทางเพื่อค้นหาครูสอนพิเศษอันดับ 1 สำหรับทุกวิชา... เรื่องราวการเตรียมสอบที่คาดเดาไม่ได้ของสุดยอดนักสู้ข้างถนน Yong-beom และทีมอาจารย์ผู้สอนของเขาจึงเริ่มต้นขึ้น!",
-      "bookmarks_text": "975"
+      "bookmarks_text": "976"
     },
     {
       "id": "vjl6-the-rebel-of-the-apocalypse-academy-comick",
@@ -619,9 +622,9 @@
       "score": "3.1",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   8   h o u r s",
-      "views_count": 307000,
-      "views_text": "307 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 4   h o u r s",
+      "views_count": 309000,
+      "views_text": "309 K",
       "genres": [
         "Manga"
       ],
@@ -639,9 +642,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 1   h o u r s",
-      "views_count": 299000,
-      "views_text": "299 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 7   h o u r s",
+      "views_count": 300000,
+      "views_text": "300 K",
       "genres": [
         "Mature",
         "Shounen",
@@ -667,9 +670,9 @@
       "score": "5.0",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 7   h o u r s ,   3 4   m i n u t e s",
-      "views_count": 295000,
-      "views_text": "295 K",
+      "time_updated": "อัปเดตเมื่อ 1 3   h o u r s ,   3 6   m i n u t e s",
+      "views_count": 299000,
+      "views_text": "299 K",
       "genres": [
         "Comedy",
         "Romance",
@@ -679,7 +682,30 @@
       ],
       "summary": "Serin, a cold and chic girl who keeps everyone at arm’s length, and Jinhyeong, an ordinary college student. In front of others, they seem perfectly normal—but when they’re together, they turn into complete fools.",
       "summary_th": "เซริน เด็กสาวเย็นชาและเก๋ไก๋ที่คอยดูแลทุกคนอย่างใกล้ชิด และจินฮยอน นักศึกษาวิทยาลัยธรรมดาๆ ต่อหน้าคนอื่น พวกเขาดูเหมือนปกติดี—แต่เมื่อพวกเขาอยู่ด้วยกัน พวกเขากลับกลายเป็นคนโง่โดยสมบูรณ์",
-      "bookmarks_text": "709"
+      "bookmarks_text": "716"
+    },
+    {
+      "id": "9sbl-high-martial-arts-my-cells-can-evolve-infinitely",
+      "title": "High Martial Arts: My Cells Can Evolve Infinitely",
+      "url": "https://www.mgeko.cc/manga/9sbl-high-martial-arts-my-cells-can-evolve-infinitely/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/4kJL8O.png",
+      "chapter_count": 8,
+      "latest_chapter_text": "Chapter 8-eng-li",
+      "score": "",
+      "status": "Ongoing",
+      "origin": "CN (Manhua)",
+      "time_updated": "อัปเดตเมื่อ 1 0   h o u r s ,   3 3   m i n u t e s",
+      "views_count": 283000,
+      "views_text": "283 K",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "manhua"
+      ],
+      "summary": "Qin Yi transmigrates into an era of advanced martial arts, but he suffers from a terminal illness and has no talent for martial arts. Just as his life is nearing its end, he unexpectedly awakens a Cell Evolution System. This talent is highly unusual: as long as he can withstand damage, his cells will adapt to the crisis and evolve. Abandoning the traditional path of martial arts, he gradually breaks free from the shackles of fate and confronts the powerful enemies of the world. As his strength continues to grow, his ordinary body, capable of infinite evolution, eventually rises to the pinnacle of all races, reshaping the order of the entire world.",
+      "summary_th": "ฉินยี่อพยพเข้าสู่ยุคแห่งศิลปะการต่อสู้ขั้นสูง แต่เขาป่วยหนักและไม่มีพรสวรรค์ด้านศิลปะการต่อสู้ ขณะที่ชีวิตของเขาใกล้จะถึงจุดจบ เขาก็ปลุกระบบวิวัฒนาการของเซลล์ขึ้นมาโดยไม่คาดคิด ความสามารถนี้ถือว่าไม่ธรรมดาเลย ตราบใดที่เขาสามารถทนต่อความเสียหายได้ เซลล์ของเขาก็จะปรับตัวเข้ากับวิกฤติและพัฒนาไป ละทิ้งเส้นทางศิลปะการต่อสู้แบบดั้งเดิม เขาค่อยๆ หลุดพ้นจากพันธนาการแห่งโชคชะตา และเผชิญหน้ากับศัตรูที่ทรงพลังของโลก ในขณะที่ความแข็งแกร่งของเขายังคงเติบโต ร่างกายธรรมดาของเขาซึ่งมีความสามารถในการวิวัฒนาการที่ไม่มีที่สิ้นสุด ในที่สุดก็ขึ้นสู่จุดสุดยอดของเผ่าพันธุ์ทั้งหมด และกำหนดรูปแบบใหม่ของโลกทั้งใบ",
+      "bookmarks_text": "2.5 K"
     },
     {
       "id": "55pm-i-became-the-owner-of-a-poor-estate",
@@ -691,7 +717,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   6   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 2   h o u r s",
       "views_count": 275000,
       "views_text": "275 K",
       "genres": [
@@ -714,7 +740,7 @@
       "score": "1.4",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   3 6   m i n u t e s",
+      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   3 7   m i n u t e s",
       "views_count": 274000,
       "views_text": "274 K",
       "genres": [
@@ -724,30 +750,7 @@
       ],
       "summary": "Working himself to the bone for his sick family, Nao Tsurugi is a struggling salesman. Due to his overly honest nature, his sales numbers are dismal, and his misfortunes culminate one day when he is stabbed to death by an enraged customer while on the job. When he opens his eyes, he finds himself in a mysterious amusement park where only those who have died are gathered. [Clear the quest and you may return to the real world.] The condition for clearing the game is to defeat a boss monster capable of slaughtering humans in an instant. However, the exclusive weapon granted to Nao is a bottom-tier \"1-Star\" item. Though Nao falls into despair, it turns out that this seemingly useless \"weapon\" harbors a hidden power: the ability to grow infinitely—",
       "summary_th": "นาโอะ สึรุกิทำงานอย่างหนักเพื่อครอบครัวที่ป่วยเป็นพนักงานขายที่กำลังดิ้นรน เนื่องจากนิสัยที่ซื่อสัตย์ของเขามากเกินไป ยอดขายของเขาจึงตกต่ำ และความโชคร้ายของเขาก็มาถึงจุดสุดยอดวันหนึ่งเมื่อเขาถูกลูกค้าที่โกรธแค้นแทงจนตายขณะทำงาน เมื่อเขาลืมตาขึ้นมา เขาพบว่าตัวเองอยู่ในสวนสนุกลึกลับที่ซึ่งรวบรวมเฉพาะผู้ที่เสียชีวิตเท่านั้น [เคลียร์ภารกิจแล้วคุณอาจกลับสู่โลกแห่งความเป็นจริง] เงื่อนไขในการเคลียร์เกมคือการเอาชนะบอสมอนสเตอร์ที่สามารถสังหารมนุษย์ได้ในทันที อย่างไรก็ตาม อาวุธพิเศษที่มอบให้ Nao จะเป็นไอเท็ม \"1 ดาว\" ระดับล่างสุด แม้ว่านาโอะจะตกอยู่ในความสิ้นหวัง แต่กลับกลายเป็นว่า \"อาวุธ\" ที่ดูไร้ประโยชน์นี้มีพลังที่ซ่อนอยู่ นั่นคือความสามารถในการเติบโตอย่างไม่มีที่สิ้นสุด—",
-      "bookmarks_text": "845"
-    },
-    {
-      "id": "9sbl-high-martial-arts-my-cells-can-evolve-infinitely",
-      "title": "High Martial Arts: My Cells Can Evolve Infinitely",
-      "url": "https://www.mgeko.cc/manga/9sbl-high-martial-arts-my-cells-can-evolve-infinitely/",
-      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/4kJL8O.png",
-      "chapter_count": 8,
-      "latest_chapter_text": "Chapter 8-eng-li",
-      "score": "",
-      "status": "Ongoing",
-      "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 4   h o u r s ,   3 2   m i n u t e s",
-      "views_count": 267000,
-      "views_text": "267 K",
-      "genres": [
-        "Action",
-        "Adventure",
-        "Fantasy",
-        "manhua"
-      ],
-      "summary": "Qin Yi transmigrates into an era of advanced martial arts, but he suffers from a terminal illness and has no talent for martial arts. Just as his life is nearing its end, he unexpectedly awakens a Cell Evolution System. This talent is highly unusual: as long as he can withstand damage, his cells will adapt to the crisis and evolve. Abandoning the traditional path of martial arts, he gradually breaks free from the shackles of fate and confronts the powerful enemies of the world. As his strength continues to grow, his ordinary body, capable of infinite evolution, eventually rises to the pinnacle of all races, reshaping the order of the entire world.",
-      "summary_th": "ฉินยี่อพยพเข้าสู่ยุคแห่งศิลปะการต่อสู้ขั้นสูง แต่เขาป่วยหนักและไม่มีพรสวรรค์ด้านศิลปะการต่อสู้ ขณะที่ชีวิตของเขาใกล้จะถึงจุดจบ เขาก็ปลุกระบบวิวัฒนาการของเซลล์ขึ้นมาโดยไม่คาดคิด ความสามารถนี้ถือว่าไม่ธรรมดาเลย ตราบใดที่เขาสามารถทนต่อความเสียหายได้ เซลล์ของเขาก็จะปรับตัวเข้ากับวิกฤติและพัฒนาไป ละทิ้งเส้นทางศิลปะการต่อสู้แบบดั้งเดิม เขาค่อยๆ หลุดพ้นจากพันธนาการแห่งโชคชะตา และเผชิญหน้ากับศัตรูที่ทรงพลังของโลก ในขณะที่ความแข็งแกร่งของเขายังคงเติบโต ร่างกายธรรมดาของเขาซึ่งมีความสามารถในการวิวัฒนาการที่ไม่มีที่สิ้นสุด ในที่สุดก็ขึ้นสู่จุดสุดยอดของเผ่าพันธุ์ทั้งหมด และกำหนดรูปแบบใหม่ของโลกทั้งใบ",
-      "bookmarks_text": "2.5 K"
+      "bookmarks_text": "846"
     },
     {
       "id": "dz7m-isekai-all-purpose-supermarket",
@@ -759,9 +762,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1 4   h o u r s ,   3 6   m i n u t e s",
-      "views_count": 267000,
-      "views_text": "267 K",
+      "time_updated": "อัปเดตเมื่อ 2 0   h o u r s ,   3 5   m i n u t e s",
+      "views_count": 269000,
+      "views_text": "269 K",
       "genres": [
         "Shounen",
         "Action",
@@ -776,7 +779,7 @@
         "manhwa"
       ],
       "summary": "Han Ji-oh, the owner of an all-purpose neighborhood store, discovers a dimensional portal opened by a kitchen knife. Through it, he begins traveling back and forth between the real world and another world. Using a subspace, he starts doing business in both worlds, selling goods and making money. His modest dream was simply to earn enough to become a building owner and live comfortably. But then he gets dragged into a hero’s party and is told to stop the Demon King from being resurrected?! Thus begins Han Ji-oh’s dimension-hopping commercial action fantasy, as the owner of the Otherworldly General Store!",
-      "summary_th": "ฮันจีโอ เจ้าของร้านค้าอเนกประสงค์ใกล้บ้าน ค้นพบพอร์ทัลมิติที่เปิดด้วยมีดทำครัว เขาเริ่มเดินทางไปมาระหว่างโลกแห่งความจริงและอีกโลกหนึ่งผ่านทางนั้น เขาเริ่มทำธุรกิจในทั้งสองโลกโดยใช้พื้นที่ย่อย ขายสินค้าและสร้างรายได้ ความฝันอันเรียบง่ายของเขาคือการมีรายได้เพียงพอที่จะเป็นเจ้าของอาคารและใช้ชีวิตอย่างสุขสบาย แต่แล้วเขาก็ถูกลากเข้าไปในปาร์ตี้ของฮีโร่และถูกบอกให้หยุดไม่ให้ราชาปีศาจฟื้นคืนชีพ?! เรื่องราวแอ็คชั่นแฟนตาซีเชิงพาณิชย์ที่กระโดดข้ามมิติของ Han Ji-oh จึงเริ่มต้นขึ้นในฐานะเจ้าของร้านค้าทั่วไปนอกโลก!",
+      "summary_th": "ฮันจีโอ เจ้าของร้านค้าอเนกประสงค์ใกล้บ้าน ค้นพบพอร์ทัลมิติที่เปิดด้วยมีดทำครัว เขาเริ่มเดินทางไปมาระหว่างโลกแห่งความจริงและอีกโลกหนึ่งผ่านทางนั้น เขาเริ่มทำธุรกิจในทั้งสองโลกโดยใช้พื้นที่ย่อย ขายสินค้าและสร้างรายได้ ความฝันอันเรียบง่ายของเขาคือการมีรายได้เพียงพอที่จะเป็นเจ้าของอาคารและใช้ชีวิตอย่างสุขสบาย แต่แล้วเขาก็ถูกลากเข้าไปในปาร์ตี้ของฮีโร่และถูกบอกให้หยุดไม่ให้ราชาปีศาจฟื้นคืนชีพ! เรื่องราวแอ็คชั่นแฟนตาซีเชิงพาณิชย์ที่กระโดดข้ามมิติของ Han Ji-oh จึงเริ่มต้นขึ้นในฐานะเจ้าของร้านค้าทั่วไปนอกโลก!",
       "bookmarks_text": "1.8 K"
     },
     {
@@ -789,9 +792,9 @@
       "score": "3.8",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 9   h o u r s ,   2 5   m i n u t e s",
-      "views_count": 256000,
-      "views_text": "256 K",
+      "time_updated": "อัปเดตเมื่อ 1 5   h o u r s ,   2 6   m i n u t e s",
+      "views_count": 259000,
+      "views_text": "259 K",
       "genres": [
         "Shounen",
         "Action",
@@ -801,30 +804,7 @@
       ],
       "summary": "In a world where monsters emerge from mysterious Gates and threaten humanity, Licht Arimiya has lived a life consumed by tragedy. When he was young, his older brother was cursed by a superior monster known as a “Demon,” transforming him into one of their kind and leading to the murder of their parents. Licht himself also lost his eyesight, leaving him to live in despair. Even so, he refused to give up. Determined to rescue his captured brother and take revenge on the Demons, Licht trained relentlessly in hopes of becoming a “Hunter,” a warrior gifted with supernatural abilities. But his dream never came true. The only class he was able to obtain was “Guide,” a low-ranking support role meant to assist Hunters in exploring Gates. Despite being looked down on and ridiculed by the Hunters around him, Licht continued to fight. Then one day, while exploring a Gate, he encounters an overwhelmingly powerful Demon. The Hunters abandon him and use him as bait, leaving him to die. But just as he is pushed to the brink of death, a mysterious figure suddenly appears—and an unknown special skill awakens within Licht. It is a power capable of overturning the fate that the Demons stole from him.",
       "summary_th": "ในโลกที่สัตว์ประหลาดโผล่ออกมาจากประตูลึกลับและคุกคามมนุษยชาติ Licht Arimiya ใช้ชีวิตโดยโศกนาฏกรรม ตอนที่เขายังเด็ก พี่ชายของเขาถูกสาปโดยสัตว์ประหลาดชั้นสูงที่รู้จักกันในชื่อ “ปีศาจ” ซึ่งเปลี่ยนเขาให้เป็นหนึ่งในประเภทและนำไปสู่การฆาตกรรมพ่อแม่ของพวกเขา Licht เองก็สูญเสียการมองเห็นเช่นกัน ทำให้เขาต้องอยู่อย่างสิ้นหวัง ถึงกระนั้นเขาก็ปฏิเสธที่จะยอมแพ้ ด้วยความมุ่งมั่นที่จะช่วยเหลือน้องชายที่ถูกจับกุมและแก้แค้นปีศาจ Licht ฝึกฝนอย่างไม่ลดละโดยหวังว่าจะได้เป็น “นักล่า” นักรบที่มีความสามารถเหนือธรรมชาติ แต่ความฝันของเขาไม่เคยเป็นจริง คลาสเดียวที่เขาสามารถรับได้คือ “ไกด์” ซึ่งเป็นบทบาทสนับสนุนระดับต่ำที่มีวัตถุประสงค์เพื่อช่วยเหลือฮันเตอร์ในการสำรวจเกตส์ แม้ว่าจะถูกนักล่าที่อยู่รอบๆ ดูถูกและเยาะเย้ย แต่ Licht ก็ยังคงต่อสู้ต่อไป แล้ววันหนึ่ง ขณะสำรวจประตู เขาได้พบกับปีศาจที่ทรงพลังอย่างล้นหลาม พวกนักล่าทิ้งเขาและใช้เขาเป็นเหยื่อล่อ ปล่อยให้เขาตาย แต่ในขณะที่เขาถูกผลักไปสู่ความตาย จู่ๆ ร่างลึกลับก็ปรากฏขึ้น และทักษะพิเศษที่ไม่รู้จักก็ตื่นขึ้นมาในตัวลิชท์ มันเป็นพลังที่สามารถพลิกชะตากรรมที่ปีศาจขโมยไปจากเขาได้",
-      "bookmarks_text": "1.1 K"
-    },
-    {
-      "id": "meikyuu-labyrinth-kingdom-a-tactical-fantasy-world-survival-guide",
-      "title": "MEIKYUU: LABYRINTH KINGDOM, A TACTICAL FANTASY WORLD SURVIVAL GUIDE",
-      "url": "https://www.mgeko.cc/manga/meikyuu-labyrinth-kingdom-a-tactical-fantasy-world-survival-guide/",
-      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/fantasy-world-survival-guide.jpeg",
-      "chapter_count": 3,
-      "latest_chapter_text": "Chapter 3-eng-li",
-      "score": "",
-      "status": "Ongoing",
-      "origin": "Manga",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   2 1   h o u r s",
-      "views_count": 241000,
-      "views_text": "241 K",
-      "genres": [
-        "Action",
-        "Adventure",
-        "Isekai",
-        "Si-fi"
-      ],
-      "summary": "Expert soldier Taiga has just retired from the military after twenty years of service. Listless, he decides a visit to his homeland of Japan will help him figure out what to do next. But he never arrives. A strange earthquake in the airport seems to spell his demise, but instead it transports him to Million Dungeon, a labyrinthine world of caverns, kingdoms, magic…and monsters. The key to survival is apparently creating his own nation, but even with all of Taiga’s experience, the incredible dangers may prove too muc",
-      "summary_th": "ทหารผู้เชี่ยวชาญ Taiga เพิ่งเกษียณจากกองทัพหลังจากรับราชการมายี่สิบปี เขาตัดสินใจว่าการไปเยือนบ้านเกิดที่ญี่ปุ่นจะช่วยให้เขารู้ว่าจะต้องทำอะไรต่อไป แต่เขาไม่เคยมาถึง แผ่นดินไหวที่แปลกประหลาดในสนามบินดูเหมือนจะสะกดความตายของเขา แต่กลับพาเขาไปยัง Million Dungeon โลกแห่งเขาวงกตที่เต็มไปด้วยถ้ำ อาณาจักร เวทมนตร์...และสัตว์ประหลาด กุญแจสำคัญในการเอาชีวิตรอดคือการสร้างชาติของตัวเองขึ้นมา แต่ถึงแม้ไทก้าจะมีประสบการณ์มามากมาย อันตรายอันน่าเหลือเชื่อก็อาจมากเกินไป",
-      "bookmarks_text": "738"
+      "bookmarks_text": "1.2 K"
     },
     {
       "id": "maou-toshi",
@@ -836,9 +816,9 @@
       "score": "3.1",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 2 3   h o u r s ,   1 8   m i n u t e s",
-      "views_count": 231000,
-      "views_text": "231 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   5   h o u r s",
+      "views_count": 232000,
+      "views_text": "232 K",
       "genres": [
         "Drama",
         "Fantasy",
@@ -859,7 +839,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 3   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 9   h o u r s",
       "views_count": 216000,
       "views_text": "216 K",
       "genres": [
@@ -875,6 +855,29 @@
       "bookmarks_text": "944"
     },
     {
+      "id": "f81w-the-strongest-priest-theres-nothing-wrong-with-wielding-a-hammer-right",
+      "title": "The Strongest Priest: There’s Nothing Wrong with Wielding a Hammer, Right?",
+      "url": "https://www.mgeko.cc/manga/f81w-the-strongest-priest-theres-nothing-wrong-with-wielding-a-hammer-right/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/5po8xx.png",
+      "chapter_count": 11,
+      "latest_chapter_text": "Chapter 11-eng-li",
+      "score": "",
+      "status": "Ongoing",
+      "origin": "CN (Manhua)",
+      "time_updated": "อัปเดตเมื่อ 4   h o u r s ,   4   m i n u t e s",
+      "views_count": 207000,
+      "views_text": "207 K",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Manhua"
+      ],
+      "summary": "Bai Jiu, a high school student whose life is far from ordinary even before he enters another world. Behind his normal student identity, Bai Jiu secretly works in a dangerous gray profession, carrying out jobs arranged by his employer. During a school trip, a sudden traffic accident kills him and several other students, giving them an unexpected chance to travel to a world filled with monsters and magic.",
+      "summary_th": "ไป๋จิ่ว นักเรียนมัธยมปลายที่ชีวิตห่างไกลจากความธรรมดาก่อนที่เขาจะเข้าสู่อีกโลกหนึ่ง เบื้องหลังตัวตนนักศึกษาปกติของเขา ไป๋จิ่วแอบทำงานอาชีพสีเทาอันตราย โดยทำงานที่นายจ้างจัดให้ ในระหว่างการทัศนศึกษา อุบัติเหตุจราจรกะทันหันทำให้เขาและนักเรียนคนอื่นๆ เสียชีวิต ทำให้พวกเขามีโอกาสที่ไม่คาดคิดในการเดินทางไปยังโลกที่เต็มไปด้วยสัตว์ประหลาดและเวทมนตร์",
+      "bookmarks_text": "1.1 K"
+    },
+    {
       "id": "xuci-the-genius-alchemist-who-loves-hard-work",
       "title": "The Genius Alchemist Who Loves Hard Work",
       "url": "https://www.mgeko.cc/manga/xuci-the-genius-alchemist-who-loves-hard-work/",
@@ -884,9 +887,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 7   h o u r s ,   2 1   m i n u t e s",
-      "views_count": 182000,
-      "views_text": "182 K",
+      "time_updated": "อัปเดตเมื่อ 1 3   h o u r s ,   2 3   m i n u t e s",
+      "views_count": 184000,
+      "views_text": "184 K",
       "genres": [
         "Adventure",
         "Fantasy",
@@ -909,9 +912,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 2   h o u r s ,   2 8   m i n u t e s",
-      "views_count": 169000,
-      "views_text": "169 K",
+      "time_updated": "อัปเดตเมื่อ 8   h o u r s ,   2 9   m i n u t e s",
+      "views_count": 175000,
+      "views_text": "175 K",
       "genres": [
         "Action",
         "Shounen",
@@ -919,7 +922,32 @@
       ],
       "summary": "Nectrella, a necromancer who inherited the blood of Castul. To reclaim the lover seized by his hand, the berserker Thane throws himself into a life-or-death battle.",
       "summary_th": "Nectrella หมอผีผู้สืบทอดสายเลือดของ Castul เพื่อทวงคืนคนรักที่ถูกจับมือของเขากลับคืนมา ธาเนผู้คลั่งไคล้ต้องทุ่มตัวเองเข้าสู่การต่อสู้แบบเอาเป็นเอาตาย",
-      "bookmarks_text": "803"
+      "bookmarks_text": "811"
+    },
+    {
+      "id": "exq9-the-hero-s-stand-in",
+      "title": "The Hero's Stand-In",
+      "url": "https://www.mgeko.cc/manga/exq9-the-hero-s-stand-in/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/8yzyy7.png",
+      "chapter_count": 21,
+      "latest_chapter_text": "Chapter 21-eng-li",
+      "score": "4.6",
+      "status": "Ongoing",
+      "origin": "KR (Manhwa)",
+      "time_updated": "อัปเดตเมื่อ 3   h o u r s ,   1 0   m i n u t e s",
+      "views_count": 174000,
+      "views_text": "174 K",
+      "genres": [
+        "Adventure",
+        "Fantasy",
+        "Long Strip",
+        "Isekai",
+        "Full Color",
+        "Manhwa"
+      ],
+      "summary": "To escape the looming threat of the Demon King, the people of another world begin summoning powerful warriors from different worlds. Meanwhile, an ordinary office worker named Song Lee-seok is summoned by mistake simply because he shares the same name as South Korea's strongest martial artist. But the people of this world mistake him for the legendary hero! Thrown into an adventure built on a lie, can this completely average man keep up the act and somehow defeat the Demon King before his true identity is exposed? **Original Webtoon** [Naver Webtoon](https://comic.naver.com/webtoon/list?titleId=849541), [Naver Series](https://series.naver.com/comic/detail.series?productNo=13991460)",
+      "summary_th": "เพื่อหลีกหนีจากภัยคุกคามที่ใกล้เข้ามาของราชาปีศาจ ผู้คนจากอีกโลกหนึ่งจึงเริ่มเรียกนักรบผู้ทรงพลังจากต่างโลก ในขณะเดียวกัน พนักงานออฟฟิศธรรมดาๆ ชื่อซงลีซอกถูกเรียกตัวโดยไม่ได้ตั้งใจเพียงเพราะเขาใช้ชื่อเดียวกันกับนักศิลปะการต่อสู้ที่แข็งแกร่งที่สุดของเกาหลีใต้ แต่ผู้คนในโลกนี้กลับเข้าใจผิดว่าเขาคือฮีโร่ในตำนาน! เมื่อถูกโยนเข้าสู่การผจญภัยที่สร้างขึ้นจากคำโกหก ชายธรรมดาๆ คนนี้จะสามารถรักษาการกระทำนี้ไว้และเอาชนะราชาปีศาจก่อนที่ตัวตนที่แท้จริงของเขาจะถูกเปิดเผยได้หรือไม่? **เว็บตูนต้นฉบับ** [Naver เว็บตูน](https://comic.naver.com/webtoon/list?titleId=849541), [ซีรีส์ Naver](https://series.naver.com/comic/detail.series?productNo=13991460)",
+      "bookmarks_text": "1.3 K"
     },
     {
       "id": "a-brotherly-journey",
@@ -931,9 +959,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   2 8   m i n u t e s",
-      "views_count": 109000,
-      "views_text": "109 K",
+      "time_updated": "อัปเดตเมื่อ 2 3   h o u r s ,   2 8   m i n u t e s",
+      "views_count": 110000,
+      "views_text": "110 K",
       "genres": [
         "Fantasy",
         "Isekai",
@@ -953,9 +981,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   2 1   m i n u t e s",
-      "views_count": 103000,
-      "views_text": "103 K",
+      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   2 2   m i n u t e s",
+      "views_count": 106000,
+      "views_text": "106 K",
       "genres": [
         "Shounen",
         "Long Strip",
@@ -967,6 +995,28 @@
       "bookmarks_text": "1.7 K"
     },
     {
+      "id": "2lrb-the-wizard-s-notes",
+      "title": "The Wizard's Notes",
+      "url": "https://www.mgeko.cc/manga/2lrb-the-wizard-s-notes/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/4e3d23dc-b182-44e6-b2bd-ed4666539d55.webp",
+      "chapter_count": 6,
+      "latest_chapter_text": "Chapter 6-eng-li",
+      "score": "",
+      "status": "Ongoing",
+      "origin": "JP (Manga)",
+      "time_updated": "อัปเดตเมื่อ 1 0   h o u r s ,   4 7   m i n u t e s",
+      "views_count": 102000,
+      "views_text": "102 K",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "manga"
+      ],
+      "summary": "In a world where guilds operate like major industries and cities thrive on the profession of adventuring. Right in the thick of it all, Etranger teams up with Olivia, a stalwart tank, and Dahlia, a halfling scout, to conquer the uncharted depths of the labyrinth.",
+      "summary_th": "ในโลกที่กิลด์ดำเนินกิจการเช่นเดียวกับอุตสาหกรรมหลักและเมืองต่างๆ เจริญรุ่งเรืองในอาชีพนักผจญภัย ท่ามกลางความลึกลับนี้ Etranger ร่วมมือกับ Olivia แทงค์ผู้แข็งแกร่ง และ Dahlia ลูกครึ่งสอดแนม เพื่อพิชิตความลึกที่ไม่เคยมีมาก่อนของเขาวงกต",
+      "bookmarks_text": "1.5 K"
+    },
+    {
       "id": "bgbh-legend-of-the-pinnacle-of-online-games",
       "title": "Legend of the Pinnacle of Online Games",
       "url": "https://www.mgeko.cc/manga/bgbh-legend-of-the-pinnacle-of-online-games/",
@@ -976,7 +1026,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   5   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 1   h o u r s",
       "views_count": 95000,
       "views_text": "95 K",
       "genres": [
@@ -996,26 +1046,31 @@
       "bookmarks_text": "884"
     },
     {
-      "id": "2lrb-the-wizard-s-notes",
-      "title": "The Wizard's Notes",
-      "url": "https://www.mgeko.cc/manga/2lrb-the-wizard-s-notes/",
-      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/4e3d23dc-b182-44e6-b2bd-ed4666539d55.webp",
-      "chapter_count": 6,
-      "latest_chapter_text": "Chapter 6-eng-li",
-      "score": "",
+      "id": "doomsday-weapon",
+      "title": "Doomsday Weapon",
+      "url": "https://www.mgeko.cc/manga/doomsday-weapon/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/Kera.webp",
+      "chapter_count": 21,
+      "latest_chapter_text": "Chapter 21-eng-li",
+      "score": "0.0",
       "status": "Ongoing",
-      "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 4   h o u r s ,   4 6   m i n u t e s",
-      "views_count": 94000,
-      "views_text": "94 K",
+      "origin": "KR (Manhwa)",
+      "time_updated": "อัปเดตเมื่อ 4   h o u r s",
+      "views_count": 92000,
+      "views_text": "92 K",
       "genres": [
         "Action",
+        "Adventure",
+        "Drama",
         "Fantasy",
-        "manga"
+        "Fight",
+        "Manhwa",
+        "Shounen",
+        "Supernatural"
       ],
-      "summary": "In a world where guilds operate like major industries and cities thrive on the profession of adventuring. Right in the thick of it all, Etranger teams up with Olivia, a stalwart tank, and Dahlia, a halfling scout, to conquer the uncharted depths of the labyrinth.",
-      "summary_th": "ในโลกที่กิลด์ดำเนินกิจการเช่นเดียวกับอุตสาหกรรมหลักและเมืองต่างๆ เจริญรุ่งเรืองในอาชีพนักผจญภัย ท่ามกลางความลึกลับนี้ Etranger ร่วมมือกับ Olivia แทงค์ผู้แข็งแกร่ง และ Dahlia ลูกครึ่งสอดแนม เพื่อพิชิตความลึกที่ไม่เคยมีมาก่อนของเขาวงกต",
-      "bookmarks_text": "1.4 K"
+      "summary": "The “D-fire” (Defier)—superhuman weapons born from the weaponization of nuclear fusion technology. The war they waged brought about a great catastrophe that annihilated 30% of humanity. The survivors came to despise the D-fires, calling them “Exterminators” or “Annihilators”)—the ones responsible for mankind’s near-extinction. Theo, the sole surviving Exterminator from the war, has lived for 30 years as an ordinary family man under the surveillance of the Einex Alliance, his core removed and his powers sealed. But when the anti-nuclear terrorist organization “Zero Core” attacks, killing his wife and causing his daughter Luis to disappear, the peaceful life he tried so hard to protect shatters into pieces. Swearing revenge, Theo unleashes his forbidden power for the first time in 30 years to retrieve his daughter. The lonely battle of the last Exterminator begins—against Zero Core’s massive conspiracy and the prejudice of the entire world.",
+      "summary_th": "“D-fire” (Defier)—อาวุธเหนือมนุษย์ที่เกิดจากการนำเทคโนโลยีนิวเคลียร์ฟิวชันมาใช้เป็นอาวุธ สงครามที่พวกเขาทำนำมาซึ่งหายนะครั้งใหญ่ที่ทำลายล้างมนุษยชาติถึง 30% ผู้รอดชีวิตเข้ามาดูหมิ่น D-fires โดยเรียกพวกมันว่า \"ผู้ทำลายล้าง\" หรือ \"ผู้ทำลายล้าง\") ซึ่งเป็นผู้รับผิดชอบต่อการสูญพันธุ์ของมนุษยชาติที่ใกล้สูญพันธุ์ Theo ผู้ทำลายล้างเพียงคนเดียวที่รอดชีวิตจากสงคราม อาศัยอยู่เป็นเวลา 30 ปีในฐานะคนในครอบครัวธรรมดาๆ ภายใต้การดูแลของ Einex Alliance แกนกลางของเขาถูกถอดออกและพลังของเขาถูกผนึกไว้ แต่เมื่อองค์กรก่อการร้ายต่อต้านนิวเคลียร์ “Zero Core” โจมตี สังหารภรรยาของเขาและทำให้ลูกสาวของเขา หลุยส์ หายตัวไป ชีวิตอันสงบสุขที่เขาพยายามอย่างหนักเพื่อปกป้องให้แตกเป็นชิ้น ๆ ธีโอสาบานว่าจะแก้แค้นและปลดปล่อยพลังต้องห้ามของเขาเป็นครั้งแรกในรอบ 30 ปีเพื่อนำลูกสาวของเขากลับมา การต่อสู้อันโดดเดี่ยวของผู้ทำลายล้างคนสุดท้ายเริ่มต้นขึ้น ต่อต้านการสมรู้ร่วมคิดครั้งใหญ่ของ Zero Core และอคติของคนทั้งโลก",
+      "bookmarks_text": "460"
     },
     {
       "id": "txp1-the-f-rank-tamer-rules-the-world-from-the-shadows-through-sheer-numbers",
@@ -1027,7 +1082,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 7   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   2 3   h o u r s",
       "views_count": 76000,
       "views_text": "76 K",
       "genres": [
@@ -1051,7 +1106,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 1   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 7   h o u r s",
       "views_count": 73000,
       "views_text": "73 K",
       "genres": [
@@ -1076,9 +1131,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 9   h o u r s ,   5 9   m i n u t e s",
-      "views_count": 69000,
-      "views_text": "69 K",
+      "time_updated": "อัปเดตเมื่อ 1 6   h o u r s ,   1   m i n u t e",
+      "views_count": 70000,
+      "views_text": "70 K",
       "genres": [
         "Action",
         "Adventure",
@@ -1092,7 +1147,31 @@
       ],
       "summary": "Dozens of elite members are assembled to rescue a princess swallowed by a giant dragon. However, the dragon's belly is a hellish labyrinth intertwined with bizarre tumor monsters. One by one, the members fall victim to claustrophobic terror and unknown entities. Can they survive to the end and find the princess?",
       "summary_th": "สมาชิกระดับสูงหลายสิบคนมารวมตัวกันเพื่อช่วยเหลือเจ้าหญิงที่ถูกมังกรยักษ์กลืนกิน อย่างไรก็ตาม ท้องของมังกรนั้นเป็นเขาวงกตที่ชั่วร้ายซึ่งเกี่ยวพันกับสัตว์ประหลาดเนื้องอกที่แปลกประหลาด สมาชิกแต่ละคนตกเป็นเหยื่อของความหวาดกลัวที่จำกัดและตัวตนที่ไม่รู้จักทีละคน พวกเขาสามารถเอาชีวิตรอดจนจบและตามหาเจ้าหญิงได้หรือไม่?",
-      "bookmarks_text": "411"
+      "bookmarks_text": "413"
+    },
+    {
+      "id": "hakkou-shounen",
+      "title": "Hakkou Shounen no Shiawase na Majutsu Kakumei",
+      "url": "https://www.mgeko.cc/manga/hakkou-shounen/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/69e4fc8fe7980.jpg",
+      "chapter_count": 11,
+      "latest_chapter_text": "Chapter 11-eng-li",
+      "score": "0.0",
+      "status": "Ongoing",
+      "origin": "JP (Manga)",
+      "time_updated": "อัปเดตเมื่อ 2   h o u r s ,   5 8   m i n u t e s",
+      "views_count": 69000,
+      "views_text": "69 K",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "Manga"
+      ],
+      "summary": "Born with an enormous amount of magical power and a curse known as the “Demon King’s Favor”… a boy named Ellen was granted what was called the “worst evil eye in history.” Ellen first awakened his power at the age of five. In a desperate attempt to protect his family, he unintentionally manifested that power. His family, terrified of it, locked him away in a storage shed… Ten years passed like that… Ellen was eventually discovered by the great mage Hermes, who recognized his power. He began studying magic and gradually blossomed into a talented sorcerer. A tale of the strongest magician, Ellen, who possesses an evil eye capable of bringing even destruction itself—his unstoppable legend begins here!",
+      "summary_th": "เกิดมาพร้อมกับพลังเวทย์มนตร์จำนวนมหาศาลและคำสาปที่เรียกว่า “ความโปรดปรานของราชาปีศาจ”… เด็กชายชื่อเอลเลนได้รับสิ่งที่เรียกว่า “ดวงตาปีศาจที่เลวร้ายที่สุดในประวัติศาสตร์” เอลเลนปลุกพลังของเขาครั้งแรกเมื่ออายุได้ห้าขวบ ด้วยความพยายามอย่างยิ่งยวดที่จะปกป้องครอบครัวของเขา เขาได้แสดงพลังนั้นออกมาโดยไม่ได้ตั้งใจ ครอบครัวของเขาหวาดกลัวสิ่งนี้ จึงขังเขาไว้ในโรงเก็บของ… สิบปีผ่านไปเช่นนั้น… ในที่สุดเอลเลนก็ถูกค้นพบโดยนักเวทผู้ยิ่งใหญ่ เฮอร์มีส ซึ่งจำพลังของเขาได้ เขาเริ่มศึกษาเวทมนตร์และค่อยๆ เติบโตเป็นพ่อมดที่มีพรสวรรค์ เรื่องราวของนักมายากลที่แข็งแกร่งที่สุด เอลเลน ผู้มีดวงตาปีศาจที่สามารถทำลายล้างได้ ตำนานที่ไม่อาจหยุดยั้งของเขาเริ่มต้นที่นี่!",
+      "bookmarks_text": "523"
     },
     {
       "id": "fb86-till-death-do-us-part",
@@ -1104,7 +1183,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1   d a y ,   6   h o u r s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   1 2   h o u r s",
       "views_count": 68000,
       "views_text": "68 K",
       "genres": [
@@ -1119,7 +1198,7 @@
         "Manhwa"
       ],
       "summary": "Thirty-two espers with bombs implanted in their heads. Divided into two teams, they are forced to play a high-stakes game of human chess where their lives hang in the balance. If they fail to locate and eliminate the enemy \"King\" before time runs out, everyone will be wiped out. The team that succeeds in killing the opposing King before the time limit survives, while the team that loses their King will have their bombs detonated, meeting certain death. Driven into a corner, they must utilize their unique skills to find a way to assassinate the rival King. Boys and girls forced to drive one another toward death just to survive... Their desperate, brutal struggle begins.",
-      "summary_th": "เอสเปอร์สามสิบสองคนพร้อมระเบิดฝังอยู่ในหัว พวกเขาแบ่งออกเป็นสองทีม และถูกบังคับให้เล่นเกมหมากรุกมนุษย์ที่มีเดิมพันสูง โดยที่ชีวิตของพวกเขาแขวนอยู่บนเส้นด้าย หากพวกเขาล้มเหลวในการค้นหาและกำจัด \"ราชา\" ศัตรูก่อนหมดเวลา ทุกคนจะถูกกำจัด ทีมที่สังหารราชาของฝ่ายตรงข้ามได้สำเร็จก่อนเวลาที่กำหนดจะรอดชีวิต ในขณะที่ทีมที่สูญเสียราชาจะถูกระเบิดทิ้งและพบกับความตาย เมื่อถูกต้อนจนมุม พวกเขาต้องใช้ทักษะเฉพาะตัวเพื่อหาทางลอบสังหารราชาคู่แข่ง เด็กชายและเด็กหญิงถูกบังคับให้ขับรถกันไปสู่ความตายเพื่อความอยู่รอด... การต่อสู้อันโหดร้ายและสิ้นหวังของพวกเขาเริ่มต้นขึ้น",
+      "summary_th": "เอสเปอร์สามสิบสองคนพร้อมระเบิดฝังอยู่ในหัว พวกเขาแบ่งออกเป็นสองทีม และถูกบังคับให้เล่นเกมหมากรุกมนุษย์ที่มีเดิมพันสูง ซึ่งชีวิตของพวกเขาแขวนอยู่บนความสมดุล หากพวกเขาล้มเหลวในการค้นหาและกำจัด \"ราชา\" ศัตรูก่อนหมดเวลา ทุกคนจะถูกกำจัด ทีมที่สังหารราชาของฝ่ายตรงข้ามได้สำเร็จก่อนเวลาที่กำหนดจะรอดชีวิต ในขณะที่ทีมที่สูญเสียราชาจะถูกระเบิดทิ้งและพบกับความตาย เมื่อถูกต้อนจนมุม พวกเขาต้องใช้ทักษะเฉพาะตัวเพื่อหาทางลอบสังหารราชาคู่แข่ง เด็กชายและเด็กหญิงถูกบังคับให้ขับรถกันไปสู่ความตายเพื่อความอยู่รอด... การต่อสู้อันโหดร้ายและสิ้นหวังของพวกเขาเริ่มต้นขึ้น",
       "bookmarks_text": "285"
     },
     {
@@ -1132,7 +1211,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 1 4   h o u r s ,   3 5   m i n u t e s",
+      "time_updated": "อัปเดตเมื่อ 2 0   h o u r s ,   3 4   m i n u t e s",
       "views_count": 65000,
       "views_text": "65 K",
       "genres": [
@@ -1147,8 +1226,8 @@
         "Manhwa"
       ],
       "summary": "Kim Min-jae has lost everything after falling victim to a housing deposit scam and being betrayed by the lover he trusted. After moving into an old apartment building, he discovers a hidden door and key inside the wall that lead to the mysterious “Ghost Market.” In this marketplace run by ghosts, everything has a price—even lifespan, emotions, memories, and body parts. Through a series of deadly games and dangerous deals, Min-jae fights to survive while amassing wealth and power. And now, he is preparing the ultimate revenge against those who brought him to ruin. **Original Webtoon:** [Naver Webtoon](https://comic.naver.com/webtoon/list?titleId=855894), [Naver Series](https://series.naver.com/comic/detail.series?productNo=14834143)",
-      "summary_th": "คิมมินแจสูญเสียทุกสิ่งทุกอย่างไปหลังจากตกเป็นเหยื่อของการหลอกลวงเรื่องเงินมัดจำบ้านและถูกคนรักที่เขาไว้วางใจหักหลัง หลังจากย้ายเข้าไปอยู่ในอาคารอพาร์ตเมนต์เก่า เขาค้นพบประตูที่ซ่อนอยู่และกุญแจภายในกำแพงที่นำไปสู่ ​​\"ตลาดผี\" อันลึกลับ ในตลาดที่ควบคุมโดยผี ทุกสิ่งมีราคา แม้แต่ช่วงชีวิต อารมณ์ ความทรงจำ และส่วนต่างๆ ของร่างกาย มินแจต่อสู้เพื่อเอาชีวิตรอดพร้อมกับรวบรวมความมั่งคั่งและอำนาจผ่านเกมอันตรายและข้อตกลงสุดอันตรายมากมาย และตอนนี้เขากำลังเตรียมการแก้แค้นขั้นสูงสุดต่อผู้ที่นำพาเขาไปสู่ความพินาศ **เว็บตูนต้นฉบับ:** [Naver Webtoon](https://comic.naver.com/webtoon/list?titleId=855894), [Naver Series](https://series.naver.com/comic/detail.series?productNo=14834143)",
-      "bookmarks_text": "561"
+      "summary_th": "คิมมินแจสูญเสียทุกสิ่งทุกอย่างหลังจากตกเป็นเหยื่อของการหลอกลวงเรื่องเงินมัดจำบ้านและถูกคนรักที่เขาไว้วางใจหักหลัง หลังจากย้ายเข้าไปอยู่ในอาคารอพาร์ตเมนต์เก่า เขาค้นพบประตูที่ซ่อนอยู่และกุญแจภายในกำแพงที่นำไปสู่ ​​\"ตลาดผี\" อันลึกลับ ในตลาดที่ควบคุมโดยผี ทุกสิ่งมีราคา แม้แต่ช่วงชีวิต อารมณ์ ความทรงจำ และส่วนต่างๆ ของร่างกาย มินแจต่อสู้เพื่อเอาชีวิตรอดพร้อมกับรวบรวมความมั่งคั่งและอำนาจผ่านเกมอันตรายและข้อตกลงสุดอันตรายมากมาย และตอนนี้เขากำลังเตรียมการแก้แค้นขั้นสูงสุดต่อผู้ที่นำพาเขาไปสู่ความพินาศ **เว็บตูนต้นฉบับ:** [Naver Webtoon](https://comic.naver.com/webtoon/list?titleId=855894), [Naver Series](https://series.naver.com/comic/detail.series?productNo=14834143)",
+      "bookmarks_text": "562"
     },
     {
       "id": "nwfe-my-skill-bar-is-full-of-monsters",
@@ -1160,9 +1239,9 @@
       "score": "",
       "status": "Ongoing",
       "origin": "CN (Manhua)",
-      "time_updated": "อัปเดตเมื่อ 1 1   h o u r s ,   2 1   m i n u t e s",
-      "views_count": 45000,
-      "views_text": "45 K",
+      "time_updated": "อัปเดตเมื่อ 1 7   h o u r s ,   2 2   m i n u t e s",
+      "views_count": 46000,
+      "views_text": "46 K",
       "genres": [
         "Action",
         "Drama",
@@ -1174,6 +1253,30 @@
       "bookmarks_text": "1.2 K"
     },
     {
+      "id": "t30n-hin-no-jitsuryoku-o-kakushite-iru-sekai-saikyou-no-ossan-shinyuu-ga-boukensha-patii-kara-tsuihousareta-node-jibun-mo-nukeru-koto-ni-shita",
+      "title": "hin no Jitsuryoku o Kakushite Iru Sekai Saikyou no Ossan, Shinyuu ga Boukensha Patii kara Tsuihousareta node Jibun mo Nukeru Koto ni Shita",
+      "url": "https://www.mgeko.cc/manga/t30n-hin-no-jitsuryoku-o-kakushite-iru-sekai-saikyou-no-ossan-shinyuu-ga-boukensha-patii-kara-tsuihousareta-node-jibun-mo-nukeru-koto-ni-shita/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/O88XRe.png",
+      "chapter_count": 6,
+      "latest_chapter_text": "Chapter 6-eng-li",
+      "score": "",
+      "status": "Ongoing",
+      "origin": "JP (Manga)",
+      "time_updated": "อัปเดตเมื่อ 1   h o u r ,   2 2   m i n u t e s",
+      "views_count": 43000,
+      "views_text": "43 K",
+      "genres": [
+        "Shounen",
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "manga"
+      ],
+      "summary": "The former hero Roald, who hides his true identity and lives as an \"old man adventurer.\" He sees through the talents of Yukina, his companion who's treated as incompetent, and together they leave their old party to start anew in this reversal exile story!",
+      "summary_th": "อดีตฮีโร่โรอัลด์ผู้ซ่อนตัวตนที่แท้จริงของเขาและใช้ชีวิตในฐานะ \"นักผจญภัยผู้เฒ่า\" เขามองผ่านพรสวรรค์ของ Yukina เพื่อนของเขาที่ถูกปฏิบัติเหมือนไร้ความสามารถ และพวกเขาก็ออกจากปาร์ตี้เก่าเพื่อเริ่มต้นใหม่ในเรื่องราวการเนรเทศแบบพลิกกลับนี้!",
+      "bookmarks_text": "464"
+    },
+    {
       "id": "4ge7-zatsuyo-gakari-to-shite-yado-de-hataraki-hajimeta-renkinjutsu-shi-kanbanmusume-tachi-to-issho-ni-kurasu-koto-ni-natta",
       "title": "Zatsuyo-gakari to Shite Yado de Hataraki Hajimeta Renkinjutsu-shi, Kanbanmusume-tachi to Issho ni Kurasu Koto ni Natta",
       "url": "https://www.mgeko.cc/manga/4ge7-zatsuyo-gakari-to-shite-yado-de-hataraki-hajimeta-renkinjutsu-shi-kanbanmusume-tachi-to-issho-ni-kurasu-koto-ni-natta/",
@@ -1183,7 +1286,7 @@
       "score": "",
       "status": "Ongoing",
       "origin": "JP (Manga)",
-      "time_updated": "อัปเดตเมื่อ 2 3   h o u r s ,   5 2   m i n u t e s",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   5   h o u r s",
       "views_count": 39000,
       "views_text": "39 K",
       "genres": [
@@ -1195,8 +1298,35 @@
         "manga"
       ],
       "summary": "In the quiet countryside stands Yadorigi, an old inn with a nostalgic charm. Roji, a young man who works there as an all-purpose handyman, has a secret no one knows: in his previous life, he was a legendary alchemist. Grateful to the late benefactor who once took him in, Roji has been secretly using alchemy to help the inn's three beautiful sisters, who are the face of Yadorigi. But one stormy night, disaster strikes—his own dilapidated home is blown away without a trace! With nowhere else to go, Roji is at a loss until the three sisters offer him an unexpected solution: \"If you've got nowhere to stay, why not live here at the inn?!\" And so begins Roji's life under one roof with the three sisters: a caring and dependable eldest sister, a tsundere middle sister who struggles to express her feelings, and a carefree youngest sister. Join these endearingly awkward girls and their astonishingly capable—but blissfully unaware—handyman for a heartwarming, exciting new chapter in their lives!",
-      "summary_th": "ในชนบทอันเงียบสงบ ยาโดริกิเป็นโรงแรมเก่าแก่ที่มีเสน่ห์ชวนให้นึกถึงอดีต โรจิ ชายหนุ่มที่ทำงานที่นั่นเป็นช่างซ่อมบำรุงอเนกประสงค์ มีความลับที่ไม่มีใครรู้ ในชีวิตที่แล้ว เขาเป็นนักเล่นแร่แปรธาตุในตำนาน เพื่อแสดงความขอบคุณผู้มีพระคุณผู้ล่วงลับซึ่งครั้งหนึ่งเคยรับเขาเข้ามา โรจิจึงแอบใช้การเล่นแร่แปรธาตุเพื่อช่วยน้องสาวแสนสวยสามคนของโรงแรมซึ่งเป็นใบหน้าของยาโดริกิ แต่คืนหนึ่งที่พายุโหมกระหน่ำ ภัยพิบัติก็มาเยือน บ้านที่ทรุดโทรมของเขาเองถูกปลิวว่อนไปอย่างไร้ร่องรอย! โรจิไม่มีที่ไปอีกแล้ว จนกระทั่งสามสาวพี่น้องเสนอวิธีแก้ปัญหาที่ไม่คาดคิดให้เขา: \"ถ้าคุณไม่มีที่จะพัก ทำไมไม่พักที่โรงแรมนี้ล่ะ!\" ดังนั้นชีวิตของ Roji จึงเริ่มต้นขึ้นภายใต้หลังคาเดียวกันกับพี่สาวสามคน ได้แก่ พี่สาวคนโตที่เอาใจใส่และพึ่งพาได้ พี่สาวคนกลางซึนเดรีที่พยายามดิ้นรนที่จะแสดงความรู้สึกของเธอ และน้องสาวคนเล็กที่ไร้กังวล เข้าร่วมกับเด็กสาวที่น่าอึดอัดใจที่น่ารักเหล่านี้และช่างซ่อมบำรุงที่มีความสามารถอย่างน่าอัศจรรย์—แต่ไม่รู้ตัวอย่างมีความสุข—สำหรับบทใหม่ที่น่าตื่นเต้นและอบอุ่นใจในชีวิตของพวกเขา!",
-      "bookmarks_text": "408"
+      "summary_th": "ยาโดริกิเป็นโรงแรมเก่าแก่ที่มีเสน่ห์ชวนให้คิดถึงในชนบทอันเงียบสงบ โรจิ ชายหนุ่มที่ทำงานที่นั่นเป็นช่างซ่อมอเนกประสงค์ มีความลับที่ไม่มีใครรู้ ในชีวิตที่แล้ว เขาเป็นนักเล่นแร่แปรธาตุในตำนาน เพื่อแสดงความขอบคุณผู้มีพระคุณผู้ล่วงลับซึ่งครั้งหนึ่งเคยรับเขาเข้ามา โรจิจึงแอบใช้การเล่นแร่แปรธาตุเพื่อช่วยน้องสาวแสนสวยสามคนของโรงแรมซึ่งเป็นใบหน้าของยาโดริกิ แต่คืนหนึ่งที่พายุโหมกระหน่ำ ภัยพิบัติก็มาเยือน บ้านที่ทรุดโทรมของเขาเองถูกปลิวว่อนไปอย่างไร้ร่องรอย! โรจิไม่มีที่ไปอีกแล้ว จนกระทั่งสามสาวพี่น้องเสนอวิธีแก้ปัญหาที่ไม่คาดคิดให้เขา: \"ถ้าคุณไม่มีที่จะพัก ทำไมไม่พักที่โรงแรมนี้ล่ะ!\" ดังนั้นชีวิตของ Roji จึงเริ่มต้นขึ้นภายใต้หลังคาเดียวกันกับพี่สาวสามคน ได้แก่ พี่สาวคนโตที่เอาใจใส่และพึ่งพาได้ พี่สาวคนกลางซึนเดรีที่พยายามดิ้นรนที่จะแสดงความรู้สึกของเธอ และน้องสาวคนเล็กที่ไร้กังวล เข้าร่วมกับเด็กสาวที่น่าอึดอัดใจที่น่ารักเหล่านี้และช่างซ่อมบำรุงที่มีความสามารถอย่างน่าอัศจรรย์—แต่ไม่รู้ตัวอย่างมีความสุข—สำหรับบทใหม่ที่น่าตื่นเต้นและอบอุ่นใจในชีวิตของพวกเขา!",
+      "bookmarks_text": "409"
+    },
+    {
+      "id": "wa2n-nine-star-hegemon-body-arts",
+      "title": "Nine Star Hegemon Body Arts",
+      "url": "https://www.mgeko.cc/manga/wa2n-nine-star-hegemon-body-arts/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/qaK3Y.jpg",
+      "chapter_count": 2,
+      "latest_chapter_text": "Chapter 2-eng-li",
+      "score": "",
+      "status": "Ongoing",
+      "origin": "CN (Manhua)",
+      "time_updated": "อัปเดตเมื่อ 3   h o u r s",
+      "views_count": 32000,
+      "views_text": "32 K",
+      "genres": [
+        "Adventure",
+        "Fantasy",
+        "Historical",
+        "Martial Arts",
+        "Long Strip",
+        "Web Comic",
+        "Full Color",
+        "manhua"
+      ],
+      "summary": "Is Emperor Dan reborn? Is it a fusion of souls? Long Chen, who was stolen from his spiritual roots, spiritual blood, and spiritual bones, relied on the alchemy divine art in his memory to practice the mysterious nine-star hegemony tactics, to clear the heavy fog, and solve the shocking situation. The world in the palm of your hand, the sun, the moon, and the stars on your feet, hook up with all kinds of beauties and suppress evil spirits and evil spirits. Rivers and lakes rumors: When Long Chen arrives, the earth roars and the sky screams. When Long Chen came out, the ghost cried.",
+      "summary_th": "จักรพรรดิแดนเกิดใหม่แล้วเหรอ? มันเป็นการรวมตัวของจิตวิญญาณ? หลงเฉินซึ่งถูกขโมยไปจากรากจิตวิญญาณ เลือดจิตวิญญาณ และกระดูกจิตวิญญาณของเขา อาศัยศิลปะการเล่นแร่แปรธาตุศักดิ์สิทธิ์ในความทรงจำของเขาเพื่อฝึกฝนกลยุทธ์การครองอำนาจเก้าดาวอันลึกลับ เพื่อขจัดหมอกหนาทึบ และแก้ไขสถานการณ์ที่น่าตกใจ โลกในฝ่ามือของคุณ ดวงอาทิตย์ ดวงจันทร์ และดวงดาวบนเท้าของคุณ เกี่ยวพันกับความงามทุกชนิดและปราบปรามวิญญาณชั่วร้ายและวิญญาณชั่วร้าย ข่าวลือเกี่ยวกับแม่น้ำและทะเลสาบ: เมื่อหลงเฉินมาถึง แผ่นดินก็คำรามและท้องฟ้าก็กรีดร้อง เมื่อหลงเฉินออกมา ผีก็ร้องไห้",
+      "bookmarks_text": "392"
     },
     {
       "id": "ypk9-the-subcontractor-s-blueprint",
@@ -1208,16 +1338,39 @@
       "score": "",
       "status": "Ongoing",
       "origin": "KR (Manhwa)",
-      "time_updated": "อัปเดตเมื่อ 2 1   h o u r s ,   2 3   m i n u t e s",
-      "views_count": 11000,
-      "views_text": "11 K",
+      "time_updated": "อัปเดตเมื่อ 1   d a y ,   3   h o u r s",
+      "views_count": 12000,
+      "views_text": "12 K",
       "genres": [
         "Drama",
         "manhwa"
       ],
       "summary": "N/A",
       "summary_th": "ไม่มี",
-      "bookmarks_text": "198"
+      "bookmarks_text": "227"
+    },
+    {
+      "id": "514y-cyberpunk-chivalry",
+      "title": "Cyberpunk Chivalry",
+      "url": "https://www.mgeko.cc/manga/514y-cyberpunk-chivalry/",
+      "cover": "https://imgsrv5.com/avatar/288x412/media/manga_covers/a1855430-704f-462d-bf2b-afc1355c6af0.webp",
+      "chapter_count": 6,
+      "latest_chapter_text": "Chapter 6-eng-li",
+      "score": "",
+      "status": "Ongoing",
+      "origin": "KR (Manhwa)",
+      "time_updated": "อัปเดตเมื่อ 2   h o u r s ,   4 2   m i n u t e s",
+      "views_count": 11000,
+      "views_text": "11 K",
+      "genres": [
+        "Action",
+        "Drama",
+        "Fantasy",
+        "manhwa"
+      ],
+      "summary": "Having finally carved a bloody path of vengeance to its bitter end, the legendary swordsman known as the Bloodline of Kunlun closed his eyes, ready for eternal rest. Instead, he opens them to the hum of neon and the stench of decay. He hasn’t returned to the earth; he has awakened centuries later in the scrap yards of a sprawling futuristic metropolis, resurrected inside a cobbled-together humanoid body built from salvaged metal: Ash . Gone is his flesh and blood. Gone are his dantian and the deep reservoir of internal Qi that once shook the murim. In a world ruled by advanced cybernetic weaponry, high-tech mega-corporations, and cold steel, he is nothing more than a discarded machine. Until he tries to throw a punch. With no internal energy left to channel, the electric currents humming through his mechanical chassis suddenly spark, answering to the ancient katas etched into his soul. Electricity replaces Qi. The old martial arts still work. “I want revenge.”",
+      "summary_th": "ในที่สุด หลังจากกำหนดเส้นทางแห่งการแก้แค้นอันนองเลือดจนถึงจุดจบอันขมขื่น นักดาบในตำนานที่รู้จักกันในชื่อ Bloodline of Kunlun ก็หลับตาลง เตรียมพร้อมสำหรับการพักผ่อนชั่วนิรันดร์ แต่เขากลับเปิดพวกเขาให้ได้ยินเสียงครวญครางของแสงนีออนและกลิ่นเหม็นแห่งความเสื่อมโทรม เขาไม่ได้กลับมายังโลก เขาตื่นขึ้นมาในศตวรรษต่อมาในเศษซากของมหานครแห่งอนาคตที่เหยียดยาว และฟื้นคืนชีพขึ้นมาอีกครั้งภายในร่างมนุษย์ที่ปูด้วยหินเข้าด้วยกันซึ่งสร้างจากโลหะที่กู้คืนมา: Ash เนื้อและเลือดของเขาหายไปแล้ว ตันเถียนของเขาและแหล่งกักเก็บพลังชี่ลึกภายในที่เคยเขย่ามูริมไปแล้ว ในโลกที่ปกครองโดยอาวุธไซเบอร์เนติกส์ขั้นสูง บริษัทยักษ์ใหญ่ด้านเทคโนโลยีขั้นสูง และโคลด์สตีล เขาเป็นเพียงเครื่องจักรที่ถูกทิ้งร้าง จนกระทั่งเขาพยายามจะชก เมื่อพลังงานภายในหมดไป กระแสไฟฟ้าที่ส่งผ่านโครงจักรกลของเขาจึงเกิดประกายไฟขึ้นทันที เป็นการตอบสนองต่อคาตาโบราณที่ฝังอยู่ในจิตวิญญาณของเขา ไฟฟ้าเข้ามาแทนที่ Qi ศิลปะการต่อสู้แบบเก่ายังคงใช้งานได้ “ฉันต้องการแก้แค้น”",
+      "bookmarks_text": "244"
     }
   ]
 }
