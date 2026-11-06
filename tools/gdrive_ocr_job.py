@@ -637,7 +637,7 @@ def sanitize_filename(name: str) -> str:
     return cleaned or 'chapter'
 
 
-def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", ocr_text="", queue_id="", doc_url="", gas_url=None, passcode="10211032"):
+def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", ocr_text="", queue_id="", doc_url="", gas_url=None, passcode="10211032", manga_list=None, queue_items=None):
     """
     Constructs the PROMPT2 TEMPT content according to MangaHub AI Translation spec:
     1. ลิงก์ Google Docs ของเอกสารอ้างอิง (แท็บแรกเป็น Glossary)
@@ -666,11 +666,13 @@ def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", o
     manga_id = None
     if not final_doc_url or curr_ch_val is not None:
         try:
-            payload = {"action": "GET_MANGA_LIST", "passcode": passcode, "payload": {}}
-            req = urllib.request.Request(gas_api_url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                res_data = json.loads(resp.read().decode("utf-8"))
-                manga_list = res_data.get("data", [])
+            if manga_list is None:
+                payload = {"action": "GET_MANGA_LIST", "passcode": passcode, "payload": {}}
+                req = urllib.request.Request(gas_api_url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    res_data = json.loads(resp.read().decode("utf-8"))
+                    manga_list = res_data.get("data", [])
+            if True:
                 
                 # Match manga
                 matched = None
@@ -691,11 +693,14 @@ def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", o
     # Fetch previous chapters from WorkQueue if possible
     if manga_id and curr_ch_val is not None:
         try:
-            payload = {"action": "GET_WORK_QUEUE", "passcode": passcode, "payload": {"month": "all", "year": "all"}}
-            req = urllib.request.Request(gas_api_url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                q_data = json.loads(resp.read().decode("utf-8"))
-                q_items = q_data.get("data", [])
+            q_items = queue_items
+            if q_items is None:
+                payload = {"action": "GET_WORK_QUEUE", "passcode": passcode, "payload": {"month": "all", "year": "all"}}
+                req = urllib.request.Request(gas_api_url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    q_data = json.loads(resp.read().decode("utf-8"))
+                    q_items = q_data.get("data", [])
+            if True:
                 prev_chaps = []
                 for q in q_items:
                     if str(q.get("mangaid")) == str(manga_id):
@@ -921,7 +926,7 @@ def main():
         queue_id=args.queue_id,
         doc_url=args.doc_url,
         gas_url=args.gas_url,
-        gas_passcode=args.gas_passcode
+        passcode=args.gas_passcode
     )
     prompt_path = out_dir / prompt_filename
     with open(prompt_path, "w", encoding="utf-8") as fp:
@@ -955,6 +960,7 @@ def main():
     # 5. Upload .MTP and OCR .TXT directly into source Google Drive folder
     uploaded_mtp_id = None
     uploaded_txt_id = None
+    uploaded_prompt_id = None
     if args.upload_to_source and drive_service:
         print("\n☁️ [Google Drive Upload] 1/2 Uploading .mtp directly into source folder...")
         uploaded_mtp_id = upload_file_to_source_folder(drive_service, clean_folder_id, mtp_path)

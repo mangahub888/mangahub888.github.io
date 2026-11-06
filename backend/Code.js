@@ -8107,9 +8107,10 @@ function uploadTextToDriveFolder(payload) {
         if (workLinkCol > 0) {
           for (let i = 1; i < data.length; i++) {
             if (String(data[i][0]).trim() === queueId) {
+              const tag = payload.linkTag || (fileName.toUpperCase().includes('PROMPT') ? '[prompt]' : '[ocr txt]');
               const currentLink = String(data[i][workLinkCol - 1] || '');
               if (!currentLink.includes(fileId)) {
-                sheet.getRange(i + 1, workLinkCol).setValue(currentLink + (currentLink ? '\n' : '') + '[ocr txt] ' + fileUrl);
+                sheet.getRange(i + 1, workLinkCol).setValue(currentLink + (currentLink ? '\n' : '') + tag + ' ' + fileUrl);
               }
               break;
             }
