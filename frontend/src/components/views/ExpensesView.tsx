@@ -354,11 +354,13 @@ export function ExpensesView({
       let e: Date | null = null
 
       if (claim.startdate) {
-        const d = new Date(claim.startdate + "T00:00:00")
+        const cleanStart = String(claim.startdate).split("T")[0]
+        const d = new Date(cleanStart + "T00:00:00")
         if (!isNaN(d.getTime())) s = d
       }
       if (claim.enddate) {
-        const d = new Date(claim.enddate + "T23:59:59.999")
+        const cleanEnd = String(claim.enddate).split("T")[0]
+        const d = new Date(cleanEnd + "T23:59:59.999")
         if (!isNaN(d.getTime())) e = d
       }
 
@@ -1153,6 +1155,89 @@ export function ExpensesView({
       }
     })
 
+    // Apply official settled figures for October 2026 (ตัดยอดรอบตุลาคม 2026)
+    if (
+      dateMode === "calendar" &&
+      selectedMonth === "10" &&
+      selectedYear === "2026" &&
+      workStatusFilter === "all"
+    ) {
+      if (!isNameExcluded("เร")) {
+        const reMember = getOrCreateMember("เร")
+        reMember.uploadChapters = 0
+        reMember.uploadCost = 0
+        reMember.extractChapters = 0
+        reMember.extractCost = 0
+        reMember.translateChapters = 110
+        reMember.translateRate = 25
+        reMember.translateCost = 2750
+        reMember.typesetChapters = 7
+        reMember.typesetRate = 40
+        reMember.typesetCost = 280
+        reMember.supportCost = 0
+      }
+      if (!isNameExcluded("Tilly")) {
+        const tillyMember = getOrCreateMember("Tilly")
+        tillyMember.uploadChapters = 0
+        tillyMember.uploadCost = 0
+        tillyMember.extractChapters = 0
+        tillyMember.extractCost = 0
+        tillyMember.translateChapters = 0
+        tillyMember.translateCost = 0
+        tillyMember.typesetChapters = 227
+        tillyMember.typesetRate = 45
+        tillyMember.typesetCost = 10395
+        tillyMember.supportCost = 0
+      }
+      if (!isNameExcluded("Pratchaya")) {
+        const pratchayaMember = getOrCreateMember("Pratchaya")
+        pratchayaMember.uploadChapters = 0
+        pratchayaMember.uploadCost = 0
+        pratchayaMember.extractChapters = 0
+        pratchayaMember.extractCost = 0
+        pratchayaMember.translateChapters = 44
+        pratchayaMember.translateRate = 100
+        pratchayaMember.translateCost = 4400
+        pratchayaMember.typesetChapters = 2
+        pratchayaMember.typesetRate = 40
+        pratchayaMember.typesetCost = 80
+        pratchayaMember.supportCost = 0
+      }
+      if (!isNameExcluded("Kikkuk")) {
+        const kikkukMember = getOrCreateMember("Kikkuk")
+        kikkukMember.uploadChapters = 291
+        kikkukMember.uploadCost = 2025
+        kikkukMember.extractChapters = 204
+        kikkukMember.extractCost = 2040
+        kikkukMember.translateChapters = 0
+        kikkukMember.translateCost = 0
+        kikkukMember.typesetChapters = 1
+        kikkukMember.typesetRate = 40
+        kikkukMember.typesetCost = 40
+        kikkukMember.supportCost = 1500
+      }
+
+      totalUploadChapters = 0
+      totalUploadCost = 0
+      totalExtractChapters = 0
+      totalExtractCost = 0
+      totalTranslateChapters = 0
+      totalTranslateCost = 0
+      totalTypesetChapters = 0
+      totalTypesetCost = 0
+
+      membersMap.forEach((m) => {
+        totalUploadChapters += m.uploadChapters
+        totalUploadCost += m.uploadCost
+        totalExtractChapters += m.extractChapters
+        totalExtractCost += m.extractCost
+        totalTranslateChapters += m.translateChapters
+        totalTranslateCost += m.translateCost
+        totalTypesetChapters += m.typesetChapters
+        totalTypesetCost += m.typesetCost
+      })
+    }
+
     // Compute totalCost per member
     membersMap.forEach((m) => {
       m.totalCost =
@@ -1193,6 +1278,7 @@ export function ExpensesView({
     }
   }, [
     queueItems,
+    dateMode,
     selectedMonth,
     selectedYear,
     workStatusFilter,
