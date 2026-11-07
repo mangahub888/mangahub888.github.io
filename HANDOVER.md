@@ -6,6 +6,25 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 เพิ่มเว็บ Comix.to (`https://comix.to/`) ในหน้าหาไอเดียโปรเจคใหม่ (`ProjectIdeasView.tsx`) พร้อมแยก 2 เว็บไซต์เป็น 2 ฟิลเตอร์อิสระ (`Mgeko` vs `Comix.to`) และขยายช่วงตอน `0-100` ตอน สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
+
+#### 1. รายละเอียด Requirement จาก USER:
+1. **"หน้าหาไอเดียโปรเจคใหม่ จาก max 30 ep เราเพิ่มไปให้เลือกได้หลายระดับไปเลย 1-5 6-10 ... 0-100"**
+2. **"เอา [Comix - Read Comics online for free](https://comix.to/) มาใส่ในการหาไอเดียใหม่ด้วย โดยแยก 2 เวปออกจากกัน ทำเป็น 2 ฟีลเตอร์"**
+
+#### 2. สิ่งที่ได้รับการปรับปรุงและแก้ไข (Frontend, Crawler & Backend Pipeline):
+1. **เพิ่มฟิลเตอร์แยก 2 เว็บไซต์ต้นทางอย่างชัดเจนใน `frontend/src/components/views/ProjectIdeasView.tsx`**:
+   - **🟠 ฟิลเตอร์เว็บ 1: Mgeko (`mgeko.cc/jumbo/manga`)** — แสดงข้อมูล สถิติ จำนวนเรื่อง หมวดหมู่ และลิงก์ `เปิด Mgeko` เฉพาะของ Mgeko (161 เรื่อง)
+   - **🟣 ฟิลเตอร์เว็บ 2: Comix - Read Comics online (`comix.to`)** — แสดงข้อมูล สถิติ จำนวนผู้ติดตาม หมวดหมู่ และลิงก์ `เปิด Comix.to` เฉพาะของ Comix.to (250 เรื่อง)
+   - สามารถสลับระหว่าง 2 เว็บไซต์ได้ทั้งจากการ์ดฟิลเตอร์ขนาดใหญ่ด้านบน และปุ่มสลับด่วน (`🟠 Mgeko` / `🟣 Comix.to`) ในแถบเครื่องมือค้นหา
+   - เพิ่ม `referrerPolicy="no-referrer"` บนแท็ก `<img>` เพื่อให้ภาพหน้าปกจาก `https://comix.to/images/covers/...` โหลดแสดงผลได้ครบทุกเรื่องโดยไม่ติดการบล็อก Referer
+2. **อัปเกรดกุญแจเข้ารหัส Comix.to API (`c38.` Signature & `ZJ_HEX`) และ Crawler Engine**:
+   - อัปเดต `COMIX_SIG_PREFIX = "c38"` และ `ZJ_HEX` ชุดใหม่ล่าสุดจาก `apicore` bundle ของ Comix.to ใน `tools/comix_purchaser.py` และ `backend/Code.js`
+   - อัปเกรด `tools/mgeko_project_ideas_crawler.py` ให้ดึงข้อมูลทั้งจาก **Mgeko** และ **Comix.to** (`/api/v1/manga` ทั้งหมวด Trending 7d, Most Followed, และ Recently Updated ที่มีจำนวนตอน `1 - 100` ตอน) พร้อมทำความสะอาดเรื่องย่อและแปลเป็นภาษาไทย บันทึกลง `tools/data/project_ideas_latest.json`, `tools/data/comix_project_ideas_latest.json`, `frontend/src/data/`, และ `frontend/public/data/`
+   - อัปเดต `.github/workflows/project_ideas_crawler.yml` ให้รันสแกนและอัปเดตข้อมูลทั้ง 2 เว็บไซต์อัตโนมัติทุกๆ 6 ชั่วโมง
+
+---
+
 ### 🏆 อัปเกรดหน้าหาไอเดียโปรเจคใหม่ (`ProjectIdeasView.tsx` & Crawler Pipeline) — ขยายช่วงตอนจาก ≤ 30 ตอน เป็น 0-100 ตอน พร้อมตัวกรองหลายระดับ (`1-5`, `6-10` ... `96-100`) สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
 
 #### 1. รายละเอียด Requirement จาก USER:

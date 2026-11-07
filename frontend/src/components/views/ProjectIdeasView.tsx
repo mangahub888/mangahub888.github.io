@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import initialIdeasData from "@/data/project_ideas_latest.json"
+import initialComixIdeasData from "@/data/comix_project_ideas_latest.json"
 import { callGasApi } from "@/api/gasClient"
 import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
 import { toast } from "sonner"
@@ -35,6 +36,7 @@ import {
   PowerOff,
   Loader2,
   SlidersHorizontal,
+  Globe,
 } from "lucide-react"
 
 interface TriggerStatusData {
@@ -51,6 +53,42 @@ interface TriggerStatusData {
 interface ProjectIdeasViewProps {
   onOpenAddManga?: (prefilled: any) => void
 }
+
+export type SourceFilterId = "mgeko" | "comix"
+
+export interface SourceWebsiteConfig {
+  id: SourceFilterId
+  name: string
+  domain: string
+  url: string
+  badgeText: string
+  accentColor: "amber" | "violet"
+  metricLabel: string
+  openButtonLabel: string
+}
+
+export const SOURCE_WEBSITE_FILTERS: SourceWebsiteConfig[] = [
+  {
+    id: "mgeko",
+    name: "Mgeko",
+    domain: "mgeko.cc/jumbo/manga",
+    url: "https://www.mgeko.cc/jumbo/manga/",
+    badgeText: "เว็บที่ 1 • Mgeko.cc",
+    accentColor: "amber",
+    metricLabel: "วิว",
+    openButtonLabel: "เปิด Mgeko",
+  },
+  {
+    id: "comix",
+    name: "Comix - Read Comics online",
+    domain: "comix.to",
+    url: "https://comix.to/",
+    badgeText: "เว็บที่ 2 • Comix.to",
+    accentColor: "violet",
+    metricLabel: "ผู้ติดตาม",
+    openButtonLabel: "เปิด Comix.to",
+  },
+]
 
 export interface ChapterRangePreset {
   id: string
@@ -94,9 +132,13 @@ export const CHAPTER_RANGE_PRESETS: ChapterRangePreset[] = [
 ]
 
 export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
-  const [data, setData] = React.useState<any>(initialIdeasData)
+  const [rawData, setRawData] = React.useState<any>(initialIdeasData)
+  const [comixFallbackData, setComixFallbackData] = React.useState<any>(initialComixIdeasData)
   const [loading, setLoading] = React.useState<boolean>(false)
   const [triggering, setTriggering] = React.useState<boolean>(false)
+
+  // 2 Separate Website Filters: "mgeko" vs "comix"
+  const [sourceFilter, setSourceFilter] = React.useState<SourceFilterId>("mgeko")
 
   // 6-Hour Automation Trigger Status
   const [triggerStatus, setTriggerStatus] = React.useState<TriggerStatusData | null>(null)
@@ -117,6 +159,35 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
   const [viewMode, setViewMode] = React.useState<"grid" | "table">("grid")
   const [expandedSummaries, setExpandedSummaries] = React.useState<Record<string, boolean>>({})
 
+  // Resolve separated datasets for Mgeko and Comix.to
+  const mgekoDataset = React.useMemo(() => {
+    if (rawData?.sources?.mgeko && Array.isArray(rawData.sources.mgeko.items)) {
+      return rawData.sources.mgeko
+    }
+    return rawData
+  }, [rawData])
+
+  const comixDataset = React.useMemo(() => {
+    if (rawData?.sources?.comix && Array.isArray(rawData.sources.comix.items) && rawData.sources.comix.items.length > 0) {
+      return rawData.sources.comix
+    }
+    return comixFallbackData
+  }, [rawData, comixFallbackData])
+
+  // Active dataset based on selected website filter ("mgeko" or "comix")
+  const data = React.useMemo(() => {
+    return sourceFilter === "comix" ? comixDataset : mgekoDataset
+  }, [sourceFilter, mgekoDataset, comixDataset])
+
+  const activeSourceConfig = React.useMemo(() => {
+    return SOURCE_WEBSITE_FILTERS.find((s) => s.id === sourceFilter) || SOURCE_WEBSITE_FILTERS[0]
+  }, [sourceFilter])
+
+  const handleSelectWebsiteFilter = (nextSource: SourceFilterId) => {
+    setSourceFilter(nextSource)
+    setSelectedGenre("all")
+  }
+
   // Fetch freshest data
   const loadLatestIdeas = React.useCallback(async () => {
     setLoading(true)
@@ -129,15 +200,23 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
         if (liveRes.ok) {
           const json = await liveRes.json()
           if (json && Array.isArray(json.items) && json.items.length > 0) {
-            setData((prev: any) => {
-              const prevThresh = Number(prev?.max_chapters_threshold || 0)
-              const nextThresh = Number(json?.max_chapters_threshold || 0)
-              const prevLen = Array.isArray(prev?.items) ? prev.items.length : 0
-              if (prevThresh > nextThresh && prevLen > json.items.length) {
-                return prev
+            setRawData((prev: any) => {
+              const prevHasComix = Boolean(prev?.sources?.comix?.items?.length)
+              const nextHasComix = Boolean(json?.sources?.comix?.items?.length)
+              if (prevHasComix && !nextHasComix) {
+                return {
+                  ...json,
+                  sources: {
+                    mgeko: json,
+                    comix: prev.sources.comix,
+                  },
+                }
               }
               return json
             })
+            if (json?.sources?.comix?.items?.length) {
+              setComixFallbackData(json.sources.comix)
+            }
             setLoading(false)
             return
           }
@@ -149,7 +228,10 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
       if (res.ok) {
         const json = await res.json()
         if (json && Array.isArray(json.items) && json.items.length > 0) {
-          setData(json)
+          setRawData(json)
+          if (json?.sources?.comix?.items?.length) {
+            setComixFallbackData(json.sources.comix)
+          }
           setLoading(false)
           return
         }
@@ -212,10 +294,10 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
   // Manually Trigger Project Ideas Workflow Pipeline
   const handleTriggerAction = async () => {
     setTriggering(true)
-    const toastId = toast.loading("กำลังส่งสัญญาณรัน Mgeko Discovery (0-100 ตอน) บน GitHub Actions...")
+    const toastId = toast.loading("กำลังส่งสัญญาณรันสแกน Mgeko + Comix.to (0-100 ตอน) บน GitHub Actions...")
     try {
       await callGasApi("TRIGGER_PROJECT_IDEAS_PIPELINE", { source: "project_ideas_ui", maxChapters: 100, pages: 5 })
-      toast.success("🚀 ส่งสัญญาณให้ระบบสแกนหาไอเดียมังงะใหม่ (0-100 ตอน) เรียบร้อยแล้ว!", { id: toastId })
+      toast.success("🚀 ส่งสัญญาณให้ระบบสแกนหาไอเดียมังงะใหม่ (Mgeko + Comix.to 0-100 ตอน) เรียบร้อยแล้ว!", { id: toastId })
       if (refetchActions) refetchActions()
       setTimeout(() => {
         loadLatestIdeas()
@@ -259,7 +341,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
     setCustomMaxEp("")
   }
 
-  // Compute counts per preset range (taking into account origin/genre/search filters if any, or raw items)
+  // Compute counts per preset range for the currently selected website filter
   const rangeCounts = React.useMemo(() => {
     const items = Array.isArray(data?.items) ? data.items : []
     const counts: Record<string, number> = {}
@@ -290,9 +372,10 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
 
     // Genre Filter
     if (selectedGenre !== "all") {
-      list = list.filter((item) =>
-        Array.isArray(item.genres) &&
-        item.genres.some((g: string) => g.toLowerCase() === selectedGenre.toLowerCase())
+      list = list.filter(
+        (item) =>
+          Array.isArray(item.genres) &&
+          item.genres.some((g: string) => g.toLowerCase() === selectedGenre.toLowerCase())
       )
     }
 
@@ -302,6 +385,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
       list = list.filter(
         (item) =>
           (item.title && item.title.toLowerCase().includes(q)) ||
+          (Array.isArray(item.alt_titles) && item.alt_titles.some((t: string) => t && t.toLowerCase().includes(q))) ||
           (item.summary && item.summary.toLowerCase().includes(q)) ||
           (item.summary_th && item.summary_th.toLowerCase().includes(q)) ||
           (Array.isArray(item.genres) && item.genres.some((g: string) => g.toLowerCase().includes(q)))
@@ -329,6 +413,9 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
   const broadPresets = React.useMemo(() => CHAPTER_RANGE_PRESETS.filter((p) => p.group === "broad"), [])
   const steppedPresets = React.useMemo(() => CHAPTER_RANGE_PRESETS.filter((p) => p.group === "stepped"), [])
 
+  const mgekoCount = Array.isArray(mgekoDataset?.items) ? mgekoDataset.items.length : 0
+  const comixCount = Array.isArray(comixDataset?.items) ? comixDataset.items.length : 0
+
   return (
     <div className="space-y-6">
       {/* Top Banner */}
@@ -343,18 +430,22 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                 หาไอเดียโปรเจคใหม่ (New Project Discovery)
               </span>
               <Badge className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                รองรับทุกระดับ: 0 - 100 ตอน (เลือกซอยย่อยทีละ 5 ตอนได้)
+                รองรับ 2 เว็บไซต์แยกฟิลเตอร์ • 0 - 100 ตอน
               </Badge>
             </div>
             <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
-              <span>สแกนจาก:</span>
+              <span>กำลังดูข้อมูลจาก:</span>
               <a
-                href="https://www.mgeko.cc/jumbo/manga/"
+                href={activeSourceConfig.url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-amber-400 hover:text-amber-300 font-mono flex items-center gap-1 underline underline-offset-2"
+                className={`font-mono flex items-center gap-1 underline underline-offset-2 ${
+                  sourceFilter === "comix"
+                    ? "text-violet-400 hover:text-violet-300"
+                    : "text-amber-400 hover:text-amber-300"
+                }`}
               >
-                mgeko.cc/jumbo/manga <ExternalLink className="h-3 w-3 inline" />
+                {activeSourceConfig.domain} <ExternalLink className="h-3 w-3 inline" />
               </a>
               <span>• อัปเดตล่าสุด:</span>
               <span className="text-slate-200 font-mono">
@@ -387,6 +478,108 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
             {triggering ? "กำลังสั่งรัน..." : "สั่งสแกนอัปเดตสด"}
           </Button>
         </div>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* 2 SEPARATED WEBSITE FILTERS (Mgeko.cc vs Comix.to)                    */}
+      {/* ===================================================================== */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* Filter 1: Mgeko (mgeko.cc) */}
+        <button
+          type="button"
+          onClick={() => handleSelectWebsiteFilter("mgeko")}
+          className={`text-left p-4 rounded-xl border transition-all flex items-center justify-between gap-4 ${
+            sourceFilter === "mgeko"
+              ? "bg-gradient-to-r from-amber-950/60 via-[#131c31] to-[#0f172a] border-amber-500/70 ring-1 ring-amber-500/50 shadow-lg shadow-amber-500/10"
+              : "bg-[#0f172a]/70 border-slate-800 hover:border-amber-500/40 hover:bg-[#111a2e]"
+          }`}
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div
+              className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${
+                sourceFilter === "mgeko"
+                  ? "bg-amber-500/20 text-amber-400 border-amber-500/50"
+                  : "bg-slate-800/70 text-slate-400 border-slate-700"
+              }`}
+            >
+              <Globe className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-bold text-white">
+                  🟠 ฟิลเตอร์เว็บ 1: Mgeko (mgeko.cc)
+                </span>
+                {sourceFilter === "mgeko" && (
+                  <Badge className="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-2 py-0">
+                    กำลังเลือกใช้งาน
+                  </Badge>
+                )}
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5 truncate">
+                แหล่งรวมมังงะอัปเดตไว (mgeko.cc/jumbo/manga) • คัดเฉพาะไม่เกิน 100 ตอน
+              </p>
+            </div>
+          </div>
+
+          <div className="text-right shrink-0">
+            <div className="text-xl font-bold font-mono text-amber-400">
+              {mgekoCount} <span className="text-xs font-normal text-slate-400">เรื่อง</span>
+            </div>
+            <div className="text-[10px] text-slate-400 font-mono">
+              KR {mgekoDataset?.origin_distribution?.["KR (Manhwa)"] || 0} • CN{" "}
+              {mgekoDataset?.origin_distribution?.["CN (Manhua)"] || 0}
+            </div>
+          </div>
+        </button>
+
+        {/* Filter 2: Comix - Read Comics online for free (comix.to) */}
+        <button
+          type="button"
+          onClick={() => handleSelectWebsiteFilter("comix")}
+          className={`text-left p-4 rounded-xl border transition-all flex items-center justify-between gap-4 ${
+            sourceFilter === "comix"
+              ? "bg-gradient-to-r from-violet-950/60 via-[#161432] to-[#0f172a] border-violet-500/70 ring-1 ring-violet-500/50 shadow-lg shadow-violet-500/10"
+              : "bg-[#0f172a]/70 border-slate-800 hover:border-violet-500/40 hover:bg-[#13142c]"
+          }`}
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div
+              className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 border transition-colors ${
+                sourceFilter === "comix"
+                  ? "bg-violet-500/20 text-violet-300 border-violet-500/50"
+                  : "bg-slate-800/70 text-slate-400 border-slate-700"
+              }`}
+            >
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-bold text-white">
+                  🟣 ฟิลเตอร์เว็บ 2: Comix - Read Comics online (comix.to)
+                </span>
+                {sourceFilter === "comix" && (
+                  <Badge className="bg-violet-500/20 text-violet-300 border border-violet-500/40 text-[10px] px-2 py-0">
+                    กำลังเลือกใช้งาน
+                  </Badge>
+                )}
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5 truncate">
+                แหล่งรวม Manhwa / Manhua / Manga มาแรงจาก Comix.to • คัดเฉพาะไม่เกิน 100 ตอน
+              </p>
+            </div>
+          </div>
+
+          <div className="text-right shrink-0">
+            <div className="text-xl font-bold font-mono text-violet-400">
+              {comixCount} <span className="text-xs font-normal text-slate-400">เรื่อง</span>
+            </div>
+            <div className="text-[10px] text-slate-400 font-mono">
+              KR {comixDataset?.origin_distribution?.["KR (Manhwa)"] || 0} • CN{" "}
+              {comixDataset?.origin_distribution?.["CN (Manhua)"] || 0} • JP{" "}
+              {comixDataset?.origin_distribution?.["JP (Manga)"] || 0}
+            </div>
+          </div>
+        </button>
       </div>
 
       {/* 6-Hour Automation Trigger Status & Control Banner */}
@@ -484,7 +677,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
         </div>
       </div>
 
-      {/* 4 KPI Summary Cards */}
+      {/* 4 KPI Summary Cards (Specific to the active Website Filter) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card
           onClick={() => handleSelectPresetRange("0-100")}
@@ -494,7 +687,9 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-400">🎯 มังงะที่ผ่านเกณฑ์ (0 - 100 ตอน)</p>
+              <p className="text-xs text-slate-400">
+                🎯 มังงะใน {sourceFilter === "comix" ? "Comix.to" : "Mgeko"} (0 - 100 ตอน)
+              </p>
               <p className="text-2xl font-bold font-mono text-amber-400 mt-1">
                 {data?.total_candidates || (data?.items || []).length || 0}{" "}
                 <span className="text-xs font-normal text-slate-400">เรื่อง</span>
@@ -537,7 +732,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
         <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-400">🌏 สัญชาติมังงะ</p>
+              <p className="text-xs text-slate-400">🌏 สัญชาติมังงะ ({sourceFilter === "comix" ? "Comix.to" : "Mgeko"})</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs font-mono font-medium text-slate-200">
                   🇰🇷 Manhwa ({data?.origin_distribution?.["KR (Manhwa)"] || 0})
@@ -576,12 +771,12 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
 
       {/* Control Filters Bar */}
       <div className="flex flex-col gap-3 p-3.5 rounded-xl border border-slate-800 bg-[#0b1120]/80">
-        {/* Row 1: Search, Quick Select Dropdown, Sort, View Toggle */}
+        {/* Row 1: Search, Quick Website Switcher, Episode Range Dropdown, Sort, View Toggle */}
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-lg">
             <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
             <Input
-              placeholder="ค้นหาชื่อมังงะ, คีย์เวิร์ด, หรือเรื่องย่อ..."
+              placeholder={`ค้นหาชื่อมังงะ, ชื่อรอง, หรือเรื่องย่อใน ${sourceFilter === "comix" ? "Comix.to" : "Mgeko"}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 pl-8 text-xs bg-[#0f172a] border-slate-800"
@@ -589,6 +784,34 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Compact Website Filter Pills inside Filter Bar */}
+            <div className="flex items-center bg-[#0f172a] p-0.5 rounded-lg border border-slate-800">
+              <button
+                type="button"
+                onClick={() => handleSelectWebsiteFilter("mgeko")}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
+                  sourceFilter === "mgeko"
+                    ? "bg-amber-600 text-white shadow-xs"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <span>🟠 Mgeko</span>
+                <span className="text-[10px] font-mono opacity-85">({mgekoCount})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSelectWebsiteFilter("comix")}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
+                  sourceFilter === "comix"
+                    ? "bg-violet-600 text-white shadow-xs"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <span>🟣 Comix.to</span>
+                <span className="text-[10px] font-mono opacity-85">({comixCount})</span>
+              </button>
+            </div>
+
             {/* Dropdown Select for Episode Range */}
             <div className="flex items-center gap-1.5">
               <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap">เลือกช่วงตอน:</span>
@@ -626,7 +849,9 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
               value={sortBy}
               onChange={(e: any) => setSortBy(e.target.value)}
             >
-              <option value="views_desc">ยอดวิวสูงสุด 🔥</option>
+              <option value="views_desc">
+                {sourceFilter === "comix" ? "ผู้ติดตามสูงสุด 🔥" : "ยอดวิวสูงสุด 🔥"}
+              </option>
               <option value="chap_asc">ตอนน้อยสุดไปมาก (1 → 100)</option>
               <option value="chap_desc">ตอนมากสุดไปน้อย (100 → 1)</option>
               <option value="score_desc">คะแนนรีวิวสูงสุด ⭐</option>
@@ -838,16 +1063,27 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
 
       {/* Results Count Header */}
       <div className="flex items-center justify-between text-xs text-slate-400 px-1 flex-wrap gap-2">
-        <span>
-          พบมังงะไอเดียใหม่ที่ตรงกับเงื่อนไข:{" "}
-          <strong className="text-amber-400 font-mono text-sm">{filteredItems.length}</strong> เรื่อง
+        <span className="flex items-center gap-2 flex-wrap">
+          <Badge
+            className={`text-[10px] font-mono ${
+              sourceFilter === "comix"
+                ? "bg-violet-500/20 text-violet-300 border border-violet-500/40"
+                : "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+            }`}
+          >
+            {activeSourceConfig.badgeText}
+          </Badge>
+          <span>
+            พบมังงะไอเดียใหม่ที่ตรงกับเงื่อนไข:{" "}
+            <strong className="text-amber-400 font-mono text-sm">{filteredItems.length}</strong> เรื่อง
+          </span>
         </span>
         <span>
           กรองช่วงตอน:{" "}
           <strong className="text-emerald-400 font-mono">
             {activeBounds.min} - {activeBounds.max} ตอน
           </strong>{" "}
-          (จากฐานข้อมูล 0 - {data?.max_chapters_threshold || 100} ตอน)
+          (จากฐานข้อมูล {sourceFilter === "comix" ? "Comix.to" : "Mgeko"} 0 - {data?.max_chapters_threshold || 100} ตอน)
         </span>
       </div>
 
@@ -857,7 +1093,9 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
           {filteredItems.length === 0 ? (
             <div className="col-span-full py-16 text-center text-slate-500">
               <Compass className="h-8 w-8 mx-auto mb-2 text-slate-600 opacity-60" />
-              <p>ไม่พบมังงะในช่วง {activeBounds.min} - {activeBounds.max} ตอน ที่ตรงกับเงื่อนไขการค้นหา</p>
+              <p>
+                ไม่พบมังงะใน {sourceFilter === "comix" ? "Comix.to" : "Mgeko"} ช่วง {activeBounds.min} - {activeBounds.max} ตอน ที่ตรงกับเงื่อนไขการค้นหา
+              </p>
               <Button
                 variant="outline"
                 size="sm"
@@ -872,11 +1110,16 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
               const isExpanded = expandedSummaries[item.id] || false
               const displaySummary = item.summary_th || item.summary || ""
               const hasLongSummary = displaySummary.length > 140
+              const isComixItem = item.source === "comix" || sourceFilter === "comix"
 
               return (
                 <Card
-                  key={item.id || idx}
-                  className="overflow-hidden border-slate-800 bg-[#0f172a]/80 hover:border-amber-500/40 hover:bg-[#121b2f] transition-all flex flex-col justify-between group"
+                  key={`${item.source || sourceFilter}-${item.id || idx}`}
+                  className={`overflow-hidden border-slate-800 bg-[#0f172a]/80 transition-all flex flex-col justify-between group ${
+                    isComixItem
+                      ? "hover:border-violet-500/40 hover:bg-[#14162e]"
+                      : "hover:border-amber-500/40 hover:bg-[#121b2f]"
+                  }`}
                 >
                   <div className="p-4 flex gap-4">
                     {/* Cover Image */}
@@ -885,6 +1128,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                         <img
                           src={item.cover}
                           alt={item.title}
+                          referrerPolicy="no-referrer"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           loading="lazy"
                         />
@@ -894,11 +1138,11 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                         </div>
                       )}
 
-                      {/* Views / Score Badge */}
+                      {/* Views / Follows / Score Badge */}
                       {item.views_text || item.views_count ? (
                         <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-[10px] font-mono text-amber-400 flex items-center gap-1 font-bold border border-amber-500/20">
                           <Flame className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
-                          {item.views_text || `${(item.views_count || 0).toLocaleString()} วิว`}
+                          {item.views_text || `${(item.views_count || 0).toLocaleString()}`}
                         </span>
                       ) : item.score ? (
                         <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/80 backdrop-blur-sm text-[10px] font-mono text-amber-400 flex items-center gap-0.5 font-bold">
@@ -929,6 +1173,11 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                           >
                             {item.origin || "Manga"}
                           </Badge>
+                          {item.score && (
+                            <span className="text-[10px] font-mono text-amber-300 bg-amber-500/10 px-1.5 py-0 rounded border border-amber-500/20">
+                              ⭐ {item.score}
+                            </span>
+                          )}
                           {item.time_updated && (
                             <span className="text-[10px] text-slate-500 font-mono">
                               {item.time_updated}
@@ -968,7 +1217,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                         {item.views_text ? (
                           <span className="text-[11px] text-amber-400 font-mono flex items-center gap-1 font-semibold">
                             <Flame className="h-3 w-3 fill-amber-400 text-amber-400" />
-                            {item.views_text} วิว
+                            {item.views_text} {activeSourceConfig.metricLabel}
                           </span>
                         ) : (
                           <span className="text-[10px] text-slate-500">
@@ -1013,10 +1262,14 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                         href={item.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center h-7 px-2 text-[11px] text-amber-400 hover:text-amber-300 transition-colors font-medium rounded-md hover:bg-amber-500/10"
+                        className={`inline-flex items-center h-7 px-2 text-[11px] transition-colors font-medium rounded-md ${
+                          isComixItem
+                            ? "text-violet-400 hover:text-violet-300 hover:bg-violet-500/10"
+                            : "text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                        }`}
                       >
                         <ExternalLink className="h-3 w-3 mr-1" />
-                        เปิด Mgeko
+                        {isComixItem ? "เปิด Comix.to" : "เปิด Mgeko"}
                       </a>
                     </div>
 
@@ -1058,7 +1311,9 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                   <TableHead className="min-w-[200px]">ชื่อเรื่องมังงะ</TableHead>
                   <TableHead className="text-center min-w-[90px]">สัญชาติ</TableHead>
                   <TableHead className="text-center min-w-[100px]">ตอนล่าสุด</TableHead>
-                  <TableHead className="text-center min-w-[90px]">ยอดวิว</TableHead>
+                  <TableHead className="text-center min-w-[90px]">
+                    {sourceFilter === "comix" ? "ผู้ติดตาม" : "ยอดวิว"}
+                  </TableHead>
                   <TableHead className="min-w-[180px]">หมวดหมู่</TableHead>
                   <TableHead className="text-center min-w-[120px]">อัปเดตเมื่อ</TableHead>
                   <TableHead className="text-right min-w-[140px]">การจัดการ</TableHead>
@@ -1072,127 +1327,139 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredItems.map((item, idx) => (
-                    <TableRow
-                      key={item.id || idx}
-                      className="border-slate-800/60 hover:bg-[#151d2f]/50 transition-colors"
-                    >
-                      <TableCell className="text-center font-mono font-medium text-xs text-slate-400">
-                        #{idx + 1}
-                      </TableCell>
+                  filteredItems.map((item, idx) => {
+                    const isComixItem = item.source === "comix" || sourceFilter === "comix"
+                    return (
+                      <TableRow
+                        key={`${item.source || sourceFilter}-${item.id || idx}`}
+                        className="border-slate-800/60 hover:bg-[#151d2f]/50 transition-colors"
+                      >
+                        <TableCell className="text-center font-mono font-medium text-xs text-slate-400">
+                          #{idx + 1}
+                        </TableCell>
 
-                      <TableCell className="text-center">
-                        <div className="w-10 h-14 rounded overflow-hidden bg-slate-900 border border-slate-800 mx-auto">
-                          {item.cover ? (
-                            <img src={item.cover} alt={item.title} className="w-full h-full object-cover" />
+                        <TableCell className="text-center">
+                          <div className="w-10 h-14 rounded overflow-hidden bg-slate-900 border border-slate-800 mx-auto">
+                            {item.cover ? (
+                              <img
+                                src={item.cover}
+                                alt={item.title}
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <BookOpen className="h-4 w-4 m-auto text-slate-600" />
+                            )}
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-semibold text-slate-100 hover:text-amber-300 transition-colors line-clamp-1">
+                              {item.title}
+                            </span>
+                            {(item.summary_th || item.summary) && (
+                              <span className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
+                                {item.summary_th || item.summary}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="text-center">
+                          <Badge
+                            className={`text-[10px] font-normal border ${
+                              item.origin?.includes("KR")
+                                ? "bg-purple-500/10 text-purple-400 border-purple-500/30"
+                                : item.origin?.includes("CN")
+                                ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                : "bg-blue-500/10 text-blue-400 border-blue-500/30"
+                            }`}
+                          >
+                            {item.origin || "Manga"}
+                          </Badge>
+                        </TableCell>
+
+                        <TableCell className="text-center">
+                          <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-mono text-xs">
+                            {item.chapter_count} ตอน
+                          </Badge>
+                        </TableCell>
+
+                        <TableCell className="text-center font-mono text-xs text-amber-400 font-semibold">
+                          {item.views_text || item.views_count ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold shadow-xs">
+                              <Flame className="h-3 w-3 text-amber-400 fill-amber-400 shrink-0" />
+                              {item.views_text || `${item.views_count?.toLocaleString()}`}
+                            </span>
+                          ) : item.score ? (
+                            <span>⭐ {item.score}</span>
                           ) : (
-                            <BookOpen className="h-4 w-4 m-auto text-slate-600" />
+                            <span className="text-slate-500 font-normal">-</span>
                           )}
-                        </div>
-                      </TableCell>
+                        </TableCell>
 
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-slate-100 hover:text-amber-300 transition-colors line-clamp-1">
-                            {item.title}
-                          </span>
-                          {(item.summary_th || item.summary) && (
-                            <span className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
-                              {item.summary_th || item.summary}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {(item.genres || []).slice(0, 3).map((g: string) => (
+                              <span key={g} className="px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-slate-400">
+                                {g}
+                              </span>
+                            ))}
+                          </div>
+                        </TableCell>
 
-                      <TableCell className="text-center">
-                        <Badge
-                          className={`text-[10px] font-normal border ${
-                            item.origin?.includes("KR")
-                              ? "bg-purple-500/10 text-purple-400 border-purple-500/30"
-                              : item.origin?.includes("CN")
-                              ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                              : "bg-blue-500/10 text-blue-400 border-blue-500/30"
-                          }`}
-                        >
-                          {item.origin || "Manga"}
-                        </Badge>
-                      </TableCell>
+                        <TableCell className="text-center text-[10px] font-mono text-slate-400">
+                          {item.time_updated || "-"}
+                        </TableCell>
 
-                      <TableCell className="text-center">
-                        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-mono text-xs">
-                          {item.chapter_count} ตอน
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell className="text-center font-mono text-xs text-amber-400 font-semibold">
-                        {item.views_text || item.views_count ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold shadow-xs">
-                            <Flame className="h-3 w-3 text-amber-400 fill-amber-400 shrink-0" />
-                            {item.views_text || `${item.views_count?.toLocaleString()} วิว`}
-                          </span>
-                        ) : item.score ? (
-                          <span>⭐ {item.score}</span>
-                        ) : (
-                          <span className="text-slate-500 font-normal">-</span>
-                        )}
-                      </TableCell>
-
-                      <TableCell>
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {(item.genres || []).slice(0, 3).map((g: string) => (
-                            <span key={g} className="px-1.5 py-0.5 rounded text-[9px] bg-slate-800 text-slate-400">
-                              {g}
-                            </span>
-                          ))}
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="text-center text-[10px] font-mono text-slate-400">
-                        {item.time_updated || "-"}
-                      </TableCell>
-
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleCopyTitle(item.title)}
-                            className="h-7 w-7 p-0 text-slate-400 hover:text-white"
-                            title="คัดลอกชื่อเรื่อง"
-                          >
-                            <Copy className="h-3 w-3" />
-                          </Button>
-                          <a
-                            href={item.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center justify-center h-7 w-7 text-amber-400 hover:text-amber-300"
-                            title="เปิดอ่านบน Mgeko"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </a>
-                          {onOpenAddManga && (
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
                             <Button
+                              variant="ghost"
                               size="sm"
-                              onClick={() =>
-                                onOpenAddManga({
-                                  manganame: item.title,
-                                  originalname: item.title,
-                                  originalurl: item.url,
-                                  lastchapter: String(item.chapter_count || "0"),
-                                  status: item.status || "Ongoing",
-                                })
-                              }
-                              className="h-7 px-2 text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white font-medium"
+                              onClick={() => handleCopyTitle(item.title)}
+                              className="h-7 w-7 p-0 text-slate-400 hover:text-white"
+                              title="คัดลอกชื่อเรื่อง"
                             >
-                              <Plus className="h-3 w-3 mr-0.5" />
-                              เปิดโปรเจค
+                              <Copy className="h-3 w-3" />
                             </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                            <a
+                              href={item.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={`inline-flex items-center justify-center h-7 w-7 ${
+                                isComixItem
+                                  ? "text-violet-400 hover:text-violet-300"
+                                  : "text-amber-400 hover:text-amber-300"
+                              }`}
+                              title={isComixItem ? "เปิดอ่านบน Comix.to" : "เปิดอ่านบน Mgeko"}
+                            >
+                              <ExternalLink className="h-3.5 w-3.5" />
+                            </a>
+                            {onOpenAddManga && (
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  onOpenAddManga({
+                                    manganame: item.title,
+                                    originalname: item.title,
+                                    originalurl: item.url,
+                                    lastchapter: String(item.chapter_count || "0"),
+                                    status: item.status || "Ongoing",
+                                  })
+                                }
+                                className="h-7 px-2 text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white font-medium"
+                              >
+                                <Plus className="h-3 w-3 mr-0.5" />
+                                เปิดโปรเจค
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
                 )}
               </TableBody>
             </Table>

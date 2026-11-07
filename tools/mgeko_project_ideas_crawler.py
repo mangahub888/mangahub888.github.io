@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mgeko New Project Ideas Crawler Engine
---------------------------------------
-Crawls newly updated manga from https://www.mgeko.cc/jumbo/manga/
+MangaHub New Project Ideas Crawler Engine (Mgeko + Comix.to)
+------------------------------------------------------------
+Crawls newly updated and popular manga from:
+1. Mgeko (https://www.mgeko.cc/jumbo/manga/)
+2. Comix (https://comix.to/)
+
 Filters strictly for new projects with:
 - RULE: NOT MORE THAN 100 CHAPTERS (<= 100 ตอน)
 
 Features:
-- Loops through pagination pages (1 to 5)
+- Crawls both websites into separate source datasets (`sources.mgeko` & `sources.comix`)
 - Extracts Title, Cover image link, Latest Chapter, Score, Origin, and Update time
-- Extracts Total Views count (ยอดวิว) and Bookmarks from manga detail page
+- Extracts Total Views / Follows count and Bookmarks
 - Translates story synopsis to Thai using Google Translate API (เรื่องย่อแปลไทย)
-- Sorts candidates by Views count descending (เรียงตามยอดวิวสูงสุด)
+- Sorts candidates by Views/Follows count descending (เรียงตามความนิยมสูงสุด)
 - Generates JSON feeds for MangaHub frontend:
   - tools/data/project_ideas_latest.json
   - frontend/src/data/project_ideas_latest.json
   - frontend/public/data/project_ideas_latest.json
+  - frontend/src/data/comix_project_ideas_latest.json
+  - frontend/public/data/comix_project_ideas_latest.json
 """
 
 import os
@@ -36,12 +41,18 @@ import lxml.html
 sys.stdout.reconfigure(encoding='utf-8')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+from comix_purchaser import call_comix_api
+
 DATA_DIR = os.path.join(BASE_DIR, "data")
 FRONTEND_SRC_DIR = os.path.join(BASE_DIR, "..", "frontend", "src", "data")
 FRONTEND_PUB_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "data")
 FRONTEND_DIST_DIR = os.path.join(BASE_DIR, "..", "frontend", "dist", "data")
 
 OUTPUT_FILE = os.path.join(DATA_DIR, "project_ideas_latest.json")
+COMIX_OUTPUT_FILE = os.path.join(DATA_DIR, "comix_project_ideas_latest.json")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
@@ -50,6 +61,7 @@ DEFAULT_HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
     'Accept-Language': 'en-US,en;q=0.9'
 }
+
 
 def parse_chapter_num(ch_text: str) -> float:
     """Parse numeric chapter count from string like 'Chapter 26-eng-li' or 'Ch. 5.5'."""
@@ -69,6 +81,7 @@ def parse_chapter_num(ch_text: str) -> float:
             pass
     return 0.0
 
+
 def parse_views_count(view_str: str) -> int:
     """Parse '209 K', '6.6 M', '1,234' into integer."""
     if not view_str:
@@ -85,32 +98,57 @@ def parse_views_count(view_str: str) -> int:
         return int(val * 1000000)
     return int(val)
 
+
+def format_compact_number(num: int) -> str:
+    """Format integer like 94550 into '94.6 K' or '1.2 M'."""
+    if num >= 1_000_000:
+        return f"{num / 1_000_000:.1f} M"
+    if num >= 1_000:
+        return f"{num / 1_000:.1f} K"
+    return f"{num:,}"
+
+
 def translate_to_thai(text: str) -> str:
     """Translate synopsis from English to Thai using Google Translate API."""
     if not text:
         return ""
     try:
-        # Keep chunk size within safe limit for Google Translate single endpoint
-        chunk = text[:1500].strip()
+        chunk = text[:1200].strip()
         url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=th&dt=t&q=" + urllib.parse.quote(chunk)
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
-        with urllib.request.urlopen(req, timeout=12) as resp:
+        with urllib.request.urlopen(req, timeout=10) as resp:
             res = json.loads(resp.read().decode('utf-8'))
             translated = "".join([part[0] for part in res[0] if part[0]])
             return translated.strip()
-    except Exception as e:
-        print(f"⚠️ Google Translate notice: {e}")
+    except Exception:
         return text
+
+
+def clean_comix_synopsis(raw_synopsis: str) -> str:
+    """Clean markdown links and promotional footers from Comix.to synopsis."""
+    if not raw_synopsis:
+        return ""
+    text = raw_synopsis
+    # Strip markdown links section at the bottom like **Original Webtoon:** ...
+    text = re.split(r'\*\*(?:Original|Official)\s+(?:Webtoon|Novel|Translations?|Links?)', text, flags=re.IGNORECASE)[0]
+    # Replace markdown links [Label](url) with Label
+    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+    # Remove bold/italic markers
+    text = re.sub(r'\*{1,2}', '', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
 
 def clean_time_updated(raw_time: str) -> str:
     """Clean raw update time string."""
     if not raw_time:
         return ""
-    cleaned = raw_time.replace("update", "").replace("Added", "").replace("", " ").strip()
+    cleaned = raw_time.replace("update", "").replace("Added", "").strip()
     return f"อัปเดตเมื่อ {cleaned}" if cleaned else ""
 
+
 def fetch_manga_detail_and_translate(item: Dict[str, Any], session: requests.Session) -> Dict[str, Any]:
-    """Fetch synopsis, views, and genres, then translate synopsis to Thai."""
+    """Fetch synopsis, views, and genres for Mgeko item, then translate synopsis to Thai."""
     url = item.get("url", "")
     if not url:
         return item
@@ -151,12 +189,10 @@ def fetch_manga_detail_and_translate(item: Dict[str, Any], session: requests.Ses
                     summary_en = raw_desc
                 summary_en = re.sub(r'\s+', ' ', summary_en).strip()
 
-            # Translate to Thai via Google Translate API
             summary_th = ""
             if summary_en:
                 summary_th = translate_to_thai(summary_en)
 
-            # Status from detail page
             detail_status = ""
             for tag in doc.xpath('//*[contains(text(), "Status") or contains(text(), "status")]'):
                 parent_txt = tag.getparent().text_content().strip() if tag.getparent() is not None else ""
@@ -176,7 +212,6 @@ def fetch_manga_detail_and_translate(item: Dict[str, Any], session: requests.Ses
             if detail_status:
                 item["status"] = detail_status
 
-            # Refine origin based on genres
             lower_genres = [g.lower() for g in genres]
             if any("manhwa" in g for g in lower_genres):
                 item["origin"] = "KR (Manhwa)"
@@ -190,6 +225,7 @@ def fetch_manga_detail_and_translate(item: Dict[str, Any], session: requests.Ses
 
     return item
 
+
 def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Dict[str, Any]:
     """Crawl Mgeko recently updated manga and filter for candidates with <= max_chapters."""
     now = datetime.now()
@@ -197,10 +233,9 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
     session = requests.Session()
 
     print("=" * 80)
-    print(f"🚀 Mgeko New Project Ideas Crawler Engine")
+    print(f"🚀 [1/2] Mgeko New Project Ideas Crawler Engine")
     print(f"   เป้าหมาย: https://www.mgeko.cc/jumbo/manga/ (สแกน {max_pages} หน้า)")
     print(f"   กฎคัดกรอง: เฉพาะเรื่องที่มีไม่เกิน {max_chapters} ตอน (<= {max_chapters} ตอน)")
-    print(f"   ฟีเจอร์: ดึงยอดวิว + แปลเรื่องย่อด้วย Google Translate API + เรียงตามยอดวิว")
     print("=" * 80)
 
     all_raw_candidates = []
@@ -213,7 +248,7 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
         else:
             page_url = f'https://www.mgeko.cc/jumbo/manga/?results={page}&filter=All'
 
-        print(f"\n▶ กำลังดึงข้อมูลหน้า {page}/{max_pages}: {page_url} ...")
+        print(f"▶ [Mgeko] กำลังดึงข้อมูลหน้า {page}/{max_pages}: {page_url} ...")
         try:
             r = session.get(page_url, headers=DEFAULT_HEADERS, timeout=20)
             if r.status_code != 200:
@@ -222,7 +257,6 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
 
             doc = lxml.html.fromstring(r.text)
             items = doc.xpath('//li[contains(@class, "novel-item") and not(contains(@class, "swiper-slide"))]')
-            print(f"  ✓ พบมังงะอัปเดตใหม่ทั้งหมดในหน้านี้: {len(items)} เรื่อง")
             total_scanned_count += len(items)
 
             page_qualified = 0
@@ -249,7 +283,6 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
                 ch_raw = ch_el[0].text_content().strip() if ch_el else ''
                 ch_num = parse_chapter_num(ch_raw)
 
-                # RULE FILTER: Must be <= max_chapters and > 0
                 if ch_num <= 0 or ch_num > max_chapters:
                     continue
 
@@ -283,6 +316,7 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
 
                 all_raw_candidates.append({
                     "id": manga_id,
+                    "source": "mgeko",
                     "title": title,
                     "url": clean_base_url,
                     "cover": cover,
@@ -300,31 +334,20 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
                 })
                 page_qualified += 1
 
-            print(f"  ✓ มีตอนไม่เกิน {max_chapters} ตอนในหน้านี้: {page_qualified} เรื่อง")
+            print(f"  ✓ [Mgeko หน้า {page}] คัดกรอง <= {max_chapters} ตอนได้ {page_qualified} เรื่อง")
 
         except Exception as e:
-            print(f"❌ Error crawling page {page}: {e}")
+            print(f"❌ Error crawling Mgeko page {page}: {e}")
 
-    print("\n" + "=" * 80)
-    print(f"🎯 รวมพบเรื่องที่มีไม่เกิน {max_chapters} ตอนทั้งหมด: {len(all_raw_candidates)} เรื่อง (จากที่สแกน {total_scanned_count} เรื่อง)")
-    print("⚡ กำลังดึงยอดวิว + แปลเรื่องย่อด้วย Google Translate API แบบขนาน...")
-    print("=" * 80)
-
+    print(f"⚡ [Mgeko] กำลังดึงยอดวิว + แปลเรื่องย่อ {len(all_raw_candidates)} เรื่อง...")
     enriched_candidates = []
-    start_enrich = time.time()
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=8) as executor:
         futures = {executor.submit(fetch_manga_detail_and_translate, item, session): item for item in all_raw_candidates}
         for f in as_completed(futures):
-            res = f.result()
-            enriched_candidates.append(res)
+            enriched_candidates.append(f.result())
 
-    enrich_time = time.time() - start_enrich
-    print(f"✓ ดึงยอดวิวและแปลเรื่องย่อครบทั้ง {len(enriched_candidates)} เรื่อง สำเร็จในเวลา {enrich_time:.2f} วินาที!")
-
-    # Sort strictly by VIEWS COUNT descending (เรียงตามยอดวิวสูงสุด)
     enriched_candidates.sort(key=lambda x: x.get("views_count", 0), reverse=True)
 
-    # Compute genre & origin distribution
     genre_counts: Dict[str, int] = {}
     origin_counts: Dict[str, int] = {}
     total_views_portfolio = 0
@@ -339,7 +362,9 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
 
     sorted_genres = dict(sorted(genre_counts.items(), key=lambda kv: kv[1], reverse=True))
 
-    output_payload = {
+    return {
+        "source_id": "mgeko",
+        "source_name": "Mgeko (mgeko.cc)",
         "crawled_at": crawled_at,
         "source_url": "https://www.mgeko.cc/jumbo/manga/",
         "filter_rule": f"chapter_count <= {max_chapters}",
@@ -353,40 +378,234 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
         "items": enriched_candidates
     }
 
-    # Save to disk
+
+def enrich_comix_item_translation(item: Dict[str, Any]) -> Dict[str, Any]:
+    """Translate Comix.to clean English synopsis to Thai."""
+    summary_en = item.get("summary", "")
+    if summary_en:
+        item["summary_th"] = translate_to_thai(summary_en) or summary_en
+    else:
+        item["summary_th"] = ""
+    return item
+
+
+def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 100) -> Dict[str, Any]:
+    """
+    Crawl Comix.to (https://comix.to/) via encrypted API `/api/v1/manga`
+    filtering strictly for `1 <= latestChapter <= max_chapters`.
+    Combines:
+    - Trending 7 days (`order[views_7d]=desc`)
+    - Most Followed (`order[follows_total]=desc`)
+    - Recently Updated (`order[chapter_updated_at]=desc`)
+    so the dataset has rich representation across all chapter ranges (1-5, 6-10 ... 96-100).
+    """
+    now = datetime.now()
+    crawled_at = now.isoformat()
+
+    print("\n" + "=" * 80)
+    print(f"🚀 [2/2] Comix.to New Project Ideas Crawler Engine")
+    print(f"   เป้าหมาย: https://comix.to/ (สแกนผ่าน API /api/v1/manga)")
+    print(f"   กฎคัดกรอง: เฉพาะเรื่องที่มีไม่เกิน {max_chapters} ตอน (1 - {max_chapters} ตอน)")
+    print("=" * 80)
+
+    feed_configs = [
+        ("Trending 7d", {"order[views_7d]": "desc"}, max_pages_per_feed),
+        ("Most Followed", {"order[follows_total]": "desc"}, max_pages_per_feed),
+        ("Recently Updated", {"order[chapter_updated_at]": "desc"}, max_pages_per_feed + 1),
+    ]
+
+    raw_items_by_hid: Dict[str, Dict[str, Any]] = {}
+    total_scanned = 0
+
+    for feed_label, extra_params, pages in feed_configs:
+        for page in range(1, pages + 1):
+            params = {
+                "page": page,
+                "limit": 30,
+                "min_chap": 1,
+                "max_chap": max_chapters,
+                **extra_params,
+            }
+            print(f"▶ [Comix.to - {feed_label}] หน้า {page}/{pages} ...")
+            try:
+                res = call_comix_api("/manga", params)
+                batch = res.get("items", []) if isinstance(res, dict) else []
+                total_scanned += len(batch)
+                added = 0
+                for raw in batch:
+                    hid = raw.get("hid") or str(raw.get("id") or "")
+                    if not hid or hid in raw_items_by_hid:
+                        continue
+                    ch_num = float(raw.get("latestChapter") or 0)
+                    if ch_num <= 0 or ch_num > max_chapters:
+                        continue
+
+                    poster = raw.get("poster") or {}
+                    cover_rel = poster.get("medium") or poster.get("large") or ""
+                    if cover_rel.startswith("/"):
+                        cover_url = "https://comix.to" + cover_rel
+                    else:
+                        cover_url = cover_rel
+
+                    rel_url = raw.get("url") or f"/title/{hid}"
+                    full_url = "https://comix.to" + rel_url if rel_url.startswith("/") else rel_url
+
+                    mtype = (raw.get("type") or "").lower()
+                    lang = (raw.get("originalLanguage") or "").lower()
+                    if mtype == "manhwa" or lang == "ko":
+                        origin = "KR (Manhwa)"
+                        type_tag = "Manhwa"
+                    elif mtype == "manhua" or lang == "zh":
+                        origin = "CN (Manhua)"
+                        type_tag = "Manhua"
+                    elif mtype == "manga" or lang == "ja":
+                        origin = "JP (Manga)"
+                        type_tag = "Manga"
+                    else:
+                        origin = "Manga"
+                        type_tag = "Comics"
+
+                    raw_status = (raw.get("status") or "releasing").lower()
+                    if raw_status == "releasing":
+                        status = "Ongoing"
+                    elif raw_status == "finished":
+                        status = "Completed"
+                    elif raw_status == "on_hiatus":
+                        status = "Hiatus"
+                    else:
+                        status = raw_status.capitalize()
+
+                    follows = int(raw.get("followsTotal") or 0)
+                    rated_avg = raw.get("ratedAvg")
+                    score_str = f"{float(rated_avg):.1f}" if rated_avg else ""
+
+                    updated_fmt = raw.get("chapterUpdatedAtFormatted") or ""
+                    time_updated = f"อัปเดตเมื่อ {updated_fmt}" if updated_fmt else ""
+
+                    clean_syn = clean_comix_synopsis(raw.get("synopsis") or "")
+
+                    genres = [type_tag]
+                    if status == "Ongoing":
+                        genres.append("Releasing")
+                    elif status == "Completed":
+                        genres.append("Completed")
+                    if raw.get("hasOfficial"):
+                        genres.append("Official")
+
+                    ch_val = int(ch_num) if ch_num.is_integer() else ch_num
+
+                    raw_items_by_hid[hid] = {
+                        "id": hid,
+                        "source": "comix",
+                        "title": raw.get("title") or hid,
+                        "alt_titles": raw.get("altTitles") or [],
+                        "url": full_url,
+                        "cover": cover_url,
+                        "chapter_count": ch_val,
+                        "latest_chapter_text": f"Chapter {ch_val}",
+                        "score": score_str,
+                        "status": status,
+                        "origin": origin,
+                        "time_updated": time_updated,
+                        "views_count": follows,
+                        "views_text": format_compact_number(follows),
+                        "bookmarks_text": f"{follows:,}",
+                        "genres": genres,
+                        "summary": clean_syn,
+                        "summary_th": ""
+                    }
+                    added += 1
+                print(f"  ✓ [Comix.to - {feed_label} หน้า {page}] เพิ่มใหม่ {added} เรื่อง (รวมสะสม {len(raw_items_by_hid)} เรื่อง)")
+            except Exception as e:
+                print(f"❌ Error fetching Comix.to ({feed_label} page {page}): {e}")
+
+    candidates = list(raw_items_by_hid.values())
+    print(f"⚡ [Comix.to] กำลังแปลเรื่องย่อภาษาไทยสำหรับ {len(candidates)} เรื่อง...")
+    enriched_comix = []
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        futures = {executor.submit(enrich_comix_item_translation, item): item for item in candidates}
+        for f in as_completed(futures):
+            enriched_comix.append(f.result())
+
+    enriched_comix.sort(key=lambda x: x.get("views_count", 0), reverse=True)
+
+    genre_counts: Dict[str, int] = {}
+    origin_counts: Dict[str, int] = {}
+    total_views_sum = 0
+
+    for c in enriched_comix:
+        orig = c.get("origin") or "Unknown"
+        origin_counts[orig] = origin_counts.get(orig, 0) + 1
+        total_views_sum += c.get("views_count", 0)
+        for g in c.get("genres", []):
+            if g:
+                genre_counts[g] = genre_counts.get(g, 0) + 1
+
+    sorted_genres = dict(sorted(genre_counts.items(), key=lambda kv: kv[1], reverse=True))
+
+    return {
+        "source_id": "comix",
+        "source_name": "Comix (comix.to)",
+        "crawled_at": crawled_at,
+        "source_url": "https://comix.to/",
+        "filter_rule": f"chapter_count <= {max_chapters}",
+        "sort_order": "follows_total_desc",
+        "max_chapters_threshold": max_chapters,
+        "total_scanned": total_scanned,
+        "total_candidates": len(enriched_comix),
+        "total_views_sum": total_views_sum,
+        "origin_distribution": origin_counts,
+        "top_genres": sorted_genres,
+        "items": enriched_comix
+    }
+
+
+def crawl_all_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Dict[str, Any]:
+    """Crawl both Mgeko and Comix.to and write unified + separate JSON feeds."""
+    mgeko_payload = crawl_mgeko_project_ideas(max_pages=max_pages, max_chapters=max_chapters)
+    comix_payload = crawl_comix_project_ideas(max_pages_per_feed=3, max_chapters=max_chapters)
+
+    combined_payload = {
+        **mgeko_payload,
+        "sources": {
+            "mgeko": mgeko_payload,
+            "comix": comix_payload,
+        }
+    }
+
+    # Save main combined payload & Comix standalone payload
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(output_payload, f, ensure_ascii=False, indent=2)
-    print(f"✓ บันทึกผลลัพธ์ลงใน: {OUTPUT_FILE}")
+        json.dump(combined_payload, f, ensure_ascii=False, indent=2)
+    with open(COMIX_OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(comix_payload, f, ensure_ascii=False, indent=2)
+    print(f"\n✓ บันทึกผลลัพธ์ลงใน: {OUTPUT_FILE} และ {COMIX_OUTPUT_FILE}")
 
     for out_dir in [FRONTEND_SRC_DIR, FRONTEND_PUB_DIR, FRONTEND_DIST_DIR]:
         if os.path.exists(out_dir):
-            target = os.path.join(out_dir, "project_ideas_latest.json")
-            try:
-                with open(target, "w", encoding="utf-8") as f:
-                    json.dump(output_payload, f, ensure_ascii=False, indent=2)
-                print(f"✓ อัปเดตข้อมูลไปยัง Frontend: {target}")
-            except Exception as e:
-                print(f"⚠️ บันทึกไปยัง {target} ล้มเหลว: {e}")
+            for fname, payload_obj in [
+                ("project_ideas_latest.json", combined_payload),
+                ("comix_project_ideas_latest.json", comix_payload),
+            ]:
+                target = os.path.join(out_dir, fname)
+                try:
+                    with open(target, "w", encoding="utf-8") as f:
+                        json.dump(payload_obj, f, ensure_ascii=False, indent=2)
+                    print(f"✓ อัปเดตข้อมูลไปยัง Frontend: {target}")
+                except Exception as e:
+                    print(f"⚠️ บันทึกไปยัง {target} ล้มเหลว: {e}")
 
-    # Print Leaderboard sorted by Views
     print("\n" + "=" * 95)
-    print(f"🏆 อันดับมังงะไอเดียใหม่ (<= {max_chapters} ตอน) เรียงตามยอดวิวสูงสุด:")
+    print(f"🏆 สรุปผลการดึงไอเดียโปรเจคใหม่ (<= {max_chapters} ตอน):")
+    print(f"   1. Mgeko (mgeko.cc) : {mgeko_payload['total_candidates']} เรื่อง (สแกน {mgeko_payload['total_scanned']} เรื่อง)")
+    print(f"   2. Comix (comix.to) : {comix_payload['total_candidates']} เรื่อง (สแกน {comix_payload['total_scanned']} เรื่อง)")
     print("=" * 95)
-    print(f"{'อันดับ':<6} | {'ชื่อเรื่อง':<38} | {'สัญชาติ':<13} | {'ตอน':<7} | {'ยอดวิวรวม':>12} | {'หมวดหมู่'}")
-    print("-" * 95)
-    for idx, c in enumerate(enriched_candidates[:15], 1):
-        genres_str = ", ".join(c.get("genres", [])[:2]) or "General"
-        v_str = f"{c.get('views_count', 0):,} วิว ({c.get('views_text')})"
-        print(f"#{idx:<5} | {c.get('title')[:36]:<38} | {c.get('origin'):<13} | Ch.{c.get('chapter_count'):<4} | {v_str:>12} | {genres_str}")
-        if c.get("summary_th"):
-            print(f"        🇹🇭 เรื่องย่อแปลไทย: {c.get('summary_th')[:90]}...")
+    return combined_payload
 
-    return output_payload
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Mgeko Project Ideas Crawler")
-    parser.add_argument("--pages", type=int, default=5, help="Number of pagination pages to scan (default: 5)")
+    parser = argparse.ArgumentParser(description="MangaHub Project Ideas Crawler (Mgeko + Comix.to)")
+    parser.add_argument("--pages", type=int, default=5, help="Number of Mgeko pagination pages to scan (default: 5)")
     parser.add_argument("--max-chapters", type=int, default=100, help="Maximum chapter count threshold (default: 100)")
     args = parser.parse_args()
 
-    crawl_mgeko_project_ideas(max_pages=args.pages, max_chapters=args.max_chapters)
+    crawl_all_project_ideas(max_pages=args.pages, max_chapters=args.max_chapters)

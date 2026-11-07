@@ -1,4 +1,4 @@
-name: Mgeko New Project Ideas Crawler (<= 100 Chapters)
+name: New Project Ideas Crawler (Mgeko & Comix.to <= 100 Chapters)
 
 on:
   workflow_dispatch:
@@ -38,9 +38,9 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests lxml
+          pip install requests lxml pillow
 
-      - name: Run Mgeko Project Ideas Crawler
+      - name: Run Project Ideas Crawler (Mgeko + Comix.to)
         run: |
           python tools/mgeko_project_ideas_crawler.py --pages "${{ github.event.inputs.pages || '5' }}" --max-chapters "${{ github.event.inputs.max_chapters || '100' }}"
 
@@ -48,10 +48,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/data/project_ideas_latest.json frontend/public/data/project_ideas_latest.json frontend/src/data/project_ideas_latest.json
+          git add tools/data/project_ideas_latest.json tools/data/comix_project_ideas_latest.json frontend/public/data/project_ideas_latest.json frontend/public/data/comix_project_ideas_latest.json frontend/src/data/project_ideas_latest.json frontend/src/data/comix_project_ideas_latest.json
           if git diff --staged --quiet; then
             echo "No new project ideas changes to commit."
           else
-            git commit -m "chore(ideas): update mgeko <= 100 chapters project ideas [skip ci]"
+            git commit -m "chore(ideas): update Mgeko & Comix.to <= 100 chapters project ideas [skip ci]"
             git push origin main
           fi
