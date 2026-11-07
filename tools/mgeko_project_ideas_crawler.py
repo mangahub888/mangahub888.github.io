@@ -109,19 +109,22 @@ def format_compact_number(num: int) -> str:
 
 
 def translate_to_thai(text: str) -> str:
-    """Translate synopsis from English to Thai using Google Translate API."""
+    """Translate synopsis from English to Thai using Google Translate API with retry."""
     if not text:
         return ""
-    try:
-        chunk = text[:1200].strip()
-        url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=th&dt=t&q=" + urllib.parse.quote(chunk)
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            res = json.loads(resp.read().decode('utf-8'))
-            translated = "".join([part[0] for part in res[0] if part[0]])
-            return translated.strip()
-    except Exception:
-        return text
+    for attempt in range(3):
+        try:
+            chunk = text[:1200].strip()
+            url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=th&dt=t&q=" + urllib.parse.quote(chunk)
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                res = json.loads(resp.read().decode('utf-8'))
+                translated = "".join([part[0] for part in res[0] if part[0]])
+                if translated.strip():
+                    return translated.strip()
+        except Exception:
+            time.sleep(0.4)
+    return text
 
 
 def clean_comix_synopsis(raw_synopsis: str) -> str:
@@ -226,15 +229,103 @@ def fetch_manga_detail_and_translate(item: Dict[str, Any], session: requests.Ses
     return item
 
 
-def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Dict[str, Any]:
-    """Crawl Mgeko recently updated manga and filter for candidates with <= max_chapters."""
+DEFAULT_SEED_KEYWORDS = [
+    "Cyberpunk Chivalry",
+    "Cyberpunk",
+    "How A Cyberpunk Fixer Lives",
+]
+
+
+def parse_mgeko_novel_element(it, max_chapters: int) -> Optional[Dict[str, Any]]:
+    """Parse a single novel-item element from Mgeko HTML."""
+    a_tags = it.xpath('.//a')
+    if not a_tags:
+        return None
+    a = a_tags[0]
+    href = a.get('href', '')
+    if not href:
+        return None
+    if not href.startswith('http'):
+        href = 'https://www.mgeko.cc' + href
+
+    clean_base_url = href.split('/all-chapters/')[0].split('/chapter-')[0]
+    title_el = it.xpath('.//*[contains(@class, "novel-title")]')
+    title = title_el[0].text_content().strip() if title_el else (a.get('title') or '').strip()
+
+    ch_el = it.xpath('.//*[contains(@class, "chapter-title")]')
+    if ch_el:
+        ch_raw = ch_el[0].text_content().strip()
+    else:
+        # Check strong inside novel-stats (e.g. search page: "<strong> Chapters 6-eng-li</strong>")
+        stats_strong = it.xpath('.//*[contains(@class, "novel-stats")]//strong')
+        ch_raw = stats_strong[0].text_content().strip() if stats_strong else ''
+    ch_num = parse_chapter_num(ch_raw)
+
+    if ch_num <= 0 or ch_num > max_chapters:
+        return None
+
+    img_el = it.xpath('.//img')
+    cover = ''
+    if img_el:
+        cover = img_el[0].get('data-src') or img_el[0].get('src') or ''
+        if cover.startswith('/'):
+            cover = 'https://www.mgeko.cc' + cover
+
+    score_el = it.xpath('.//*[contains(@class, "score")]')
+    score_str = score_el[0].text_content().strip() if score_el else ''
+
+    status_el = it.xpath('.//*[contains(@class, "status")]')
+    status = status_el[0].text_content().strip() if status_el else 'Ongoing'
+
+    time_el = it.xpath('.//*[contains(@class, "novel-stats")]//span')
+    time_raw = time_el[0].text_content().strip() if time_el else ''
+    time_updated = clean_time_updated(time_raw)
+
+    flag_el = it.xpath('.//*[contains(@class, "novel-stats")]//img')
+    origin = 'Manga'
+    if flag_el:
+        src = flag_el[0].get('src', '')
+        if 'rep-cn' in src:
+            origin = 'CN (Manhua)'
+        elif 'rep-kr' in src:
+            origin = 'KR (Manhwa)'
+        elif 'rep-jp' in src:
+            origin = 'JP (Manga)'
+
+    manga_id = clean_base_url.rstrip('/').split('/')[-1]
+
+    return {
+        "id": manga_id,
+        "source": "mgeko",
+        "title": title,
+        "url": clean_base_url,
+        "cover": cover,
+        "chapter_count": int(ch_num) if ch_num.is_integer() else ch_num,
+        "latest_chapter_text": ch_raw,
+        "score": score_str,
+        "status": status,
+        "origin": origin,
+        "time_updated": time_updated,
+        "views_count": 0,
+        "views_text": "-",
+        "genres": [],
+        "summary": "",
+        "summary_th": ""
+    }
+
+
+def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100, seed_keywords: Optional[List[str]] = None) -> Dict[str, Any]:
+    """Crawl Mgeko recently updated manga and search seed keywords, filtering for <= max_chapters."""
     now = datetime.now()
     crawled_at = now.isoformat()
     session = requests.Session()
 
+    if seed_keywords is None:
+        seed_keywords = DEFAULT_SEED_KEYWORDS
+
     print("=" * 80)
     print(f"🚀 [1/2] Mgeko New Project Ideas Crawler Engine")
-    print(f"   เป้าหมาย: https://www.mgeko.cc/jumbo/manga/ (สแกน {max_pages} หน้า)")
+    print(f"   เป้าหมาย: https://www.mgeko.cc/jumbo/manga/ (สแกน {max_pages} หน้า + คำค้นเจาะจง {len(seed_keywords)} คำ)")
     print(f"   กฎคัดกรอง: เฉพาะเรื่องที่มีไม่เกิน {max_chapters} ตอน (<= {max_chapters} ตอน)")
     print("=" * 80)
 
@@ -261,83 +352,45 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Di
 
             page_qualified = 0
             for it in items:
-                a_tags = it.xpath('.//a')
-                if not a_tags:
+                candidate = parse_mgeko_novel_element(it, max_chapters)
+                if not candidate:
                     continue
-                a = a_tags[0]
-                href = a.get('href', '')
-                if not href:
-                    continue
-                if not href.startswith('http'):
-                    href = 'https://www.mgeko.cc' + href
-
-                clean_base_url = href.split('/all-chapters/')[0].split('/chapter-')[0]
+                clean_base_url = candidate["url"]
                 if clean_base_url in seen_urls:
                     continue
                 seen_urls.add(clean_base_url)
-
-                title_el = it.xpath('.//*[contains(@class, "novel-title")]')
-                title = title_el[0].text_content().strip() if title_el else (a.get('title') or '').strip()
-
-                ch_el = it.xpath('.//*[contains(@class, "chapter-title")]')
-                ch_raw = ch_el[0].text_content().strip() if ch_el else ''
-                ch_num = parse_chapter_num(ch_raw)
-
-                if ch_num <= 0 or ch_num > max_chapters:
-                    continue
-
-                img_el = it.xpath('.//img')
-                cover = ''
-                if img_el:
-                    cover = img_el[0].get('data-src') or img_el[0].get('src') or ''
-
-                score_el = it.xpath('.//*[contains(@class, "score")]')
-                score_str = score_el[0].text_content().strip() if score_el else ''
-
-                status_el = it.xpath('.//*[contains(@class, "status")]')
-                status = status_el[0].text_content().strip() if status_el else 'Ongoing'
-
-                time_el = it.xpath('.//*[contains(@class, "novel-stats")]//span')
-                time_raw = time_el[0].text_content().strip() if time_el else ''
-                time_updated = clean_time_updated(time_raw)
-
-                flag_el = it.xpath('.//*[contains(@class, "novel-stats")]//img')
-                origin = 'Manga'
-                if flag_el:
-                    src = flag_el[0].get('src', '')
-                    if 'rep-cn' in src:
-                        origin = 'CN (Manhua)'
-                    elif 'rep-kr' in src:
-                        origin = 'KR (Manhwa)'
-                    elif 'rep-jp' in src:
-                        origin = 'JP (Manga)'
-
-                manga_id = clean_base_url.rstrip('/').split('/')[-1]
-
-                all_raw_candidates.append({
-                    "id": manga_id,
-                    "source": "mgeko",
-                    "title": title,
-                    "url": clean_base_url,
-                    "cover": cover,
-                    "chapter_count": int(ch_num) if ch_num.is_integer() else ch_num,
-                    "latest_chapter_text": ch_raw,
-                    "score": score_str,
-                    "status": status,
-                    "origin": origin,
-                    "time_updated": time_updated,
-                    "views_count": 0,
-                    "views_text": "-",
-                    "genres": [],
-                    "summary": "",
-                    "summary_th": ""
-                })
+                all_raw_candidates.append(candidate)
                 page_qualified += 1
 
             print(f"  ✓ [Mgeko หน้า {page}] คัดกรอง <= {max_chapters} ตอนได้ {page_qualified} เรื่อง")
 
         except Exception as e:
             print(f"❌ Error crawling Mgeko page {page}: {e}")
+
+    # Seed Keywords Discovery (targeted search to catch gems like Cyberpunk Chivalry)
+    for kw in seed_keywords:
+        try:
+            search_url = f'https://www.mgeko.cc/search/?search={urllib.parse.quote(kw)}'
+            print(f"▶ [Mgeko - ค้นหาคำค้นเจาะจง] '{kw}': {search_url} ...")
+            r = session.get(search_url, headers=DEFAULT_HEADERS, timeout=15)
+            if r.status_code == 200:
+                doc = lxml.html.fromstring(r.text)
+                items = doc.xpath('//li[contains(@class, "novel-item") and not(contains(@class, "swiper-slide"))]')
+                total_scanned_count += len(items)
+                added_kw = 0
+                for it in items:
+                    candidate = parse_mgeko_novel_element(it, max_chapters)
+                    if not candidate:
+                        continue
+                    clean_base_url = candidate["url"]
+                    if clean_base_url in seen_urls:
+                        continue
+                    seen_urls.add(clean_base_url)
+                    all_raw_candidates.append(candidate)
+                    added_kw += 1
+                print(f"  ✓ [Mgeko - ค้นหา '{kw}'] เพิ่มใหม่ {added_kw} เรื่อง (รวมสะสม {len(all_raw_candidates)} เรื่อง)")
+        except Exception as e:
+            print(f"❌ Error searching Mgeko for '{kw}': {e}")
 
     print(f"⚡ [Mgeko] กำลังดึงยอดวิว + แปลเรื่องย่อ {len(all_raw_candidates)} เรื่อง...")
     enriched_candidates = []
@@ -389,29 +442,130 @@ def enrich_comix_item_translation(item: Dict[str, Any]) -> Dict[str, Any]:
     return item
 
 
-def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 100) -> Dict[str, Any]:
+def parse_comix_raw_item(raw: Dict[str, Any], max_chapters: int) -> Optional[Dict[str, Any]]:
+    """Parse raw Comix manga API object into project idea candidate dict."""
+    hid = raw.get("hid") or str(raw.get("id") or "")
+    if not hid:
+        return None
+    ch_num = float(raw.get("latestChapter") or 0)
+    if ch_num <= 0 or ch_num > max_chapters:
+        return None
+
+    poster = raw.get("poster") or {}
+    cover_rel = poster.get("medium") or poster.get("large") or ""
+    if cover_rel.startswith("/"):
+        cover_url = "https://comix.to" + cover_rel
+    else:
+        cover_url = cover_rel
+
+    rel_url = raw.get("url") or f"/title/{hid}"
+    full_url = "https://comix.to" + rel_url if rel_url.startswith("/") else rel_url
+
+    mtype = (raw.get("type") or "").lower()
+    lang = (raw.get("originalLanguage") or "").lower()
+    if mtype == "manhwa" or lang == "ko":
+        origin = "KR (Manhwa)"
+        type_tag = "Manhwa"
+    elif mtype == "manhua" or lang == "zh":
+        origin = "CN (Manhua)"
+        type_tag = "Manhua"
+    elif mtype == "manga" or lang == "ja":
+        origin = "JP (Manga)"
+        type_tag = "Manga"
+    else:
+        origin = "Manga"
+        type_tag = "Comics"
+
+    raw_status = (raw.get("status") or "releasing").lower()
+    if raw_status == "releasing":
+        status = "Ongoing"
+    elif raw_status == "finished":
+        status = "Completed"
+    elif raw_status == "on_hiatus":
+        status = "Hiatus"
+    else:
+        status = raw_status.capitalize()
+
+    follows = int(raw.get("followsTotal") or 0)
+    rated_avg = raw.get("ratedAvg")
+    score_str = f"{float(rated_avg):.1f}" if rated_avg else ""
+
+    updated_fmt = raw.get("chapterUpdatedAtFormatted") or ""
+    time_updated = f"อัปเดตเมื่อ {updated_fmt}" if updated_fmt else ""
+
+    clean_syn = clean_comix_synopsis(raw.get("synopsis") or "")
+
+    genres = [type_tag]
+    if status == "Ongoing":
+        genres.append("Releasing")
+    elif status == "Completed":
+        genres.append("Completed")
+    if raw.get("hasOfficial"):
+        genres.append("Official")
+
+    # Add raw genres if available
+    raw_genres = raw.get("genres") or []
+    if isinstance(raw_genres, list):
+        for g in raw_genres:
+            g_title = g.get("title") if isinstance(g, dict) else str(g)
+            if g_title and g_title not in genres:
+                genres.append(g_title)
+
+    ch_val = int(ch_num) if ch_num.is_integer() else ch_num
+
+    return {
+        "id": hid,
+        "source": "comix",
+        "title": raw.get("title") or hid,
+        "alt_titles": raw.get("altTitles") or [],
+        "url": full_url,
+        "cover": cover_url,
+        "chapter_count": ch_val,
+        "latest_chapter_text": f"Chapter {ch_val}",
+        "score": score_str,
+        "status": status,
+        "origin": origin,
+        "time_updated": time_updated,
+        "views_count": follows,
+        "views_text": format_compact_number(follows),
+        "bookmarks_text": f"{follows:,}",
+        "genres": genres,
+        "summary": clean_syn,
+        "summary_th": ""
+    }
+
+
+def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 100, seed_keywords: Optional[List[str]] = None) -> Dict[str, Any]:
     """
     Crawl Comix.to (https://comix.to/) via encrypted API `/api/v1/manga`
     filtering strictly for `1 <= latestChapter <= max_chapters`.
     Combines:
     - Trending 7 days (`order[views_7d]=desc`)
+    - Trending 30 days (`order[views_30d]=desc`)
     - Most Followed (`order[follows_total]=desc`)
     - Recently Updated (`order[chapter_updated_at]=desc`)
+    - Newly Created (`order[created_at]=desc`)
+    - Seed Keywords Search (e.g. Cyberpunk Chivalry)
     so the dataset has rich representation across all chapter ranges (1-5, 6-10 ... 96-100).
     """
     now = datetime.now()
     crawled_at = now.isoformat()
 
+    if seed_keywords is None:
+        seed_keywords = DEFAULT_SEED_KEYWORDS
+
     print("\n" + "=" * 80)
     print(f"🚀 [2/2] Comix.to New Project Ideas Crawler Engine")
-    print(f"   เป้าหมาย: https://comix.to/ (สแกนผ่าน API /api/v1/manga)")
+    print(f"   เป้าหมาย: https://comix.to/ (สแกนผ่าน API /api/v1/manga + ค้นหาเจาะจง {len(seed_keywords)} คำ)")
     print(f"   กฎคัดกรอง: เฉพาะเรื่องที่มีไม่เกิน {max_chapters} ตอน (1 - {max_chapters} ตอน)")
     print("=" * 80)
 
     feed_configs = [
         ("Trending 7d", {"order[views_7d]": "desc"}, max_pages_per_feed),
+        ("Trending 30d", {"order[views_30d]": "desc"}, max_pages_per_feed),
         ("Most Followed", {"order[follows_total]": "desc"}, max_pages_per_feed),
-        ("Recently Updated", {"order[chapter_updated_at]": "desc"}, max_pages_per_feed + 1),
+        ("Recently Updated", {"order[chapter_updated_at]": "desc"}, max_pages_per_feed + 2),
+        ("Newly Created", {"order[created_at]": "desc"}, 2),
     ]
 
     raw_items_by_hid: Dict[str, Dict[str, Any]] = {}
@@ -436,88 +590,40 @@ def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 1
                     hid = raw.get("hid") or str(raw.get("id") or "")
                     if not hid or hid in raw_items_by_hid:
                         continue
-                    ch_num = float(raw.get("latestChapter") or 0)
-                    if ch_num <= 0 or ch_num > max_chapters:
+                    item_dict = parse_comix_raw_item(raw, max_chapters)
+                    if not item_dict:
                         continue
-
-                    poster = raw.get("poster") or {}
-                    cover_rel = poster.get("medium") or poster.get("large") or ""
-                    if cover_rel.startswith("/"):
-                        cover_url = "https://comix.to" + cover_rel
-                    else:
-                        cover_url = cover_rel
-
-                    rel_url = raw.get("url") or f"/title/{hid}"
-                    full_url = "https://comix.to" + rel_url if rel_url.startswith("/") else rel_url
-
-                    mtype = (raw.get("type") or "").lower()
-                    lang = (raw.get("originalLanguage") or "").lower()
-                    if mtype == "manhwa" or lang == "ko":
-                        origin = "KR (Manhwa)"
-                        type_tag = "Manhwa"
-                    elif mtype == "manhua" or lang == "zh":
-                        origin = "CN (Manhua)"
-                        type_tag = "Manhua"
-                    elif mtype == "manga" or lang == "ja":
-                        origin = "JP (Manga)"
-                        type_tag = "Manga"
-                    else:
-                        origin = "Manga"
-                        type_tag = "Comics"
-
-                    raw_status = (raw.get("status") or "releasing").lower()
-                    if raw_status == "releasing":
-                        status = "Ongoing"
-                    elif raw_status == "finished":
-                        status = "Completed"
-                    elif raw_status == "on_hiatus":
-                        status = "Hiatus"
-                    else:
-                        status = raw_status.capitalize()
-
-                    follows = int(raw.get("followsTotal") or 0)
-                    rated_avg = raw.get("ratedAvg")
-                    score_str = f"{float(rated_avg):.1f}" if rated_avg else ""
-
-                    updated_fmt = raw.get("chapterUpdatedAtFormatted") or ""
-                    time_updated = f"อัปเดตเมื่อ {updated_fmt}" if updated_fmt else ""
-
-                    clean_syn = clean_comix_synopsis(raw.get("synopsis") or "")
-
-                    genres = [type_tag]
-                    if status == "Ongoing":
-                        genres.append("Releasing")
-                    elif status == "Completed":
-                        genres.append("Completed")
-                    if raw.get("hasOfficial"):
-                        genres.append("Official")
-
-                    ch_val = int(ch_num) if ch_num.is_integer() else ch_num
-
-                    raw_items_by_hid[hid] = {
-                        "id": hid,
-                        "source": "comix",
-                        "title": raw.get("title") or hid,
-                        "alt_titles": raw.get("altTitles") or [],
-                        "url": full_url,
-                        "cover": cover_url,
-                        "chapter_count": ch_val,
-                        "latest_chapter_text": f"Chapter {ch_val}",
-                        "score": score_str,
-                        "status": status,
-                        "origin": origin,
-                        "time_updated": time_updated,
-                        "views_count": follows,
-                        "views_text": format_compact_number(follows),
-                        "bookmarks_text": f"{follows:,}",
-                        "genres": genres,
-                        "summary": clean_syn,
-                        "summary_th": ""
-                    }
+                    raw_items_by_hid[hid] = item_dict
                     added += 1
                 print(f"  ✓ [Comix.to - {feed_label} หน้า {page}] เพิ่มใหม่ {added} เรื่อง (รวมสะสม {len(raw_items_by_hid)} เรื่อง)")
             except Exception as e:
                 print(f"❌ Error fetching Comix.to ({feed_label} page {page}): {e}")
+
+    # Seed Keywords Search (guarantees targeted titles like Cyberpunk Chivalry are discovered)
+    for kw in seed_keywords:
+        print(f"▶ [Comix.to - ค้นหาคำค้นเจาะจง] '{kw}' ...")
+        try:
+            res = call_comix_api("/manga", {
+                "keyword": kw,
+                "limit": 30,
+                "min_chap": 1,
+                "max_chap": max_chapters,
+            })
+            batch = res.get("items", []) if isinstance(res, dict) else []
+            total_scanned += len(batch)
+            added_kw = 0
+            for raw in batch:
+                hid = raw.get("hid") or str(raw.get("id") or "")
+                if not hid or hid in raw_items_by_hid:
+                    continue
+                item_dict = parse_comix_raw_item(raw, max_chapters)
+                if not item_dict:
+                    continue
+                raw_items_by_hid[hid] = item_dict
+                added_kw += 1
+            print(f"  ✓ [Comix.to - ค้นหา '{kw}'] เพิ่มใหม่ {added_kw} เรื่อง (รวมสะสม {len(raw_items_by_hid)} เรื่อง)")
+        except Exception as e:
+            print(f"❌ Error searching Comix for '{kw}': {e}")
 
     candidates = list(raw_items_by_hid.values())
     print(f"⚡ [Comix.to] กำลังแปลเรื่องย่อภาษาไทยสำหรับ {len(candidates)} เรื่อง...")
@@ -560,10 +666,13 @@ def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 1
     }
 
 
-def crawl_all_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Dict[str, Any]:
+def crawl_all_project_ideas(max_pages: int = 5, max_chapters: int = 100, seed_keywords: Optional[List[str]] = None) -> Dict[str, Any]:
     """Crawl both Mgeko and Comix.to and write unified + separate JSON feeds."""
-    mgeko_payload = crawl_mgeko_project_ideas(max_pages=max_pages, max_chapters=max_chapters)
-    comix_payload = crawl_comix_project_ideas(max_pages_per_feed=3, max_chapters=max_chapters)
+    if seed_keywords is None:
+        seed_keywords = DEFAULT_SEED_KEYWORDS
+
+    mgeko_payload = crawl_mgeko_project_ideas(max_pages=max_pages, max_chapters=max_chapters, seed_keywords=seed_keywords)
+    comix_payload = crawl_comix_project_ideas(max_pages_per_feed=3, max_chapters=max_chapters, seed_keywords=seed_keywords)
 
     combined_payload = {
         **mgeko_payload,
@@ -606,6 +715,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="MangaHub Project Ideas Crawler (Mgeko + Comix.to)")
     parser.add_argument("--pages", type=int, default=5, help="Number of Mgeko pagination pages to scan (default: 5)")
     parser.add_argument("--max-chapters", type=int, default=100, help="Maximum chapter count threshold (default: 100)")
+    parser.add_argument("--keywords", nargs="*", default=DEFAULT_SEED_KEYWORDS, help="Seed keywords to search and include (default: Cyberpunk Chivalry, Cyberpunk)")
     args = parser.parse_args()
 
-    crawl_all_project_ideas(max_pages=args.pages, max_chapters=args.max_chapters)
+    crawl_all_project_ideas(max_pages=args.pages, max_chapters=args.max_chapters, seed_keywords=args.keywords)
