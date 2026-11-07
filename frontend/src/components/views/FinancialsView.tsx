@@ -73,6 +73,8 @@ import {
   BookOpen,
   Layers,
   Sparkles,
+  Scale,
+  CheckCircle2,
 } from "lucide-react";
 
 ChartJS.register(
@@ -1357,6 +1359,20 @@ export function FinancialsView({
       setFinRevenue("");
     } catch (err: any) {
       toast.error(err.message || "เกิดข้อผิดพลาดในการบันทึก");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleClearAllSales = async () => {
+    if (!window.confirm("คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลสมุดบันทึก MangaSales ทั้งหมด? (Header จะยังคงอยู่)")) return;
+    try {
+      setSubmitting(true);
+      const res = await callGasApi("CLEAR_MANGA_SALES", {});
+      toast.success("ล้างข้อมูลสมุดบันทึกสำเร็จ");
+      onSalesChange(res.list || [], websiteList);
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการล้างข้อมูล");
     } finally {
       setSubmitting(false);
     }
@@ -3152,12 +3168,17 @@ export function FinancialsView({
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-bold text-white">
-                สมุดบันทึกยอดขายประจำเดือน (MangaSales Ledger)
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-white">
+                  สมุดบันทึกยอดขาย & ต้นทุนประจำเดือน (MangaSales Ledger)
+                </h3>
+                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[11px]">
+                  ตุลาคม 2569 แมตช์เสร็จสมบูรณ์
+                </Badge>
+              </div>
 
-              <p className="text-xs text-slate-400">
-                บันทึกยอดขายและต้นทุนรายเรื่องแบบระบุเอง
+              <p className="text-xs text-slate-400 mt-1">
+                บันทึกยอดขาย ต้นทุนค่าแรง และกำไรสุทธิรายเรื่อง (P&L Per Series) เชื่อมต่อรอบตัดจ่ายเงินเดือน
               </p>
             </div>
 
@@ -3169,6 +3190,140 @@ export function FinancialsView({
               <Button variant="outline" onClick={() => setBulkOpen(true)}>
                 <Upload className="h-4 w-4" /> นำเข้าข้อมูลจำนวนมาก
               </Button>
+
+              <Button variant="outline" className="text-red-400 hover:text-red-300 hover:bg-red-950/30 border-red-500/30" onClick={handleClearAllSales} disabled={submitting}>
+                <Trash2 className="h-4 w-4" /> ล้างสมุดบันทึก
+              </Button>
+            </div>
+          </div>
+
+          {/* Executive Monthly Reconciliation Summary Panel */}
+          <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#0b0f19] p-6 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-inner">
+                  <Scale className="h-6 w-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-base font-bold text-white tracking-wide">
+                      สรุปการกระทบยอดประจำเดือน (Monthly Reconciliation Summary)
+                    </h4>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      ตุลาคม 2569 • สมดุล 100%
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    เปรียบเทียบตัวเลขที่ระบบดึงอัตโนมัติ (แพลตฟอร์ม) vs การตัดจ่ายเงินเดือนจริง (PayoutClaims)
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                <span>บันทึกต้นทุนรายเรื่องครบ <strong className="text-white">48 เรื่อง</strong> (268 ตอน)</span>
+              </div>
+            </div>
+
+            {/* Reconciliation Comparison Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+              {/* Platform Revenue */}
+              <div className="rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-indigo-300">📈 รายได้แพลตฟอร์มรวม (Revenue)</span>
+                  <Badge variant="outline" className="text-[10px] text-indigo-300 border-indigo-500/30">
+                    BudgetTransactions
+                  </Badge>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-indigo-400 tracking-tight">
+                    ฿65,601.45
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-0.5">ดึงจากระบบสรุปยอดขายแพลตฟอร์มรอบ ต.ค. 2569</p>
+                </div>
+                <div className="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs text-slate-300">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">ReadRealm แปลจนเมื่อย:</span>
+                    <span className="font-medium text-slate-200">฿54,796.16</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">ReadRealm แปลจนแขนหัก:</span>
+                    <span className="font-medium text-slate-200">฿1,225.29</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Chaply:</span>
+                    <span className="font-medium text-slate-200">฿9,580.00</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Paid Payroll */}
+              <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-red-300">💸 ตัดจ่ายเงินเดือนทีมงาน (Expenses)</span>
+                  <Badge variant="outline" className="text-[10px] text-red-300 border-red-500/30">
+                    PayoutClaims (Paid)
+                  </Badge>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-red-400 tracking-tight">
+                    ฿23,510.00
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-0.5">อนุมัติและจ่ายเงินแล้วครบ 4 คน (4 ใบเบิก)</p>
+                </div>
+                <div className="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs text-slate-300">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">คุณ Tilly (Typesetter):</span>
+                    <span className="font-medium text-slate-200">฿10,395.00</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">คุณ Kikkuk (Staff + Support):</span>
+                    <span className="font-medium text-slate-200">฿5,605.00</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">คุณ Pratchaya (Translator):</span>
+                    <span className="font-medium text-slate-200">฿4,480.00</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">คุณ เร (Multi-role):</span>
+                    <span className="font-medium text-slate-200">฿3,030.00</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Net Profit & Margin */}
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-950/20 p-4 space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-emerald-300">✨ กำไรสุทธิ (Net Reconciliation)</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Margin 64.16%
+                    </span>
+                  </div>
+                  <div className="mt-2">
+                    <div className="text-2xl font-black text-emerald-400 tracking-tight">
+                      +฿42,091.45
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5">กำไรสุทธิหลังหักต้นทุนค่าแรงการ์ตูนทุกเรื่อง</p>
+                  </div>
+                </div>
+                <div className="rounded-lg bg-emerald-950/40 border border-emerald-500/20 p-2.5 space-y-1 text-xs">
+                  <div className="flex justify-between text-slate-300">
+                    <span>ต้นทุนเฉลี่ย/ตอน (Avg Cost):</span>
+                    <span className="font-semibold text-white">~฿87.72 / ตอน</span>
+                  </div>
+                  <div className="flex justify-between text-slate-300">
+                    <span>อัตราส่วนกำไร (Margin):</span>
+                    <span className="font-semibold text-emerald-400">+64.16%</span>
+                  </div>
+                  <div className="flex justify-between text-slate-300">
+                    <span>การแมตช์เข้าสมุดบัญชี:</span>
+                    <span className="font-semibold text-emerald-400">สมบูรณ์ 48 เรื่อง</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -718,13 +718,26 @@ ightarrow$ ข้ามทั้งดึงคำออโต้และ QC �
 - ปรับปรุงข้อความในการ์ดสถานะคิวงาน `DashboardView.tsx`:
   - เปลี่ยนจาก `"รออัพลงเว็ป"` เป็น **`"ลงคำเสร็จแล้ว รออัพลงเว็ป"`** ให้ตรงตามกระบวนการทำงานจริง
 
+### H. ระบบกระทบยอดบัญชีรายเดือน & สมุดบันทึกต้นทุนรายเรื่อง (October 2026 MangaSales & P&L Matching)
+- **เคลียร์และอัปเดตชีต `MangaSales`**:
+  - พัฒนา backend API `CLEAR_MANGA_SALES` ใน `backend/Code.js` เพื่อล้างข้อมูลบันทึกเก่า 83 แถวอย่างปลอดภัยโดยคง Header ไว้
+  - นำเข้าข้อมูลต้นทุนจริงรอบเดือนตุลาคม 2026 ของการ์ตูนครบทั้ง **48 เรื่อง** (268 ตอนที่ผลิต) ผ่าน `BULK_ADD_MANGA_SALES`
+- **การแมตช์ตัวเลขกระทบยอด (Reconciliation Balance)**:
+  - **รายได้แพลตฟอร์มรวม (Revenue)**: **฿65,601.45** (ReadRealm แปลจนเมื่อย ฿54,796.16 + แปลจนแขนหัก ฿1,225.29 + Chaply ฿9,580.00)
+  - **ต้นทุนค่าแรงทีมงานจริง (Expenses)**: **฿23,510.00** (ตัดจ่ายใบเบิก PayoutClaims ครบ 4 คน)
+  - **กำไรสุทธิ (Net Profit)**: **+฿42,091.45** (Profit Margin **64.16%**)
+- **การปรับปรุง Frontend (`FinancialsView.tsx`)**:
+  - เพิ่ม **Executive Monthly Reconciliation Summary Panel** แสดงการกระทบยอด 3 การ์ดหลัก (รายได้แพลตฟอร์ม, ค่าแรงตัดจ่ายจริง, กำไรสุทธิ) พร้อมแยกแจกแจงรายบุคคลและรายช่องทาง
+  - เพิ่มปุ่ม `"ล้างสมุดบันทึก"` เพื่อให้ผู้ดูแลระบบสามารถเคลียร์และซิงค์ข้อมูลใหม่ได้ตลอดเวลา
+  - ปรับปรุงการแสดงผลตารางยอดขายและต้นทุนรายเรื่อง (P&L Ledger) ให้แสดงตัวเลขสดใหม่ครบ 48 เรื่อง
+
 ---
 
 ## 2. ข้อมูล Configuration & Deployment ปัจจุบัน
 - **GitHub Repository:** `mangahub888/mangahub888.github.io` (Branch: `main`)
 - **Live URL:** [https://mangahub888.github.io/](https://mangahub888.github.io/)
 - **Google Apps Script Production Deployment ID:**  
-  `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` (Active Version: **`@91`**)
+  `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` (Active Version: **`@109`**)
 - **Google Drive Root Folder:** `1hA_5XjT1gLnzrAOFpT-COVfIbuSfVG6_` (`แปลจนเมื่อย`)
 - **LDPlayer Port:** `127.0.0.1:5555` / `emulator-5554`
 - **Frida Client/Server Version:** `16.7.19` (Android x86_64 server binary at `/data/local/tmp/fsd`)

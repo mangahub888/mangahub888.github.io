@@ -367,6 +367,9 @@ function doPost(e) {
       case 'DELETE_MANGA_SALE':
         result = deleteMangaSale(payload.index, payload.sale);
         break;
+      case 'CLEAR_MANGA_SALES':
+        result = clearMangaSales();
+        break;
       case 'COUNT_FINISHED_CHAPTERS':
         result = countFinishedChapters(payload.mangaId, payload.year, payload.month);
         break;
@@ -2753,6 +2756,28 @@ function deleteMangaSale(index) {
     lock.releaseLock();
   }
 }
+
+function clearMangaSales() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(MANGA_SALES_SHEET_NAME);
+    const lastRow = sheet.getLastRow();
+    const lastCol = sheet.getLastColumn();
+    if (lastRow > 1 && lastCol > 0) {
+      sheet.getRange(2, 1, lastRow - 1, lastCol).clearContent();
+    }
+    invalidateCache(['manga_sales', 'financial_sales']);
+    return { success: true, count: 0, list: [] };
+  } catch (err) {
+    console.error('clearMangaSales Error:', err);
+    return { error: 'Clear MangaSales Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
 
 function countFinishedChapters(mangaId, year, month) {
   try {
