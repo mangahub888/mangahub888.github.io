@@ -24,7 +24,9 @@ import {
   ExternalLink,
   Users,
   RefreshCw,
+  Search,
 } from "lucide-react"
+import { ComixUrlSearchDialog } from "@/components/modals/ComixUrlSearchDialog"
 
 const mangaSchema = z.object({
   manganame: z.string().min(1, "กรุณาระบุชื่อมังงะ (ภาษาไทย)"),
@@ -65,6 +67,7 @@ export function MangaModal({
     Array<{ id: string; name: string }>
   >([])
   const [loadingGroups, setLoadingGroups] = React.useState(false)
+  const [comixSearchOpen, setComixSearchOpen] = React.useState(false)
 
   const {
     register,
@@ -113,6 +116,51 @@ export function MangaModal({
     } finally {
       setLoadingGroups(false)
     }
+  }
+
+  const handleSelectComixItem = (item: {
+    url: string
+    title: string
+    alt_titles?: string[]
+    chapter_count?: number
+    status?: string
+    origin?: string
+    cover?: string
+  }) => {
+    // 1. Set URL
+    setValue("originalurl", item.url, { shouldDirty: true, shouldValidate: true })
+
+    // 2. Set original name if empty
+    if (!watch("originalname")) {
+      setValue("originalname", item.title, { shouldDirty: true })
+    }
+
+    // 3. Set manganame if empty
+    if (!watch("manganame")) {
+      setValue("manganame", item.title, { shouldDirty: true })
+    }
+
+    // 4. Set lastchapter if empty or "0"
+    const currentChap = watch("lastchapter")
+    if (!currentChap || currentChap === "0") {
+      setValue("lastchapter", String(item.chapter_count || "0"), { shouldDirty: true })
+    }
+
+    // 5. Generate slug if empty
+    if (!watch("slug")) {
+      const match = item.url.match(/comix\.to\/title\/[a-z0-9]+-(.+)/i)
+      const cleanSlug = match
+        ? match[1].toLowerCase().replace(/[^a-z0-9-]+/g, "-")
+        : item.title.toLowerCase().replace(/[^a-z0-9-]+/g, "-")
+      if (cleanSlug) {
+        setValue("slug", cleanSlug, { shouldDirty: true })
+      }
+    }
+
+    // 6. Automatically trigger scan group fetching from the selected Comix URL
+    fetchGroupsFromUrl(item.url)
+
+    toast.success(`เลือก "${item.title}" เรียบร้อยแล้ว (ใส่ URL ต้นฉบับสำเร็จ)`)
   }
 
   React.useEffect(() => {
@@ -227,11 +275,12 @@ export function MangaModal({
   const isUrgent = watch("isurgent")
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <>
+      <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">
-            {editItem ? "แก้ไขข้อมูลมังงะ" : "เพิ่มมังงะใหม่"}
+            {editItem ? "แก้ไขข้อมูลมังงะ" : "เปิดโปรเจคใหม่ / เพิ่มมังงะใหม่"}
           </DialogTitle>
         </DialogHeader>
 
@@ -265,8 +314,32 @@ export function MangaModal({
               <Input placeholder="เช่น One Piece" {...register("originalname")} />
             </div>
             <div className="space-y-1.5">
-              <Label>URL ต้นฉบับ</Label>
-              <Input placeholder="https://..." {...register("originalurl")} />
+              <div className="flex items-center justify-between">
+                <Label>URL ต้นฉบับ</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setComixSearchOpen(true)}
+                  className="h-6 px-2 text-[11px] border-violet-500/40 bg-violet-950/30 text-violet-300 hover:bg-violet-900/50 hover:text-white cursor-pointer"
+                >
+                  <Search className="h-3 w-3 mr-1 text-violet-400" />
+                  ค้นหาจาก Comix
+                </Button>
+              </div>
+              <div className="flex gap-1.5">
+                <Input placeholder="https://..." {...register("originalurl")} />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setComixSearchOpen(true)}
+                  title="กดเพื่อค้นหา URL จาก Comix"
+                  className="shrink-0 h-10 px-3 border-violet-500/40 bg-violet-950/30 text-violet-300 hover:bg-violet-900/50 hover:text-white cursor-pointer font-medium"
+                >
+                  <Search className="h-4 w-4 sm:mr-1.5 text-violet-400" />
+                  <span className="hidden sm:inline">ค้นหา Comix</span>
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -483,5 +556,13 @@ export function MangaModal({
         </form>
       </DialogContent>
     </Dialog>
+
+    <ComixUrlSearchDialog
+      open={comixSearchOpen}
+      onClose={() => setComixSearchOpen(false)}
+      initialQuery={watch("originalname") || watch("manganame") || ""}
+      onSelect={handleSelectComixItem}
+    />
+  </>
   )
 }

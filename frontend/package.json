@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "test": "node --experimental-strip-types test_cache_busting.mjs && node --experimental-strip-types test_queue_steps.mjs",
+    "test": "node --experimental-strip-types test_cache_busting.mjs && node --experimental-strip-types test_queue_steps.mjs && node --experimental-strip-types test_comix_search_modal.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
