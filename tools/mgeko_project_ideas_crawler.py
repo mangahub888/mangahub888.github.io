@@ -5,7 +5,7 @@ Mgeko New Project Ideas Crawler Engine
 --------------------------------------
 Crawls newly updated manga from https://www.mgeko.cc/jumbo/manga/
 Filters strictly for new projects with:
-- RULE: NOT MORE THAN 30 CHAPTERS (<= 30 ตอน)
+- RULE: NOT MORE THAN 100 CHAPTERS (<= 100 ตอน)
 
 Features:
 - Loops through pagination pages (1 to 5)
@@ -190,7 +190,7 @@ def fetch_manga_detail_and_translate(item: Dict[str, Any], session: requests.Ses
 
     return item
 
-def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 30) -> Dict[str, Any]:
+def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100) -> Dict[str, Any]:
     """Crawl Mgeko recently updated manga and filter for candidates with <= max_chapters."""
     now = datetime.now()
     crawled_at = now.isoformat()
@@ -370,7 +370,7 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 30) -> Dic
 
     # Print Leaderboard sorted by Views
     print("\n" + "=" * 95)
-    print("🏆 อันดับมังงะไอเดียใหม่ (<= 30 ตอน) เรียงตามยอดวิวสูงสุด:")
+    print(f"🏆 อันดับมังงะไอเดียใหม่ (<= {max_chapters} ตอน) เรียงตามยอดวิวสูงสุด:")
     print("=" * 95)
     print(f"{'อันดับ':<6} | {'ชื่อเรื่อง':<38} | {'สัญชาติ':<13} | {'ตอน':<7} | {'ยอดวิวรวม':>12} | {'หมวดหมู่'}")
     print("-" * 95)
@@ -386,7 +386,7 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 30) -> Dic
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Mgeko Project Ideas Crawler")
     parser.add_argument("--pages", type=int, default=5, help="Number of pagination pages to scan (default: 5)")
-    parser.add_argument("--max-chapters", type=int, default=30, help="Maximum chapter count threshold (default: 30)")
+    parser.add_argument("--max-chapters", type=int, default=100, help="Maximum chapter count threshold (default: 100)")
     args = parser.parse_args()
 
     crawl_mgeko_project_ideas(max_pages=args.pages, max_chapters=args.max_chapters)

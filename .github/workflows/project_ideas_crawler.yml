@@ -1,4 +1,4 @@
-name: Mgeko New Project Ideas Crawler (<= 30 Chapters)
+name: Mgeko New Project Ideas Crawler (<= 100 Chapters)
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
       max_chapters:
         description: 'Maximum chapter count threshold'
         required: false
-        default: '30'
+        default: '100'
 
 concurrency:
   group: mgeko-project-ideas-crawler
@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Mgeko Project Ideas Crawler
         run: |
-          python tools/mgeko_project_ideas_crawler.py --pages "${{ github.event.inputs.pages || '5' }}" --max-chapters "${{ github.event.inputs.max_chapters || '30' }}"
+          python tools/mgeko_project_ideas_crawler.py --pages "${{ github.event.inputs.pages || '5' }}" --max-chapters "${{ github.event.inputs.max_chapters || '100' }}"
 
       - name: Commit & Push New Project Ideas
         run: |
@@ -52,6 +52,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new project ideas changes to commit."
           else
-            git commit -m "chore(ideas): update mgeko <= 30 chapters project ideas [skip ci]"
+            git commit -m "chore(ideas): update mgeko <= 100 chapters project ideas [skip ci]"
             git push origin main
           fi

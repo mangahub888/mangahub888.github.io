@@ -444,7 +444,7 @@ function doPost(e) {
         break;
       // --- PROJECT IDEAS DISCOVERY (6-HOUR AUTOMATION) ---
       case 'TRIGGER_PROJECT_IDEAS_PIPELINE':
-        result = triggerGitHubProjectIdeasPipeline(payload ? payload.source : 'frontend_ui');
+        result = triggerGitHubProjectIdeasPipeline(payload ? payload.source : 'frontend_ui', payload ? payload.maxChapters : '100', payload ? payload.pages : '5');
         break;
       case 'CREATE_PROJECT_IDEAS_TRIGGER':
         result = { message: createProjectIdeas6HourTrigger() };
@@ -8595,7 +8595,7 @@ function getChaplyGrowthData() {
 // PROJECT IDEAS (MGEKO DISCOVERY) 6-HOUR AUTOMATION PIPELINE
 // =============================================================================
 
-function triggerGitHubProjectIdeasPipeline(triggerSource) {
+function triggerGitHubProjectIdeasPipeline(triggerSource, maxChapters, pages) {
   try {
     const token = getGitHubToken();
     if (!token) {
@@ -8608,7 +8608,7 @@ function triggerGitHubProjectIdeasPipeline(triggerSource) {
       ref: 'main',
       inputs: {
         pages: '5',
-        max_chapters: '30'
+        max_chapters: String(maxChapters || '100')
       }
     };
 

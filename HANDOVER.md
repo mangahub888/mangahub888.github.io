@@ -6,6 +6,26 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 อัปเกรดหน้าหาไอเดียโปรเจคใหม่ (`ProjectIdeasView.tsx` & Crawler Pipeline) — ขยายช่วงตอนจาก ≤ 30 ตอน เป็น 0-100 ตอน พร้อมตัวกรองหลายระดับ (`1-5`, `6-10` ... `96-100`) สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
+
+#### 1. รายละเอียด Requirement จาก USER:
+- **"หน้าหาไอเดียโปรเจคใหม่ จาก max 30 ep เราเพิ่มไปให้เลือกได้หลายระดับไปเลย 1-5 6-10 ... 0-100"**
+
+#### 2. สิ่งที่ได้รับการปรับปรุงและแก้ไข (Frontend, Crawler & Backend Pipeline):
+1. **ปรับปรุง UI ตัวกรองช่วงตอนหลายระดับใน `frontend/src/components/views/ProjectIdeasView.tsx`**:
+   - ขยายขีดจำกัดการแสดงผลและตัวกรองเริ่มต้นเป็น **`0-100` ตอน** (`ทั้งหมด (0 - 100 ตอน)`)
+   - เพิ่ม **ปุ่มซอยย่อยทุกๆ 5 ตอน (20 ระดับ)** ครบถ้วนตั้งแต่ `1-5`, `6-10`, `11-15`, `16-20`, `21-25`, `26-30`, `31-35`, `36-40`, `41-45`, `46-50`, `51-55`, `56-60`, `61-65`, `66-70`, `71-75`, `76-80`, `81-85`, `86-90`, `91-95`, ไปจนถึง `96-100` ตอน พร้อมแสดงตัวเลขจำนวนเรื่อง (`count badge`) ในแต่ละช่วงแบบ Real-time
+   - เพิ่ม **ปุ่มช่วงหลัก (Broad Presets)**: `0 - 100 ตอน`, `0 - 30 ตอน`, `0 - 50 ตอน`, `31 - 60 ตอน`, และ `61 - 100 ตอน`
+   - เพิ่ม **Dropdown เลือกช่วงตอนด่วน** และ **ช่องกรอกช่วงตอนกำหนดเอง (Custom Min - Max Input)** ให้ผู้ใช้ระบุตัวเลขต่ำสุด-สูงสุดเองได้อย่างอิสระ (0 ถึง 100 ตอน)
+2. **อัปเกรด Crawler Engine & GitHub Actions Workflow & GAS Trigger**:
+   - `tools/mgeko_project_ideas_crawler.py`: เปลี่ยนค่าเริ่มต้น `max_chapters` จาก `30` เป็น `100` ตอน และรันสแกนข้อมูลจริงจาก Mgeko (5 หน้า, สแกน 244 เรื่อง -> ได้มังงะที่อยู่ในเกณฑ์ `0-100` ตอนเพิ่มขึ้นจาก 59 เรื่องเป็น **163 เรื่อง**) พร้อมบันทึกลง `tools/data/project_ideas_latest.json`, `frontend/src/data/project_ideas_latest.json`, และ `frontend/public/data/project_ideas_latest.json`
+   - `.github/workflows/project_ideas_crawler.yml`: เปลี่ยนค่า default `max_chapters` เป็น `'100'`
+   - `backend/Code.js`: ปรับฟังก์ชัน `triggerGitHubProjectIdeasPipeline(triggerSource, maxChapters, pages)` ให้ส่ง `max_chapters: String(maxChapters || '100')` ไปยัง GitHub Actions
+3. **การตรวจสอบและ Build**:
+   - รัน `npm --prefix frontend run build` (`tsc -b && vite build`) ผ่านสมบูรณ์ 100% ไร้ข้อผิดพลาด
+
+---
+
 ### 🏆 แก้ไขปัญหา Tencent LDPlayer Pipeline (Download Timeout, Badge ⬇️ ค้าง, CID Mapping, 15-Bug 1-Click Audit) & ย้าย Secrets เข้า GAS ScriptProperties (`@103`) สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
 
 #### 1. การแก้ไข Tencent LDPlayer Pipeline & 15-Bug 1-Click Audit (`tools/tencent_ldplayer_pipeline.py`, `tools/quick_refresh_session.py`, `.bat`, `todo99.md`):

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,12 +31,10 @@ import {
   Clock,
   Compass,
   Flame,
-  ArrowUpDown,
-  Filter,
-  Check,
   Power,
   PowerOff,
   Loader2,
+  SlidersHorizontal,
 } from "lucide-react"
 
 interface TriggerStatusData {
@@ -54,6 +52,47 @@ interface ProjectIdeasViewProps {
   onOpenAddManga?: (prefilled: any) => void
 }
 
+export interface ChapterRangePreset {
+  id: string
+  label: string
+  shortLabel: string
+  min: number
+  max: number
+  group: "broad" | "stepped"
+  badgeColor?: string
+}
+
+export const CHAPTER_RANGE_PRESETS: ChapterRangePreset[] = [
+  // Broad / Overview Ranges
+  { id: "0-100", label: "ทั้งหมด (0 - 100 ตอน)", shortLabel: "0 - 100 ตอน", min: 0, max: 100, group: "broad", badgeColor: "amber" },
+  { id: "0-30", label: "ไม่เกิน 30 ตอน (0 - 30)", shortLabel: "0 - 30 ตอน", min: 0, max: 30, group: "broad", badgeColor: "emerald" },
+  { id: "0-50", label: "ไม่เกิน 50 ตอน (0 - 50)", shortLabel: "0 - 50 ตอน", min: 0, max: 50, group: "broad", badgeColor: "cyan" },
+  { id: "31-60", label: "ระดับกลาง (31 - 60 ตอน)", shortLabel: "31 - 60 ตอน", min: 31, max: 60, group: "broad", badgeColor: "indigo" },
+  { id: "61-100", label: "ตอนเยอะ (61 - 100 ตอน)", shortLabel: "61 - 100 ตอน", min: 61, max: 100, group: "broad", badgeColor: "purple" },
+
+  // Stepped 5-Episode Ranges (1-5, 6-10, ... up to 96-100)
+  { id: "1-5", label: "🌱 1 - 5 ตอน", shortLabel: "1-5", min: 1, max: 5, group: "stepped" },
+  { id: "6-10", label: "6 - 10 ตอน", shortLabel: "6-10", min: 6, max: 10, group: "stepped" },
+  { id: "11-15", label: "11 - 15 ตอน", shortLabel: "11-15", min: 11, max: 15, group: "stepped" },
+  { id: "16-20", label: "16 - 20 ตอน", shortLabel: "16-20", min: 16, max: 20, group: "stepped" },
+  { id: "21-25", label: "21 - 25 ตอน", shortLabel: "21-25", min: 21, max: 25, group: "stepped" },
+  { id: "26-30", label: "26 - 30 ตอน", shortLabel: "26-30", min: 26, max: 30, group: "stepped" },
+  { id: "31-35", label: "31 - 35 ตอน", shortLabel: "31-35", min: 31, max: 35, group: "stepped" },
+  { id: "36-40", label: "36 - 40 ตอน", shortLabel: "36-40", min: 36, max: 40, group: "stepped" },
+  { id: "41-45", label: "41 - 45 ตอน", shortLabel: "41-45", min: 41, max: 45, group: "stepped" },
+  { id: "46-50", label: "46 - 50 ตอน", shortLabel: "46-50", min: 46, max: 50, group: "stepped" },
+  { id: "51-55", label: "51 - 55 ตอน", shortLabel: "51-55", min: 51, max: 55, group: "stepped" },
+  { id: "56-60", label: "56 - 60 ตอน", shortLabel: "56-60", min: 56, max: 60, group: "stepped" },
+  { id: "61-65", label: "61 - 65 ตอน", shortLabel: "61-65", min: 61, max: 65, group: "stepped" },
+  { id: "66-70", label: "66 - 70 ตอน", shortLabel: "66-70", min: 66, max: 70, group: "stepped" },
+  { id: "71-75", label: "71 - 75 ตอน", shortLabel: "71-75", min: 71, max: 75, group: "stepped" },
+  { id: "76-80", label: "76 - 80 ตอน", shortLabel: "76-80", min: 76, max: 80, group: "stepped" },
+  { id: "81-85", label: "81 - 85 ตอน", shortLabel: "81-85", min: 81, max: 85, group: "stepped" },
+  { id: "86-90", label: "86 - 90 ตอน", shortLabel: "86-90", min: 86, max: 90, group: "stepped" },
+  { id: "91-95", label: "91 - 95 ตอน", shortLabel: "91-95", min: 91, max: 95, group: "stepped" },
+  { id: "96-100", label: "96 - 100 ตอน", shortLabel: "96-100", min: 96, max: 100, group: "stepped" },
+]
+
 export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
   const [data, setData] = React.useState<any>(initialIdeasData)
   const [loading, setLoading] = React.useState<boolean>(false)
@@ -70,7 +109,9 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
   // Filters
   const [searchQuery, setSearchQuery] = React.useState<string>("")
   const [originFilter, setOriginFilter] = React.useState<string>("all")
-  const [chapterRange, setChapterRange] = React.useState<"all" | "1-5" | "6-15" | "16-30">("all")
+  const [chapterRange, setChapterRange] = React.useState<string>("0-100")
+  const [customMinEp, setCustomMinEp] = React.useState<string>("")
+  const [customMaxEp, setCustomMaxEp] = React.useState<string>("")
   const [selectedGenre, setSelectedGenre] = React.useState<string>("all")
   const [sortBy, setSortBy] = React.useState<"views_desc" | "chap_asc" | "chap_desc" | "score_desc" | "recent">("views_desc")
   const [viewMode, setViewMode] = React.useState<"grid" | "table">("grid")
@@ -88,7 +129,15 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
         if (liveRes.ok) {
           const json = await liveRes.json()
           if (json && Array.isArray(json.items) && json.items.length > 0) {
-            setData(json)
+            setData((prev: any) => {
+              const prevThresh = Number(prev?.max_chapters_threshold || 0)
+              const nextThresh = Number(json?.max_chapters_threshold || 0)
+              const prevLen = Array.isArray(prev?.items) ? prev.items.length : 0
+              if (prevThresh > nextThresh && prevLen > json.items.length) {
+                return prev
+              }
+              return json
+            })
             setLoading(false)
             return
           }
@@ -163,10 +212,10 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
   // Manually Trigger Project Ideas Workflow Pipeline
   const handleTriggerAction = async () => {
     setTriggering(true)
-    const toastId = toast.loading("กำลังส่งสัญญาณรัน Mgeko Discovery บน GitHub Actions...")
+    const toastId = toast.loading("กำลังส่งสัญญาณรัน Mgeko Discovery (0-100 ตอน) บน GitHub Actions...")
     try {
-      await callGasApi("TRIGGER_PROJECT_IDEAS_PIPELINE", { source: "project_ideas_ui" })
-      toast.success("🚀 ส่งสัญญาณให้ระบบสแกนหาไอเดียมังงะใหม่เรียบร้อยแล้ว!", { id: toastId })
+      await callGasApi("TRIGGER_PROJECT_IDEAS_PIPELINE", { source: "project_ideas_ui", maxChapters: 100, pages: 5 })
+      toast.success("🚀 ส่งสัญญาณให้ระบบสแกนหาไอเดียมังงะใหม่ (0-100 ตอน) เรียบร้อยแล้ว!", { id: toastId })
       if (refetchActions) refetchActions()
       setTimeout(() => {
         loadLatestIdeas()
@@ -191,6 +240,38 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
     }))
   }
 
+  // Active Min / Max Chapter bounds
+  const activeBounds = React.useMemo(() => {
+    const hasCustomMin = customMinEp.trim() !== "" && !isNaN(Number(customMinEp))
+    const hasCustomMax = customMaxEp.trim() !== "" && !isNaN(Number(customMaxEp))
+    if (hasCustomMin || hasCustomMax) {
+      const min = hasCustomMin ? Math.max(0, Number(customMinEp)) : 0
+      const max = hasCustomMax ? Math.max(min, Number(customMaxEp)) : 100
+      return { min, max, label: `${min} - ${max} ตอน (กำหนดเอง)`, isCustom: true }
+    }
+    const preset = CHAPTER_RANGE_PRESETS.find((p) => p.id === chapterRange) || CHAPTER_RANGE_PRESETS[0]
+    return { min: preset.min, max: preset.max, label: preset.label, isCustom: false }
+  }, [chapterRange, customMinEp, customMaxEp])
+
+  const handleSelectPresetRange = (presetId: string) => {
+    setChapterRange(presetId)
+    setCustomMinEp("")
+    setCustomMaxEp("")
+  }
+
+  // Compute counts per preset range (taking into account origin/genre/search filters if any, or raw items)
+  const rangeCounts = React.useMemo(() => {
+    const items = Array.isArray(data?.items) ? data.items : []
+    const counts: Record<string, number> = {}
+    for (const preset of CHAPTER_RANGE_PRESETS) {
+      counts[preset.id] = items.filter((it: any) => {
+        const ch = Number(it.chapter_count || 0)
+        return ch >= preset.min && ch <= preset.max
+      }).length
+    }
+    return counts
+  }, [data])
+
   // Filter & Sort Logic
   const filteredItems = React.useMemo(() => {
     if (!data || !Array.isArray(data.items)) return []
@@ -201,14 +282,11 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
       list = list.filter((item) => item.origin === originFilter || (item.origin && item.origin.includes(originFilter)))
     }
 
-    // Chapter Range Filter (Strict Rule <= 30)
-    if (chapterRange === "1-5") {
-      list = list.filter((item) => (item.chapter_count || 0) >= 1 && (item.chapter_count || 0) <= 5)
-    } else if (chapterRange === "6-15") {
-      list = list.filter((item) => (item.chapter_count || 0) >= 6 && (item.chapter_count || 0) <= 15)
-    } else if (chapterRange === "16-30") {
-      list = list.filter((item) => (item.chapter_count || 0) >= 16 && (item.chapter_count || 0) <= 30)
-    }
+    // Chapter Range Filter (Multi-level 1-5, 6-10 ... 0-100 or custom min-max)
+    list = list.filter((item) => {
+      const ch = Number(item.chapter_count || 0)
+      return ch >= activeBounds.min && ch <= activeBounds.max
+    })
 
     // Genre Filter
     if (selectedGenre !== "all") {
@@ -225,6 +303,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
         (item) =>
           (item.title && item.title.toLowerCase().includes(q)) ||
           (item.summary && item.summary.toLowerCase().includes(q)) ||
+          (item.summary_th && item.summary_th.toLowerCase().includes(q)) ||
           (Array.isArray(item.genres) && item.genres.some((g: string) => g.toLowerCase().includes(q)))
       )
     }
@@ -239,13 +318,16 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
     })
 
     return list
-  }, [data, originFilter, chapterRange, selectedGenre, searchQuery, sortBy])
+  }, [data, originFilter, activeBounds, selectedGenre, searchQuery, sortBy])
 
   // Top genres list for chips
   const topGenreChips = React.useMemo(() => {
     if (!data || !data.top_genres) return ["Action", "Fantasy", "Isekai", "Comedy", "Manhwa", "Manhua"]
     return Object.keys(data.top_genres).slice(0, 10)
   }, [data])
+
+  const broadPresets = React.useMemo(() => CHAPTER_RANGE_PRESETS.filter((p) => p.group === "broad"), [])
+  const steppedPresets = React.useMemo(() => CHAPTER_RANGE_PRESETS.filter((p) => p.group === "stepped"), [])
 
   return (
     <div className="space-y-6">
@@ -256,15 +338,15 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
             <Lightbulb className="h-5 w-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-semibold text-white">
                 หาไอเดียโปรเจคใหม่ (New Project Discovery)
               </span>
               <Badge className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                กฎคัดกรอง: ไม่เกิน 30 ตอน (≤ 30 ตอน)
+                รองรับทุกระดับ: 0 - 100 ตอน (เลือกซอยย่อยทีละ 5 ตอนได้)
               </Badge>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
+            <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
               <span>สแกนจาก:</span>
               <a
                 href="https://www.mgeko.cc/jumbo/manga/"
@@ -404,16 +486,22 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
 
       {/* 4 KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
+        <Card
+          onClick={() => handleSelectPresetRange("0-100")}
+          className={`p-4 bg-[#0f172a]/90 border-slate-800 cursor-pointer transition-all hover:border-amber-500/40 ${
+            !activeBounds.isCustom && chapterRange === "0-100" ? "ring-1 ring-amber-500/50 border-amber-500/40" : ""
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-slate-400">🎯 มังงะที่ผ่านเกณฑ์ (≤ 30 ตอน)</p>
+              <p className="text-xs text-slate-400">🎯 มังงะที่ผ่านเกณฑ์ (0 - 100 ตอน)</p>
               <p className="text-2xl font-bold font-mono text-amber-400 mt-1">
-                {data?.total_candidates || 57}{" "}
+                {data?.total_candidates || (data?.items || []).length || 0}{" "}
                 <span className="text-xs font-normal text-slate-400">เรื่อง</span>
               </p>
               <p className="text-[11px] text-slate-500 mt-1">
-                จากที่สแกนทั้งหมด {data?.total_scanned || 204} เรื่อง (5 หน้า)
+                ไม่เกิน 30 ตอน: <span className="text-emerald-400 font-mono">{rangeCounts["0-30"] || 0}</span> เรื่อง • 31-100 ตอน:{" "}
+                <span className="text-indigo-400 font-mono">{(rangeCounts["31-60"] || 0) + (rangeCounts["61-100"] || 0)}</span> เรื่อง
               </p>
             </div>
             <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
@@ -422,16 +510,22 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
           </div>
         </Card>
 
-        <Card className="p-4 bg-[#0f172a]/90 border-slate-800">
+        <Card
+          onClick={() => handleSelectPresetRange("1-5")}
+          className={`p-4 bg-[#0f172a]/90 border-slate-800 cursor-pointer transition-all hover:border-emerald-500/40 ${
+            !activeBounds.isCustom && chapterRange === "1-5" ? "ring-1 ring-emerald-500/50 border-emerald-500/40" : ""
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400">🌱 มังงะเปิดใหม่ (1 - 5 ตอน)</p>
               <p className="text-2xl font-bold font-mono text-emerald-400 mt-1">
-                {(data?.items || []).filter((i: any) => (i.chapter_count || 0) <= 5).length || 6}{" "}
+                {rangeCounts["1-5"] || 0}{" "}
                 <span className="text-xs font-normal text-slate-400">เรื่อง</span>
               </p>
               <p className="text-[11px] text-slate-400 mt-1">
-                เริ่มแปลได้ทันที ต้นทุนและเวลาเริ่มต้นต่ำ
+                6-10 ตอน: <span className="text-cyan-400 font-mono">{rangeCounts["6-10"] || 0}</span> เรื่อง • 11-20 ตอน:{" "}
+                <span className="text-teal-400 font-mono">{(rangeCounts["11-15"] || 0) + (rangeCounts["16-20"] || 0)}</span> เรื่อง
               </p>
             </div>
             <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
@@ -446,14 +540,14 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
               <p className="text-xs text-slate-400">🌏 สัญชาติมังงะ</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs font-mono font-medium text-slate-200">
-                  🇰🇷 Manhwa ({data?.origin_distribution?.["KR (Manhwa)"] || 20})
+                  🇰🇷 Manhwa ({data?.origin_distribution?.["KR (Manhwa)"] || 0})
                 </span>
                 <span className="text-xs font-mono font-medium text-slate-200">
-                  🇨🇳 Manhua ({data?.origin_distribution?.["CN (Manhua)"] || 15})
+                  🇨🇳 Manhua ({data?.origin_distribution?.["CN (Manhua)"] || 0})
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 mt-1">
-                🇯🇵 Manga ({data?.origin_distribution?.["JP (Manga)"] || 22})
+                🇯🇵 Manga ({(data?.origin_distribution?.["JP (Manga)"] || 0) + (data?.origin_distribution?.["Manga"] || 0)})
               </p>
             </div>
             <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
@@ -470,7 +564,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                 {topGenreChips.slice(0, 3).join(", ")}
               </p>
               <p className="text-[11px] text-slate-500 mt-1">
-                เรื่องย่อ &amp; หมวดหมู่ถูกดึงแบบ Full Metadata
+                เรื่องย่อแปลไทย &amp; หมวดหมู่ Full Metadata
               </p>
             </div>
             <div className="h-10 w-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
@@ -482,8 +576,8 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
 
       {/* Control Filters Bar */}
       <div className="flex flex-col gap-3 p-3.5 rounded-xl border border-slate-800 bg-[#0b1120]/80">
-        {/* Row 1: Search, Sort, View Toggle */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        {/* Row 1: Search, Quick Select Dropdown, Sort, View Toggle */}
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-lg">
             <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
             <Input
@@ -494,15 +588,47 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Dropdown Select for Episode Range */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap">เลือกช่วงตอน:</span>
+              <select
+                className="h-8 rounded-lg border border-slate-800 bg-[#0f172a] px-2.5 text-xs text-amber-300 font-medium"
+                value={activeBounds.isCustom ? "custom" : chapterRange}
+                onChange={(e) => {
+                  if (e.target.value !== "custom") {
+                    handleSelectPresetRange(e.target.value)
+                  }
+                }}
+              >
+                <optgroup label="🌟 ภาพรวมช่วงกว้าง (Broad Presets)">
+                  {broadPresets.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label} ({rangeCounts[p.id] ?? 0} เรื่อง)
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="📊 แบ่งระดับทีละ 5 ตอน (1-5, 6-10 ... 96-100)">
+                  {steppedPresets.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label} ({rangeCounts[p.id] ?? 0} เรื่อง)
+                    </option>
+                  ))}
+                </optgroup>
+                {activeBounds.isCustom && (
+                  <option value="custom">🎯 กำหนดเอง ({activeBounds.min} - {activeBounds.max} ตอน)</option>
+                )}
+              </select>
+            </div>
+
             <select
               className="h-8 rounded-lg border border-slate-800 bg-[#0f172a] px-2.5 text-xs text-slate-200"
               value={sortBy}
               onChange={(e: any) => setSortBy(e.target.value)}
             >
               <option value="views_desc">ยอดวิวสูงสุด 🔥</option>
-              <option value="chap_asc">ตอนน้อยสุดไปมาก (1 → 30)</option>
-              <option value="chap_desc">ตอนมากสุดไปน้อย (30 → 1)</option>
+              <option value="chap_asc">ตอนน้อยสุดไปมาก (1 → 100)</option>
+              <option value="chap_desc">ตอนมากสุดไปน้อย (100 → 1)</option>
               <option value="score_desc">คะแนนรีวิวสูงสุด ⭐</option>
             </select>
 
@@ -530,7 +656,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
           </div>
         </div>
 
-        {/* Row 2: Origin & Chapter Range Chips */}
+        {/* Row 2: Origin & Broad Chapter Presets + Custom Min-Max Input */}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/60">
           {/* Origin */}
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -577,53 +703,111 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
             </button>
           </div>
 
-          {/* Chapter Range */}
+          {/* Broad Chapter Range Presets & Custom Min/Max */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[11px] text-slate-400 mr-1 font-medium">ช่วงตอน:</span>
-            <button
-              onClick={() => setChapterRange("all")}
-              className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
-                chapterRange === "all"
-                  ? "bg-amber-600/30 text-amber-300 border-amber-500/50 font-semibold"
-                  : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
-              }`}
-            >
-              ทั้งหมด (≤ 30 ตอน)
-            </button>
-            <button
-              onClick={() => setChapterRange("1-5")}
-              className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
-                chapterRange === "1-5"
-                  ? "bg-emerald-600/30 text-emerald-300 border-emerald-500/50 font-semibold"
-                  : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
-              }`}
-            >
-              🌱 1 - 5 ตอน
-            </button>
-            <button
-              onClick={() => setChapterRange("6-15")}
-              className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
-                chapterRange === "6-15"
-                  ? "bg-cyan-600/30 text-cyan-300 border-cyan-500/50 font-semibold"
-                  : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
-              }`}
-            >
-              ⚡ 6 - 15 ตอน
-            </button>
-            <button
-              onClick={() => setChapterRange("16-30")}
-              className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all ${
-                chapterRange === "16-30"
-                  ? "bg-indigo-600/30 text-indigo-300 border-indigo-500/50 font-semibold"
-                  : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
-              }`}
-            >
-              🔥 16 - 30 ตอน
-            </button>
+            <span className="text-[11px] text-slate-400 mr-1 font-medium">ช่วงหลัก:</span>
+            {broadPresets.map((preset) => {
+              const isSelected = !activeBounds.isCustom && chapterRange === preset.id
+              return (
+                <button
+                  key={preset.id}
+                  onClick={() => handleSelectPresetRange(preset.id)}
+                  className={`px-2.5 py-1 text-xs font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                    isSelected
+                      ? "bg-amber-600/30 text-amber-300 border-amber-500/60 font-semibold shadow-xs"
+                      : "bg-[#0f172a] text-slate-400 border-slate-800 hover:text-slate-200"
+                  }`}
+                >
+                  <span>{preset.shortLabel}</span>
+                  <span className="text-[10px] font-mono opacity-75">({rangeCounts[preset.id] ?? 0})</span>
+                </button>
+              )
+            })}
+
+            {/* Custom Min-Max Episode Inputs */}
+            <div className="flex items-center gap-1 ml-1 pl-2 border-l border-slate-800">
+              <SlidersHorizontal className="h-3 w-3 text-slate-400 mr-0.5" />
+              <span className="text-[11px] text-slate-400">กำหนดเอง:</span>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                placeholder="ต่ำสุด"
+                value={customMinEp}
+                onChange={(e) => setCustomMinEp(e.target.value)}
+                className="w-14 h-7 px-1.5 text-center text-xs font-mono rounded-md bg-[#0f172a] border border-slate-800 text-slate-200 focus:border-amber-500/60 focus:outline-none"
+              />
+              <span className="text-slate-500 text-xs">-</span>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                placeholder="สูงสุด"
+                value={customMaxEp}
+                onChange={(e) => setCustomMaxEp(e.target.value)}
+                className="w-14 h-7 px-1.5 text-center text-xs font-mono rounded-md bg-[#0f172a] border border-slate-800 text-slate-200 focus:border-amber-500/60 focus:outline-none"
+              />
+              {activeBounds.isCustom && (
+                <button
+                  onClick={() => {
+                    setCustomMinEp("")
+                    setCustomMaxEp("")
+                  }}
+                  className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30"
+                >
+                  ล้าง
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Row 3: Genre Chips */}
+        {/* Row 3: Multi-level Stepped 5-Episode Chips (1-5, 6-10, 11-15 ... 96-100) */}
+        <div className="flex flex-col gap-1.5 pt-2 border-t border-slate-800/40">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-slate-400 font-medium">
+              🎚️ เลือกระดับจำนวนตอนแบบละเอียด (ซอยย่อยทุกๆ 5 ตอน: 1-5, 6-10 ... ถึง 100 ตอน):
+            </span>
+            <span className="text-[11px] font-mono text-amber-400">
+              กำลังเลือก: {activeBounds.label}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {steppedPresets.map((preset) => {
+              const isSelected = !activeBounds.isCustom && chapterRange === preset.id
+              const count = rangeCounts[preset.id] ?? 0
+              return (
+                <button
+                  key={preset.id}
+                  onClick={() => handleSelectPresetRange(preset.id)}
+                  className={`px-2 py-1 text-[11px] font-mono rounded-md border transition-all flex items-center gap-1 ${
+                    isSelected
+                      ? "bg-emerald-600/30 text-emerald-300 border-emerald-500/60 font-semibold shadow-xs"
+                      : count > 0
+                      ? "bg-[#0f172a] text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white"
+                      : "bg-[#0f172a]/40 text-slate-600 border-slate-800/50 hover:text-slate-400"
+                  }`}
+                  title={`${preset.label} (มี ${count} เรื่อง)`}
+                >
+                  <span>{preset.shortLabel}</span>
+                  <span
+                    className={`text-[9px] px-1 py-0 rounded-full ${
+                      isSelected
+                        ? "bg-emerald-500/30 text-emerald-200"
+                        : count > 0
+                        ? "bg-slate-800 text-amber-400/90"
+                        : "bg-slate-900 text-slate-600"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Row 4: Genre Chips */}
         <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-800/40">
           <span className="text-[11px] text-slate-400 mr-1 font-medium">หมวดหมู่:</span>
           <button
@@ -653,12 +837,18 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
       </div>
 
       {/* Results Count Header */}
-      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+      <div className="flex items-center justify-between text-xs text-slate-400 px-1 flex-wrap gap-2">
         <span>
           พบมังงะไอเดียใหม่ที่ตรงกับเงื่อนไข:{" "}
           <strong className="text-amber-400 font-mono text-sm">{filteredItems.length}</strong> เรื่อง
         </span>
-        <span>แสดงผลมังงะที่มีไม่เกิน 30 ตอนเท่านั้น</span>
+        <span>
+          กรองช่วงตอน:{" "}
+          <strong className="text-emerald-400 font-mono">
+            {activeBounds.min} - {activeBounds.max} ตอน
+          </strong>{" "}
+          (จากฐานข้อมูล 0 - {data?.max_chapters_threshold || 100} ตอน)
+        </span>
       </div>
 
       {/* Main View: Grid Mode */}
@@ -667,12 +857,21 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
           {filteredItems.length === 0 ? (
             <div className="col-span-full py-16 text-center text-slate-500">
               <Compass className="h-8 w-8 mx-auto mb-2 text-slate-600 opacity-60" />
-              <p>ไม่พบมังงะที่ตรงกับเงื่อนไขการค้นหา</p>
+              <p>ไม่พบมังงะในช่วง {activeBounds.min} - {activeBounds.max} ตอน ที่ตรงกับเงื่อนไขการค้นหา</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleSelectPresetRange("0-100")}
+                className="mt-3 text-xs border-slate-700 bg-[#0f172a] text-amber-400 hover:text-amber-300"
+              >
+                แสดงทั้งหมด (0 - 100 ตอน)
+              </Button>
             </div>
           ) : (
             filteredItems.map((item, idx) => {
               const isExpanded = expandedSummaries[item.id] || false
-              const hasLongSummary = item.summary && item.summary.length > 140
+              const displaySummary = item.summary_th || item.summary || ""
+              const hasLongSummary = displaySummary.length > 140
 
               return (
                 <Card
@@ -773,7 +972,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                           </span>
                         ) : (
                           <span className="text-[10px] text-slate-500">
-                            (เหลือที่ให้แปลตามอีกเยอะ)
+                            (กำลังได้รับความนิยม)
                           </span>
                         )}
                       </div>
@@ -781,10 +980,10 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                   </div>
 
                   {/* Synopsis / Summary */}
-                  {item.summary && (
+                  {displaySummary && (
                     <div className="px-4 pb-3 pt-1 border-t border-slate-800/60 text-[11px] text-slate-300/80 leading-relaxed">
                       <p className={isExpanded ? "" : "line-clamp-2"}>
-                        {item.summary}
+                        {displaySummary}
                       </p>
                       {hasLongSummary && (
                         <button
@@ -869,7 +1068,7 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                 {filteredItems.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="text-center py-12 text-slate-500">
-                      ไม่พบมังงะที่ตรงกับเงื่อนไข
+                      ไม่พบมังงะในช่วง {activeBounds.min} - {activeBounds.max} ตอน ที่ตรงกับเงื่อนไข
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -897,9 +1096,9 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
                           <span className="text-xs font-semibold text-slate-100 hover:text-amber-300 transition-colors line-clamp-1">
                             {item.title}
                           </span>
-                          {item.summary && (
+                          {(item.summary_th || item.summary) && (
                             <span className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
-                              {item.summary}
+                              {item.summary_th || item.summary}
                             </span>
                           )}
                         </div>
