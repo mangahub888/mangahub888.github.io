@@ -1,11 +1,11 @@
 {
-  "pipeline_recorded_at": "2026-11-07T23:14:12.958553+00:00",
+  "pipeline_recorded_at": "2026-11-07T23:56:14.179978+00:00",
   "date_reference": "2026-11-07",
   "total_comics": 236,
-  "total_sales_portfolio": 5779756.85,
-  "total_views_portfolio": 20697032,
-  "lionking_sales": 4411796.05,
-  "lionking_views": 17047532,
+  "total_sales_portfolio": 5779805.45,
+  "total_views_portfolio": 20697185,
+  "lionking_sales": 4411844.65,
+  "lionking_views": 17047685,
   "lionking_count": 155,
   "adieu_sales": 1367960.8,
   "adieu_views": 3649500,
@@ -24,9 +24,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 213,
-      "total_views": 1340050,
+      "total_views": 1340061,
       "total_sales": 497178.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-06T15:41:31.998Z",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -43,8 +43,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2140.2,
-      "views_7_chapters": 1703,
-      "platform": "readrealm"
+      "views_7_chapters": 1703
     },
     {
       "comic_id": "EZ41KDdWY1Nxw7MA5PkN",
@@ -52,9 +51,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 368,
-      "total_views": 1251493,
-      "total_sales": 461442.9,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "total_views": 1251508,
+      "total_sales": 461450.1,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-03T17:54:29.947Z",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -71,18 +70,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 5383.8,
-      "views_7_chapters": 5867,
-      "platform": "readrealm"
+      "views_7_chapters": 5867
     },
     {
       "comic_id": "jnGrQvMpVQQ2V5J8l2Ez",
       "subject": "ที่แท้ข้าก็ไร้เทียมทานมาตั้งนานแล้วนี่เอง",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 323,
-      "total_views": 1788316,
-      "total_sales": 425891.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "chapters_count": 324,
+      "total_views": 1788325,
+      "total_sales": 425906.2,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-08-03T08:56:07.005Z",
       "days_inactive": 461,
       "is_inactive_30d": true,
@@ -99,18 +97,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 4415.4,
-      "views_7_chapters": 4548,
-      "platform": "readrealm"
+      "views_7_chapters": 4548
     },
     {
       "comic_id": "5qDAm32WxX9XOogPnaGe",
       "subject": "เจ้าแห่งกงล้อโชคชะตา",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 274,
-      "total_views": 1860629,
+      "chapters_count": 275,
+      "total_views": 1860630,
       "total_sales": 328624.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-25T19:13:48.428Z",
       "days_inactive": 13,
       "is_inactive_30d": false,
@@ -127,18 +124,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 828.0,
-      "views_7_chapters": 601,
-      "platform": "readrealm"
+      "views_7_chapters": 601
     },
     {
       "comic_id": "pRbKaMELO7kBOglzP41q",
       "subject": "ผู้ฟื้นคืนชีพเพียงหนึ่งเดียว | Solo Reincarnation",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 81,
+      "chapters_count": 82,
       "total_views": 419271,
       "total_sales": 225506.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-02-13T16:08:00.823Z",
       "days_inactive": 267,
       "is_inactive_30d": true,
@@ -155,8 +151,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1647.8,
-      "views_7_chapters": 1478,
-      "platform": "readrealm"
+      "views_7_chapters": 1478
     },
     {
       "comic_id": "qzkJdZa0Y6kgxrv4KR5n",
@@ -164,9 +159,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 143,
-      "total_views": 959384,
+      "total_views": 959397,
       "total_sales": 224302.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-05T19:11:22.369Z",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -183,8 +178,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1312.2,
-      "views_7_chapters": 1032,
-      "platform": "readrealm"
+      "views_7_chapters": 1032
     },
     {
       "comic_id": "XrDoGdyOrN17O8pbqz1a",
@@ -194,7 +188,7 @@
       "chapters_count": 154,
       "total_views": 447876,
       "total_sales": 154497.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-05T19:15:25.128Z",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -211,8 +205,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1868.4,
-      "views_7_chapters": 1698,
-      "platform": "readrealm"
+      "views_7_chapters": 1698
     },
     {
       "comic_id": "NG8Qg2kxDpAjxz7Kdeo9",
@@ -220,9 +213,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 130,
-      "total_views": 517035,
-      "total_sales": 149171.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "total_views": 517038,
+      "total_sales": 149173.4,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-06-13T03:41:27.059Z",
       "days_inactive": 147,
       "is_inactive_30d": true,
@@ -239,8 +232,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 5378.4,
-      "views_7_chapters": 5126,
-      "platform": "readrealm"
+      "views_7_chapters": 5126
     },
     {
       "comic_id": "lkJy7ZdeYZvMYX5PAwB6",
@@ -250,7 +242,7 @@
       "chapters_count": 126,
       "total_views": 376927,
       "total_sales": 130228.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-31T18:41:44.333Z",
       "days_inactive": 7,
       "is_inactive_30d": false,
@@ -267,8 +259,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1071.0,
-      "views_7_chapters": 825,
-      "platform": "readrealm"
+      "views_7_chapters": 825
     },
     {
       "comic_id": "qzkJdZa0Y6bYrv4KR5nm",
@@ -276,9 +267,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 240,
-      "total_views": 638958,
+      "total_views": 638960,
       "total_sales": 127665.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T05:56:05.054Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -295,8 +286,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 705.6,
-      "views_7_chapters": 585,
-      "platform": "readrealm"
+      "views_7_chapters": 585
     },
     {
       "comic_id": "n6r39MJVwynpxNAB81yk",
@@ -304,9 +294,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 130,
-      "total_views": 531617,
-      "total_sales": 121887.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "total_views": 531624,
+      "total_sales": 121892.4,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-05T05:44:27.666Z",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -323,8 +313,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1371.6,
-      "views_7_chapters": 1338,
-      "platform": "readrealm"
+      "views_7_chapters": 1338
     },
     {
       "comic_id": "NazlwDvqOAvVbkJoedBW",
@@ -334,7 +323,7 @@
       "chapters_count": 89,
       "total_views": 349554,
       "total_sales": 120824.35,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-03-05T12:37:46.542Z",
       "days_inactive": 612,
       "is_inactive_30d": true,
@@ -351,18 +340,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 6822.0,
-      "views_7_chapters": 5623,
-      "platform": "readrealm"
+      "views_7_chapters": 5623
     },
     {
       "comic_id": "NG8Qg2kxDpBoxz7Kdeo9",
       "subject": "การหวนคืนของจอมเวทย์ระดับตำนาน | The Return Of The Legendary Mage",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 89,
+      "chapters_count": 90,
       "total_views": 239247,
       "total_sales": 107115.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-02-13T15:42:18.592Z",
       "days_inactive": 267,
       "is_inactive_30d": true,
@@ -379,18 +367,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1949.2,
-      "views_7_chapters": 2665,
-      "platform": "readrealm"
+      "views_7_chapters": 2665
     },
     {
       "comic_id": "5qDAm32WxX3GYogPnaGe",
       "subject": "ก๊อบลินกระจอกอย่างข้าจะไปสู่เทพก๊อบลินให้ดู!",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 117,
+      "chapters_count": 118,
       "total_views": 358729,
       "total_sales": 106049.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-07-26T10:37:51.738Z",
       "days_inactive": 104,
       "is_inactive_30d": true,
@@ -407,18 +394,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3772.8,
-      "views_7_chapters": 3429,
-      "platform": "readrealm"
+      "views_7_chapters": 3429
     },
     {
       "comic_id": "awPZAJq7Ok2xW8Dozkm3",
       "subject": "บ่มเพาะด้วยความเร็วหนึ่งล้านเท่า",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 102,
+      "chapters_count": 103,
       "total_views": 237836,
       "total_sales": 104119.25,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-02-09T08:21:30.375Z",
       "days_inactive": 636,
       "is_inactive_30d": true,
@@ -435,8 +421,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 7462.4,
-      "views_7_chapters": 6323,
-      "platform": "readrealm"
+      "views_7_chapters": 6323
     },
     {
       "comic_id": "ng5GbmNxB4r5V9AlMyk0",
@@ -444,9 +429,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 64,
-      "total_views": 306020,
-      "total_sales": 102716.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "total_views": 306026,
+      "total_sales": 102720.0,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-05T19:11:07.170Z",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -463,8 +448,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 9028.8,
-      "views_7_chapters": 10356,
-      "platform": "readrealm"
+      "views_7_chapters": 10356
     },
     {
       "comic_id": "wPZAJq7OkMwlYW8Dozkm",
@@ -474,7 +458,7 @@
       "chapters_count": 101,
       "total_views": 493283,
       "total_sales": 102101.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-03-18T10:52:29.242Z",
       "days_inactive": 234,
       "is_inactive_30d": true,
@@ -491,18 +475,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3238.2,
-      "views_7_chapters": 3482,
-      "platform": "readrealm"
+      "views_7_chapters": 3482
     },
     {
       "comic_id": "Z41KDdWY1QL7Yw7MA5Pk",
       "subject": "คุณพ่อของฉันน่ะ...แอบซ่อนความลับ | My Daddy Hides His Power",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 68,
+      "chapters_count": 69,
       "total_views": 353619,
       "total_sales": 100815.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-21T11:25:01.241Z",
       "days_inactive": 290,
       "is_inactive_30d": true,
@@ -519,18 +502,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3649.8,
-      "views_7_chapters": 3080,
-      "platform": "readrealm"
+      "views_7_chapters": 3080
     },
     {
       "comic_id": "nNG8Qg2kxDnpVz7Kdeo9",
       "subject": "ฟาร์มเลเวลในดันเจี้ยนส่วนตัว | Levelling Up In An Exclusive Dungeon",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 59,
+      "chapters_count": 60,
       "total_views": 270736,
       "total_sales": 96786.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-12T02:12:29.652Z",
       "days_inactive": 483,
       "is_inactive_30d": true,
@@ -547,8 +529,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2112.0,
-      "views_7_chapters": 1576,
-      "platform": "readrealm"
+      "views_7_chapters": 1576
     },
     {
       "comic_id": "NG8Qg2kxDpNKxz7Kdeo9",
@@ -556,9 +537,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 114,
-      "total_views": 375755,
-      "total_sales": 95610.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "total_views": 375772,
+      "total_sales": 95623.2,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T15:22:26.690Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -575,18 +556,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 4066.2,
-      "views_7_chapters": 3390,
-      "platform": "readrealm"
+      "views_7_chapters": 3390
     },
     {
       "comic_id": "Xm5MEjRdOnXdYg6Ay8ZW",
       "subject": "ร่างแยกของฉันกำลังกลายเป็นตำนาน | All My Alter Egos Are Tycoons",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 72,
+      "chapters_count": 73,
       "total_views": 215418,
       "total_sales": 93554.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-10T13:35:26.866Z",
       "days_inactive": 301,
       "is_inactive_30d": true,
@@ -603,8 +583,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 4576.0,
-      "views_7_chapters": 4020,
-      "platform": "readrealm"
+      "views_7_chapters": 4020
     },
     {
       "comic_id": "le0bk9XVGdJ0Yj34oaQw",
@@ -612,9 +591,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 74,
-      "total_views": 276990,
+      "total_views": 277007,
       "total_sales": 82753.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-06T15:43:17.313Z",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -631,8 +610,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3004.2,
-      "views_7_chapters": 2671,
-      "platform": "readrealm"
+      "views_7_chapters": 2671
     },
     {
       "comic_id": "ovGkNElzYlMGxq27mKdM",
@@ -642,7 +620,7 @@
       "chapters_count": 80,
       "total_views": 227771,
       "total_sales": 74937.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-10-02T14:03:16.012Z",
       "days_inactive": 766,
       "is_inactive_30d": true,
@@ -659,18 +637,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2998.4,
-      "views_7_chapters": 2680,
-      "platform": "readrealm"
+      "views_7_chapters": 2680
     },
     {
       "comic_id": "Wng5GbmNxBDLV9AlMyk0",
       "subject": "หลานอัจฉริยะของราชาเงินกู้ |  Genius Grandson of the Loan Shark King",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 38,
+      "chapters_count": 39,
       "total_views": 136223,
       "total_sales": 69676.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-02-05T07:09:50.187Z",
       "days_inactive": 640,
       "is_inactive_30d": true,
@@ -687,8 +664,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 11374.4,
-      "views_7_chapters": 7912,
-      "platform": "readrealm"
+      "views_7_chapters": 7912
     },
     {
       "comic_id": "WrwEvg7LY81x20blNPpM",
@@ -698,7 +674,7 @@
       "chapters_count": 94,
       "total_views": 200776,
       "total_sales": 66167.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-19T03:26:29.424Z",
       "days_inactive": 657,
       "is_inactive_30d": true,
@@ -715,8 +691,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2671.2,
-      "views_7_chapters": 2240,
-      "platform": "readrealm"
+      "views_7_chapters": 2240
     },
     {
       "comic_id": "ng5GbmNxBA34Y9AlMyk0",
@@ -724,9 +699,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 130,
-      "total_views": 305122,
+      "total_views": 305134,
       "total_sales": 59085.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T16:45:39.647Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -743,8 +718,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 727.2,
-      "views_7_chapters": 602,
-      "platform": "readrealm"
+      "views_7_chapters": 602
     },
     {
       "comic_id": "azlwDvqOA7BpYbkJoedB",
@@ -754,7 +728,7 @@
       "chapters_count": 124,
       "total_views": 260512,
       "total_sales": 58914.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T05:56:53.964Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -771,8 +745,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 561.6,
-      "views_7_chapters": 590,
-      "platform": "readrealm"
+      "views_7_chapters": 590
     },
     {
       "comic_id": "5qDAm32WxX4XxogPnaGe",
@@ -782,7 +755,7 @@
       "chapters_count": 50,
       "total_views": 134204,
       "total_sales": 51473.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-03-11T12:00:10.575Z",
       "days_inactive": 606,
       "is_inactive_30d": true,
@@ -799,18 +772,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 6083.4,
-      "views_7_chapters": 4587,
-      "platform": "readrealm"
+      "views_7_chapters": 4587
     },
     {
       "comic_id": "1GmA4egMxWPnOB8PWbyp",
       "subject": "หากข้ายังมีชีวิต ข้าจะต้องกลายเป็นมหาจอมมาร | If I Don’t Die Soon, I’ll End Up Ruling The Demon Realm",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 114,
+      "chapters_count": 115,
       "total_views": 193312,
       "total_sales": 50160.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-09-02T02:56:17.522Z",
       "days_inactive": 431,
       "is_inactive_30d": true,
@@ -827,18 +799,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1989.6,
-      "views_7_chapters": 2005,
-      "platform": "readrealm"
+      "views_7_chapters": 2005
     },
     {
       "comic_id": "L1E4dv9AV5LGOogakpmQ",
       "subject": "เจ้าตำหนักเหมันต์",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 58,
+      "chapters_count": 60,
       "total_views": 95208,
       "total_sales": 49752.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-02-05T16:12:04.461Z",
       "days_inactive": 275,
       "is_inactive_30d": true,
@@ -855,8 +826,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2019.6,
-      "views_7_chapters": 1946,
-      "platform": "readrealm"
+      "views_7_chapters": 1946
     },
     {
       "comic_id": "GpeQDXZlx2jvx5n0JWoR",
@@ -866,7 +836,7 @@
       "chapters_count": 158,
       "total_views": 219361,
       "total_sales": 39000.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-19T04:37:12.372Z",
       "days_inactive": 476,
       "is_inactive_30d": true,
@@ -883,18 +853,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 792.0,
-      "views_7_chapters": 686,
-      "platform": "readrealm"
+      "views_7_chapters": 686
     },
     {
       "comic_id": "Z41KDdWY1Qy9Yw7MA5Pk",
       "subject": "จอมดาบฮันเตอร์กลับมาเพื่อเป็นฮันเตอร์ข้าราชการ | Return Of The Sword God-Rank Civil Servant",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 67,
+      "chapters_count": 68,
       "total_views": 126257,
       "total_sales": 38898.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-08T11:37:49.672Z",
       "days_inactive": 334,
       "is_inactive_30d": true,
@@ -911,18 +880,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1562.0,
-      "views_7_chapters": 1540,
-      "platform": "readrealm"
+      "views_7_chapters": 1540
     },
     {
       "comic_id": "aDZ1qlAOezezV5k7gmeM",
       "subject": "นักดาบปีศาจอัจฉริยะแห่งนิกายฮวาซาน | Mount Hua Sect’s Genius Phantom Swordsman",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 33,
+      "chapters_count": 34,
       "total_views": 66332,
       "total_sales": 36828.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-26T10:21:15.185Z",
       "days_inactive": 499,
       "is_inactive_30d": true,
@@ -939,8 +907,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 9693.2,
-      "views_7_chapters": 6245,
-      "platform": "readrealm"
+      "views_7_chapters": 6245
     },
     {
       "comic_id": "enEj08zOqEjoO6W34lpa",
@@ -950,7 +917,7 @@
       "chapters_count": 81,
       "total_views": 142065,
       "total_sales": 35937.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-05-21T14:59:50.872Z",
       "days_inactive": 170,
       "is_inactive_30d": true,
@@ -967,8 +934,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 435.6,
-      "views_7_chapters": 394,
-      "platform": "readrealm"
+      "views_7_chapters": 394
     },
     {
       "comic_id": "ng5GbmNxB4zEV9AlMyk0",
@@ -976,9 +942,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 102,
-      "total_views": 165666,
+      "total_views": 165667,
       "total_sales": 33372.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-27T18:22:23.176Z",
       "days_inactive": 11,
       "is_inactive_30d": false,
@@ -995,18 +961,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 766.8,
-      "views_7_chapters": 585,
-      "platform": "readrealm"
+      "views_7_chapters": 585
     },
     {
       "comic_id": "GaDZ1qlAOezV5k7gmeMn",
       "subject": "เนโครแมนเซอร์! ฉันคือภัยพิบัติล้างโลก!",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 160,
+      "chapters_count": 161,
       "total_views": 110734,
       "total_sales": 33268.15,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-19T13:42:32.887Z",
       "days_inactive": 476,
       "is_inactive_30d": true,
@@ -1023,8 +988,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1206.0,
-      "views_7_chapters": 1037,
-      "platform": "readrealm"
+      "views_7_chapters": 1037
     },
     {
       "comic_id": "0NRm4EX9VEKzx63qZJ2W",
@@ -1034,7 +998,7 @@
       "chapters_count": 76,
       "total_views": 182218,
       "total_sales": 32294.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-27T12:31:39.735Z",
       "days_inactive": 649,
       "is_inactive_30d": true,
@@ -1051,18 +1015,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2483.2,
-      "views_7_chapters": 2020,
-      "platform": "readrealm"
+      "views_7_chapters": 2020
     },
     {
       "comic_id": "azlwDvqOAyaGObkJoedB",
       "subject": "ฉันก็แค่ฮีลเลอร์ที่แข็งแกร่งที่สุด | The Veteran Healer Is Overpowered",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 49,
+      "chapters_count": 50,
       "total_views": 72965,
       "total_sales": 31048.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-08-22T14:08:09.058Z",
       "days_inactive": 442,
       "is_inactive_30d": true,
@@ -1079,8 +1042,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 495.0,
-      "views_7_chapters": 341,
-      "platform": "readrealm"
+      "views_7_chapters": 341
     },
     {
       "comic_id": "zkJdZa0Y6gBoxrv4KR5n",
@@ -1088,9 +1050,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 56,
-      "total_views": 140743,
+      "total_views": 140750,
       "total_sales": 30000.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-04T16:28:35.738Z",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -1107,8 +1069,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1578.6,
-      "views_7_chapters": 1508,
-      "platform": "readrealm"
+      "views_7_chapters": 1508
     },
     {
       "comic_id": "MvyBR09xzDB0Vbd1NrqE",
@@ -1116,9 +1077,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 107,
-      "total_views": 137857,
+      "total_views": 137858,
       "total_sales": 29557.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-09-09T11:33:56.008Z",
       "days_inactive": 424,
       "is_inactive_30d": true,
@@ -1135,18 +1096,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1657.6,
-      "views_7_chapters": 1480,
-      "platform": "readrealm"
+      "views_7_chapters": 1480
     },
     {
       "comic_id": "lewv7z5O46BGYpqBnAQX",
       "subject": "วีรกรรมเทพมาร คืนยุทธจักร  | Chronicles of the Reincarnated Demon God",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 57,
+      "chapters_count": 58,
       "total_views": 79812,
       "total_sales": 29536.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-08-24T06:21:09.339Z",
       "days_inactive": 440,
       "is_inactive_30d": true,
@@ -1163,18 +1123,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1542.2,
-      "views_7_chapters": 1565,
-      "platform": "readrealm"
+      "views_7_chapters": 1565
     },
     {
       "comic_id": "BAyoRlNxvZ0Wxdqp18wL",
       "subject": "การสร้างสุดยอดไอเท็มระดับตำนานของผู้หวนคืน | Regressed Genius Creates Mythic Items",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 67,
+      "chapters_count": 68,
       "total_views": 69018,
       "total_sales": 29299.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-08T11:52:41.341Z",
       "days_inactive": 334,
       "is_inactive_30d": true,
@@ -1191,18 +1150,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 721.6,
-      "views_7_chapters": 876,
-      "platform": "readrealm"
+      "views_7_chapters": 876
     },
     {
       "comic_id": "0AplLrbONRg1OZ15okX2",
       "subject": "จากลิงน้ำ ก้าวสู่มรรคาแห่งเทพ",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 92,
+      "chapters_count": 93,
       "total_views": 115725,
       "total_sales": 28648.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-25T03:18:41.277Z",
       "days_inactive": 347,
       "is_inactive_30d": true,
@@ -1219,8 +1177,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1319.4,
-      "views_7_chapters": 1436,
-      "platform": "readrealm"
+      "views_7_chapters": 1436
     },
     {
       "comic_id": "NG8Qg2kxDy5KOz7Kdeo9",
@@ -1228,9 +1185,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 71,
-      "total_views": 83569,
+      "total_views": 83572,
       "total_sales": 28247.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-04T16:28:22.922Z",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -1247,8 +1204,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1575.0,
-      "views_7_chapters": 1308,
-      "platform": "readrealm"
+      "views_7_chapters": 1308
     },
     {
       "comic_id": "NG8Qg2kxDk7gYz7Kdeo9",
@@ -1258,7 +1214,7 @@
       "chapters_count": 70,
       "total_views": 85061,
       "total_sales": 26928.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T11:06:01.314Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -1275,8 +1231,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 748.8,
-      "views_7_chapters": 602,
-      "platform": "readrealm"
+      "views_7_chapters": 602
     },
     {
       "comic_id": "Xm5MEjRdOnA3xg6Ay8ZW",
@@ -1286,7 +1241,7 @@
       "chapters_count": 51,
       "total_views": 43916,
       "total_sales": 26856.7,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-06-30T13:57:53.739Z",
       "days_inactive": 860,
       "is_inactive_30d": true,
@@ -1303,8 +1258,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2528.0,
-      "views_7_chapters": 1926,
-      "platform": "readrealm"
+      "views_7_chapters": 1926
     },
     {
       "comic_id": "n6r39MJVwy58xNAB81yk",
@@ -1314,7 +1268,7 @@
       "chapters_count": 120,
       "total_views": 155019,
       "total_sales": 26505.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-27T18:29:32.123Z",
       "days_inactive": 11,
       "is_inactive_30d": false,
@@ -1331,8 +1285,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 138.6,
-      "views_7_chapters": 89,
-      "platform": "readrealm"
+      "views_7_chapters": 89
     },
     {
       "comic_id": "RbKaMELO7p6PVglzP41q",
@@ -1342,7 +1295,7 @@
       "chapters_count": 62,
       "total_views": 117966,
       "total_sales": 25542.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-20T07:19:33.342Z",
       "days_inactive": 18,
       "is_inactive_30d": false,
@@ -1359,8 +1312,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1495.8,
-      "views_7_chapters": 1305,
-      "platform": "readrealm"
+      "views_7_chapters": 1305
     },
     {
       "comic_id": "KenEj08zOqoY6W34lpar",
@@ -1370,7 +1322,7 @@
       "chapters_count": 64,
       "total_views": 83121,
       "total_sales": 24940.95,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-08-28T16:35:34.405Z",
       "days_inactive": 801,
       "is_inactive_30d": true,
@@ -1387,18 +1339,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1737.6,
-      "views_7_chapters": 1300,
-      "platform": "readrealm"
+      "views_7_chapters": 1300
     },
     {
       "comic_id": "azlwDvqOAy4BObkJoedB",
       "subject": "ย้อนเวลาทั้งที ขอเป็นหมอที่ไม่วุ่นวายได้ไหม | The Regressed Doctor Wants to Live Quietly",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 45,
+      "chapters_count": 46,
       "total_views": 61881,
       "total_sales": 24864.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-08-28T08:02:43.612Z",
       "days_inactive": 436,
       "is_inactive_30d": true,
@@ -1415,8 +1366,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1896.4,
-      "views_7_chapters": 1361,
-      "platform": "readrealm"
+      "views_7_chapters": 1361
     },
     {
       "comic_id": "0AplLrbONRyoOZ15okX2",
@@ -1426,7 +1376,7 @@
       "chapters_count": 34,
       "total_views": 46031,
       "total_sales": 23683.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-08-21T12:58:38.221Z",
       "days_inactive": 443,
       "is_inactive_30d": true,
@@ -1443,18 +1393,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3058.0,
-      "views_7_chapters": 2186,
-      "platform": "readrealm"
+      "views_7_chapters": 2186
     },
     {
       "comic_id": "3MjZ0qWYgqQnOJLAreG1",
       "subject": "ย้อนวันฝ่าชะตาบททดสอบชีวิตใหม่ของว่าที่นักบุญ | The Foreign Object Was Me",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 43,
+      "chapters_count": 44,
       "total_views": 90014,
       "total_sales": 23475.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-09T15:34:03.763Z",
       "days_inactive": 516,
       "is_inactive_30d": true,
@@ -1471,8 +1420,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2134.0,
-      "views_7_chapters": 1524,
-      "platform": "readrealm"
+      "views_7_chapters": 1524
     },
     {
       "comic_id": "3E8jmDbO0ePeVZwR5qpa",
@@ -1482,7 +1430,7 @@
       "chapters_count": 67,
       "total_views": 69694,
       "total_sales": 20991.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-02-04T03:18:10.183Z",
       "days_inactive": 276,
       "is_inactive_30d": true,
@@ -1499,18 +1447,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1537.2,
-      "views_7_chapters": 1183,
-      "platform": "readrealm"
+      "views_7_chapters": 1183
     },
     {
       "comic_id": "onvEqQwJYPMJxedr65l2",
       "subject": "หวนคืนนิรันดร์กาล",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 45,
+      "chapters_count": 46,
       "total_views": 53693,
       "total_sales": 20469.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-01T04:43:27.809Z",
       "days_inactive": 555,
       "is_inactive_30d": true,
@@ -1527,18 +1474,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1817.2,
-      "views_7_chapters": 1276,
-      "platform": "readrealm"
+      "views_7_chapters": 1276
     },
     {
       "comic_id": "JvApmMXVJ9aNOg1re8Pa",
       "subject": "จอมดาบหวนคืนกาลเวลาโลกมรณะ | Sword God from the Ruined World",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 48,
+      "chapters_count": 49,
       "total_views": 43806,
       "total_sales": 19511.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-26T01:41:48.193Z",
       "days_inactive": 285,
       "is_inactive_30d": true,
@@ -1555,8 +1501,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2050.4,
-      "views_7_chapters": 2142,
-      "platform": "readrealm"
+      "views_7_chapters": 2142
     },
     {
       "comic_id": "GmA4egMxWR5KYB8PWbyp",
@@ -1564,9 +1509,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 60,
-      "total_views": 76073,
+      "total_views": 76074,
       "total_sales": 19427.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-05T19:10:56.865Z",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -1583,8 +1528,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 558.0,
-      "views_7_chapters": 499,
-      "platform": "readrealm"
+      "views_7_chapters": 499
     },
     {
       "comic_id": "zkJdZa0Y63Xbxrv4KR5n",
@@ -1594,7 +1538,7 @@
       "chapters_count": 37,
       "total_views": 45464,
       "total_sales": 18854.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-30T02:43:39.596Z",
       "days_inactive": 526,
       "is_inactive_30d": true,
@@ -1611,18 +1555,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1595.0,
-      "views_7_chapters": 948,
-      "platform": "readrealm"
+      "views_7_chapters": 948
     },
     {
       "comic_id": "Z41KDdWY19m4Yw7MA5Pk",
       "subject": "เกมเปลี่ยนโลกของช่างตีเหล็กในตำนาน | The Genius Blacksmith's Game",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 39,
+      "chapters_count": 40,
       "total_views": 42213,
       "total_sales": 18229.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-02-11T01:26:19.787Z",
       "days_inactive": 269,
       "is_inactive_30d": true,
@@ -1639,8 +1582,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3555.2,
-      "views_7_chapters": 3356,
-      "platform": "readrealm"
+      "views_7_chapters": 3356
     },
     {
       "comic_id": "Wng5GbmNxB5qY9AlMyk0",
@@ -1650,7 +1592,7 @@
       "chapters_count": 30,
       "total_views": 37844,
       "total_sales": 17742.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-11-14T12:29:03.501Z",
       "days_inactive": 723,
       "is_inactive_30d": true,
@@ -1667,8 +1609,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 4172.0,
-      "views_7_chapters": 3067,
-      "platform": "readrealm"
+      "views_7_chapters": 3067
     },
     {
       "comic_id": "EQwLk1zYRDLQO50y2Wed",
@@ -1678,7 +1619,7 @@
       "chapters_count": 25,
       "total_views": 39909,
       "total_sales": 17108.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-03-26T10:58:56.307Z",
       "days_inactive": 591,
       "is_inactive_30d": true,
@@ -1695,18 +1636,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 4325.2,
-      "views_7_chapters": 2668,
-      "platform": "readrealm"
+      "views_7_chapters": 2668
     },
     {
       "comic_id": "enEj08zOqJJqV6W34lpa",
       "subject": "เพราะฉันมีภูมิคุ้มกันเลยไม่ถูกซอมบี้กัด | The Zombie Won't Bite Me",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 49,
+      "chapters_count": 50,
       "total_views": 66964,
       "total_sales": 16649.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-09-09T00:08:40.036Z",
       "days_inactive": 424,
       "is_inactive_30d": true,
@@ -1723,18 +1663,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1188.0,
-      "views_7_chapters": 920,
-      "platform": "readrealm"
+      "views_7_chapters": 920
     },
     {
       "comic_id": "GmA4egMxWXvKOB8PWbyp",
       "subject": "หลังจากลืมตาขึ้นมาศิษย์ของข้ากลับกลายเป็นจักรพรรดินีปีศาจ | My Empress's Disciple Will Become a Villain",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 68,
-      "total_views": 81966,
+      "chapters_count": 69,
+      "total_views": 81976,
       "total_sales": 16210.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-09-01T08:06:48.472Z",
       "days_inactive": 432,
       "is_inactive_30d": true,
@@ -1751,18 +1690,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1069.2,
-      "views_7_chapters": 852,
-      "platform": "readrealm"
+      "views_7_chapters": 852
     },
     {
       "comic_id": "Rr1aN5Wx3MWQVk4oPDQd",
       "subject": "อัยการผู้ชั่วร้ายได้เปลี่ยนไปแล้ว | The Wicked Prosecutor Has Changed",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 56,
+      "chapters_count": 57,
       "total_views": 35686,
       "total_sales": 15740.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-07T13:23:36.220Z",
       "days_inactive": 304,
       "is_inactive_30d": true,
@@ -1779,18 +1717,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 847.0,
-      "views_7_chapters": 589,
-      "platform": "readrealm"
+      "views_7_chapters": 589
     },
     {
       "comic_id": "Gle0bk9XVGgwVj34oaQw",
       "subject": "สหายสมัยเด็กของข้าแข็งแกร่งที่สุดในใต้หล้า",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 40,
+      "chapters_count": 41,
       "total_views": 57190,
       "total_sales": 14434.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-12-26T02:18:17.005Z",
       "days_inactive": 681,
       "is_inactive_30d": true,
@@ -1807,8 +1744,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2082.0,
-      "views_7_chapters": 1332,
-      "platform": "readrealm"
+      "views_7_chapters": 1332
     },
     {
       "comic_id": "NG8Qg2kxDpdBxz7Kdeo9",
@@ -1818,7 +1754,7 @@
       "chapters_count": 31,
       "total_views": 37538,
       "total_sales": 12775.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-19T04:25:28.341Z",
       "days_inactive": 506,
       "is_inactive_30d": true,
@@ -1835,8 +1771,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1907.4,
-      "views_7_chapters": 1558,
-      "platform": "readrealm"
+      "views_7_chapters": 1558
     },
     {
       "comic_id": "EQwLk1zYR9RXV50y2Wed",
@@ -1844,9 +1779,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 53,
-      "total_views": 44991,
+      "total_views": 44992,
       "total_sales": 12772.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T10:01:06.358Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -1863,18 +1798,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 925.2,
-      "views_7_chapters": 779,
-      "platform": "readrealm"
+      "views_7_chapters": 779
     },
     {
       "comic_id": "kJy7ZdeYZNvoYX5PAwB6",
       "subject": "จอมระบบเสกสรรค์แห่งวันสิ้นโลก | The Ultimate Shut-In",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 15,
+      "chapters_count": 16,
       "total_views": 33235,
       "total_sales": 12628.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-02-04T04:34:56.655Z",
       "days_inactive": 641,
       "is_inactive_30d": true,
@@ -1891,8 +1825,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 6898.6,
-      "views_7_chapters": 4575,
-      "platform": "readrealm"
+      "views_7_chapters": 4575
     },
     {
       "comic_id": "G3E8jmDbO0rYZwR5qpa4",
@@ -1902,7 +1835,7 @@
       "chapters_count": 70,
       "total_views": 60198,
       "total_sales": 11898.25,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-03-14T11:21:49.110Z",
       "days_inactive": 968,
       "is_inactive_30d": true,
@@ -1919,18 +1852,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1348.8,
-      "views_7_chapters": 930,
-      "platform": "readrealm"
+      "views_7_chapters": 930
     },
     {
       "comic_id": "rwEvg7LY89g1x20blNPp",
       "subject": "หนทางเกษียณของเนโครแมนเซอร์ระดับภัยพิบัติ | How to Retire as a Disaster Necromancer",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 45,
+      "chapters_count": 46,
       "total_views": 39824,
       "total_sales": 11114.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-26T03:39:49.784Z",
       "days_inactive": 469,
       "is_inactive_30d": true,
@@ -1947,18 +1879,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 695.2,
-      "views_7_chapters": 383,
-      "platform": "readrealm"
+      "views_7_chapters": 383
     },
     {
       "comic_id": "aDZ1qlAOez8oV5k7gmeM",
       "subject": "วิถีเซียนพิศวง",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 39,
+      "chapters_count": 40,
       "total_views": 62193,
       "total_sales": 11070.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-17T02:06:00.699Z",
       "days_inactive": 508,
       "is_inactive_30d": true,
@@ -1975,18 +1906,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1018.8,
-      "views_7_chapters": 752,
-      "platform": "readrealm"
+      "views_7_chapters": 752
     },
     {
       "comic_id": "0AplLrbON9n5xZ15okX2",
       "subject": "เกิดใหม่เป็นอัจฉริยะจอมเสเพลแห่งตระกูลมืด",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 41,
+      "chapters_count": 42,
       "total_views": 34557,
       "total_sales": 10956.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-30T10:50:15.883Z",
       "days_inactive": 465,
       "is_inactive_30d": true,
@@ -2003,8 +1933,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1078.0,
-      "views_7_chapters": 836,
-      "platform": "readrealm"
+      "views_7_chapters": 836
     },
     {
       "comic_id": "aDZ1qlAOelRbx5k7gmeM",
@@ -2014,7 +1943,7 @@
       "chapters_count": 44,
       "total_views": 32495,
       "total_sales": 9424.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-06-07T07:19:47.424Z",
       "days_inactive": 153,
       "is_inactive_30d": true,
@@ -2031,18 +1960,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 626.4,
-      "views_7_chapters": 599,
-      "platform": "readrealm"
+      "views_7_chapters": 599
     },
     {
       "comic_id": "kJy7ZdeYZNRJYX5PAwB6",
       "subject": "ยอดกระบี่ประกายดารา",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 34,
+      "chapters_count": 35,
       "total_views": 17748,
       "total_sales": 9334.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-08T09:26:49.142Z",
       "days_inactive": 668,
       "is_inactive_30d": true,
@@ -2059,18 +1987,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2732.0,
-      "views_7_chapters": 1760,
-      "platform": "readrealm"
+      "views_7_chapters": 1760
     },
     {
       "comic_id": "Rr1aN5Wx38MeOk4oPDQd",
       "subject": "บันทึกการกลับชาติมาเกิดของเทพอสูร | The Reincarnation of the Heavenly Demon",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 23,
+      "chapters_count": 24,
       "total_views": 24480,
       "total_sales": 8945.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-16T05:06:28.466Z",
       "days_inactive": 295,
       "is_inactive_30d": true,
@@ -2087,8 +2014,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3245.0,
-      "views_7_chapters": 2924,
-      "platform": "readrealm"
+      "views_7_chapters": 2924
     },
     {
       "comic_id": "BAyoRlNxvwmgOdqp18wL",
@@ -2098,7 +2024,7 @@
       "chapters_count": 44,
       "total_views": 24239,
       "total_sales": 8575.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-04T11:04:17.122Z",
       "days_inactive": 338,
       "is_inactive_30d": true,
@@ -2115,8 +2041,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 719.4,
-      "views_7_chapters": 631,
-      "platform": "readrealm"
+      "views_7_chapters": 631
     },
     {
       "comic_id": "Z41KDdWY1989Yw7MA5Pk",
@@ -2124,9 +2049,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 27,
-      "total_views": 33868,
-      "total_sales": 8566.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "total_views": 33871,
+      "total_sales": 8568.0,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-05T19:27:02.792Z",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -2143,8 +2068,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1467.0,
-      "views_7_chapters": 1391,
-      "platform": "readrealm"
+      "views_7_chapters": 1391
     },
     {
       "comic_id": "peQDXZlx2laqV5n0JWoR",
@@ -2154,7 +2078,7 @@
       "chapters_count": 44,
       "total_views": 48092,
       "total_sales": 8519.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T15:24:08.577Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -2171,18 +2095,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 505.8,
-      "views_7_chapters": 457,
-      "platform": "readrealm"
+      "views_7_chapters": 457
     },
     {
       "comic_id": "le0bk9XVGdGLYj34oaQw",
       "subject": "จากสายเปย์ สู่ผู้ไร้เทียมทาน",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 48,
+      "chapters_count": 49,
       "total_views": 58995,
       "total_sales": 8497.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-09-20T12:15:57.381Z",
       "days_inactive": 413,
       "is_inactive_30d": true,
@@ -2199,8 +2122,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 604.8,
-      "views_7_chapters": 611,
-      "platform": "readrealm"
+      "views_7_chapters": 611
     },
     {
       "comic_id": "RbKaMELO79JaYglzP41q",
@@ -2210,7 +2132,7 @@
       "chapters_count": 41,
       "total_views": 65628,
       "total_sales": 8179.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-03-29T02:58:59.350Z",
       "days_inactive": 223,
       "is_inactive_30d": true,
@@ -2227,8 +2149,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1267.2,
-      "views_7_chapters": 1182,
-      "platform": "readrealm"
+      "views_7_chapters": 1182
     },
     {
       "comic_id": "NG8Qg2kxDyqvOz7Kdeo9",
@@ -2238,7 +2159,7 @@
       "chapters_count": 29,
       "total_views": 20635,
       "total_sales": 7714.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T14:28:14.737Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -2255,8 +2176,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1884.6,
-      "views_7_chapters": 1655,
-      "platform": "readrealm"
+      "views_7_chapters": 1655
     },
     {
       "comic_id": "7AnZ8eydVLg8O9lJp23X",
@@ -2266,7 +2186,7 @@
       "chapters_count": 25,
       "total_views": 19037,
       "total_sales": 7436.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-18T16:59:33.161Z",
       "days_inactive": 658,
       "is_inactive_30d": true,
@@ -2283,8 +2203,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3180.0,
-      "views_7_chapters": 1835,
-      "platform": "readrealm"
+      "views_7_chapters": 1835
     },
     {
       "comic_id": "zkJdZa0Y63kbxrv4KR5n",
@@ -2294,7 +2213,7 @@
       "chapters_count": 23,
       "total_views": 43479,
       "total_sales": 7406.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-05T15:02:48.300Z",
       "days_inactive": 671,
       "is_inactive_30d": true,
@@ -2311,18 +2230,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 5316.8,
-      "views_7_chapters": 4058,
-      "platform": "readrealm"
+      "views_7_chapters": 4058
     },
     {
       "comic_id": "MvyBR09xzD6WVbd1NrqE",
       "subject": "ฉันกลายเป็นน้องสะใภ้ของเหล่าพระเอกในรีเวิร์สฮาเร็มที่พังทลาย",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 32,
+      "chapters_count": 33,
       "total_views": 17694,
       "total_sales": 7366.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-04-07T03:55:14.775Z",
       "days_inactive": 579,
       "is_inactive_30d": true,
@@ -2339,8 +2257,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1443.2,
-      "views_7_chapters": 997,
-      "platform": "readrealm"
+      "views_7_chapters": 997
     },
     {
       "comic_id": "kJy7ZdeYZRJJYX5PAwB6",
@@ -2350,7 +2267,7 @@
       "chapters_count": 32,
       "total_views": 21052,
       "total_sales": 7326.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T14:32:05.521Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -2367,18 +2284,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1542.6,
-      "views_7_chapters": 1436,
-      "platform": "readrealm"
+      "views_7_chapters": 1436
     },
     {
       "comic_id": "ng5GbmNxB3bqO9AlMyk0",
       "subject": "จอมยุทธ์แห่งคุนหลุน: ผู้เป็นเจ้าแห่งร้อยโรค",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 28,
+      "chapters_count": 29,
       "total_views": 15654,
       "total_sales": 7326.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-04-06T15:06:42.393Z",
       "days_inactive": 580,
       "is_inactive_30d": true,
@@ -2395,18 +2311,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1597.2,
-      "views_7_chapters": 856,
-      "platform": "readrealm"
+      "views_7_chapters": 856
     },
     {
       "comic_id": "qDAm32WxXR7gVogPnaGe",
       "subject": "เหล่าปรมาจารย์หญิงล้วนอยากตอกข้า",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 29,
+      "chapters_count": 30,
       "total_views": 44202,
       "total_sales": 7307.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-08-15T01:48:27.241Z",
       "days_inactive": 449,
       "is_inactive_30d": true,
@@ -2423,8 +2338,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1936.8,
-      "views_7_chapters": 1849,
-      "platform": "readrealm"
+      "views_7_chapters": 1849
     },
     {
       "comic_id": "kJy7ZdeYZRaJYX5PAwB6",
@@ -2434,7 +2348,7 @@
       "chapters_count": 22,
       "total_views": 31629,
       "total_sales": 7137.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-04-07T14:11:50.235Z",
       "days_inactive": 214,
       "is_inactive_30d": true,
@@ -2451,8 +2365,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3447.0,
-      "views_7_chapters": 2967,
-      "platform": "readrealm"
+      "views_7_chapters": 2967
     },
     {
       "comic_id": "D7vgQpJ2VjGY6Zr5GmXy",
@@ -2462,7 +2375,7 @@
       "chapters_count": 22,
       "total_views": 19610,
       "total_sales": 6923.3,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-02-26T12:49:43.380Z",
       "days_inactive": 985,
       "is_inactive_30d": true,
@@ -2479,8 +2392,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2630.7,
-      "views_7_chapters": 2030,
-      "platform": "readrealm"
+      "views_7_chapters": 2030
     },
     {
       "comic_id": "3lewv7z5O4QVpqBnAQXd",
@@ -2490,7 +2402,7 @@
       "chapters_count": 61,
       "total_views": 72543,
       "total_sales": 6646.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2023-12-22T09:23:19.614Z",
       "days_inactive": 1051,
       "is_inactive_30d": true,
@@ -2507,18 +2419,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2306.5,
-      "views_7_chapters": 1499,
-      "platform": "readrealm"
+      "views_7_chapters": 1499
     },
     {
       "comic_id": "XrDoGdyOrzkQO8pbqz1a",
       "subject": "เดธไนท์ระดับวันสิ้นโลกหวนคืน | Return of the Calamity-Class Death Knight",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 46,
+      "chapters_count": 47,
       "total_views": 14468,
       "total_sales": 6626.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-04T00:44:43.963Z",
       "days_inactive": 338,
       "is_inactive_30d": true,
@@ -2535,18 +2446,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 888.8,
-      "views_7_chapters": 698,
-      "platform": "readrealm"
+      "views_7_chapters": 698
     },
     {
       "comic_id": "EQwLk1zYRD4rO50y2Wed",
       "subject": "ฉันจะปกป้องคุณพ่อ จอมเผด็จการสุดโหด I Will Protect My Tyrant Dad!",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 18,
+      "chapters_count": 19,
       "total_views": 29382,
       "total_sales": 6452.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-02-08T14:37:53.094Z",
       "days_inactive": 637,
       "is_inactive_30d": true,
@@ -2563,8 +2473,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3677.0,
-      "views_7_chapters": 2033,
-      "platform": "readrealm"
+      "views_7_chapters": 2033
     },
     {
       "comic_id": "m5MEjRdOnz8dOg6Ay8ZW",
@@ -2572,9 +2481,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 35,
-      "total_views": 41728,
+      "total_views": 41733,
       "total_sales": 6436.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-05T19:10:44.139Z",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -2591,8 +2500,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 718.2,
-      "views_7_chapters": 672,
-      "platform": "readrealm"
+      "views_7_chapters": 672
     },
     {
       "comic_id": "EZ41KDdWY1eKYw7MA5Pk",
@@ -2602,7 +2510,7 @@
       "chapters_count": 12,
       "total_views": 24113,
       "total_sales": 6244.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-09-13T05:59:18.920Z",
       "days_inactive": 785,
       "is_inactive_30d": true,
@@ -2619,8 +2527,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 5788.0,
-      "views_7_chapters": 3433,
-      "platform": "readrealm"
+      "views_7_chapters": 3433
     },
     {
       "comic_id": "GpeQDXZlx22vx5n0JWoR",
@@ -2630,7 +2537,7 @@
       "chapters_count": 24,
       "total_views": 19958,
       "total_sales": 5948.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-08-06T13:36:35.468Z",
       "days_inactive": 823,
       "is_inactive_30d": true,
@@ -2647,8 +2554,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2608.0,
-      "views_7_chapters": 2340,
-      "platform": "readrealm"
+      "views_7_chapters": 2340
     },
     {
       "comic_id": "Z41KDdWY19goYw7MA5Pk",
@@ -2658,7 +2564,7 @@
       "chapters_count": 33,
       "total_views": 21949,
       "total_sales": 5909.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-28T06:31:12.088Z",
       "days_inactive": 10,
       "is_inactive_30d": false,
@@ -2675,8 +2581,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 613.8,
-      "views_7_chapters": 617,
-      "platform": "readrealm"
+      "views_7_chapters": 617
     },
     {
       "comic_id": "4n6r39MJVwGJVNAB81yk",
@@ -2686,7 +2591,7 @@
       "chapters_count": 16,
       "total_views": 12196,
       "total_sales": 5647.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-08-31T15:06:51.987Z",
       "days_inactive": 798,
       "is_inactive_30d": true,
@@ -2703,8 +2608,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3028.0,
-      "views_7_chapters": 1979,
-      "platform": "readrealm"
+      "views_7_chapters": 1979
     },
     {
       "comic_id": "m5MEjRdOnzbrOg6Ay8ZW",
@@ -2714,7 +2618,7 @@
       "chapters_count": 46,
       "total_views": 21498,
       "total_sales": 5560.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-06-02T04:58:09.975Z",
       "days_inactive": 158,
       "is_inactive_30d": true,
@@ -2731,8 +2635,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 462.6,
-      "views_7_chapters": 486,
-      "platform": "readrealm"
+      "views_7_chapters": 486
     },
     {
       "comic_id": "jnGrQvMpVQ0qO5J8l2Ez",
@@ -2742,7 +2645,7 @@
       "chapters_count": 22,
       "total_views": 41986,
       "total_sales": 5516.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-11-07T12:00:04.265Z",
       "days_inactive": 730,
       "is_inactive_30d": true,
@@ -2759,8 +2662,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2436.0,
-      "views_7_chapters": 1418,
-      "platform": "readrealm"
+      "views_7_chapters": 1418
     },
     {
       "comic_id": "qDAm32WxXdXBxogPnaGe",
@@ -2770,7 +2672,7 @@
       "chapters_count": 50,
       "total_views": 35145,
       "total_sales": 5463.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-06-05T15:05:10.823Z",
       "days_inactive": 155,
       "is_inactive_30d": true,
@@ -2787,8 +2689,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 244.8,
-      "views_7_chapters": 162,
-      "platform": "readrealm"
+      "views_7_chapters": 162
     },
     {
       "comic_id": "onvEqQwJYPJOedr65l29",
@@ -2798,7 +2699,7 @@
       "chapters_count": 45,
       "total_views": 37072,
       "total_sales": 5435.65,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-08-14T06:35:49.843Z",
       "days_inactive": 815,
       "is_inactive_30d": true,
@@ -2815,18 +2716,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 656.0,
-      "views_7_chapters": 3258,
-      "platform": "readrealm"
+      "views_7_chapters": 3258
     },
     {
       "comic_id": "NG8Qg2kxDpAgxz7Kdeo9",
       "subject": "สุดยอดยีนเทพเจ้า | Super God Gene",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 226,
+      "chapters_count": 230,
       "total_views": 23458,
       "total_sales": 5418.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-16T16:08:14.851Z",
       "days_inactive": 295,
       "is_inactive_30d": true,
@@ -2843,18 +2743,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 345.6,
-      "views_7_chapters": 246,
-      "platform": "readrealm"
+      "views_7_chapters": 246
     },
     {
       "comic_id": "9ZazJMeV9pZwO4wK6vRq",
       "subject": "เร้นกายมาแสนปี ศิษย์รุ่นหลานวอนให้ข้ากลับสู่ยุทธภพ | I Lived In Seclusion For 100,000 Years",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 168,
+      "chapters_count": 171,
       "total_views": 19821,
       "total_sales": 5259.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-10-17T06:24:16.336Z",
       "days_inactive": 386,
       "is_inactive_30d": true,
@@ -2871,8 +2770,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 181.8,
-      "views_7_chapters": 209,
-      "platform": "readrealm"
+      "views_7_chapters": 209
     },
     {
       "comic_id": "azlwDvqOA0lZxbkJoedB",
@@ -2882,7 +2780,7 @@
       "chapters_count": 38,
       "total_views": 30434,
       "total_sales": 5238.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-17T14:42:39.327Z",
       "days_inactive": 478,
       "is_inactive_30d": true,
@@ -2899,18 +2797,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1229.4,
-      "views_7_chapters": 1012,
-      "platform": "readrealm"
+      "views_7_chapters": 1012
     },
     {
       "comic_id": "nvEqQwJYP9JExedr65l2",
       "subject": "การหวนคืนของเจ้าชายสามแห่งอาณาจักรที่ล่มสลาย | The Third Prince of the Fallen Kingdom has Regressed",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 45,
+      "chapters_count": 46,
       "total_views": 35815,
       "total_sales": 5231.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-07T11:43:28.911Z",
       "days_inactive": 335,
       "is_inactive_30d": true,
@@ -2927,8 +2824,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 323.4,
-      "views_7_chapters": 329,
-      "platform": "readrealm"
+      "views_7_chapters": 329
     },
     {
       "comic_id": "rKk19Eexy89DYWAyR3qL",
@@ -2938,7 +2834,7 @@
       "chapters_count": 22,
       "total_views": 29131,
       "total_sales": 5153.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-04-07T07:49:25.403Z",
       "days_inactive": 214,
       "is_inactive_30d": true,
@@ -2955,8 +2851,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1917.0,
-      "views_7_chapters": 1719,
-      "platform": "readrealm"
+      "views_7_chapters": 1719
     },
     {
       "comic_id": "jMvyBR09xzRWxbd1NrqE",
@@ -2966,7 +2861,7 @@
       "chapters_count": 17,
       "total_views": 35107,
       "total_sales": 5140.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-09-16T05:12:54.125Z",
       "days_inactive": 782,
       "is_inactive_30d": true,
@@ -2983,8 +2878,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3128.0,
-      "views_7_chapters": 2282,
-      "platform": "readrealm"
+      "views_7_chapters": 2282
     },
     {
       "comic_id": "orKk19EexydYWAyR3qLl",
@@ -2994,7 +2888,7 @@
       "chapters_count": 32,
       "total_views": 37102,
       "total_sales": 5137.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-01-15T05:10:55.014Z",
       "days_inactive": 1027,
       "is_inactive_30d": true,
@@ -3011,18 +2905,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2185.0,
-      "views_7_chapters": 1625,
-      "platform": "readrealm"
+      "views_7_chapters": 1625
     },
     {
       "comic_id": "0AplLrbONRzoOZ15okX2",
       "subject": "หนทางเพิ่มระดับของเทพแห่งยุทธ์ | The Martial God Who Levels Up",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 30,
+      "chapters_count": 31,
       "total_views": 11273,
       "total_sales": 4972.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-03-20T06:13:19.643Z",
       "days_inactive": 597,
       "is_inactive_30d": true,
@@ -3039,18 +2932,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1267.2,
-      "views_7_chapters": 804,
-      "platform": "readrealm"
+      "views_7_chapters": 804
     },
     {
       "comic_id": "m5MEjRdOnANbxg6Ay8ZW",
       "subject": "ผู้ฝึกสัตว์มายา: ฉันมองเห็นภาพรวมวิวัฒนาการทั้งหมด",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 23,
+      "chapters_count": 24,
       "total_views": 36754,
       "total_sales": 4969.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-12T01:46:49.022Z",
       "days_inactive": 513,
       "is_inactive_30d": true,
@@ -3067,8 +2959,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2374.2,
-      "views_7_chapters": 2269,
-      "platform": "readrealm"
+      "views_7_chapters": 2269
     },
     {
       "comic_id": "w9bjalkObNqAOWXyN0K6",
@@ -3078,7 +2969,7 @@
       "chapters_count": 27,
       "total_views": 19866,
       "total_sales": 4887.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-30T14:16:42.747Z",
       "days_inactive": 646,
       "is_inactive_30d": true,
@@ -3095,8 +2986,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1778.2,
-      "views_7_chapters": 1217,
-      "platform": "readrealm"
+      "views_7_chapters": 1217
     },
     {
       "comic_id": "jamDek8Yo9knO0Pz1JNw",
@@ -3106,7 +2996,7 @@
       "chapters_count": 44,
       "total_views": 37182,
       "total_sales": 4778.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-19T10:23:57.306Z",
       "days_inactive": 353,
       "is_inactive_30d": true,
@@ -3123,18 +3013,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 768.0,
-      "views_7_chapters": 709,
-      "platform": "readrealm"
+      "views_7_chapters": 709
     },
     {
       "comic_id": "GmA4egMxWDoqOB8PWbyp",
       "subject": "ชะตาชีวิตตัวร้ายแห่งสถาบันปีศาจ | The Fox-Eyed Villain of the Demon Academy",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 28,
+      "chapters_count": 29,
       "total_views": 15396,
       "total_sales": 4573.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-15T14:54:11.479Z",
       "days_inactive": 510,
       "is_inactive_30d": true,
@@ -3151,18 +3040,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1447.6,
-      "views_7_chapters": 1119,
-      "platform": "readrealm"
+      "views_7_chapters": 1119
     },
     {
       "comic_id": "rKk19Eexy8DRYWAyR3qL",
       "subject": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 44,
+      "chapters_count": 46,
       "total_views": 26683,
       "total_sales": 4528.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-05-24T14:43:07.614Z",
       "days_inactive": 167,
       "is_inactive_30d": true,
@@ -3179,18 +3067,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 239.4,
-      "views_7_chapters": 267,
-      "platform": "readrealm"
+      "views_7_chapters": 267
     },
     {
       "comic_id": "nvEqQwJYPwGJVedr65l2",
       "subject": "ข้าคือแพทย์ยุทธไร้เทียมทาน",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 51,
+      "chapters_count": 52,
       "total_views": 19498,
       "total_sales": 4015.9,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-03-18T11:05:38.701Z",
       "days_inactive": 234,
       "is_inactive_30d": true,
@@ -3207,18 +3094,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 656.0,
-      "views_7_chapters": 618,
-      "platform": "readrealm"
+      "views_7_chapters": 618
     },
     {
       "comic_id": "MXZg08yOaRBJVqw7A39l",
       "subject": "เลือดหยดเดียวชั่วนิรันดร์—ข้ายังไร้พ่ายทั่วหล้า | Invincible With Only a Single Point of HP",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 30,
+      "chapters_count": 31,
       "total_views": 19909,
       "total_sales": 3976.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-07-18T10:09:24.021Z",
       "days_inactive": 112,
       "is_inactive_30d": true,
@@ -3235,8 +3121,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 865.8,
-      "views_7_chapters": 807,
-      "platform": "readrealm"
+      "views_7_chapters": 807
     },
     {
       "comic_id": "Wng5GbmNxB8V9AlMyk0w",
@@ -3246,7 +3131,7 @@
       "chapters_count": 18,
       "total_views": 7765,
       "total_sales": 3622.25,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2023-12-19T07:50:59.622Z",
       "days_inactive": 1054,
       "is_inactive_30d": true,
@@ -3263,8 +3148,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1386.25,
-      "views_7_chapters": 916,
-      "platform": "readrealm"
+      "views_7_chapters": 916
     },
     {
       "comic_id": "aL9EPNkRVdQ0Ymn3Agyq",
@@ -3274,7 +3158,7 @@
       "chapters_count": 39,
       "total_views": 15374,
       "total_sales": 3619.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-08-14T13:54:12.020Z",
       "days_inactive": 815,
       "is_inactive_30d": true,
@@ -3291,18 +3175,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 443.2,
-      "views_7_chapters": 341,
-      "platform": "readrealm"
+      "views_7_chapters": 341
     },
     {
       "comic_id": "a7qNk8mOK6BBxXyvogDn",
       "subject": "เส้นทางจอมมาร สู่มหาดันเจี้ยน | For the Strongest Dungeon",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 33,
+      "chapters_count": 34,
       "total_views": 39143,
       "total_sales": 3583.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-12T10:39:11.287Z",
       "days_inactive": 513,
       "is_inactive_30d": true,
@@ -3319,8 +3202,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 946.0,
-      "views_7_chapters": 583,
-      "platform": "readrealm"
+      "views_7_chapters": 583
     },
     {
       "comic_id": "m5MEjRdOnLD7Yg6Ay8ZW",
@@ -3330,7 +3212,7 @@
       "chapters_count": 37,
       "total_views": 19260,
       "total_sales": 3501.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-03-01T11:00:47.920Z",
       "days_inactive": 251,
       "is_inactive_30d": true,
@@ -3347,18 +3229,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 781.2,
-      "views_7_chapters": 1084,
-      "platform": "readrealm"
+      "views_7_chapters": 1084
     },
     {
       "comic_id": "aDZ1qlAOe1l2O5k7gmeM",
       "subject": "แบกเกอร์แห่งดันเจี้ยน | Dungeon Porter",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 27,
+      "chapters_count": 28,
       "total_views": 20377,
       "total_sales": 3473.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-11T10:19:57.739Z",
       "days_inactive": 514,
       "is_inactive_30d": true,
@@ -3375,8 +3256,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1228.4,
-      "views_7_chapters": 971,
-      "platform": "readrealm"
+      "views_7_chapters": 971
     },
     {
       "comic_id": "zkJdZa0Y69dkVrv4KR5n",
@@ -3386,7 +3266,7 @@
       "chapters_count": 44,
       "total_views": 12778,
       "total_sales": 3389.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T09:58:46.098Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -3403,8 +3283,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 383.4,
-      "views_7_chapters": 363,
-      "platform": "readrealm"
+      "views_7_chapters": 363
     },
     {
       "comic_id": "rwEvg7LY8QnJx20blNPp",
@@ -3414,7 +3293,7 @@
       "chapters_count": 26,
       "total_views": 6577,
       "total_sales": 2988.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-28T06:09:49.262Z",
       "days_inactive": 10,
       "is_inactive_30d": false,
@@ -3431,8 +3310,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 491.4,
-      "views_7_chapters": 419,
-      "platform": "readrealm"
+      "views_7_chapters": 419
     },
     {
       "comic_id": "m5MEjRdOnzKZOg6Ay8ZW",
@@ -3442,7 +3320,7 @@
       "chapters_count": 50,
       "total_views": 13487,
       "total_sales": 2768.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-04-10T10:18:59.024Z",
       "days_inactive": 211,
       "is_inactive_30d": true,
@@ -3459,8 +3337,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 311.4,
-      "views_7_chapters": 210,
-      "platform": "readrealm"
+      "views_7_chapters": 210
     },
     {
       "comic_id": "ERr1aN5Wx3gexk4oPDQd",
@@ -3470,7 +3347,7 @@
       "chapters_count": 31,
       "total_views": 13637,
       "total_sales": 2625.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-08-10T07:46:40.734Z",
       "days_inactive": 819,
       "is_inactive_30d": true,
@@ -3487,18 +3364,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 724.8,
-      "views_7_chapters": 722,
-      "platform": "readrealm"
+      "views_7_chapters": 722
     },
     {
       "comic_id": "3E8jmDbO0KWbxZwR5qpa",
       "subject": "ท็อปแรงก์เกอร์สู่เส้นทางของคู่มือชีวิตนักเขียน",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 24,
+      "chapters_count": 25,
       "total_views": 5364,
       "total_sales": 2620.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-03-29T15:35:52.868Z",
       "days_inactive": 588,
       "is_inactive_30d": true,
@@ -3515,8 +3391,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 968.0,
-      "views_7_chapters": 692,
-      "platform": "readrealm"
+      "views_7_chapters": 692
     },
     {
       "comic_id": "vGkNElzYlMjDxq27mKdM",
@@ -3526,7 +3401,7 @@
       "chapters_count": 39,
       "total_views": 11878,
       "total_sales": 2565.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-09-04T04:19:35.527Z",
       "days_inactive": 64,
       "is_inactive_30d": true,
@@ -3543,8 +3418,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 363.6,
-      "views_7_chapters": 401,
-      "platform": "readrealm"
+      "views_7_chapters": 401
     },
     {
       "comic_id": "RbKaMELO7plPVglzP41q",
@@ -3554,7 +3428,7 @@
       "chapters_count": 31,
       "total_views": 10053,
       "total_sales": 2484.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T14:31:21.427Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -3571,8 +3445,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 347.4,
-      "views_7_chapters": 315,
-      "platform": "readrealm"
+      "views_7_chapters": 315
     },
     {
       "comic_id": "aDZ1qlAOewl3Y5k7gmeM",
@@ -3580,9 +3453,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 19,
-      "total_views": 34576,
-      "total_sales": 2460.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "total_views": 34579,
+      "total_sales": 2462.4,
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T15:20:13.049Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -3599,18 +3472,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1893.6,
-      "views_7_chapters": 1855,
-      "platform": "readrealm"
+      "views_7_chapters": 1855
     },
     {
       "comic_id": "GmA4egMxWRmDYB8PWbyp",
       "subject": "พลังยุทธ์ขั้นสูง : มีแค่อัจฉริยะเท่านั้นถึงจะได้พบข้า : High Martial Arts: Genius Is Only the Threshold to Meeting Me!",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 24,
+      "chapters_count": 25,
       "total_views": 12325,
       "total_sales": 2345.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-06-14T09:50:35.487Z",
       "days_inactive": 146,
       "is_inactive_30d": true,
@@ -3627,8 +3499,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 887.4,
-      "views_7_chapters": 871,
-      "platform": "readrealm"
+      "views_7_chapters": 871
     },
     {
       "comic_id": "MXZg08yOaRDjVqw7A39l",
@@ -3638,7 +3509,7 @@
       "chapters_count": 21,
       "total_views": 18551,
       "total_sales": 2334.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-21T06:55:45.572Z",
       "days_inactive": 321,
       "is_inactive_30d": true,
@@ -3655,18 +3526,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2334.2,
-      "views_7_chapters": 2596,
-      "platform": "readrealm"
+      "views_7_chapters": 2596
     },
     {
       "comic_id": "lewv7z5O460DYpqBnAQX",
       "subject": "เสาจักรพรรดิ: จุติเหล่าธิดาอัครสตรี",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 20,
+      "chapters_count": 21,
       "total_views": 36880,
       "total_sales": 2331.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-20T03:40:16.196Z",
       "days_inactive": 475,
       "is_inactive_30d": true,
@@ -3683,8 +3553,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1892.4,
-      "views_7_chapters": 2626,
-      "platform": "readrealm"
+      "views_7_chapters": 2626
     },
     {
       "comic_id": "Q0AplLrbONGNVZ15okX2",
@@ -3694,7 +3563,7 @@
       "chapters_count": 37,
       "total_views": 12131,
       "total_sales": 2139.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-07-08T18:08:39.491Z",
       "days_inactive": 852,
       "is_inactive_30d": true,
@@ -3711,8 +3580,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 508.8,
-      "views_7_chapters": 361,
-      "platform": "readrealm"
+      "views_7_chapters": 361
     },
     {
       "comic_id": "a7qNk8mOK6EKxXyvogDn",
@@ -3722,7 +3590,7 @@
       "chapters_count": 22,
       "total_views": 10890,
       "total_sales": 2046.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-17T02:03:39.463Z",
       "days_inactive": 325,
       "is_inactive_30d": true,
@@ -3739,18 +3607,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1090.8,
-      "views_7_chapters": 969,
-      "platform": "readrealm"
+      "views_7_chapters": 969
     },
     {
       "comic_id": "0AplLrbON0GZYZ15okX2",
       "subject": "จอมดาบข้ามกาลเวลา | The Swordmaster Who Leapt Through Time",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 26,
+      "chapters_count": 27,
       "total_views": 11910,
       "total_sales": 2017.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-16T10:21:16.047Z",
       "days_inactive": 295,
       "is_inactive_30d": true,
@@ -3767,18 +3634,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 728.2,
-      "views_7_chapters": 546,
-      "platform": "readrealm"
+      "views_7_chapters": 546
     },
     {
       "comic_id": "rwEvg7LY89k1x20blNPp",
       "subject": "วิถีเซียนนอกรีต",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 23,
+      "chapters_count": 24,
       "total_views": 26531,
       "total_sales": 1952.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-03-03T12:33:34.781Z",
       "days_inactive": 614,
       "is_inactive_30d": true,
@@ -3795,18 +3661,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1197.2,
-      "views_7_chapters": 881,
-      "platform": "readrealm"
+      "views_7_chapters": 881
     },
     {
       "comic_id": "0NRm4EX9VE81O63qZJ2W",
       "subject": "ปรามาสแห่งเทพ",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 20,
+      "chapters_count": 21,
       "total_views": 13912,
       "total_sales": 1950.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-02-25T20:23:22.399Z",
       "days_inactive": 620,
       "is_inactive_30d": true,
@@ -3823,8 +3688,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1240.0,
-      "views_7_chapters": 1213,
-      "platform": "readrealm"
+      "views_7_chapters": 1213
     },
     {
       "comic_id": "GmA4egMxWRADYB8PWbyp",
@@ -3834,7 +3698,7 @@
       "chapters_count": 26,
       "total_views": 13854,
       "total_sales": 1823.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T15:21:27.184Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -3851,8 +3715,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 550.8,
-      "views_7_chapters": 425,
-      "platform": "readrealm"
+      "views_7_chapters": 425
     },
     {
       "comic_id": "0NRm4EX9VEZY63qZJ2Wz",
@@ -3862,7 +3725,7 @@
       "chapters_count": 12,
       "total_views": 7365,
       "total_sales": 1750.45,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2023-12-29T06:54:10.239Z",
       "days_inactive": 1044,
       "is_inactive_30d": true,
@@ -3879,8 +3742,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1352.05,
-      "views_7_chapters": 1345,
-      "platform": "readrealm"
+      "views_7_chapters": 1345
     },
     {
       "comic_id": "4EQwLk1zYRvY50y2Wedn",
@@ -3890,7 +3752,7 @@
       "chapters_count": 31,
       "total_views": 21789,
       "total_sales": 1736.15,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-02-13T06:12:52.044Z",
       "days_inactive": 998,
       "is_inactive_30d": true,
@@ -3907,18 +3769,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 764.8,
-      "views_7_chapters": 497,
-      "platform": "readrealm"
+      "views_7_chapters": 497
     },
     {
       "comic_id": "BAyoRlNxvwZ2Odqp18wL",
       "subject": "เกิดใหม่พร้อมพลังทะยานสู่จุดสูงสุด",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 35,
+      "chapters_count": 36,
       "total_views": 9175,
       "total_sales": 1735.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-18T11:33:48.480Z",
       "days_inactive": 538,
       "is_inactive_30d": true,
@@ -3935,8 +3796,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 585.0,
-      "views_7_chapters": 492,
-      "platform": "readrealm"
+      "views_7_chapters": 492
     },
     {
       "comic_id": "3a7qNk8mOKgOXyvogDn5",
@@ -3946,7 +3806,7 @@
       "chapters_count": 28,
       "total_views": 11245,
       "total_sales": 1597.55,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-01-03T20:08:03.729Z",
       "days_inactive": 1039,
       "is_inactive_30d": true,
@@ -3963,18 +3823,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 608.75,
-      "views_7_chapters": 528,
-      "platform": "readrealm"
+      "views_7_chapters": 528
     },
     {
       "comic_id": "3E8jmDbO029QYZwR5qpa",
       "subject": "สตรีมเกมของยอดมนุษย์ | Superhuman’s Gaming Stream",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 19,
+      "chapters_count": 20,
       "total_views": 8507,
       "total_sales": 1524.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-20T13:57:02.365Z",
       "days_inactive": 291,
       "is_inactive_30d": true,
@@ -3991,8 +3850,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 928.4,
-      "views_7_chapters": 857,
-      "platform": "readrealm"
+      "views_7_chapters": 857
     },
     {
       "comic_id": "n6r39MJVwpqjYNAB81yk",
@@ -4002,7 +3860,7 @@
       "chapters_count": 37,
       "total_views": 6112,
       "total_sales": 1515.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T09:44:46.707Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -4019,8 +3877,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 253.8,
-      "views_7_chapters": 174,
-      "platform": "readrealm"
+      "views_7_chapters": 174
     },
     {
       "comic_id": "3MjZ0qWYgJ4XVJLAreG1",
@@ -4030,7 +3887,7 @@
       "chapters_count": 32,
       "total_views": 5046,
       "total_sales": 1495.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-08-04T14:53:44.009Z",
       "days_inactive": 95,
       "is_inactive_30d": true,
@@ -4047,8 +3904,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 522.0,
-      "views_7_chapters": 429,
-      "platform": "readrealm"
+      "views_7_chapters": 429
     },
     {
       "comic_id": "ng5GbmNxBrg8x9AlMyk0",
@@ -4058,7 +3914,7 @@
       "chapters_count": 28,
       "total_views": 5786,
       "total_sales": 1425.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-02T15:23:58.850Z",
       "days_inactive": 5,
       "is_inactive_30d": false,
@@ -4075,8 +3931,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 212.4,
-      "views_7_chapters": 239,
-      "platform": "readrealm"
+      "views_7_chapters": 239
     },
     {
       "comic_id": "ovGkNElzYl23Oq27mKdM",
@@ -4086,7 +3941,7 @@
       "chapters_count": 12,
       "total_views": 6701,
       "total_sales": 1362.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-10-02T08:40:14.874Z",
       "days_inactive": 766,
       "is_inactive_30d": true,
@@ -4103,8 +3958,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1362.0,
-      "views_7_chapters": 1191,
-      "platform": "readrealm"
+      "views_7_chapters": 1191
     },
     {
       "comic_id": "dPDM46rGYm0VZlomvzLb",
@@ -4114,7 +3968,7 @@
       "chapters_count": 17,
       "total_views": 9841,
       "total_sales": 1308.95,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-01-16T07:21:10.990Z",
       "days_inactive": 1026,
       "is_inactive_30d": true,
@@ -4131,18 +3985,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 688.95,
-      "views_7_chapters": 692,
-      "platform": "readrealm"
+      "views_7_chapters": 692
     },
     {
       "comic_id": "JvApmMXVJGeoYg1re8Pa",
       "subject": "จ้าวเนโครแมนเซอร์ ขอพักงานมาฝึกเป็นพ่อคน | Even the Supreme One Has Never Been a Dad Before",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 24,
+      "chapters_count": 25,
       "total_views": 5058,
       "total_sales": 1234.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-20T07:39:03.331Z",
       "days_inactive": 352,
       "is_inactive_30d": true,
@@ -4159,18 +4012,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 761.2,
-      "views_7_chapters": 551,
-      "platform": "readrealm"
+      "views_7_chapters": 551
     },
     {
       "comic_id": "3E8jmDbO02AeYZwR5qpa",
       "subject": "ปฐมบทแห่งระบบสำนัก | Initializing the Sect System",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 20,
+      "chapters_count": 21,
       "total_views": 5238,
       "total_sales": 1225.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-01-02T11:15:50.866Z",
       "days_inactive": 309,
       "is_inactive_30d": true,
@@ -4187,8 +4039,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 624.8,
-      "views_7_chapters": 710,
-      "platform": "readrealm"
+      "views_7_chapters": 710
     },
     {
       "comic_id": "EQwLk1zYRR9KY50y2Wed",
@@ -4198,7 +4049,7 @@
       "chapters_count": 20,
       "total_views": 6911,
       "total_sales": 1220.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T11:18:09.686Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -4215,8 +4066,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 765.0,
-      "views_7_chapters": 556,
-      "platform": "readrealm"
+      "views_7_chapters": 556
     },
     {
       "comic_id": "BAyoRlNxvJEbxdqp18wL",
@@ -4226,7 +4076,7 @@
       "chapters_count": 23,
       "total_views": 3881,
       "total_sales": 1155.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T16:35:50.770Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -4243,8 +4093,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 806.4,
-      "views_7_chapters": 623,
-      "platform": "readrealm"
+      "views_7_chapters": 623
     },
     {
       "comic_id": "MvyBR09xzjQlxbd1NrqE",
@@ -4254,7 +4103,7 @@
       "chapters_count": 20,
       "total_views": 10842,
       "total_sales": 1155.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-16T10:20:54.308Z",
       "days_inactive": 509,
       "is_inactive_30d": true,
@@ -4271,8 +4120,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1155.6,
-      "views_7_chapters": 1767,
-      "platform": "readrealm"
+      "views_7_chapters": 1767
     },
     {
       "comic_id": "1E4dv9AV5M2rVogakpmQ",
@@ -4282,7 +4130,7 @@
       "chapters_count": 31,
       "total_views": 12164,
       "total_sales": 1152.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-08-28T02:46:12.870Z",
       "days_inactive": 71,
       "is_inactive_30d": true,
@@ -4299,8 +4147,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 171.0,
-      "views_7_chapters": 175,
-      "platform": "readrealm"
+      "views_7_chapters": 175
     },
     {
       "comic_id": "3MjZ0qWYgw1oYJLAreG1",
@@ -4310,7 +4157,7 @@
       "chapters_count": 14,
       "total_views": 4034,
       "total_sales": 1105.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-14T05:21:56.770Z",
       "days_inactive": 24,
       "is_inactive_30d": false,
@@ -4327,18 +4174,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1105.2,
-      "views_7_chapters": 1557,
-      "platform": "readrealm"
+      "views_7_chapters": 1557
     },
     {
       "comic_id": "NRm4EX9VE3Q4x63qZJ2W",
       "subject": "จุติใหม่ระดับ SS: มหาเวทคลั่งถล่มอะคาเดมี่ | The SS-Class Freshman of the Magic Academy",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 21,
+      "chapters_count": 22,
       "total_views": 8574,
       "total_sales": 1092.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-07-14T08:34:33.251Z",
       "days_inactive": 116,
       "is_inactive_30d": true,
@@ -4355,18 +4201,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 642.6,
-      "views_7_chapters": 458,
-      "platform": "readrealm"
+      "views_7_chapters": 458
     },
     {
       "comic_id": "rKk19Eexy7y6VWAyR3qL",
       "subject": "ซัมมอนเนอร์: ผู้เปิดประตูสู่เหวนรก | Devil Summoner, I am the Abyss Lord",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 17,
+      "chapters_count": 18,
       "total_views": 7654,
       "total_sales": 1069.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-09T08:22:35.041Z",
       "days_inactive": 516,
       "is_inactive_30d": true,
@@ -4383,8 +4228,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 957.6,
-      "views_7_chapters": 2216,
-      "platform": "readrealm"
+      "views_7_chapters": 2216
     },
     {
       "comic_id": "wPZAJq7OkDryVW8Dozkm",
@@ -4394,7 +4238,7 @@
       "chapters_count": 25,
       "total_views": 6832,
       "total_sales": 1015.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-02T15:12:28.709Z",
       "days_inactive": 5,
       "is_inactive_30d": false,
@@ -4411,8 +4255,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 273.6,
-      "views_7_chapters": 172,
-      "platform": "readrealm"
+      "views_7_chapters": 172
     },
     {
       "comic_id": "qDAm32WxX12BOogPnaGe",
@@ -4422,7 +4265,7 @@
       "chapters_count": 28,
       "total_views": 6530,
       "total_sales": 990.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-03-12T03:55:02.557Z",
       "days_inactive": 240,
       "is_inactive_30d": true,
@@ -4439,18 +4282,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 343.8,
-      "views_7_chapters": 250,
-      "platform": "readrealm"
+      "views_7_chapters": 250
     },
     {
       "comic_id": "aDZ1qlAOelpBx5k7gmeM",
       "subject": "ข้าผู้กลายเป็นผู้อุปถัมภ์เหล่าวายร้าย | Raising Villains the Right Way",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 14,
+      "chapters_count": 15,
       "total_views": 8118,
       "total_sales": 930.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-28T09:05:13.954Z",
       "days_inactive": 314,
       "is_inactive_30d": true,
@@ -4467,18 +4309,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 930.6,
-      "views_7_chapters": 2091,
-      "platform": "readrealm"
+      "views_7_chapters": 2091
     },
     {
       "comic_id": "DBQ4k6PYpKrMV8qrm0J5",
       "subject": "ลัทธิเงามารสวรรค์แห่งลั่วหยาง | The Luoyang Branch of the Heavenly Demon Cult",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 26,
+      "chapters_count": 29,
       "total_views": 6958,
       "total_sales": 919.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-10T04:36:11.984Z",
       "days_inactive": 546,
       "is_inactive_30d": true,
@@ -4495,8 +4336,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 411.4,
-      "views_7_chapters": 272,
-      "platform": "readrealm"
+      "views_7_chapters": 272
     },
     {
       "comic_id": "3MjZ0qWYgqZkOJLAreG1",
@@ -4506,7 +4346,7 @@
       "chapters_count": 24,
       "total_views": 16724,
       "total_sales": 916.7,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-12-30T07:44:06.038Z",
       "days_inactive": 677,
       "is_inactive_30d": true,
@@ -4523,8 +4363,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 529.7,
-      "views_7_chapters": 720,
-      "platform": "readrealm"
+      "views_7_chapters": 720
     },
     {
       "comic_id": "wPZAJq7OknKlxW8Dozkm",
@@ -4534,7 +4373,7 @@
       "chapters_count": 22,
       "total_views": 11628,
       "total_sales": 867.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-07T06:50:39.520Z",
       "days_inactive": 518,
       "is_inactive_30d": true,
@@ -4551,8 +4390,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 867.6,
-      "views_7_chapters": 1172,
-      "platform": "readrealm"
+      "views_7_chapters": 1172
     },
     {
       "comic_id": "7AnZ8eydVL1lY9lJp23X",
@@ -4562,7 +4400,7 @@
       "chapters_count": 16,
       "total_views": 5165,
       "total_sales": 722.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-09-19T08:02:57.976Z",
       "days_inactive": 779,
       "is_inactive_30d": true,
@@ -4579,8 +4417,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 414.0,
-      "views_7_chapters": 252,
-      "platform": "readrealm"
+      "views_7_chapters": 252
     },
     {
       "comic_id": "0AplLrbON0b5YZ15okX2",
@@ -4590,7 +4427,7 @@
       "chapters_count": 20,
       "total_views": 5944,
       "total_sales": 709.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-05T05:44:51.606Z",
       "days_inactive": 337,
       "is_inactive_30d": true,
@@ -4607,8 +4444,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 504.0,
-      "views_7_chapters": 1599,
-      "platform": "readrealm"
+      "views_7_chapters": 1599
     },
     {
       "comic_id": "JvApmMXVJ9DeOg1re8Pa",
@@ -4618,7 +4454,7 @@
       "chapters_count": 14,
       "total_views": 8430,
       "total_sales": 669.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-17T13:45:59.006Z",
       "days_inactive": 355,
       "is_inactive_30d": true,
@@ -4635,8 +4471,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 669.6,
-      "views_7_chapters": 1947,
-      "platform": "readrealm"
+      "views_7_chapters": 1947
     },
     {
       "comic_id": "pRbKaMELO7mZYglzP41q",
@@ -4646,7 +4481,7 @@
       "chapters_count": 9,
       "total_views": 10427,
       "total_sales": 620.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-10-13T09:40:33.656Z",
       "days_inactive": 755,
       "is_inactive_30d": true,
@@ -4663,18 +4498,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 620.8,
-      "views_7_chapters": 3754,
-      "platform": "readrealm"
+      "views_7_chapters": 3754
     },
     {
       "comic_id": "RbKaMELO7pk0VglzP41q",
       "subject": "จุติเทพเมรุคลั่ง: ระบบกลืนวิญญาณ | I Became a God Devouring Souls at the Crematorium",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 16,
+      "chapters_count": 17,
       "total_views": 3839,
       "total_sales": 610.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-07-11T15:12:48.912Z",
       "days_inactive": 119,
       "is_inactive_30d": true,
@@ -4691,18 +4525,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 601.2,
-      "views_7_chapters": 458,
-      "platform": "readrealm"
+      "views_7_chapters": 458
     },
     {
       "comic_id": "GaDZ1qlAOem2O5k7gmeM",
       "subject": "มีดผ่านรก",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 12,
+      "chapters_count": 13,
       "total_views": 4259,
       "total_sales": 572.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-11-22T08:42:27.324Z",
       "days_inactive": 715,
       "is_inactive_30d": true,
@@ -4719,18 +4552,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 436.0,
-      "views_7_chapters": 973,
-      "platform": "readrealm"
+      "views_7_chapters": 973
     },
     {
       "comic_id": "RbKaMELO79vqYglzP41q",
       "subject": "นักเวทเจ้าปัญหา หอคอยเวทย์มนตร์ | The Magic Tower Problematic Child",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 12,
+      "chapters_count": 13,
       "total_views": 5600,
       "total_sales": 523.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-19T04:50:58.854Z",
       "days_inactive": 537,
       "is_inactive_30d": true,
@@ -4747,18 +4579,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 367.4,
-      "views_7_chapters": 2147,
-      "platform": "readrealm"
+      "views_7_chapters": 2147
     },
     {
       "comic_id": "rKk19EexyjznOWAyR3qL",
       "subject": "ย้อนอดีตครั้งนี้ โลกไม่มีวันพินาศ",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 12,
+      "chapters_count": 13,
       "total_views": 6564,
       "total_sales": 523.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-04-07T14:01:02.270Z",
       "days_inactive": 579,
       "is_inactive_30d": true,
@@ -4775,8 +4606,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 523.6,
-      "views_7_chapters": 2162,
-      "platform": "readrealm"
+      "views_7_chapters": 2162
     },
     {
       "comic_id": "9ZazJMeV9pXpO4wK6vRq",
@@ -4786,7 +4616,7 @@
       "chapters_count": 24,
       "total_views": 7311,
       "total_sales": 493.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-09-27T06:28:10.157Z",
       "days_inactive": 406,
       "is_inactive_30d": true,
@@ -4803,8 +4633,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 234.0,
-      "views_7_chapters": 193,
-      "platform": "readrealm"
+      "views_7_chapters": 193
     },
     {
       "comic_id": "a7qNk8mOK95RYXyvogDn",
@@ -4812,9 +4641,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 13,
-      "total_views": 4488,
+      "total_views": 4489,
       "total_sales": 487.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-20T07:13:34.773Z",
       "days_inactive": 18,
       "is_inactive_30d": false,
@@ -4831,18 +4660,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 487.8,
-      "views_7_chapters": 1598,
-      "platform": "readrealm"
+      "views_7_chapters": 1598
     },
     {
       "comic_id": "9ZazJMeV9AJjV4wK6vRq",
       "subject": "จอมมารเก็บขยะ",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 21,
+      "chapters_count": 22,
       "total_views": 9196,
       "total_sales": 457.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-06T09:03:27.856Z",
       "days_inactive": 670,
       "is_inactive_30d": true,
@@ -4859,8 +4687,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 385.6,
-      "views_7_chapters": 271,
-      "platform": "readrealm"
+      "views_7_chapters": 271
     },
     {
       "comic_id": "n6r39MJVwy8JxNAB81yk",
@@ -4870,7 +4697,7 @@
       "chapters_count": 15,
       "total_views": 4806,
       "total_sales": 421.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-26T12:58:36.762Z",
       "days_inactive": 346,
       "is_inactive_30d": true,
@@ -4887,18 +4714,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 390.6,
-      "views_7_chapters": 950,
-      "platform": "readrealm"
+      "views_7_chapters": 950
     },
     {
       "comic_id": "azlwDvqOAy2oObkJoedB",
       "subject": "จอมเวทย์หมัดสะท้านฟ้า",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 11,
+      "chapters_count": 12,
       "total_views": 2795,
       "total_sales": 404.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-04-01T12:46:41.374Z",
       "days_inactive": 585,
       "is_inactive_30d": true,
@@ -4915,8 +4741,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 404.8,
-      "views_7_chapters": 859,
-      "platform": "readrealm"
+      "views_7_chapters": 859
     },
     {
       "comic_id": "XrDoGdyOrNPdO8pbqz1a",
@@ -4926,7 +4751,7 @@
       "chapters_count": 7,
       "total_views": 2298,
       "total_sales": 402.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-22T10:44:15.466Z",
       "days_inactive": 654,
       "is_inactive_30d": true,
@@ -4943,8 +4768,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 402.0,
-      "views_7_chapters": 1689,
-      "platform": "readrealm"
+      "views_7_chapters": 1689
     },
     {
       "comic_id": "KenEj08zOqZBV6W34lpa",
@@ -4954,7 +4778,7 @@
       "chapters_count": 9,
       "total_views": 4175,
       "total_sales": 384.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-05-01T04:07:17.694Z",
       "days_inactive": 920,
       "is_inactive_30d": true,
@@ -4971,8 +4795,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 384.0,
-      "views_7_chapters": 1379,
-      "platform": "readrealm"
+      "views_7_chapters": 1379
     },
     {
       "comic_id": "nJvApmMXVJeMOg1re8Pa",
@@ -4982,7 +4805,7 @@
       "chapters_count": 5,
       "total_views": 3029,
       "total_sales": 364.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-02-21T11:25:02.349Z",
       "days_inactive": 990,
       "is_inactive_30d": true,
@@ -4999,8 +4822,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 364.8,
-      "views_7_chapters": 1440,
-      "platform": "readrealm"
+      "views_7_chapters": 1440
     },
     {
       "comic_id": "aDZ1qlAOe1z7O5k7gmeM",
@@ -5010,7 +4832,7 @@
       "chapters_count": 38,
       "total_views": 7086,
       "total_sales": 352.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-04T13:25:36.109Z",
       "days_inactive": 521,
       "is_inactive_30d": true,
@@ -5027,8 +4849,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 83.2,
-      "views_7_chapters": 78,
-      "platform": "readrealm"
+      "views_7_chapters": 78
     },
     {
       "comic_id": "nvEqQwJYPz8NOedr65l2",
@@ -5038,7 +4859,7 @@
       "chapters_count": 17,
       "total_views": 2471,
       "total_sales": 307.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-28T06:02:31.063Z",
       "days_inactive": 10,
       "is_inactive_30d": false,
@@ -5055,8 +4876,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 307.8,
-      "views_7_chapters": 332,
-      "platform": "readrealm"
+      "views_7_chapters": 332
     },
     {
       "comic_id": "n6r39MJVwDZvYNAB81yk",
@@ -5066,7 +4886,7 @@
       "chapters_count": 11,
       "total_views": 3520,
       "total_sales": 275.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-07T08:38:59.171Z",
       "days_inactive": 335,
       "is_inactive_30d": true,
@@ -5083,8 +4903,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 275.4,
-      "views_7_chapters": 1769,
-      "platform": "readrealm"
+      "views_7_chapters": 1769
     },
     {
       "comic_id": "9ZazJMeV9LJwO4wK6vRq",
@@ -5094,7 +4913,7 @@
       "chapters_count": 12,
       "total_views": 3147,
       "total_sales": 270.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-28T06:10:08.432Z",
       "days_inactive": 10,
       "is_inactive_30d": false,
@@ -5111,8 +4930,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 268.2,
-      "views_7_chapters": 1213,
-      "platform": "readrealm"
+      "views_7_chapters": 1213
     },
     {
       "comic_id": "KenEj08zOq5EO6W34lpa",
@@ -5122,7 +4940,7 @@
       "chapters_count": 16,
       "total_views": 4806,
       "total_sales": 260.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-09-28T05:11:10.513Z",
       "days_inactive": 770,
       "is_inactive_30d": true,
@@ -5139,18 +4957,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 68.8,
-      "views_7_chapters": 528,
-      "platform": "readrealm"
+      "views_7_chapters": 528
     },
     {
       "comic_id": "jamDek8Yo9bBO0Pz1JNw",
       "subject": "ราชันย์โซโล่ ผู้ล่าเดี่ยว | Emperor of Solo Play",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 16,
+      "chapters_count": 17,
       "total_views": 5141,
       "total_sales": 259.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-04T12:00:34.421Z",
       "days_inactive": 521,
       "is_inactive_30d": true,
@@ -5167,8 +4984,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 259.6,
-      "views_7_chapters": 1189,
-      "platform": "readrealm"
+      "views_7_chapters": 1189
     },
     {
       "comic_id": "4n6r39MJVw7VNAB81yk7",
@@ -5178,7 +4994,7 @@
       "chapters_count": 8,
       "total_views": 2609,
       "total_sales": 236.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2023-11-25T04:14:38.401Z",
       "days_inactive": 1078,
       "is_inactive_30d": true,
@@ -5195,8 +5011,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 236.4,
-      "views_7_chapters": 732,
-      "platform": "readrealm"
+      "views_7_chapters": 732
     },
     {
       "comic_id": "4n6r39MJVwbBONAB81yk",
@@ -5204,9 +5019,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 8,
-      "total_views": 2253,
+      "total_views": 2254,
       "total_sales": 214.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-04-07T11:20:38.977Z",
       "days_inactive": 944,
       "is_inactive_30d": true,
@@ -5223,8 +5038,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 214.4,
-      "views_7_chapters": 837,
-      "platform": "readrealm"
+      "views_7_chapters": 837
     },
     {
       "comic_id": "6XrDoGdyOrnQO8pbqz1a",
@@ -5234,7 +5048,7 @@
       "chapters_count": 7,
       "total_views": 28272,
       "total_sales": 198.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-10-13T03:39:13.546Z",
       "days_inactive": 755,
       "is_inactive_30d": true,
@@ -5251,18 +5065,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 198.0,
-      "views_7_chapters": 22062,
-      "platform": "readrealm"
+      "views_7_chapters": 22062
     },
     {
       "comic_id": "BAyoRlNxvZ2lxdqp18wL",
       "subject": "คู่มือการเลี้ยงลูกซาตานให้เป็นจ้าวแห่งนรก | Raising Hell: A Demon's Guide to Parenting",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 6,
+      "chapters_count": 7,
       "total_views": 17255,
       "total_sales": 182.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-21T05:09:50.399Z",
       "days_inactive": 655,
       "is_inactive_30d": true,
@@ -5279,8 +5092,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 182.0,
-      "views_7_chapters": 11655,
-      "platform": "readrealm"
+      "views_7_chapters": 11655
     },
     {
       "comic_id": "zkJdZa0Y6n5NYrv4KR5n",
@@ -5290,7 +5102,7 @@
       "chapters_count": 12,
       "total_views": 2007,
       "total_sales": 169.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-19T08:54:35.938Z",
       "days_inactive": 19,
       "is_inactive_30d": false,
@@ -5307,8 +5119,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 162.0,
-      "views_7_chapters": 904,
-      "platform": "readrealm"
+      "views_7_chapters": 904
     },
     {
       "comic_id": "p9ZazJMeV9lbO4wK6vRq",
@@ -5318,7 +5129,7 @@
       "chapters_count": 4,
       "total_views": 4722,
       "total_sales": 168.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-06-25T05:00:55.082Z",
       "days_inactive": 865,
       "is_inactive_30d": true,
@@ -5335,8 +5146,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 168.0,
-      "views_7_chapters": 2808,
-      "platform": "readrealm"
+      "views_7_chapters": 2808
     },
     {
       "comic_id": "pRbKaMELO792YglzP41q",
@@ -5346,7 +5156,7 @@
       "chapters_count": 8,
       "total_views": 8882,
       "total_sales": 157.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-02-04T04:50:07.264Z",
       "days_inactive": 1007,
       "is_inactive_30d": true,
@@ -5363,18 +5173,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 157.6,
-      "views_7_chapters": 4129,
-      "platform": "readrealm"
+      "views_7_chapters": 4129
     },
     {
       "comic_id": "jamDek8YoaZkO0Pz1JNw",
       "subject": "เซียนกระบี่พลังนิวเคลียร์",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 41,
+      "chapters_count": 137,
       "total_views": 9972,
       "total_sales": 149.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-04-21T15:51:21.945Z",
       "days_inactive": 565,
       "is_inactive_30d": true,
@@ -5391,8 +5200,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0,
-      "platform": "readrealm"
+      "views_7_chapters": 0
     },
     {
       "comic_id": "6XrDoGdyOre7x8pbqz1a",
@@ -5402,7 +5210,7 @@
       "chapters_count": 6,
       "total_views": 3271,
       "total_sales": 110.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-02-27T06:14:46.754Z",
       "days_inactive": 984,
       "is_inactive_30d": true,
@@ -5419,8 +5227,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 110.4,
-      "views_7_chapters": 2105,
-      "platform": "readrealm"
+      "views_7_chapters": 2105
     },
     {
       "comic_id": "kJy7ZdeYZN15YX5PAwB6",
@@ -5430,7 +5237,7 @@
       "chapters_count": 7,
       "total_views": 1047,
       "total_sales": 106.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-10T16:37:53.648Z",
       "days_inactive": 666,
       "is_inactive_30d": true,
@@ -5447,8 +5254,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 106.0,
-      "views_7_chapters": 758,
-      "platform": "readrealm"
+      "views_7_chapters": 758
     },
     {
       "comic_id": "vGkNElzYlM0vxq27mKdM",
@@ -5458,7 +5264,7 @@
       "chapters_count": 27,
       "total_views": 1416,
       "total_sales": 82.8,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-06-08T04:08:45.599Z",
       "days_inactive": 152,
       "is_inactive_30d": true,
@@ -5475,8 +5281,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 37.8,
-      "views_7_chapters": 42,
-      "platform": "readrealm"
+      "views_7_chapters": 42
     },
     {
       "comic_id": "a7qNk8mOK595YXyvogDn",
@@ -5486,7 +5291,7 @@
       "chapters_count": 11,
       "total_views": 3647,
       "total_sales": 75.6,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-17T08:50:09.258Z",
       "days_inactive": 355,
       "is_inactive_30d": true,
@@ -5503,18 +5308,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 75.6,
-      "views_7_chapters": 1804,
-      "platform": "readrealm"
+      "views_7_chapters": 1804
     },
     {
       "comic_id": "EQwLk1zYRXPKO50y2Wed",
       "subject": "สยบเคราะห์ทัณฑ์สวรรค์แสนปี | Heavenly Tribulation: 100,000 Years",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 10,
+      "chapters_count": 11,
       "total_views": 3173,
       "total_sales": 72.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-03T12:09:17.624Z",
       "days_inactive": 522,
       "is_inactive_30d": true,
@@ -5531,8 +5335,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 72.0,
-      "views_7_chapters": 1312,
-      "platform": "readrealm"
+      "views_7_chapters": 1312
     },
     {
       "comic_id": "KenEj08zOqJgV6W34lpa",
@@ -5542,7 +5345,7 @@
       "chapters_count": 6,
       "total_views": 3744,
       "total_sales": 42.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-01-23T13:19:38.880Z",
       "days_inactive": 1019,
       "is_inactive_30d": true,
@@ -5559,8 +5362,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 42.4,
-      "views_7_chapters": 2199,
-      "platform": "readrealm"
+      "views_7_chapters": 2199
     },
     {
       "comic_id": "0AplLrbON92NxZ15okX2",
@@ -5570,7 +5372,7 @@
       "chapters_count": 8,
       "total_views": 331,
       "total_sales": 32.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-03T04:25:26.251Z",
       "days_inactive": 522,
       "is_inactive_30d": true,
@@ -5587,18 +5389,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 32.0,
-      "views_7_chapters": 153,
-      "platform": "readrealm"
+      "views_7_chapters": 153
     },
     {
       "comic_id": "peQDXZlx2LavV5n0JWoR",
       "subject": "การกลับมาสู่การล้างแค้น | The Return to Vengeance",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 9,
+      "chapters_count": 10,
       "total_views": 403,
       "total_sales": 18.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-28T03:37:21.449Z",
       "days_inactive": 528,
       "is_inactive_30d": true,
@@ -5615,8 +5416,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 18.0,
-      "views_7_chapters": 66,
-      "platform": "readrealm"
+      "views_7_chapters": 66
     },
     {
       "comic_id": "7AnZ8eydVLJ3x9lJp23X",
@@ -5626,7 +5426,7 @@
       "chapters_count": 17,
       "total_views": 2564,
       "total_sales": 14.4,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-12-29T04:14:53.181Z",
       "days_inactive": 678,
       "is_inactive_30d": true,
@@ -5643,8 +5443,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 14.4,
-      "views_7_chapters": 182,
-      "platform": "readrealm"
+      "views_7_chapters": 182
     },
     {
       "comic_id": "kJy7ZdeYZoQexX5PAwB6",
@@ -5654,7 +5453,7 @@
       "chapters_count": 11,
       "total_views": 924,
       "total_sales": 11.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-03T13:00:52.757Z",
       "days_inactive": 522,
       "is_inactive_30d": true,
@@ -5671,8 +5470,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 11.0,
-      "views_7_chapters": 430,
-      "platform": "readrealm"
+      "views_7_chapters": 430
     },
     {
       "comic_id": "aDZ1qlAOellLx5k7gmeM",
@@ -5682,7 +5480,7 @@
       "chapters_count": 9,
       "total_views": 3401,
       "total_sales": 7.2,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-17T13:43:15.130Z",
       "days_inactive": 355,
       "is_inactive_30d": true,
@@ -5699,8 +5497,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 7.2,
-      "views_7_chapters": 1696,
-      "platform": "readrealm"
+      "views_7_chapters": 1696
     },
     {
       "comic_id": "7vgQpJ2VjRK3V6Zr5GmX",
@@ -5710,7 +5507,7 @@
       "chapters_count": 7,
       "total_views": 181,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T15:42:36.214Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -5727,8 +5524,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 166,
-      "platform": "readrealm"
+      "views_7_chapters": 166
     },
     {
       "comic_id": "DBQ4k6PYpQnnx8qrm0J5",
@@ -5736,9 +5532,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 7,
-      "total_views": 1217,
+      "total_views": 1219,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-03T18:30:48.618Z",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -5755,8 +5551,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 203,
-      "platform": "readrealm"
+      "views_7_chapters": 203
     },
     {
       "comic_id": "jamDek8YoebyO0Pz1JNw",
@@ -5766,7 +5561,7 @@
       "chapters_count": 4,
       "total_views": 376,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-20T07:18:19.938Z",
       "days_inactive": 18,
       "is_inactive_30d": false,
@@ -5783,8 +5578,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 340,
-      "platform": "readrealm"
+      "views_7_chapters": 340
     },
     {
       "comic_id": "m5MEjRdOnnzbOg6Ay8ZW",
@@ -5794,7 +5588,7 @@
       "chapters_count": 7,
       "total_views": 286,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T10:56:55.834Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -5811,8 +5605,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 247,
-      "platform": "readrealm"
+      "views_7_chapters": 247
     },
     {
       "comic_id": "7vgQpJ2VjRM9V6Zr5GmX",
@@ -5822,7 +5615,7 @@
       "chapters_count": 8,
       "total_views": 461,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-11-07T15:47:42.778Z",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -5839,8 +5632,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 383,
-      "platform": "readrealm"
+      "views_7_chapters": 383
     },
     {
       "comic_id": "DBQ4k6PYpQr5x8qrm0J5",
@@ -5850,7 +5642,7 @@
       "chapters_count": 0,
       "total_views": 11,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-07-21T16:20:26.890Z",
       "days_inactive": 109,
       "is_inactive_30d": true,
@@ -5867,8 +5659,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0,
-      "platform": "readrealm"
+      "views_7_chapters": 0
     },
     {
       "comic_id": "BAyoRlNxvJpaxdqp18wL",
@@ -5878,7 +5669,7 @@
       "chapters_count": 3,
       "total_views": 155,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-10-23T10:29:34.034Z",
       "days_inactive": 15,
       "is_inactive_30d": false,
@@ -5895,8 +5686,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 91,
-      "platform": "readrealm"
+      "views_7_chapters": 91
     },
     {
       "comic_id": "rKk19Eexy8ZpYWAyR3qL",
@@ -5906,7 +5696,7 @@
       "chapters_count": 4,
       "total_views": 530,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-06-06T07:32:55.493Z",
       "days_inactive": 154,
       "is_inactive_30d": true,
@@ -5923,8 +5713,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 255,
-      "platform": "readrealm"
+      "views_7_chapters": 255
     },
     {
       "comic_id": "RbKaMELO7p0pVglzP41q",
@@ -5934,7 +5723,7 @@
       "chapters_count": 6,
       "total_views": 3576,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-03-23T07:51:48.866Z",
       "days_inactive": 229,
       "is_inactive_30d": true,
@@ -5951,18 +5740,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 3082,
-      "platform": "readrealm"
+      "views_7_chapters": 3082
     },
     {
       "comic_id": "n6r39MJVwyojxNAB81yk",
       "subject": "ดาร์กเมจ: จอมเวทย้อนเวลา ผู้ครองสกิลสุดโกงเพียงหนึ่งเดียว!",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 7,
+      "chapters_count": 8,
       "total_views": 2399,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-06T14:36:12.655Z",
       "days_inactive": 519,
       "is_inactive_30d": true,
@@ -5979,18 +5767,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1544,
-      "platform": "readrealm"
+      "views_7_chapters": 1544
     },
     {
       "comic_id": "PDM46rGYmEwRYZlomvzL",
       "subject": "จุดเริ่มต้นของจอมมารผู้เคยเป็นฮีโร่แห่งอคาเดมี่ | The Hero Starts Over at the Academy",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 0,
+      "chapters_count": 1,
       "total_views": 112,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-12-14T04:24:56.587Z",
       "days_inactive": 328,
       "is_inactive_30d": true,
@@ -6007,8 +5794,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0,
-      "platform": "readrealm"
+      "views_7_chapters": 0
     },
     {
       "comic_id": "w9bjalkObGyBVWXyN0K6",
@@ -6018,7 +5804,7 @@
       "chapters_count": 10,
       "total_views": 2296,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-29T02:47:49.035Z",
       "days_inactive": 527,
       "is_inactive_30d": true,
@@ -6035,8 +5821,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1203,
-      "platform": "readrealm"
+      "views_7_chapters": 1203
     },
     {
       "comic_id": "DBQ4k6PYpRqvO8qrm0J5",
@@ -6046,7 +5831,7 @@
       "chapters_count": 5,
       "total_views": 1470,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-25T09:29:44.410Z",
       "days_inactive": 651,
       "is_inactive_30d": true,
@@ -6063,8 +5848,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 820,
-      "platform": "readrealm"
+      "views_7_chapters": 820
     },
     {
       "comic_id": "9ZazJMeV9AnzV4wK6vRq",
@@ -6074,7 +5858,7 @@
       "chapters_count": 14,
       "total_views": 9175,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-02-26T07:40:26.767Z",
       "days_inactive": 619,
       "is_inactive_30d": true,
@@ -6091,8 +5875,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 2479,
-      "platform": "readrealm"
+      "views_7_chapters": 2479
     },
     {
       "comic_id": "kJy7ZdeYZN4LYX5PAwB6",
@@ -6100,9 +5883,9 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 10,
-      "total_views": 4341,
+      "total_views": 4342,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-18T04:27:17.217Z",
       "days_inactive": 658,
       "is_inactive_30d": true,
@@ -6119,8 +5902,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1714,
-      "platform": "readrealm"
+      "views_7_chapters": 1714
     },
     {
       "comic_id": "wPZAJq7OkMq2YW8Dozkm",
@@ -6130,7 +5912,7 @@
       "chapters_count": 9,
       "total_views": 6485,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-12-16T11:12:15.543Z",
       "days_inactive": 691,
       "is_inactive_30d": true,
@@ -6147,8 +5929,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1697,
-      "platform": "readrealm"
+      "views_7_chapters": 1697
     },
     {
       "comic_id": "onvEqQwJYPyAxedr65l2",
@@ -6158,7 +5939,7 @@
       "chapters_count": 3,
       "total_views": 2878,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-08-11T12:46:37.759Z",
       "days_inactive": 818,
       "is_inactive_30d": true,
@@ -6175,8 +5956,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1877,
-      "platform": "readrealm"
+      "views_7_chapters": 1877
     },
     {
       "comic_id": "NazlwDvqOAPgxbkJoedB",
@@ -6186,7 +5966,7 @@
       "chapters_count": 4,
       "total_views": 1522,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-09-03T12:02:48.848Z",
       "days_inactive": 795,
       "is_inactive_30d": true,
@@ -6203,8 +5983,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 733,
-      "platform": "readrealm"
+      "views_7_chapters": 733
     },
     {
       "comic_id": "lkJy7ZdeYZAoVX5PAwB6",
@@ -6214,7 +5993,7 @@
       "chapters_count": 3,
       "total_views": 3372,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-03-15T12:52:00.900Z",
       "days_inactive": 967,
       "is_inactive_30d": true,
@@ -6231,8 +6010,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 2238,
-      "platform": "readrealm"
+      "views_7_chapters": 2238
     },
     {
       "comic_id": "6XrDoGdyOrj7O8pbqz1a",
@@ -6242,7 +6020,7 @@
       "chapters_count": 4,
       "total_views": 2278,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-03-02T06:51:22.210Z",
       "days_inactive": 980,
       "is_inactive_30d": true,
@@ -6259,8 +6037,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1382,
-      "platform": "readrealm"
+      "views_7_chapters": 1382
     },
     {
       "comic_id": "azlwDvqOA7rvYbkJoedB",
@@ -6270,7 +6047,7 @@
       "chapters_count": 8,
       "total_views": 3654,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-02-10T02:35:20.988Z",
       "days_inactive": 270,
       "is_inactive_30d": true,
@@ -6287,18 +6064,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 2539,
-      "platform": "readrealm"
+      "views_7_chapters": 2539
     },
     {
       "comic_id": "rKk19Eexy8kdYWAyR3qL",
       "subject": "ไซโคพาธต้องห้ามแห่งยุทธภพ | Murim Psychopath",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 8,
+      "chapters_count": 9,
       "total_views": 10268,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2026-02-11T12:22:10.287Z",
       "days_inactive": 269,
       "is_inactive_30d": true,
@@ -6315,8 +6091,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 5506,
-      "platform": "readrealm"
+      "views_7_chapters": 5506
     },
     {
       "comic_id": "NG8Qg2kxDyRMOz7Kdeo9",
@@ -6326,7 +6101,7 @@
       "chapters_count": 3,
       "total_views": 197,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-11-01T03:03:00.712Z",
       "days_inactive": 371,
       "is_inactive_30d": true,
@@ -6343,8 +6118,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 167,
-      "platform": "readrealm"
+      "views_7_chapters": 167
     },
     {
       "comic_id": "rwEvg7LY8KBQV20blNPp",
@@ -6354,7 +6128,7 @@
       "chapters_count": 5,
       "total_views": 873,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-30T13:25:15.817Z",
       "days_inactive": 495,
       "is_inactive_30d": true,
@@ -6371,8 +6145,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 527,
-      "platform": "readrealm"
+      "views_7_chapters": 527
     },
     {
       "comic_id": "kJy7ZdeYZopQxX5PAwB6",
@@ -6382,7 +6155,7 @@
       "chapters_count": 10,
       "total_views": 4184,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-07-21T04:51:33.466Z",
       "days_inactive": 474,
       "is_inactive_30d": true,
@@ -6399,18 +6172,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 2131,
-      "platform": "readrealm"
+      "views_7_chapters": 2131
     },
     {
       "comic_id": "GmA4egMxWDaLOB8PWbyp",
       "subject": "มิติลับของทนายแปลกประหลาด | The subspace of an ordinary lawyer",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 0,
+      "chapters_count": 1,
       "total_views": 77,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-06T00:08:01.099Z",
       "days_inactive": 519,
       "is_inactive_30d": true,
@@ -6427,18 +6199,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 15,
-      "platform": "readrealm"
+      "views_7_chapters": 15
     },
     {
       "comic_id": "vGkNElzYlKPZVq27mKdM",
       "subject": "จอมเวทอัจฉริยะผู้ทำลายขีดจำกัด | The Genius Wizard Who Breaks Limits",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 7,
+      "chapters_count": 9,
       "total_views": 1188,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-06-03T12:17:27.046Z",
       "days_inactive": 522,
       "is_inactive_30d": true,
@@ -6455,8 +6226,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 718,
-      "platform": "readrealm"
+      "views_7_chapters": 718
     },
     {
       "comic_id": "w9bjalkObG8bVWXyN0K6",
@@ -6466,7 +6236,7 @@
       "chapters_count": 10,
       "total_views": 3682,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-05-30T02:44:55.986Z",
       "days_inactive": 526,
       "is_inactive_30d": true,
@@ -6483,18 +6253,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 2003,
-      "platform": "readrealm"
+      "views_7_chapters": 2003
     },
     {
       "comic_id": "azlwDvqOAyWkObkJoedB",
       "subject": "ภารกิจแสวงหาแพทย์ : ตำนานแห่งการกลับชาติมาเกิดเป็นแพทย์ผู้ยิ่งใหญ่",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 2,
+      "chapters_count": 5,
       "total_views": 783,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2025-01-13T02:43:22.760Z",
       "days_inactive": 663,
       "is_inactive_30d": true,
@@ -6511,18 +6280,17 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 575,
-      "platform": "readrealm"
+      "views_7_chapters": 575
     },
     {
       "comic_id": "wPZAJq7OkMreYW8Dozkm",
       "subject": "Vanta Black",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "chapters_count": 3,
+      "chapters_count": 4,
       "total_views": 1703,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-11-18T02:57:20.064Z",
       "days_inactive": 719,
       "is_inactive_30d": true,
@@ -6539,8 +6307,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1080,
-      "platform": "readrealm"
+      "views_7_chapters": 1080
     },
     {
       "comic_id": "p9ZazJMeV9Kax4wK6vRq",
@@ -6550,7 +6317,7 @@
       "chapters_count": 3,
       "total_views": 2413,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-10-13T02:50:01.123Z",
       "days_inactive": 755,
       "is_inactive_30d": true,
@@ -6567,8 +6334,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1466,
-      "platform": "readrealm"
+      "views_7_chapters": 1466
     },
     {
       "comic_id": "orKk19EexyzwOWAyR3qL",
@@ -6578,7 +6344,7 @@
       "chapters_count": 2,
       "total_views": 665,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-10-06T12:35:04.722Z",
       "days_inactive": 762,
       "is_inactive_30d": true,
@@ -6595,8 +6361,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 240,
-      "platform": "readrealm"
+      "views_7_chapters": 240
     },
     {
       "comic_id": "WrwEvg7LY8dNY20blNPp",
@@ -6606,7 +6371,7 @@
       "chapters_count": 6,
       "total_views": 1624,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-07T23:14:12.958553+00:00",
+      "recorded_at": "2026-11-07T23:56:14.179978+00:00",
       "last_chapter_updated_at": "2024-09-03T13:50:45.317Z",
       "days_inactive": 795,
       "is_inactive_30d": true,
@@ -6623,8 +6388,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1142,
-      "platform": "readrealm"
+      "views_7_chapters": 1142
     }
   ]
 }
