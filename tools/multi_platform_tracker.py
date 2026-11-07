@@ -163,6 +163,55 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
         except Exception as e:
             print(f"⚠️ Error reading Chaply latest data: {e}")
 
+    # Phase 3: Smart Public Chapter Resolver & Cross-Platform Reconciliation
+    # Cross-check ReadRealm chapter counts against Kairew & Chaply.
+    # If other platforms have more chapters (due to ReadRealm Writer API -1 bug),
+    # query ReadRealm Public Reader API (which requires no login) to resolve the real chapter count.
+    import re
+    def normalize_thai(text: str) -> str:
+        return "".join(re.findall(r'[\u0E00-\u0E7F]', text or ""))
+
+    other_platform_max_chapters: Dict[str, int] = {}
+    for other_c in kr_comics + ch_comics:
+        th = normalize_thai(other_c.get("subject", ""))
+        if th and len(th) >= 4:
+            ch_num = int(other_c.get("chapters_count") or 0)
+            if ch_num > other_platform_max_chapters.get(th, 0):
+                other_platform_max_chapters[th] = ch_num
+
+    rr_discrepancy_resolved = 0
+    try:
+        from readrealm_growth_tracker import fetch_public_readrealm_chapters
+        for c in rr_comics:
+            rr_cid = c.get("comic_id")
+            th = normalize_thai(c.get("subject", ""))
+            expected_ch = other_platform_max_chapters.get(th, 0)
+            current_rr_ch = int(c.get("chapters_count") or 0)
+
+            if expected_ch > current_rr_ch and rr_cid:
+                pub_ch = fetch_public_readrealm_chapters(rr_cid)
+                if pub_ch > current_rr_ch:
+                    print(f"🔄 [Smart Resolver] ตรวจพบผลต่างตอน {c.get('subject')} (ReadRealm API: {current_rr_ch} -> Public API จริง: {pub_ch} ตอน | แพลตฟอร์มอื่น: {expected_ch})")
+                    c["chapters_count"] = pub_ch
+                    rr_discrepancy_resolved += 1
+    except Exception as e:
+        print(f"⚠️ Smart Chapter Resolver cross-check encountered error: {e}")
+
+    # If any ReadRealm comic was corrected, persist updated ReadRealm snapshot
+    if rr_discrepancy_resolved > 0 and os.path.exists(READREALM_LATEST):
+        try:
+            rr_data["comics"] = rr_comics
+            with open(READREALM_LATEST, "w", encoding="utf-8") as f:
+                json.dump(rr_data, f, ensure_ascii=False, indent=2)
+            for out_dir in [FRONTEND_SRC_DIR, FRONTEND_PUB_DIR]:
+                if os.path.exists(out_dir):
+                    target = os.path.join(out_dir, "readrealm_growth_latest.json")
+                    with open(target, "w", encoding="utf-8") as f:
+                        json.dump(rr_data, f, ensure_ascii=False, indent=2)
+            print(f"✓ [Smart Resolver] บันทึกการแก้ไขจำนวนตอน ReadRealm ทั้งหมด {rr_discrepancy_resolved} เรื่องลงทุกไฟล์เรียบร้อย")
+        except Exception as e:
+            print(f"⚠️ ไม่สามารถบันทึก snapshot ReadRealm หลังแก้ไขตอน: {e}")
+
     total_comics_count = len(unified_comics)
     unified_comics.sort(key=lambda x: x.get("total_sales", 0.0), reverse=True)
 

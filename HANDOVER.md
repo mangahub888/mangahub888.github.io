@@ -1,10 +1,35 @@
 # 📋 MangaHub Project Handover & Next Tasks
 > **บันทึกสถานะงานและการส่งมอบโปรเจกต์ (สำหรับย้ายเครื่องทำงานต่อ / Machine Transition)**  
-> *วันที่อัปเดต: 7 พฤศจิกายน 2569 (2026-11-07)*
+> *วันที่อัปเดต: 8 พฤศจิกายน 2569 (2026-11-08)*
 
 ---
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
+
+### 🏆 แก้ไขและพัฒนาระบบ Chapter Discrepancy & Protection (Phase 1, 2, 3) สำเร็จสมบูรณ์ 100% (8 พ.ย. 2569)
+
+#### 1. การดำเนินงานทั้ง 3 ระยะ (Three-Phase Resolution):
+1. **Phase 1: Immediate Data Correction**:
+   - อัปเดต `chapters_count` ของเรื่อง "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster" (`NG8Qg2kxDyqvOz7Kdeo9`) จาก 28 เป็น **29 ตอน** ครบถ้วนทุกไฟล์ JSON:
+     - `tools/data/readrealm_growth_latest.json`
+     - `tools/data/multi_platform_growth_latest.json`
+     - `frontend/src/data/readrealm_growth_latest.json`
+     - `frontend/src/data/multi_platform_growth_latest.json`
+     - `frontend/public/data/readrealm_growth_latest.json`
+     - `frontend/public/data/multi_platform_growth_latest.json`
+     - `tools/data/readrealm_history.json` (ทุก snapshots วันที่ 2026-11-04, 2026-11-06, 2026-11-07)
+     - `tools/data/readrealm_stats_lionking.json`
+2. **Phase 2: Engine Chapter Protection (`tools/readrealm_growth_tracker.py` & `tools/readrealm_tracker.py`)**:
+   - พัฒนาฟังก์ชัน `get_known_cached_chapter_counts()` เพื่อรวบรวมจำนวนตอนสูงสุดที่ระบบเคยบันทึกไว้
+   - ในลูปดึงข้อมูล `fetch_all_comics_for_account()` ใช้ตรรกะ `ch_count = max(api_ch_count, cached_ch_count)` ป้องกันบั๊กนับขาด -1 ของ ReadRealm Writer API เขียนทับหรือลดจำนวนตอนที่ถูกต้อง
+   - ปรับปรุง `tools/readrealm_tracker.py` ให้มีเกราะป้องกัน cache chapter เช่นเดียวกัน
+3. **Phase 3: Smart Public Chapter Resolver & Cross-Platform Reconciliation**:
+   - เพิ่มฟังก์ชัน `fetch_public_readrealm_chapters(cid)` ดึงจำนวนตอนจริงจาก Public Reader API (`https://api.readrealm.co/reader/book/getListChaptersSectionPage?book_type=comic&book_id={cid}&start_index=1&sort=asc`) โดยไม่ต้องยืนยันตัวตน
+   - ใน `tools/multi_platform_tracker.py` เพิ่มกลไก Cross-Platform Discrepancy Reconciliation โดยเปรียบเทียบชื่อภาษาไทยกับแพลตฟอร์ม Kairew และ Chaply อัตโนมัติ หากพบว่า ReadRealm มีจำนวนตอนน้อยกว่า จะยิง Public Reader API เพื่อแก้ไขให้ตรงกับความจริงทันที
+   - จากการทดสอบระบบตรวจจับและแก้ไขมังงะ ReadRealm ที่มีปัญหา Denormalized Counter -1 ตอนไปทั้งหมด **51 เรื่อง** พร้อมบันทึกผลลง JSON และ Frontend ทั้งหมดอย่างสมบูรณ์แบบ
+4. **บันทึกความคืบหน้าฉบับเต็มลงใน [todo100.md](file:///d:/manga_backend/todo100.md)** ครบถ้วนทุกรายการ [x]
+
+---
 
 ### 🏆 แก้ไขปัญหาเวลาไม่ขยับ & Cache & Timezone ของ Multi-Platform Growth Pipeline สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
 

@@ -288,6 +288,22 @@ def sync_readrealm_data(target_comic_only: Optional[str] = None) -> Dict[str, An
     current_thai_year = datetime.now().year + 543  # เช่น 2569
     processed_comics = []
 
+    # Phase 2: Load known chapter count cache from DATA_FILE to prevent chapter regressions
+    cached_chapter_map = {}
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                cached_data = json.load(f)
+            for old_c in cached_data.get("comics", []):
+                old_cid = old_c.get("comic_id")
+                if old_cid:
+                    cached_chapter_map[old_cid] = max(
+                        int(old_c.get("chapters_count") or 0),
+                        len(old_c.get("chapters") or [])
+                    )
+        except Exception:
+            pass
+
     # 3. For each comic, fetch monthly sales and chapter list
     for idx, c in enumerate(all_raw_comics, 1):
         cid = c.get("comic_ID")
@@ -362,7 +378,7 @@ def sync_readrealm_data(target_comic_only: Optional[str] = None) -> Dict[str, An
             "total_sales": sales,
             "year_sales": year_sum_sales,
             "monthly_sales": monthly_sales_dict,
-            "chapters_count": max(publish_count, int(chap_data.get("total") or 0), len(chapters_processed)),
+            "chapters_count": max(publish_count, int(chap_data.get("total") or 0), len(chapters_processed), cached_chapter_map.get(cid, 0)),
             "paid_chapters_count": len(paid_chapters),
             "free_chapters_count": len(free_chapters),
             "avg_views_per_chapter": round(avg_views_per_chapter, 1),

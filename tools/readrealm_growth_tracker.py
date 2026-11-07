@@ -440,6 +440,95 @@ def restore_account_comics_from_cache(acc_id: str, acc_name: str) -> List[Dict[s
 
     return recovered
 
+def get_known_cached_chapter_counts() -> Dict[str, int]:
+    """
+    Build a mapping of comic_id -> highest known chapter count from:
+    1. Latest growth snapshot (readrealm_growth_latest.json)
+    2. ReadRealm history snapshots (readrealm_history.json)
+    3. Detailed writer stats cache (readrealm_stats_lionking.json & readrealm_stats.json)
+    Protects against ReadRealm Writer API counter bug (-1 chapter count regression).
+    """
+    counts: Dict[str, int] = {}
+
+    # 1. Latest growth snapshot
+    if os.path.exists(LATEST_GROWTH_FILE):
+        try:
+            with open(LATEST_GROWTH_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for c in data.get("comics", []):
+                cid = str(c.get("comic_id") or "")
+                ch = int(c.get("chapters_count") or 0)
+                if cid and ch > counts.get(cid, 0):
+                    counts[cid] = ch
+        except Exception:
+            pass
+
+    # 2. History snapshots
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for snap in data.get("snapshots", {}).values():
+                cms = snap.get("comics", {})
+                for cid, cinfo in cms.items():
+                    ch = int(cinfo.get("chapters_count") or 0)
+                    if cid and ch > counts.get(cid, 0):
+                        counts[cid] = ch
+        except Exception:
+            pass
+
+    # 3. Detailed stats caches
+    for stats_fname in ["readrealm_stats_lionking.json", "readrealm_stats.json"]:
+        st_path = os.path.join(DATA_DIR, stats_fname)
+        if os.path.exists(st_path):
+            try:
+                with open(st_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                for c in data.get("comics", []):
+                    cid = str(c.get("comic_id") or "")
+                    ch_cnt = int(c.get("chapters_count") or 0)
+                    ch_len = len(c.get("chapters") or [])
+                    max_ch = max(ch_cnt, ch_len)
+                    if cid and max_ch > counts.get(cid, 0):
+                        counts[cid] = max_ch
+            except Exception:
+                pass
+
+    return counts
+
+def fetch_public_readrealm_chapters(cid: str) -> int:
+    """
+    Smart Public Chapter Resolver:
+    Fetches the accurate published chapter count directly from the public ReadRealm reader API:
+    https://api.readrealm.co/reader/book/getListChaptersSectionPage?book_type=comic&book_id={cid}&start_index=1&sort=asc
+    No writer login/bearer token required.
+    """
+    if not cid:
+        return 0
+    total = 0
+    start = 1
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Origin": "https://readrealm.co",
+        "Referer": f"https://readrealm.co/comic/{cid}"
+    }
+    try:
+        while True:
+            url = f"https://api.readrealm.co/reader/book/getListChaptersSectionPage?book_type=comic&book_id={cid}&start_index={start}&sort=asc"
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                items = data.get("data", [])
+                if not items:
+                    break
+                total += len(items)
+                if len(items) < 50:
+                    break
+                start += len(items)
+        return total
+    except Exception:
+        return total
+
 def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Fetch complete comics list and latest stats for an account."""
     token = acc.get("_cached_token") or get_valid_token(acc)
@@ -447,6 +536,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
     page = 1
     per_page = 50
     now_utc = datetime.now(timezone.utc)
+    cached_chapter_map = get_known_cached_chapter_counts()
 
     print(f"\n=======================================================")
     print(f"📚 [{acc['name']}] กำลังดึงรายชื่อการ์ตูนและสถิติล่าสุด...")
@@ -473,7 +563,12 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
             subject = (item.get("comic_subject") or "").strip()
             views = int(item.get("comic_views") or 0)
             sales = float(item.get("comic_total_sales") or 0.0)
-            ch_count = int(item.get("comic_chapter_publish_count") or item.get("comic_total_chapter") or 0)
+            api_ch_count = int(item.get("comic_chapter_publish_count") or item.get("comic_total_chapter") or 0)
+            cached_ch_count = cached_chapter_map.get(cid, 0)
+            # Phase 2: Engine Chapter Protection - prevent API -1 bug from regressing verified chapter counts
+            ch_count = max(api_ch_count, cached_ch_count)
+            if cached_ch_count > api_ch_count:
+                print(f"    🛡️ [{acc['name']}] Chapter Protection: {subject} (API={api_ch_count} -> รักษาค่าจริง={ch_count} ตอน)")
             last_ch_updated = item.get("comic_chapter_updated_at")
 
             days_inactive = 9999
