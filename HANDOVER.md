@@ -6,6 +6,25 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ไขปัญหาเวลาไม่ขยับ & Cache & Timezone ของ Multi-Platform Growth Pipeline สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
+
+#### 1. สาเหตุของปัญหาที่เกิดขึ้น (Root Cause Analysis):
+1. **GitHub Actions ใช้เวลาประมวลผล ~1 นาที 7 วินาที**: เมื่อผู้ใช้กดปุ่ม "สั่งรัน Git Action อัปเดต" ระบบเริ่มรัน Run ID `42390158385` ที่เวลา `16:12:57 UTC` แต่ขณะที่ผู้ใช้ตรวจดูหน้าจอ (เวลา `16:13:33 UTC`) ผ่านไปเพียง 36 วินาที Action ยังคงอยู่ในสถานะ `in_progress` และรันเสร็จสิ้นพร้อม Commit ข้อมูลที่เวลา `16:14:02 UTC`
+2. **Frontend หน่วงเวลาไม่เพียงพอและไม่มี Polling**: ใน `FinancialsView.tsx` เดิมตั้ง `setTimeout(loadGrowthData, 5000)` เพียง 5 วินาที ทำให้หน้าเว็บดึงข้อมูลซ้ำก่อนที่ GitHub Actions จะเริ่มทำงาน จึงได้ Snapshot เก่ารอบ `15:57:04` กลับมา
+3. **Fastly Edge Cache บน `raw.githubusercontent.com`**: GitHub Raw CDN มีแคชระดับ edge 300 วินาที (5 นาที) และไม่สนใจ query parameter (`?_t=...`) ทำให้แม้ Action จะ commit ไฟล์ใหม่แล้ว การ fetch ผ่าน URL เดิมอาจยังได้ข้อมูลเก่าที่แคชไว้
+4. **ความคลาดเคลื่อนของ Timezone (UTC vs Thai Time UTC+7)**: สคริปต์ Python ใน GitHub runner (Ubuntu) ทำงานใน timezone UTC และสร้าง ISO timestamp โดยไม่มีตัวระบุ Timezone (`Z` หรือ `+00:00`) ทำให้ JavaScript ในบราวเซอร์ตีความเป็น Local Time (เวลาบ่าย 16:14 แทนที่จะเป็นเวลา 23:14 ตามเวลาไทยจริง)
+
+#### 2. วิธีการแก้ไขและผลลัพธ์ (Comprehensive Solution):
+1. **Frontend Fastly Cache-Busting via Commit SHA**:
+   - ปรับ `loadGrowthData()` ใน `FinancialsView.tsx` ให้ตรวจหา SHA ล่าสุดจาก `https://api.github.com/repos/mangahub888/mangahub888.github.io/commits/main` แล้วดึงไฟล์ผ่าน URL ที่มี Commit SHA ซึ่งเป็น Immutable URL ช่วยข้าม Fastly 300s Edge Cache ได้ 100%
+2. **Frontend Smart Polling & Visual Progress**:
+   - ปรับ `handleTriggerPipeline()` ให้เปลี่ยนสถานะปุ่มเป็น `กำลังดึงข้อมูลคลาวด์ (~1 นาที)...` และทำ Polling ทุก 10 วินาทีจนกว่า `pipeline_recorded_at` จะเปลี่ยน แล้วจึงแจ้งเตือนความสำเร็จ
+3. **UTC/Thai Timezone Safe Normalization**:
+   - เพิ่มฟังก์ชัน `formatThaiTimestamp()` ใน Frontend ให้ตรวจจับและเติม `Z` หากไม่มี timezone offset ทำให้ `toLocaleDateString("th-TH")` แปลงเป็นเวลาไทย (+7 ชม.) ถูกต้องตรงกับนาฬิกาจริง 100%
+   - ปรับสคริปต์ฝั่ง Tracker (`multi_platform_tracker.py`, `readrealm_growth_tracker.py`, `kairew_growth_tracker.py`, `chaply_growth_tracker.py`) ให้สร้าง timestamp ด้วย `datetime.now(timezone.utc)` ทั้งหมด
+
+---
+
 ### 🏆 แก้ไขปัญหาการเข้าสู่ระบบและดึง Bearer Token ของ ReadRealm บน GitHub Actions Runner สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
 
 #### 1. สาเหตุของปัญหาที่เกิดขึ้น (Root Cause Analysis):

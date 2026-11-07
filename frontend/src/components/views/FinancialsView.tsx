@@ -249,6 +249,7 @@ export function FinancialsView({
 
   const [triggeringAction, setTriggeringAction] =
     React.useState<boolean>(false);
+  const [pipelinePolling, setPipelinePolling] = React.useState<boolean>(false);
 
   const [platformFilter, setPlatformFilter] = React.useState<
     "all" | "readrealm" | "kairew" | "chaply"
@@ -335,34 +336,51 @@ export function FinancialsView({
     | "growth30d"
   >("sales");
 
-  // Load latest Multi-Platform 6h growth data
+  // Helper to format ISO timestamps safely with UTC/Thai timezone
+  const formatThaiTimestamp = React.useCallback((dateStr?: string | null) => {
+    if (!dateStr) return "ตามรอบที่จดเอง";
+    let s = String(dateStr).trim();
+    if (!s.endsWith("Z") && !/[+-]\d{2}:\d{2}$/.test(s)) {
+      s = s + "Z";
+    }
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? dateStr : d.toLocaleString("th-TH");
+  }, []);
 
+  // Load latest Multi-Platform 6h growth data (with Fastly 300s cache-busting via commit SHA)
   const loadGrowthData = React.useCallback(async () => {
     setLoadingGrowth(true);
 
     try {
-      // 1. Live raw GitHub content (freshest from 6h action runs)
-
+      // 1. Live raw GitHub content (freshest from 6h action runs, bypass Fastly 300s edge cache)
       try {
-        const liveRes = await fetch(
-          `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/main/tools/data/multi_platform_growth_latest.json?_t=${Date.now()}`,
-        );
+        let liveUrl = `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/main/tools/data/multi_platform_growth_latest.json?_t=${Date.now()}`;
+        try {
+          const commitRes = await fetch(
+            `https://api.github.com/repos/mangahub888/mangahub888.github.io/commits/main?_t=${Date.now()}`,
+          );
+          if (commitRes.ok) {
+            const commitData = await commitRes.json();
+            if (commitData?.sha) {
+              liveUrl = `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/${commitData.sha}/tools/data/multi_platform_growth_latest.json`;
+            }
+          }
+        } catch {}
+
+        const liveRes = await fetch(liveUrl);
 
         if (liveRes.ok) {
           const json = await liveRes.json();
 
           if (json && json.comics && json.comics.length > 0) {
             setTrackerData(json);
-
             setLoadingGrowth(false);
-
-            return;
+            return json;
           }
         }
       } catch {}
 
       // 2. Local build public json
-
       const res = await fetch(
         `./data/multi_platform_growth_latest.json?_t=${Date.now()}`,
         { cache: "no-store" },
@@ -373,10 +391,8 @@ export function FinancialsView({
 
         if (json && json.comics && json.comics.length > 0) {
           setTrackerData(json);
-
           setLoadingGrowth(false);
-
-          return;
+          return json;
         }
       }
     } catch (e) {
@@ -388,12 +404,14 @@ export function FinancialsView({
 
       if (gasData && gasData.comics && gasData.comics.length > 0) {
         setTrackerData(gasData);
+        return gasData;
       }
     } catch (e) {
       console.warn("Could not load GAS growth data", e);
     } finally {
       setLoadingGrowth(false);
     }
+    return null;
   }, []);
 
   React.useEffect(() => {
@@ -402,21 +420,41 @@ export function FinancialsView({
 
   const handleTriggerPipeline = async () => {
     setTriggeringAction(true);
+    setPipelinePolling(true);
 
     try {
       await callGasApi("TRIGGER_READREALM_TRACKER", { source: "frontend_ui" });
 
-      toast.success(
-        "🚀 สั่งรัน GitHub Action (Multi-Platform 6H Tracker Pipeline) เรียบร้อยแล้ว!",
+      toast.info(
+        "🚀 สั่งรัน GitHub Action เรียบร้อยแล้ว! ระบบกำลังดึงสถิติในคลาวด์ (ใช้เวลา ~1 นาที)...",
+        { duration: 6000 },
       );
 
-      setTimeout(() => {
-        loadGrowthData();
-      }, 5000);
+      const initialTimestamp = trackerData?.pipeline_recorded_at;
+      let elapsed = 0;
+      const pollTimer = setInterval(async () => {
+        elapsed += 10;
+        const fresh = await loadGrowthData();
+        if (fresh?.pipeline_recorded_at && fresh.pipeline_recorded_at !== initialTimestamp) {
+          clearInterval(pollTimer);
+          setTriggeringAction(false);
+          setPipelinePolling(false);
+          toast.success(
+            `✨ ซิงค์ข้อมูลล่าสุดสำเร็จ! รอบบันทึก: ${formatThaiTimestamp(fresh.pipeline_recorded_at)}`,
+          );
+        } else if (elapsed >= 150) {
+          clearInterval(pollTimer);
+          setTriggeringAction(false);
+          setPipelinePolling(false);
+          toast.warning(
+            "⏳ ระบบคลาวด์ยังประมวลผลอยู่หรือติดคิว กรุณารอสักครู่แล้วกดปุ่ม 'โหลดข้อมูลใหม่'",
+          );
+        }
+      }, 10000);
     } catch (e: any) {
       toast.error(e.message || "ไม่สามารถสั่งรัน Action ได้");
-    } finally {
       setTriggeringAction(false);
+      setPipelinePolling(false);
     }
   };
 
@@ -1805,9 +1843,7 @@ export function FinancialsView({
                   รอบบันทึกล่าสุด:{" "}
                   <span className="text-slate-200 font-mono">
                     {trackerData?.pipeline_recorded_at
-                      ? new Date(
-                          trackerData.pipeline_recorded_at,
-                        ).toLocaleString("th-TH")
+                      ? formatThaiTimestamp(trackerData.pipeline_recorded_at)
                       : "4 พ.ย. 2569 (บันทึกอัตโนมัติ)"}
                   </span>{" "}
                   • วันที่อ้างอิง:{" "}
@@ -1841,15 +1877,17 @@ export function FinancialsView({
 
                 onClick={handleTriggerPipeline}
 
-                disabled={triggeringAction}
+                disabled={triggeringAction || pipelinePolling}
 
                 className="h-8 text-xs bg-indigo-600 hover:bg-indigo-500 text-white"
               >
                 <TrendingUp
-                  className={`h-3.5 w-3.5 mr-1.5 ${triggeringAction ? "animate-bounce" : ""}`}
+                  className={`h-3.5 w-3.5 mr-1.5 ${triggeringAction || pipelinePolling ? "animate-bounce" : ""}`}
                 />
 
-                {triggeringAction
+                {pipelinePolling
+                  ? "กำลังดึงข้อมูลคลาวด์ (~1 นาที)..."
+                  : triggeringAction
                   ? "กำลังสั่งรัน..."
                   : "สั่งรัน Git Action อัปเดต"}
               </Button>

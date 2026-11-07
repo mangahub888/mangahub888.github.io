@@ -27,7 +27,7 @@ import html
 import argparse
 import urllib.request
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, List, Optional
 import requests
 from playwright.sync_api import sync_playwright
@@ -189,7 +189,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         return False
 
 def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032"):
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
     snapshot_time_key = now.strftime("%Y-%m-%d_%H%M")

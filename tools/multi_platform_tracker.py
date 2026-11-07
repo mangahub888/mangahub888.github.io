@@ -22,7 +22,7 @@ import time
 import json
 import argparse
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -57,7 +57,7 @@ def run_script(script_name: str, args: List[str]) -> bool:
 
 def consolidate_multi_platform_data() -> Dict[str, Any]:
     """Merge latest snapshots from ReadRealm, Kairew, and Chaply into unified format."""
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
 
