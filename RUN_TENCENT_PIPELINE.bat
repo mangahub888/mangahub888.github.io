@@ -1,4 +1,7 @@
 @echo off
+chcp 65001 >nul
+set PYTHONUTF8=1
+set PYTHONIOENCODING=utf-8
 rem =====================================================================
 rem Tencent Comic 1-Click LDPlayer Automation Pipeline Launcher
 rem Pure ASCII 100% Windows Batch Script (CMD.EXE Safe)

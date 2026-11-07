@@ -6,17 +6,23 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
-### 🏆 แก้ไขปัญหา Tencent LDPlayer Pipeline (Download Timeout, Badge ⬇️ ค้าง, CID Mapping) & ย้าย Secrets เข้า GAS ScriptProperties (`@103`) สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
+### 🏆 แก้ไขปัญหา Tencent LDPlayer Pipeline (Download Timeout, Badge ⬇️ ค้าง, CID Mapping, 15-Bug 1-Click Audit) & ย้าย Secrets เข้า GAS ScriptProperties (`@103`) สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
 
-#### 1. การแก้ไข Tencent LDPlayer Pipeline (`tools/tencent_ldplayer_pipeline.py` & `todo99.md`):
+#### 1. การแก้ไข Tencent LDPlayer Pipeline & 15-Bug 1-Click Audit (`tools/tencent_ldplayer_pipeline.py`, `tools/quick_refresh_session.py`, `.bat`, `todo99.md`):
 - **แก้ปัญหา Download Timeout 35s ลบไฟล์ที่โหลดเสร็จแล้วทิ้ง**:
   * ขยายเวลา Poll (`DOWNLOAD_POLL_INTERVAL = 2.0`, `DEFAULT_DOWNLOAD_POLL_WINDOW = 90.0`, `DOWNLOAD_HARD_TIMEOUT = 240.0`) และเพิ่ม `check_offline_chapter_dir()` + `check_download_manager_chapter_status()` (วิเคราะห์ XML รายแถว แยก `100%` / `已完成`)
   * เพิ่ม Guard ป้องกันการเรียก `recover_download_via_pencil_delete_all()` เมื่อ `dm_state == "completed"` ทั้งในรอบแรกและรอบ Retry
 - **แก้ปัญหา Badge ⬇️ ค้าง & Dummy Chapter ติด Captcha (`VerifyCodePage`)**:
   * ปรับ `clear_device_offline_cache()` ให้ล้างทั้งโฟลเดอร์ออฟไลน์บนอุปกรณ์และลบรายการใน `DownloadManagerActivity` ทันทีหลังจบแต่ละตอน
-  * ปรับ `recover_download_via_pencil_delete_all()` ให้เปิด `DownloadManagerActivity` ตรงด้วย Intent (`--es STR_MSG_COMIC_ID`) โดยไม่ต้องกดเลือกตอน Dummy
-  * ปรับ `--all-pending` ให้จับคู่ตอนด้วย `CID` (Ground Truth) เป็นหลักก่อนเลขตอน ป้องกันปัญหาเรื่องที่มีตอนนำ (Prologue) เลื่อนลำดับตอนผิด
-- **ผลทดสอบจริง**: ทดสอบกับ Comic `657528` ตอนที่ 34, 35, 36 สำเร็จ 100% (ดูรายละเอียดใน `todo99.md`)
+  * ปรับ `recover_download_via_pencil_delete_all()` ให้เปิด `DownloadManagerActivity` ตรงด้วย Intent (`-f 0x14008000 --es STR_MSG_COMIC_ID`) โดยไม่ต้องกดเลือกตอน Dummy
+- **การตรวจสอบและแก้ไขบั๊ก 1-Click LDPlayer ครบ 15 จุด (Phase 2 Bug Hunt)**:
+  * **แก้บั๊กสลับเรื่องข้าม Comic แล้วหน้า `DownloadChapterSelectActivity` ค้างเรื่องเดิม**: ใน Frida `opendlselect(comicId)` สั่ง `.finish()` ปิด Activity ตัวเก่าใน `ActivityThread.mActivities` ก่อน `startActivity(intent)`, ใช้ flag `-f 0x14008000`, และตรวจจำนวนตอนรวม (`共{N}话`) เทียบกับ `expected_total_chapters`
+  * **แก้บั๊ก `find_chapter_seq_coords()` กดผิดตอนเมื่อมีตอนนำ (Prologue)**: ห้าม fallback ไปกด `alt_seq` (`chapter_num`) เมื่อระบุ `target_seq` (`seq_no`) แล้วแต่ตอนนั้นยังอยู่นอกหน้าจอ
+  * **แก้บั๊ก Regex ดึงสารบัญ (`fetch_tencent_chapter_list` & `quick_refresh_session.py`)**: รองรับชื่อตอนภาษาจีนติดเลข (`001觉醒`) โดยใช้ `(?!\d)` แทน ``, ตัดศูนย์นำหน้า (`001` -> `1`), และไม่ให้คำทั่วไปที่มี `序` (เช่น `秩序`) ถูกตีความเป็นตอนที่ `0`
+  * **เพิ่มระบบเปิด LDPlayer อัตโนมัติ (`pick_adb_device`)**: รัน `ldconsole.exe launch --index 0` และรอจน `sys.boot_completed == 1` เมื่อยังไม่ได้เปิดอีมูเลเตอร์
+  * **แก้ลำดับการกดหน้าต่างยืนยัน/ซื้อตอน (`购买下载` → `确认购买` → `确定下载`) & Teen Mode (`青少年守护模式`) + Fast-Fail 16s**: รองรับทั้งกรณีหน้าจ่ายตั๋วเด้งก่อนหรือหลังหน้ายืนยันขนาดไฟล์ และหยุดทันทีเมื่อติด `V会员` paywall
+  * **เพิ่มรอบเลื่อนหาตอนเป็น 18 รอบ (`search_and_tap_target_chapter`)**, ดึงพิกัดปุ่มจาก XML Tree (`find_node_center_by_id_or_text()`), ตั้งค่า UTF-8 (`chcp 65001`, `PYTHONUTF8=1`) ใน `.bat` ทั้ง 3 ไฟล์ และบันทึก Log อัตโนมัติลง `test_output/tencent_1click_latest.log`
+- **ผลทดสอบจริง (Live End-to-End Verification)**: ทดสอบครบ 3 เรื่อง 4 ตอน (`657528` ตอน 34/35/36, `657981` ตอน 9, และสลับเรื่องข้ามไป `657755` ตอน 15) อัปโหลดขึ้น Drive และซิงค์ RawTracker สำเร็จ 100% (ดูรายละเอียดใน `todo99.md`)
 
 #### 2. การย้าย Hardcoded Secrets เข้า `PropertiesService.getScriptProperties()` (`backend/Code.js` Deployment `@103`):
 - สร้างฟังก์ชัน `getSecretProperty()`, `seedSecretsToScriptProperties()`, และ `getSecretsStatus()` ใน `backend/Code.js`

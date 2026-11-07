@@ -71,15 +71,24 @@ def mask(val):
 
 
 def check_device():
+    global DEV
     print(f"[INFO] adb = {ADB}")
     print(f"[INFO] Connecting to LDPlayer at {DEV} ...")
     adb("connect", DEV)
     _, out = adb("devices")
     state = None
-    for line in out.splitlines():
+    first_online_dev = None
+    for line in out.splitlines()[1:]:
         parts = line.split()
-        if len(parts) >= 2 and parts[0] == DEV:
-            state = parts[1]
+        if len(parts) >= 2:
+            if parts[1] == "device" and not first_online_dev:
+                first_online_dev = parts[0]
+            if parts[0] == DEV:
+                state = parts[1]
+    if state != "device" and first_online_dev:
+        print(f"[INFO] {DEV} not found; auto-switching to active LDPlayer device: {first_online_dev}")
+        DEV = first_online_dev
+        state = "device"
     if state != "device":
         print(out.strip())
         raise SessionError(
