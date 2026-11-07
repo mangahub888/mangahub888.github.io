@@ -73,72 +73,143 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
     profile_dir = acc["profile_dir"]
 
     print(f"🔄 [{acc['name']}] กำลังเชื่อมต่อเบราว์เซอร์เพื่อดึง Token ใหม่...", flush=True)
-    with sync_playwright() as p:
-        launch_kwargs = {
-            "headless": headless,
-            "no_viewport": True,
-            "ignore_default_args": ["--enable-automation"],
-            "args": [
-                "--disable-blink-features=AutomationControlled",
-                "--no-sandbox",
-                "--disable-infobars"
-            ]
-        }
-        if exec_path:
-            launch_kwargs["executable_path"] = exec_path
+    try:
+        with sync_playwright() as p:
+            launch_kwargs = {
+                "headless": headless,
+                "no_viewport": True,
+                "ignore_default_args": ["--enable-automation"],
+                "args": [
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                    "--disable-infobars"
+                ]
+            }
+            if exec_path:
+                launch_kwargs["executable_path"] = exec_path
 
-        context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
-        page = context.pages[0] if context.pages else context.new_page()
+            context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+            page = context.pages[0] if context.pages else context.new_page()
 
-        tokens = []
-        def on_req(req):
-            if "api-writer" in req.url and "authorization" in req.headers:
-                tokens.append(req.headers["authorization"])
-        page.on("request", on_req)
-
-        page.goto("https://readrealm.co/writer/comic", wait_until="domcontentloaded")
-        page.wait_for_timeout(4000)
-
-        # If redirected to login, perform auto login
-        if "/login" in page.url:
-            print(f"🔑 [{acc['name']}] ทำการล็อกอิน...", flush=True)
-            page.locator("input[name='username_or_email']").fill(acc["username"])
-            page.locator("input[name='password']").fill(acc["password"])
-            page.wait_for_timeout(1000)
-
-            btn = page.locator("button[type='submit']").first
-            for _ in range(25):
-                page.wait_for_timeout(1000)
+            tokens = []
+            def on_req(req):
                 try:
-                    if not btn.is_disabled():
-                        btn.click()
-                        page.wait_for_timeout(5000)
-                        break
+                    if "authorization" in req.headers:
+                        auth_h = req.headers["authorization"]
+                        if auth_h and auth_h.startswith("Bearer ") and len(auth_h) > 20:
+                            tokens.append(auth_h)
                 except Exception:
-                    break
+                    pass
+            page.on("request", on_req)
 
-            page.goto("https://readrealm.co/writer/comic", wait_until="domcontentloaded")
-            page.wait_for_timeout(4000)
+            page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
+            page.wait_for_timeout(3500)
 
-        token = tokens[0] if tokens else ""
-        if not token:
-            try:
-                session_data = page.evaluate("""async () => {
-                    const r = await fetch('/api/auth/session');
-                    return await r.json();
-                }""")
-                if session_data and session_data.get("accessToken"):
-                    token = f"Bearer {session_data['accessToken']}"
-            except Exception as e:
-                print(f"⚠️ Session eval error: {e}")
+            # If redirected to login, perform auto login
+            if "/login" in page.url:
+                print(f"🔑 [{acc['name']}] ตรวจพบหน้าเข้าสู่ระบบ -> ทำการล็อกอิน...", flush=True)
+                tokens.clear()  # ล้าง Token เก่าก่อนหน้าทิ้งเพื่อไม่ให้ใช้ token ที่หมดอายุ
 
-        if token:
-            with open(bearer_file, "w", encoding="utf-8") as f:
-                json.dump({"bearer": token, "updated_at": datetime.now().isoformat()}, f, indent=2)
-            print(f"✓ [{acc['name']}] ได้รับ Bearer Token สำเร็จ ({len(token)} chars)")
+                user_input = page.locator("input[name='username_or_email']").first
+                pass_input = page.locator("input[name='password']").first
+                if user_input.count() and pass_input.count():
+                    user_input.fill(acc["username"])
+                    pass_input.fill(acc["password"])
+                    try:
+                        pass_input.dispatch_event("input")
+                        pass_input.dispatch_event("change")
+                    except Exception:
+                        pass
+                page.wait_for_timeout(1000)
 
-        context.close()
-        return token
+                btn = page.locator("button[type='submit']").first
+                for sec in range(35):
+                    page.wait_for_timeout(1000)
+                    if "/login" not in page.url:
+                        print(f"✓ [{acc['name']}] นำทางออกจากหน้าล็อกอินแล้ว")
+                        break
+
+                    # พยายามคลิก Cloudflare Turnstile checkbox หากมี iframe อยู่
+                    try:
+                        cf_frame = page.frame_locator("#cf-turnstile iframe, iframe[src*='challenges.cloudflare.com']").first
+                        cb = cf_frame.locator("input[type='checkbox'], .cb-i, #challenge-stage").first
+                        if cb.count() and cb.is_visible():
+                            cb.click(timeout=1500)
+                    except Exception:
+                        pass
+
+                    try:
+                        if btn.count() and not btn.is_disabled():
+                            print(f"🔘 [{acc['name']}] ปุ่มพร้อมใช้งาน -> ส่งข้อมูลเข้าสู่ระบบ...")
+                            btn.click()
+                            page.wait_for_timeout(4000)
+                            break
+                    except Exception:
+                        pass
+
+                tokens.clear()
+                page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
+                page.wait_for_timeout(4000)
+
+            # Strategy 1: ดึง Bearer Token ล่าสุดที่เพิ่งดักจับได้ (ไม่ใช้ tokens[0] ที่อาจเป็นของเก่า)
+            token = tokens[-1] if tokens else ""
+
+            # Strategy 2: ดึงจาก NextAuth Session endpoint (/api/auth/session)
+            if not token:
+                try:
+                    session_data = page.evaluate("""async () => {
+                        try {
+                            const r = await fetch('/api/auth/session');
+                            return await r.json();
+                        } catch(e) { return null; }
+                    }""")
+                    if session_data:
+                        raw_t = session_data.get("accessToken") or session_data.get("token") or (session_data.get("user") or {}).get("accessToken") or (session_data.get("user") or {}).get("token")
+                        if raw_t:
+                            token = f"Bearer {raw_t}" if not str(raw_t).startswith("Bearer ") else str(raw_t)
+                except Exception as e:
+                    print(f"⚠️ Session eval error: {e}")
+
+            # Strategy 3: ดึงจาก localStorage / sessionStorage
+            if not token:
+                try:
+                    stored_token = page.evaluate("""() => {
+                        try {
+                            for (let i = 0; i < localStorage.length; i++) {
+                                const k = localStorage.key(i);
+                                const v = localStorage.getItem(k);
+                                if (v && (k.toLowerCase().includes('token') || k.toLowerCase().includes('auth'))) {
+                                    if (v.startsWith('Bearer ') && v.length > 30) return v;
+                                    try {
+                                        const p = JSON.parse(v);
+                                        if (p.accessToken) return p.accessToken;
+                                        if (p.token) return p.token;
+                                    } catch(e) {}
+                                }
+                            }
+                        } catch(e) {}
+                        return null;
+                    }""")
+                    if stored_token:
+                        token = f"Bearer {stored_token}" if not str(stored_token).startswith("Bearer ") else str(stored_token)
+                except Exception:
+                    pass
+
+            if token:
+                try:
+                    with open(bearer_file, "w", encoding="utf-8") as f:
+                        json.dump({"bearer": token, "updated_at": datetime.now().isoformat()}, f, indent=2)
+                    print(f"✓ [{acc['name']}] ได้รับ Bearer Token สำเร็จ ({len(token)} chars)")
+                except Exception as e:
+                    print(f"⚠️ Error writing bearer file: {e}")
+            else:
+                print(f"⚠️ [{acc['name']}] ไม่สามารถดึง Bearer Token ได้จากการเชื่อมต่อเบราว์เซอร์")
+
+            context.close()
+            return token
+    except Exception as e:
+        print(f"❌ [{acc['name']}] Playwright refresh error: {e}")
+        return ""
 
 def get_valid_token(acc: Dict[str, Any], force_refresh: bool = False) -> str:
     """Retrieve existing cached token or refresh if needed."""
@@ -158,13 +229,26 @@ def get_valid_token(acc: Dict[str, Any], force_refresh: bool = False) -> str:
     return refresh_account_token(acc)
 
 def call_api(endpoint_url: str, token: str, acc: Dict[str, Any], retries: int = 2) -> Dict[str, Any]:
-    """Execute authenticated GET request to ReadRealm Writer API."""
+    """Execute authenticated GET request to ReadRealm Writer API with single-refresh guard."""
+    refreshed = False
+
+    # หาก token ว่างเปล่า ให้ลองรีเฟรชครั้งแรก 1 ครั้ง
+    if not token or not token.strip():
+        print(f"⚠️ [{acc['name']}] Token ว่างเปล่า -> กำลังขอรับ Token ใหม่...")
+        token = refresh_account_token(acc)
+        acc["_cached_token"] = token
+        refreshed = True
+        if not token:
+            print(f"❌ [{acc['name']}] ไม่สามารถดึง Token ได้ ข้ามการเรียก API")
+            return {}
+
     headers = {
         "Authorization": token,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Origin": "https://readrealm.co",
-        "Referer": "https://readrealm.co/writer/comic"
+        "Referer": "https://readrealm.co/writer/comics"
     }
+
     for attempt in range(1, retries + 1):
         try:
             req = urllib.request.Request(endpoint_url, headers=headers)
@@ -172,8 +256,15 @@ def call_api(endpoint_url: str, token: str, acc: Dict[str, Any], retries: int = 
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
             if e.code == 401:
-                print(f"⚠️ [{acc['name']}] Token หมดอายุ -> รีเฟรช Token ใหม่...")
+                if refreshed:
+                    print(f"❌ [{acc['name']}] Token ยังคงไม่ถูกต้อง (401) หลังรีเฟรช -> ยกเลิกการเรียกซ้ำเพื่อป้องกันลูปไม่รู้จบ")
+                    return {}
+                print(f"⚠️ [{acc['name']}] Token หมดอายุ (401) -> รีเฟรช Token ใหม่ 1 ครั้ง...")
                 new_token = refresh_account_token(acc)
+                refreshed = True
+                if not new_token:
+                    print(f"❌ [{acc['name']}] ไม่สามารถดึง Token ใหม่ได้")
+                    return {}
                 acc["_cached_token"] = new_token
                 headers["Authorization"] = new_token
             elif attempt == retries:
@@ -186,9 +277,79 @@ def call_api(endpoint_url: str, token: str, acc: Dict[str, Any], retries: int = 
         time.sleep(0.3)
     return {}
 
+def restore_account_comics_from_cache(acc_id: str, acc_name: str) -> List[Dict[str, Any]]:
+    """Recover comics for a specific account from latest growth snapshot or raw cache."""
+    now_utc = datetime.now(timezone.utc)
+    recovered = []
+
+    # 1. First priority: LATEST_GROWTH_FILE
+    if os.path.exists(LATEST_GROWTH_FILE):
+        try:
+            with open(LATEST_GROWTH_FILE, "r", encoding="utf-8") as lf:
+                latest_snap = json.load(lf)
+            for c in latest_snap.get("comics", []):
+                if c.get("account_id") == acc_id or c.get("account") == acc_name:
+                    recovered.append({
+                        "comic_id": str(c.get("comic_id")),
+                        "subject": c.get("subject", ""),
+                        "account": acc_name,
+                        "account_id": acc_id,
+                        "total_views": int(c.get("total_views") or 0),
+                        "total_sales": float(c.get("total_sales") or 0.0),
+                        "chapters_count": int(c.get("chapters_count") or 0),
+                        "last_chapter_updated_at": c.get("last_chapter_updated_at") or "",
+                        "days_inactive": int(c.get("days_inactive") if c.get("days_inactive") is not None else 0),
+                        "is_inactive_30d": bool(c.get("is_inactive_30d", False)),
+                        "sales_7_chapters": float(c.get("sales_7_chapters") or 0.0),
+                        "views_7_chapters": int(c.get("views_7_chapters") or 0),
+                    })
+            if recovered:
+                print(f"✓ [{acc_name}] กู้คืนข้อมูลจาก snapshot ล่าสุดสำเร็จ: {len(recovered)} เรื่อง")
+                return recovered
+        except Exception as e:
+            print(f"⚠️ Error reading {LATEST_GROWTH_FILE} for {acc_name}: {e}")
+
+    # 2. Secondary priority: readrealm_stats_<account>.json
+    cache_path = os.path.join(DATA_DIR, "readrealm_stats_lionking.json" if acc_id == "lionking" else "readrealm_stats.json")
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for c in data.get("comics", []):
+                ch_list = c.get("chapters", [])
+                last_ep_str = ch_list[-1].get("created_at") if ch_list else None
+                days_inact = 0
+                if last_ep_str:
+                    try:
+                        ep_dt = datetime.fromisoformat(last_ep_str.replace("Z", "+00:00"))
+                        days_inact = max(0, (now_utc - ep_dt).days)
+                    except Exception:
+                        days_inact = 0
+                recovered.append({
+                    "comic_id": str(c.get("comic_id")),
+                    "subject": c.get("subject", ""),
+                    "account": acc_name,
+                    "account_id": acc_id,
+                    "total_views": int(c.get("total_views") or 0),
+                    "total_sales": float(c.get("total_sales") or 0.0),
+                    "chapters_count": int(c.get("chapters_count") or len(ch_list)),
+                    "last_chapter_updated_at": last_ep_str or "",
+                    "days_inactive": days_inact,
+                    "is_inactive_30d": days_inact > 30,
+                    "sales_7_chapters": 0.0,
+                    "views_7_chapters": 0
+                })
+            if recovered:
+                print(f"✓ [{acc_name}] กู้คืนข้อมูลจาก {os.path.basename(cache_path)} สำเร็จ: {len(recovered)} เรื่อง")
+                return recovered
+        except Exception as e:
+            print(f"⚠️ Error reading raw cache {cache_path}: {e}")
+
+    return recovered
+
 def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Fetch complete comics list and latest stats for an account."""
-    token = get_valid_token(acc)
+    token = acc.get("_cached_token") or get_valid_token(acc)
     comics_list = []
     page = 1
     per_page = 50
@@ -200,10 +361,18 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
 
     while True:
         url = f"https://api-writer.readrealm.co/writer/comics/getComicsList?comic_subject=&comic_status=&comic_category=&comic_rating=&comic_publish=&per_page={per_page}&page={page}"
-        data = call_api(url, acc.get("_cached_token") or token, acc)
+        active_token = acc.get("_cached_token") or token
+        data = call_api(url, active_token, acc)
+        if not data or not isinstance(data, dict):
+            if page == 1:
+                print(f"⚠️ [{acc['name']}] ไม่ได้รับข้อมูลตอบกลับจาก API ในหน้าแรก")
+            break
+
         total = data.get("total", 0)
         items = data.get("data", [])
         if not items:
+            if page == 1:
+                print(f"⚠️ [{acc['name']}] ไม่พบรายการการ์ตูนในหน้าแรก (total: {total})")
             break
 
         for item in items:
@@ -240,7 +409,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
             break
         page += 1
 
-    print(f"✓ [{acc['name']}] ดึงข้อมูลสำเร็จ: ทั้งหมด {len(comics_list)} เรื่อง")
+    print(f"✓ [{acc['name']}] ดึงข้อมูลเสร็จสิ้น: ทั้งหมด {len(comics_list)} เรื่อง")
     return comics_list
 
 def load_history() -> Dict[str, Any]:
@@ -335,14 +504,21 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     print(f"🚀 ReadRealm 6-Hour Growth Pipeline: กำลังบันทึกข้อมูลสถิติรอบ {recorded_at}")
     print("=" * 70)
 
-    # 1. Fetch current data across both accounts
+    # 1. Fetch current data across both accounts with individual account fallback
     all_current_comics = []
     for acc in ACCOUNTS:
+        acc_comics = []
         try:
             acc_comics = fetch_all_comics_for_account(acc)
-            all_current_comics.extend(acc_comics)
         except Exception as e:
             print(f"❌ Error fetching {acc['name']}: {e}")
+
+        # If live fetch returned 0 comics for this account, restore from cache
+        if not acc_comics:
+            print(f"⚠️ Live fetch returned 0 comics for [{acc['name']}]. Preserving previous snapshot for this account...")
+            acc_comics = restore_account_comics_from_cache(acc["id"], acc["name"])
+
+        all_current_comics.extend(acc_comics)
 
     # Fallback to LATEST_GROWTH_FILE first if live fetch returned 0 (prevents overwriting 368 chapters with old 200-cap cache)
     if not all_current_comics and os.path.exists(LATEST_GROWTH_FILE):
