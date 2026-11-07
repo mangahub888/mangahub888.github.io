@@ -370,6 +370,12 @@ function doPost(e) {
       case 'CLEAR_MANGA_SALES':
         result = clearMangaSales();
         break;
+      case 'CALCULATE_AND_SYNC_MONTHLY_MANGA_SALES':
+      case 'SYNC_MONTHLY_MANGA_SALES':
+      case 'CALCULATE_MONTHLY_P_L':
+      case 'SYNC_AND_CALCULATE_MONTHLY_PL':
+        result = calculateAndSyncMonthlyMangaSales(payload ? (payload.targetMonth || payload.month || payload) : null);
+        break;
       case 'COUNT_FINISHED_CHAPTERS':
         result = countFinishedChapters(payload.mangaId, payload.year, payload.month);
         break;
@@ -2776,6 +2782,407 @@ function clearMangaSales() {
     lock.releaseLock();
   }
 }
+
+/**
+ * คำนวณและกระทบยอดต้นทุน-รายรับรายเดือน (Monthly P&L & Reconciliation)
+ * ดึงข้อมูลจริงจาก:
+ * 1. PayoutClaims (ตัดจ่ายเงินเดือนจริงรายบุคคล/รายเรื่อง)
+ * 2. WorkQueue (งานที่สำเร็จในรอบเดือน หากยังไม่มีใบเบิก)
+ * 3. BudgetTransactions (รายรับแพลตฟอร์มรายเดือน)
+ * 4. Multi-Platform Growth (ReadRealm, Chaply, Kairew)
+ * และอัปเดตเข้าสู่ชีต MangaSales พร้อมจัดเรียงกำไรสูงสุดไว้บน ขาดทุนไว้ล่าง
+ */
+function calculateAndSyncMonthlyMangaSales(targetMonth) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(60000);
+
+    // 1. จัดการ Format ของเดือนเป้าหมาย (เช่น "2026-10", "2026-11")
+    if (typeof targetMonth === 'object' && targetMonth !== null) {
+      targetMonth = targetMonth.targetMonth || targetMonth.month;
+    }
+    if (!targetMonth || typeof targetMonth !== 'string') {
+      const now = new Date();
+      targetMonth = Utilities.formatDate(now, "GMT+7", "yyyy-MM");
+    }
+    targetMonth = targetMonth.trim();
+
+    const parts = targetMonth.split('-');
+    const tYear = parseInt(parts[0], 10);
+    const tMonth = parseInt(parts[1], 10);
+    const lastDayOfMonth = new Date(tYear, tMonth, 0);
+    const lastDayStr = Utilities.formatDate(lastDayOfMonth, "GMT+7", "yyyy-MM-dd");
+
+    // 2. ดึงข้อมูลพื้นฐานจากระบบ
+    const mangaList = getMangaList();
+    const mangaIdMap = {};
+    const mangaNameMap = {};
+    mangaList.forEach(m => {
+      if (m.mangaid) mangaIdMap[String(m.mangaid)] = m;
+      if (m.manganame) mangaNameMap[m.manganame.trim()] = m;
+    });
+
+    const allClaims = getPayoutClaims();
+    const allTransactions = getBudgetTransactions();
+    const allWorkQueue = getWorkQueue();
+
+    // ดึง Growth Data (สำหรับช่วยแมตช์รายได้)
+    let readRealmComics = [];
+    let chaplyComics = [];
+    let kairewComics = [];
+    try { readRealmComics = (getReadRealmGrowthData().comics || []); } catch(e) {}
+    try { chaplyComics = (getChaplyGrowthData().comics || []); } catch(e) {}
+    try { kairewComics = (getKairewGrowthData().comics || []); } catch(e) {}
+
+    const platformSalesMap = {};
+    const ingestComicSales = (cList, platName) => {
+      cList.forEach(c => {
+        const title = (c.subject || '').trim();
+        if (!title) return;
+        // Requirement: ยกเว้นบางเรื่องที่ยังไม่ได้เปิดเรื่อง (Unopened / 0 chapters)
+        const eps = Number(c.chapters_count) || 0;
+        const cStat = String(c.status || '').trim().toLowerCase();
+        if (eps <= 0 || cStat === 'ยังไม่เปิดเรื่อง' || cStat === 'ยังไม่ได้เปิดเรื่อง' || cStat === 'unopened') {
+          return;
+        }
+        if (!platformSalesMap[title]) {
+          platformSalesMap[title] = {
+            title: title,
+            total_sales: 0,
+            sales_delta30d: 0,
+            platform: platName
+          };
+        }
+        platformSalesMap[title].total_sales += (parseFloat(c.total_sales) || 0);
+        const delta = parseFloat(c.growth_30d?.sales_delta || c.sales_delta30d) || 0;
+        platformSalesMap[title].sales_delta30d += delta;
+      });
+    };
+    ingestComicSales(readRealmComics, 'ReadRealm');
+    ingestComicSales(chaplyComics, 'Chaply');
+    ingestComicSales(kairewComics, 'Kairew');
+
+    // 3. กรอง PayoutClaims ที่อยู่ในเดือนเป้าหมาย
+    const targetMonthClaims = allClaims.filter(c => {
+      if (c.claimmonth && String(c.claimmonth).trim() === targetMonth) return true;
+      if (c.daterange && c.daterange.indexOf(targetMonth) !== -1) return true;
+      const chkDate = (val) => {
+        if (!val) return false;
+        try {
+          const d = new Date(val);
+          return !isNaN(d.getTime()) && Utilities.formatDate(d, "GMT+7", "yyyy-MM") === targetMonth;
+        } catch(e) { return false; }
+      };
+      return chkDate(c.enddate) || chkDate(c.startdate) || chkDate(c.paidat) || chkDate(c.createdat);
+    });
+
+    // 4. กรอง BudgetTransactions ในเดือนเป้าหมาย
+    const platformIncomeBreakdown = {};
+    let totalBudgetRevenue = 0;
+    allTransactions.forEach(t => {
+      if (!t.date) return;
+      try {
+        const d = new Date(t.date);
+        if (isNaN(d.getTime())) return;
+        if (Utilities.formatDate(d, "GMT+7", "yyyy-MM") === targetMonth) {
+          const tType = String(t.type || '').toLowerCase();
+          if (tType === 'income' || tType === 'รายรับ') {
+            const amt = parseFloat(t.amount) || 0;
+            totalBudgetRevenue += amt;
+            const cat = t.category || 'Other';
+            platformIncomeBreakdown[cat] = (platformIncomeBreakdown[cat] || 0) + amt;
+          }
+        }
+      } catch(e) {}
+    });
+
+    // 5. รวมยอดต้นทุนค่าแรงและจำนวนตอนแยกตามมังงะ
+    const mangaStats = {};
+    const staffClaimsSummary = {};
+    let totalPayrollPaid = 0;
+
+    targetMonthClaims.forEach(c => {
+      const claimAmt = parseFloat(c.totalamount) || 0;
+      totalPayrollPaid += claimAmt;
+      const staff = c.staffname || 'Unknown';
+      if (!staffClaimsSummary[staff]) {
+        staffClaimsSummary[staff] = { staffName: staff, role: c.role || '', totalAmount: 0, claimsCount: 0 };
+      }
+      staffClaimsSummary[staff].totalAmount += claimAmt;
+      staffClaimsSummary[staff].claimsCount += 1;
+
+      let tasks = [];
+      try {
+        tasks = JSON.parse(c.queueitemids || '[]');
+      } catch(e) {}
+
+      tasks.forEach(t => {
+        let mName = (t.mangaName || '').trim();
+        if ((!mName || mName === 'Unknown') && t.mangaId && mangaIdMap[String(t.mangaId)]) {
+          mName = mangaIdMap[String(t.mangaId)].manganame;
+        }
+        if (!mName) mName = 'Unknown';
+        const mObj = mangaNameMap[mName] || (t.mangaId && mangaIdMap[String(t.mangaId)]) || {};
+        const metaStatus = mObj.status ? String(mObj.status).trim().toLowerCase() : '';
+        if (metaStatus === 'ยังไม่เปิดเรื่อง' || metaStatus === 'ยังไม่ได้เปิดเรื่อง' || metaStatus === 'unopened') {
+          return; // Requirement: ยกเว้นบางเรื่องที่ยังไม่ได้เปิดเรื่อง
+        }
+
+        if (!mangaStats[mName]) {
+          const mObj = mangaNameMap[mName] || mangaIdMap[String(t.mangaId)] || {};
+          mangaStats[mName] = {
+            name: mName,
+            mangaId: mObj.mangaid || t.mangaId || '',
+            chapters: {},
+            totalCost: 0,
+            revenue: 0,
+            website: mObj.website || 'ReadRealm แปลจนเมื่อย',
+            category: mObj.category || 'Manhua',
+            staff: {},
+            steps: {}
+          };
+        }
+
+        const amt = parseFloat(t.amount) || 0;
+        mangaStats[mName].totalCost += amt;
+        if (t.chapter !== undefined && t.chapter !== null && String(t.chapter).trim() !== '') {
+          mangaStats[mName].chapters[String(t.chapter).trim()] = true;
+        }
+        if (t.step) {
+          mangaStats[mName].steps[t.step] = (mangaStats[mName].steps[t.step] || 0) + amt;
+        }
+        mangaStats[mName].staff[staff] = (mangaStats[mName].staff[staff] || 0) + amt;
+      });
+    });
+
+    // ถ้าเดือนนั้นยังไม่มี PayoutClaims หรือมีมังงะใน WorkQueue ที่ยังไม่ได้เบิก ให้คำนวณจาก WorkQueue
+    allWorkQueue.forEach(q => {
+      if (!q.createdat) return;
+      try {
+        const d = new Date(q.createdat);
+        if (isNaN(d.getTime())) return;
+        const qMonth = Utilities.formatDate(d, "GMT+7", "yyyy-MM");
+        if (qMonth !== targetMonth) return;
+
+        const mObj = mangaIdMap[String(q.mangaid)] || {};
+        const metaStatus = mObj.status ? String(mObj.status).trim().toLowerCase() : '';
+        if (metaStatus === 'ยังไม่เปิดเรื่อง' || metaStatus === 'ยังไม่ได้เปิดเรื่อง' || metaStatus === 'unopened') {
+          return; // Requirement: ยกเว้นบางเรื่องที่ยังไม่ได้เปิดเรื่อง
+        }
+        const mName = (mObj.manganame || `Manga #${q.mangaid}`).trim();
+
+        // หากมังงะนี้ยังไม่มีใน mangaStats หรือยังไม่มี Claims ในเดือนนี้
+        if (!mangaStats[mName] || targetMonthClaims.length === 0) {
+          if (!mangaStats[mName]) {
+            mangaStats[mName] = {
+              name: mName,
+              mangaId: q.mangaid || '',
+              chapters: {},
+              totalCost: 0,
+              revenue: 0,
+              website: mObj.website || 'ReadRealm แปลจนเมื่อย',
+              category: mObj.category || 'Manhua',
+              staff: {},
+              steps: {}
+            };
+          }
+
+          let chapCount = 1;
+          if (q.chapter) {
+            const m = String(q.chapter).match(/(\d+)\s*[-~ถึง]\s*(\d+)/);
+            if (m) chapCount = Math.max(1, Math.abs(parseInt(m[2], 10) - parseInt(m[1], 10)) + 1);
+            mangaStats[mName].chapters[String(q.chapter).trim()] = true;
+          }
+
+          let estCost = 0;
+          const isDone = (st) => st === 'เสร็จแล้ว' || st === 'done';
+          const isExcluded = (name) => ['apt', 'ภูมิ'].includes(String(name || '').toLowerCase().trim());
+
+          if (isDone(q.uploadstatus) && q.uploadername && !isExcluded(q.uploadername)) estCost += chapCount * 10;
+          if (isDone(q.extractstatus) && q.extractorname && !isExcluded(q.extractorname)) estCost += chapCount * 10;
+          if (isDone(q.translatestatus) && q.translatorname && !isExcluded(q.translatorname)) {
+            const rate = String(q.translatorname).toLowerCase().includes('pratchaya') ? 100 : 25;
+            estCost += chapCount * rate;
+          }
+          if (isDone(q.typesetstatus) && q.typesettername && !isExcluded(q.typesettername)) {
+            const isKor = String(mObj.category || '').toLowerCase().includes('manhwa') || String(q.typesetstatus).includes('เกาหลี');
+            const rate = isKor ? 50 : 45;
+            estCost += chapCount * rate;
+          }
+          mangaStats[mName].totalCost += estCost;
+        }
+      } catch(e) {}
+    });
+
+    // 6. ดึงข้อมูล MangaSales เดิมที่มีอยู่
+    const sheet = getSheet(MANGA_SALES_SHEET_NAME);
+    const existingSales = getMangaSales();
+    const existingMonthSalesMap = {};
+    const existingOtherMonthsSales = [];
+
+    existingSales.forEach(s => {
+      let isSameMonth = false;
+      if (s.month && String(s.month).trim() === targetMonth) {
+        isSameMonth = true;
+      } else if (s.date) {
+        try {
+          const d = new Date(s.date);
+          if (!isNaN(d.getTime()) && Utilities.formatDate(d, "GMT+7", "yyyy-MM") === targetMonth) {
+            isSameMonth = true;
+          }
+        } catch(e) {}
+      }
+
+      if (isSameMonth) {
+        if (s.seriesname) existingMonthSalesMap[s.seriesname.trim()] = s;
+      } else {
+        existingOtherMonthsSales.push(s);
+      }
+    });
+
+    // 7. แมตช์รายได้ (Revenue)
+    // - คงค่ายอดขายเดิมที่เคยบันทึกไว้ในเดือนนั้น (เช่น ยอดขายเดือน ต.ค. หรือที่ผู้ใช้กรอกเอง)
+    // - หรือใช้ delta ยอดขายจาก Multi-Platform Growth ถ้ามี
+    Object.keys(mangaStats).forEach(mName => {
+      const item = mangaStats[mName];
+      if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0) {
+        item.revenue = parseFloat(existingMonthSalesMap[mName].revenue);
+      } else if (platformSalesMap[mName] && platformSalesMap[mName].sales_delta30d > 0) {
+        item.revenue = platformSalesMap[mName].sales_delta30d;
+      } else if (platformSalesMap[mName] && platformSalesMap[mName].total_sales > 0 && totalBudgetRevenue === 0) {
+        item.revenue = platformSalesMap[mName].total_sales;
+      } else {
+        item.revenue = 0;
+      }
+    });
+
+    // ถ้ามีเรื่องเดิมใน existingMonthSalesMap ที่เดือนนี้ไม่มีงาน แต่เคยบันทึกยอดขายไว้
+    Object.keys(existingMonthSalesMap).forEach(mName => {
+      if (!mangaStats[mName]) {
+        const oldSale = existingMonthSalesMap[mName];
+        mangaStats[mName] = {
+          name: mName,
+          mangaId: oldSale.serieschapterid || '',
+          chapters: {},
+          totalCost: parseFloat(oldSale.totalcost) || 0,
+          revenue: parseFloat(oldSale.revenue) || 0,
+          website: oldSale.website || 'ReadRealm แปลจนเมื่อย',
+          category: oldSale.category || 'Manhua',
+          staff: {},
+          steps: {}
+        };
+        const chCount = parseInt(oldSale.chapterscount, 10) || 1;
+        for (let i = 1; i <= chCount; i++) mangaStats[mName].chapters[String(i)] = true;
+      }
+    });
+
+    // 8. สร้างแถวรายการใหม่ของเดือนนี้ พร้อมคำนวณกำไร
+    const calculatedSalesRows = [];
+    let runningTotalRev = 0;
+    let runningTotalCost = 0;
+
+    const statsKeys = Object.keys(mangaStats);
+    statsKeys.forEach((mName, idx) => {
+      const item = mangaStats[mName];
+      const chaptersCount = Object.keys(item.chapters).length || 1;
+      const totalCost = Math.round((item.totalCost || 0) * 100) / 100;
+      const costPerChap = chaptersCount > 0 ? Math.round((totalCost / chaptersCount) * 100) / 100 : 0;
+      const rev = Math.round((item.revenue || 0) * 100) / 100;
+      const profit = Math.round((rev - totalCost) * 100) / 100;
+
+      runningTotalRev += rev;
+      runningTotalCost += totalCost;
+
+      calculatedSalesRows.push({
+        date: lastDayStr,
+        month: targetMonth,
+        serieschapterid: item.mangaId || (idx + 1),
+        seriesname: item.name,
+        chapterscount: chaptersCount,
+        category: item.category || 'Manhua',
+        website: item.website || 'ReadRealm แปลจนเมื่อย',
+        page: '',
+        targetperchapter: 0,
+        totaltarget: 0,
+        costperchapter: costPerChap,
+        totalcost: totalCost,
+        revenue: rev,
+        profit: profit
+      });
+    });
+
+    // Requirement B: "เรียงมีกำไรไว้บน เริ่มขาดทุนไว้ล่าง จากคอลัมนท์ กำไร/ขาดทุน"
+    calculatedSalesRows.sort((a, b) => (Number(b.profit) || 0) - (Number(a.profit) || 0));
+
+    // 9. อัปเดตข้อมูลลง Google Sheet MangaSales
+    // รวมรายการของเดือนอื่น + รายการของเดือนเป้าหมายที่คำนวณเสร็จ
+    const allFinalSales = existingOtherMonthsSales.concat(calculatedSalesRows);
+
+    const lastCol = sheet.getLastColumn();
+    const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(h => h.toString().toLowerCase().trim());
+
+    const sheetRows = allFinalSales.map(sale => {
+      return headers.map(header => {
+        if (header === 'date') return sale.date ? new Date(sale.date) : new Date();
+        if (header === 'month') return sale.month || '';
+        if (header === 'serieschapterid') return sale.serieschapterid || '';
+        if (header === 'seriesname') return sale.seriesname || '';
+        if (header === 'chapterscount') return sale.chapterscount || 0;
+        if (header === 'category') return sale.category || '';
+        if (header === 'website') return sale.website || '';
+        if (header === 'page') return sale.page || '';
+        if (header === 'targetperchapter') return sale.targetperchapter || 0;
+        if (header === 'totaltarget') return sale.totaltarget || 0;
+        if (header === 'costperchapter') return sale.costperchapter || 0;
+        if (header === 'totalcost') return sale.totalcost || 0;
+        if (header === 'revenue') return sale.revenue || 0;
+        if (header === 'profit') return sale.profit || 0;
+        return '';
+      });
+    });
+
+    const currentLastRow = sheet.getLastRow();
+    if (currentLastRow > 1) {
+      sheet.getRange(2, 1, currentLastRow - 1, lastCol).clearContent();
+    }
+
+    if (sheetRows.length > 0) {
+      sheet.getRange(2, 1, sheetRows.length, lastCol).setValues(sheetRows);
+    }
+
+    invalidateCache(['manga_sales', 'financial_sales']);
+
+    const totalChapters = calculatedSalesRows.reduce((acc, r) => acc + (r.chapterscount || 0), 0);
+    const finalRevenue = runningTotalRev || totalBudgetRevenue;
+    const finalProfit = finalRevenue - runningTotalCost;
+    const marginPct = finalRevenue > 0 ? (finalProfit / finalRevenue) * 100 : 0;
+
+    return {
+      success: true,
+      month: targetMonth,
+      count: calculatedSalesRows.length,
+      list: getMangaSales(),
+      summary: {
+        targetMonth: targetMonth,
+        totalRevenue: Math.round(finalRevenue * 100) / 100,
+        totalCost: Math.round(runningTotalCost * 100) / 100,
+        netProfit: Math.round(finalProfit * 100) / 100,
+        marginPct: Math.round(marginPct * 100) / 100,
+        seriesCount: calculatedSalesRows.length,
+        totalChapters: totalChapters,
+        avgCostPerChapter: totalChapters > 0 ? Math.round((runningTotalCost / totalChapters) * 100) / 100 : 0,
+        staffBreakdown: Object.values(staffClaimsSummary),
+        platformBreakdown: platformIncomeBreakdown
+      }
+    };
+  } catch (err) {
+    console.error('calculateAndSyncMonthlyMangaSales error:', err);
+    return { error: 'คำนวณและกระทบยอดรายเดือนล้มเหลว: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 
 
 

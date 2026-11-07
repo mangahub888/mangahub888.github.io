@@ -75,6 +75,12 @@ import {
   Sparkles,
   Scale,
   CheckCircle2,
+  Zap,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Calendar,
+  Filter,
 } from "lucide-react";
 
 ChartJS.register(
@@ -1066,27 +1072,202 @@ export function FinancialsView({
     return list;
   }, [websiteList]);
 
+  // Monthly P&L Ledger State & Sorting (Default Profit DESC)
+  const [selectedLedgerMonth, setSelectedLedgerMonth] = React.useState<string>("all");
+  const [salesSortBy, setSalesSortBy] = React.useState<"profit" | "date" | "revenue" | "cost" | "chapters" | "name">("profit");
+  const [salesSortOrder, setSalesSortOrder] = React.useState<"desc" | "asc">("desc");
+  const [syncModalOpen, setSyncModalOpen] = React.useState<boolean>(false);
+  const [syncTargetMonth, setSyncTargetMonth] = React.useState<string>(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  });
+  const [isSyncing, setIsSyncing] = React.useState<boolean>(false);
+
+  const handleToggleSalesSort = (field: "profit" | "date" | "revenue" | "cost" | "chapters" | "name") => {
+    if (salesSortBy === field) {
+      setSalesSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
+    } else {
+      setSalesSortBy(field);
+      setSalesSortOrder("desc");
+    }
+  };
+
+  const handleSyncMonthlyPL = async () => {
+    if (!syncTargetMonth) {
+      toast.error("กรุณาระบุเดือนเป้าหมาย (YYYY-MM)");
+      return;
+    }
+
+    try {
+      setIsSyncing(true);
+      toast.loading(`กำลังดึงรายจ่าย และรายรับ จากทุกแพลตฟอร์มสำหรับเดือน ${syncTargetMonth}...`, { id: "sync-pl" });
+
+      const res = await callGasApi<any>("SYNC_AND_CALCULATE_MONTHLY_PL", {
+        targetMonth: syncTargetMonth,
+        month: syncTargetMonth,
+      });
+
+      toast.dismiss("sync-pl");
+
+      if (res && res.error) {
+        toast.error(res.error);
+        return;
+      }
+
+      toast.success(
+        `⚡ ซิงค์และคำนวณ P&L เดือน ${syncTargetMonth} เรียบร้อยแล้ว! (${res.count || 0} เรื่อง | รายได้ ฿${(res.summary?.totalRevenue || res.totalRevenue || 0).toLocaleString()} | ต้นทุน ฿${(res.summary?.totalCost || res.totalCost || 0).toLocaleString()} | กำไรสุทธิ ฿${(res.summary?.netProfit || res.totalProfit || 0).toLocaleString()})`
+      );
+
+      if (res && Array.isArray(res.list)) {
+        onSalesChange(res.list, websiteList);
+      }
+
+      setSelectedLedgerMonth(syncTargetMonth);
+      setSyncModalOpen(false);
+    } catch (err: any) {
+      toast.dismiss("sync-pl");
+      toast.error(err.message || "เกิดข้อผิดพลาดในการซิงค์ P&L");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Extract all distinct months available in salesList
+  const availableSalesMonths = React.useMemo(() => {
+    const setM = new Set<string>();
+    (salesList || []).forEach((s) => {
+      if (s.month && /^\d{4}-\d{2}$/.test(s.month)) {
+        setM.add(s.month);
+      } else if (s.date) {
+        try {
+          const d = new Date(s.date);
+          if (!isNaN(d.getTime())) {
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            setM.add(`${d.getFullYear()}-${m}`);
+          }
+        } catch (e) {}
+      }
+    });
+    setM.add("2026-10");
+    setM.add("2026-11");
+    return Array.from(setM).sort().reverse();
+  }, [salesList]);
+
+  // Requirement: เรียงมีกำไรไว้บน เริ่มขาดทุนไว้ล่าง จากคอลัมนท์ กำไร/ขาดทุน
   const filteredSales = React.useMemo(() => {
     let list = [...(salesList || [])];
 
     if (yearFilter !== "all") {
       list = list.filter((s) => {
         if (!s.date) return false;
-
         const d = new Date(s.date);
-
         if (isNaN(d.getTime())) return false;
-
         return String(d.getFullYear()) === yearFilter;
       });
     }
 
-    list.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
+    if (selectedLedgerMonth !== "all") {
+      list = list.filter((s) => {
+        if (s.month && String(s.month).trim() === selectedLedgerMonth) return true;
+        if (s.date && String(s.date).startsWith(selectedLedgerMonth)) return true;
+        return false;
+      });
+    }
+
+    // Default & Selected Sorting: Profit DESC (Highest profit on top, losses at bottom)
+    list.sort((a, b) => {
+      const revA = parseFloat(a.revenue) || 0;
+      const costA = parseFloat(a.totalcost) || 0;
+      const profitA = revA - costA;
+
+      const revB = parseFloat(b.revenue) || 0;
+      const costB = parseFloat(b.totalcost) || 0;
+      const profitB = revB - costB;
+
+      if (salesSortBy === "profit") {
+        return salesSortOrder === "desc" ? profitB - profitA : profitA - profitB;
+      }
+      if (salesSortBy === "revenue") {
+        return salesSortOrder === "desc" ? revB - revA : revA - revB;
+      }
+      if (salesSortBy === "cost") {
+        return salesSortOrder === "desc" ? costB - costA : costA - costB;
+      }
+      if (salesSortBy === "chapters") {
+        const chA = parseInt(a.chapterscount, 10) || 0;
+        const chB = parseInt(b.chapterscount, 10) || 0;
+        return salesSortOrder === "desc" ? chB - chA : chA - chB;
+      }
+      if (salesSortBy === "name") {
+        const nA = String(a.seriesname || "");
+        const nB = String(b.seriesname || "");
+        return salesSortOrder === "desc" ? nB.localeCompare(nA, "th") : nA.localeCompare(nB, "th");
+      }
+      // date fallback
+      const dateA = new Date(a.date).getTime() || 0;
+      const dateB = new Date(b.date).getTime() || 0;
+      return salesSortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    });
 
     return list;
-  }, [salesList, yearFilter]);
+  }, [salesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder]);
+
+  // Dynamic Monthly Reconciliation Data based on focused month
+  const reconciledMonthData = React.useMemo(() => {
+    const targetM =
+      selectedLedgerMonth !== "all"
+        ? selectedLedgerMonth
+        : availableSalesMonths[0] || "2026-10";
+
+    const monthSales = (salesList || []).filter((s) => {
+      if (s.month && String(s.month).trim() === targetM) return true;
+      if (s.date && String(s.date).startsWith(targetM)) return true;
+      return false;
+    });
+
+    const totalRev = monthSales.reduce((acc, s) => acc + (parseFloat(s.revenue) || 0), 0);
+    const totalCost = monthSales.reduce((acc, s) => acc + (parseFloat(s.totalcost) || 0), 0);
+    const netProfit = totalRev - totalCost;
+    const margin = totalRev > 0 ? (netProfit / totalRev) * 100 : 0;
+    const totalChapters = monthSales.reduce((acc, s) => acc + (parseInt(s.chapterscount, 10) || 0), 0);
+    const avgCostPerChapter = totalChapters > 0 ? totalCost / totalChapters : 0;
+
+    // Platform breakdown
+    const platformMap: Record<string, number> = {};
+    monthSales.forEach((s) => {
+      const plat = s.website || "ReadRealm แปลจนเมื่อย";
+      platformMap[plat] = (platformMap[plat] || 0) + (parseFloat(s.revenue) || 0);
+    });
+
+    // Month label in Thai
+    let monthLabel = targetM;
+    try {
+      const [y, m] = targetM.split("-");
+      const thaiMonths = [
+        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+      ];
+      const mIdx = parseInt(m, 10) - 1;
+      const thYear = parseInt(y, 10) + 543;
+      if (mIdx >= 0 && mIdx < 12) {
+        monthLabel = `${thaiMonths[mIdx]} ${thYear}`;
+      }
+    } catch (e) {}
+
+    return {
+      targetMonth: targetM,
+      monthLabel,
+      totalRev,
+      totalCost,
+      netProfit,
+      margin,
+      seriesCount: monthSales.length,
+      totalChapters,
+      avgCostPerChapter,
+      platformMap,
+      hasData: monthSales.length > 0,
+    };
+  }, [salesList, selectedLedgerMonth, availableSalesMonths]);
 
   const summary = React.useMemo(() => {
     let totalRev = 0;
@@ -3173,31 +3354,60 @@ export function FinancialsView({
                   สมุดบันทึกยอดขาย & ต้นทุนประจำเดือน (MangaSales Ledger)
                 </h3>
                 <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 text-[11px]">
-                  ตุลาคม 2569 แมตช์เสร็จสมบูรณ์
+                  {reconciledMonthData.monthLabel} • เรียงตามกำไร/ขาดทุน
                 </Badge>
               </div>
 
               <p className="text-xs text-slate-400 mt-1">
-                บันทึกยอดขาย ต้นทุนค่าแรง และกำไรสุทธิรายเรื่อง (P&L Per Series) เชื่อมต่อรอบตัดจ่ายเงินเดือน
+                บันทึกยอดขาย ต้นทุนค่าแรง และกำไรสุทธิรายเรื่อง (P&L Per Series) เชื่อมต่อรอบตัดจ่ายเงินเดือนอัตโนมัติ
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={() => setAddOpen(true)}>
-                <Plus className="h-4 w-4" /> บันทึกยอดขายประจำเดือน
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Month Filter Selector */}
+              <div className="flex items-center gap-1.5 bg-[#0b1120] border border-[#26334d] px-2.5 py-1.5 rounded-lg text-xs">
+                <Calendar className="h-3.5 w-3.5 text-indigo-400" />
+                <span className="text-slate-400 font-medium">รอบ:</span>
+                <select
+                  value={selectedLedgerMonth}
+                  onChange={(e) => setSelectedLedgerMonth(e.target.value)}
+                  className="bg-transparent text-slate-100 font-semibold focus:outline-none cursor-pointer"
+                >
+                  <option value="all">ทั้งหมด (ทุกเดือน)</option>
+                  {availableSalesMonths.map((m) => (
+                    <option key={m} value={m} className="bg-slate-900 text-white">
+                      {m === "2026-10" ? "ตุลาคม 2569 (2026-10)" : m === "2026-11" ? "พฤศจิกายน 2569 (2026-11)" : m}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Requirement: 1-Click Auto-Sync & Calculate Monthly P&L button */}
+              <Button
+                className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-950/40 font-bold border border-emerald-400/30 text-xs"
+                onClick={() => {
+                  setSyncTargetMonth(selectedLedgerMonth !== "all" ? selectedLedgerMonth : "2026-11");
+                  setSyncModalOpen(true);
+                }}
+              >
+                <Zap className="h-4 w-4 mr-1.5 text-amber-300 animate-pulse" /> ⚡ ซิงค์ & คำนวณ P&L ประจำเดือน
               </Button>
 
-              <Button variant="outline" onClick={() => setBulkOpen(true)}>
-                <Upload className="h-4 w-4" /> นำเข้าข้อมูลจำนวนมาก
+              <Button variant="outline" size="sm" onClick={() => setAddOpen(true)}>
+                <Plus className="h-3.5 w-3.5 mr-1" /> บันทึกยอดขาย
               </Button>
 
-              <Button variant="outline" className="text-red-400 hover:text-red-300 hover:bg-red-950/30 border-red-500/30" onClick={handleClearAllSales} disabled={submitting}>
-                <Trash2 className="h-4 w-4" /> ล้างสมุดบันทึก
+              <Button variant="outline" size="sm" onClick={() => setBulkOpen(true)}>
+                <Upload className="h-3.5 w-3.5 mr-1" /> นำเข้าข้อมูล
+              </Button>
+
+              <Button variant="outline" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-950/30 border-red-500/30" onClick={handleClearAllSales} disabled={submitting}>
+                <Trash2 className="h-3.5 w-3.5 mr-1" /> ล้างสมุด
               </Button>
             </div>
           </div>
 
-          {/* Executive Monthly Reconciliation Summary Panel */}
+          {/* Dynamic Executive Monthly Reconciliation Summary Panel */}
           <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#0b0f19] p-6 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
             
@@ -3207,23 +3417,27 @@ export function FinancialsView({
                   <Scale className="h-6 w-6" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h4 className="text-base font-bold text-white tracking-wide">
                       สรุปการกระทบยอดประจำเดือน (Monthly Reconciliation Summary)
                     </h4>
                     <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                      ตุลาคม 2569 • สมดุล 100%
+                      {reconciledMonthData.monthLabel} • {reconciledMonthData.hasData ? "สมดุล 100%" : "รอการซิงค์"}
                     </span>
                   </div>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    เปรียบเทียบตัวเลขที่ระบบดึงอัตโนมัติ (แพลตฟอร์ม) vs การตัดจ่ายเงินเดือนจริง (PayoutClaims)
+                    เปรียบเทียบตัวเลขที่ระบบดึงอัตโนมัติ (ทุกแพลตฟอร์ม) vs การตัดจ่ายเงินเดือนจริง (PayoutClaims)
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                <span>บันทึกต้นทุนรายเรื่องครบ <strong className="text-white">48 เรื่อง</strong> (268 ตอน)</span>
+                <span>
+                  บันทึกต้นทุนรายเรื่องครบ{" "}
+                  <strong className="text-white">{reconciledMonthData.seriesCount} เรื่อง</strong>{" "}
+                  ({reconciledMonthData.totalChapters} ตอน)
+                </span>
               </div>
             </div>
 
@@ -3234,28 +3448,30 @@ export function FinancialsView({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-indigo-300">📈 รายได้แพลตฟอร์มรวม (Revenue)</span>
                   <Badge variant="outline" className="text-[10px] text-indigo-300 border-indigo-500/30">
-                    BudgetTransactions
+                    ทุกแพลตฟอร์มที่เชื่อมต่อ
                   </Badge>
                 </div>
                 <div>
                   <div className="text-2xl font-black text-indigo-400 tracking-tight">
-                    ฿65,601.45
+                    ฿{reconciledMonthData.totalRev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-0.5">ดึงจากระบบสรุปยอดขายแพลตฟอร์มรอบ ต.ค. 2569</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    ดึงจากระบบสรุปยอดขายแพลตฟอร์มรอบ {reconciledMonthData.monthLabel}
+                  </p>
                 </div>
-                <div className="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs text-slate-300">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">ReadRealm แปลจนเมื่อย:</span>
-                    <span className="font-medium text-slate-200">฿54,796.16</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">ReadRealm แปลจนแขนหัก:</span>
-                    <span className="font-medium text-slate-200">฿1,225.29</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Chaply:</span>
-                    <span className="font-medium text-slate-200">฿9,580.00</span>
-                  </div>
+                <div className="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs text-slate-300 max-h-36 overflow-y-auto">
+                  {Object.keys(reconciledMonthData.platformMap).length > 0 ? (
+                    Object.entries(reconciledMonthData.platformMap).map(([pName, pAmt]) => (
+                      <div key={pName} className="flex justify-between">
+                        <span className="text-slate-400 truncate max-w-[170px]">{pName}:</span>
+                        <span className="font-medium text-slate-200">
+                          ฿{pAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-slate-500 italic py-1">ยังไม่มีข้อมูลรายได้ในรอบนี้</div>
+                  )}
                 </div>
               </div>
 
@@ -3269,26 +3485,24 @@ export function FinancialsView({
                 </div>
                 <div>
                   <div className="text-2xl font-black text-red-400 tracking-tight">
-                    ฿23,510.00
+                    ฿{reconciledMonthData.totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-0.5">อนุมัติและจ่ายเงินแล้วครบ 4 คน (4 ใบเบิก)</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    อนุมัติและจ่ายเงินแล้วตามรอบงาน ({reconciledMonthData.seriesCount} เรื่อง)
+                  </p>
                 </div>
                 <div className="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs text-slate-300">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">คุณ Tilly (Typesetter):</span>
-                    <span className="font-medium text-slate-200">฿10,395.00</span>
+                    <span className="text-slate-400">จำนวนตอนที่ผลิตจริง:</span>
+                    <span className="font-medium text-slate-200">{reconciledMonthData.totalChapters} ตอน</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">คุณ Kikkuk (Staff + Support):</span>
-                    <span className="font-medium text-slate-200">฿5,605.00</span>
+                    <span className="text-slate-400">ต้นทุนเฉลี่ยต่อตอน:</span>
+                    <span className="font-medium text-slate-200">~฿{reconciledMonthData.avgCostPerChapter.toFixed(2)} / ตอน</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">คุณ Pratchaya (Translator):</span>
-                    <span className="font-medium text-slate-200">฿4,480.00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">คุณ เร (Multi-role):</span>
-                    <span className="font-medium text-slate-200">฿3,030.00</span>
+                    <span className="text-slate-400">สถานะการกระทบยอด:</span>
+                    <span className="font-medium text-emerald-400">แมตช์ตรงกับใบเบิก</span>
                   </div>
                 </div>
               </div>
@@ -3299,12 +3513,12 @@ export function FinancialsView({
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-emerald-300">✨ กำไรสุทธิ (Net Reconciliation)</span>
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      Margin 64.16%
+                      Margin {reconciledMonthData.margin.toFixed(2)}%
                     </span>
                   </div>
                   <div className="mt-2">
-                    <div className="text-2xl font-black text-emerald-400 tracking-tight">
-                      +฿42,091.45
+                    <div className={`text-2xl font-black tracking-tight ${reconciledMonthData.netProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      {reconciledMonthData.netProfit >= 0 ? "+" : ""}฿{reconciledMonthData.netProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-[11px] text-slate-400 mt-0.5">กำไรสุทธิหลังหักต้นทุนค่าแรงการ์ตูนทุกเรื่อง</p>
                   </div>
@@ -3312,15 +3526,15 @@ export function FinancialsView({
                 <div className="rounded-lg bg-emerald-950/40 border border-emerald-500/20 p-2.5 space-y-1 text-xs">
                   <div className="flex justify-between text-slate-300">
                     <span>ต้นทุนเฉลี่ย/ตอน (Avg Cost):</span>
-                    <span className="font-semibold text-white">~฿87.72 / ตอน</span>
+                    <span className="font-semibold text-white">~฿{reconciledMonthData.avgCostPerChapter.toFixed(2)} / ตอน</span>
                   </div>
                   <div className="flex justify-between text-slate-300">
                     <span>อัตราส่วนกำไร (Margin):</span>
-                    <span className="font-semibold text-emerald-400">+64.16%</span>
+                    <span className="font-semibold text-emerald-400">+{reconciledMonthData.margin.toFixed(2)}%</span>
                   </div>
                   <div className="flex justify-between text-slate-300">
                     <span>การแมตช์เข้าสมุดบัญชี:</span>
-                    <span className="font-semibold text-emerald-400">สมบูรณ์ 48 เรื่อง</span>
+                    <span className="font-semibold text-emerald-400">สมบูรณ์ {reconciledMonthData.seriesCount} เรื่อง</span>
                   </div>
                 </div>
               </div>
@@ -3625,21 +3839,84 @@ export function FinancialsView({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>วันที่</TableHead>
+                    <TableHead className="cursor-pointer hover:text-white transition-colors" onClick={() => handleToggleSalesSort("date")}>
+                      <div className="flex items-center gap-1">
+                        <span>วันที่</span>
+                        {salesSortBy === "date" ? (
+                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 text-slate-600" />
+                        )}
+                      </div>
+                    </TableHead>
 
-                    <TableHead>เรื่อง</TableHead>
+                    <TableHead className="cursor-pointer hover:text-white transition-colors" onClick={() => handleToggleSalesSort("name")}>
+                      <div className="flex items-center gap-1">
+                        <span>เรื่อง</span>
+                        {salesSortBy === "name" ? (
+                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 text-slate-600" />
+                        )}
+                      </div>
+                    </TableHead>
 
                     <TableHead>ช่องทาง</TableHead>
 
-                    <TableHead className="text-right">จำนวนตอน</TableHead>
+                    <TableHead className="text-right cursor-pointer hover:text-white transition-colors" onClick={() => handleToggleSalesSort("chapters")}>
+                      <div className="flex items-center justify-end gap-1">
+                        <span>จำนวนตอน</span>
+                        {salesSortBy === "chapters" ? (
+                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 text-slate-600" />
+                        )}
+                      </div>
+                    </TableHead>
 
                     <TableHead className="text-right">ต้นทุน/ตอน</TableHead>
 
-                    <TableHead className="text-right">ต้นทุนรวม</TableHead>
+                    <TableHead className="text-right cursor-pointer hover:text-white transition-colors" onClick={() => handleToggleSalesSort("cost")}>
+                      <div className="flex items-center justify-end gap-1">
+                        <span>ต้นทุนรวม</span>
+                        {salesSortBy === "cost" ? (
+                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-red-400" /> : <ArrowUp className="h-3 w-3 text-red-400" />
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 text-slate-600" />
+                        )}
+                      </div>
+                    </TableHead>
 
-                    <TableHead className="text-right">ยอดขาย</TableHead>
+                    <TableHead className="text-right cursor-pointer hover:text-white transition-colors" onClick={() => handleToggleSalesSort("revenue")}>
+                      <div className="flex items-center justify-end gap-1">
+                        <span>ยอดขาย</span>
+                        {salesSortBy === "revenue" ? (
+                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                        ) : (
+                          <ArrowUpDown className="h-3 w-3 text-slate-600" />
+                        )}
+                      </div>
+                    </TableHead>
 
-                    <TableHead className="text-right">กำไร/ขาดทุน</TableHead>
+                    {/* Requirement: เรียงมีกำไรไว้บน เริ่มขาดทุนไว้ล่าง จากคอลัมนท์ กำไร/ขาดทุน (Highlight active sort) */}
+                    <TableHead
+                      className="text-right cursor-pointer bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold transition-colors select-none"
+                      onClick={() => handleToggleSalesSort("profit")}
+                      title="คลิกเพื่อสลับลำดับกำไร/ขาดทุน"
+                    >
+                      <div className="flex items-center justify-end gap-1">
+                        <span>กำไร/ขาดทุน</span>
+                        {salesSortBy === "profit" ? (
+                          salesSortOrder === "desc" ? (
+                            <ArrowDown className="h-4 w-4 text-emerald-400" />
+                          ) : (
+                            <ArrowUp className="h-4 w-4 text-emerald-400" />
+                          )
+                        ) : (
+                          <ArrowUpDown className="h-3.5 w-3.5 text-emerald-400/60" />
+                        )}
+                      </div>
+                    </TableHead>
 
                     <TableHead className="text-center w-16">จัดการ</TableHead>
                   </TableRow>
@@ -3885,6 +4162,106 @@ export function FinancialsView({
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Auto-Sync & Calculate Monthly P&L Modal (ไม่ต้องสั่งผ่าน AI Agent) */}
+      <Dialog open={syncModalOpen} onOpenChange={(v) => !v && setSyncModalOpen(false)}>
+        <DialogContent className="max-w-lg border-emerald-500/30 bg-[#0d1424] text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-emerald-400 text-lg">
+              <Zap className="h-5 w-5 text-amber-300" />
+              ซิงค์ & คำนวณ P&L ประจำเดือนอัตโนมัติ
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-2 text-xs">
+            <p className="text-slate-300 leading-relaxed">
+              ระบบจะดึงรายจ่ายจริงและรายรับจากทุกช่องทาง มาคำนวณและบันทึกลงในสมุดบัญชี <strong className="text-white">MangaSales</strong> โดยอัตโนมัติ สามารถกดคำนวณในเดือนต่อๆ ไปได้ด้วยตัวเองทันที:
+            </p>
+
+            <div className="p-3.5 rounded-xl border border-[#26334d] bg-[#070b14] space-y-2.5">
+              <Label className="text-slate-200 font-semibold text-xs flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-indigo-400" />
+                เลือกเดือนเป้าหมาย (Target Month)
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  type="month"
+                  value={syncTargetMonth}
+                  onChange={(e) => setSyncTargetMonth(e.target.value)}
+                  className="bg-[#0b1120] border-[#26334d] text-white text-xs font-mono h-9"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSyncTargetMonth("2026-10")}
+                  className={`text-xs ${syncTargetMonth === "2026-10" ? "border-emerald-500 text-emerald-400" : ""}`}
+                >
+                  ต.ค. 69
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSyncTargetMonth("2026-11")}
+                  className={`text-xs ${syncTargetMonth === "2026-11" ? "border-emerald-500 text-emerald-400" : ""}`}
+                >
+                  พ.ย. 69
+                </Button>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-3.5 space-y-2">
+              <span className="font-semibold text-indigo-300">📋 ขั้นตอนที่ระบบจะประมวลผลอัตโนมัติ:</span>
+              <ul className="space-y-1.5 text-slate-300 pl-1">
+                <li className="flex items-start gap-1.5">
+                  <span className="text-emerald-400">1.</span>
+                  <span><strong>💸 ดึงรายจ่ายค่าแรงจริง</strong>: ดึงจากใบเบิกที่จ่ายแล้ว (<code className="text-indigo-300">PayoutClaims (Paid)</code>) หรือคิวงาน <code className="text-indigo-300">WorkQueue</code></span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-indigo-400">2.</span>
+                  <span><strong>📈 ดึงรายรับทุกแพลตฟอร์ม</strong>: รวบรวมยอดขายจากทุกเว็บที่เชื่อมต่ออยู่ (<strong className="text-white">ReadRealm</strong>, <strong className="text-white">Chaply</strong>, <strong className="text-white">Kairew</strong>)</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-amber-400">3.</span>
+                  <span><strong>🚫 ยกเว้นเรื่องที่ยังไม่เปิดเรื่อง</strong>: กรองเฉพาะเรื่องที่เปิดให้อ่านแล้ว (ไม่นำเรื่องที่มี 0 ตอน หรือยังไม่เปิดเรื่องมาคำนวณ)</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-teal-400">4.</span>
+                  <span><strong>🔄 เรียงลำดับกำไรสูงสุดไว้บนสุด</strong>: จัดเรียงคอลัมน์กำไร/ขาดทุนจากมากไปหาน้อย และเริ่มขาดทุนไว้ล่าง</span>
+                </li>
+              </ul>
+            </div>
+
+            <DialogFooter className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSyncModalOpen(false)}
+                disabled={isSyncing}
+              >
+                ยกเลิก
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSyncMonthlyPL}
+                disabled={isSyncing}
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold"
+              >
+                {isSyncing ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-1.5 animate-spin" /> กำลังซิงค์ & คำนวณ...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="h-4 w-4 mr-1.5 text-amber-300" /> ยืนยันการซิงค์ & บันทึก P&L
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
