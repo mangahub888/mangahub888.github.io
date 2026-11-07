@@ -1,10 +1,51 @@
 # 📋 MangaHub Project Handover & Next Tasks
 > **บันทึกสถานะงานและการส่งมอบโปรเจกต์ (สำหรับย้ายเครื่องทำงานต่อ / Machine Transition)**  
-> *วันที่อัปเดต: 5 พฤศจิกายน 2569 (2026-11-05)*
+> *วันที่อัปเดต: 7 พฤศจิกายน 2569 (2026-11-07)*
 
 ---
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
+
+### 🏆 แก้ไขปัญหา Tencent LDPlayer Pipeline (Download Timeout, Badge ⬇️ ค้าง, CID Mapping) & ย้าย Secrets เข้า GAS ScriptProperties (`@103`) สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
+
+#### 1. การแก้ไข Tencent LDPlayer Pipeline (`tools/tencent_ldplayer_pipeline.py` & `todo99.md`):
+- **แก้ปัญหา Download Timeout 35s ลบไฟล์ที่โหลดเสร็จแล้วทิ้ง**:
+  * ขยายเวลา Poll (`DOWNLOAD_POLL_INTERVAL = 2.0`, `DEFAULT_DOWNLOAD_POLL_WINDOW = 90.0`, `DOWNLOAD_HARD_TIMEOUT = 240.0`) และเพิ่ม `check_offline_chapter_dir()` + `check_download_manager_chapter_status()` (วิเคราะห์ XML รายแถว แยก `100%` / `已完成`)
+  * เพิ่ม Guard ป้องกันการเรียก `recover_download_via_pencil_delete_all()` เมื่อ `dm_state == "completed"` ทั้งในรอบแรกและรอบ Retry
+- **แก้ปัญหา Badge ⬇️ ค้าง & Dummy Chapter ติด Captcha (`VerifyCodePage`)**:
+  * ปรับ `clear_device_offline_cache()` ให้ล้างทั้งโฟลเดอร์ออฟไลน์บนอุปกรณ์และลบรายการใน `DownloadManagerActivity` ทันทีหลังจบแต่ละตอน
+  * ปรับ `recover_download_via_pencil_delete_all()` ให้เปิด `DownloadManagerActivity` ตรงด้วย Intent (`--es STR_MSG_COMIC_ID`) โดยไม่ต้องกดเลือกตอน Dummy
+  * ปรับ `--all-pending` ให้จับคู่ตอนด้วย `CID` (Ground Truth) เป็นหลักก่อนเลขตอน ป้องกันปัญหาเรื่องที่มีตอนนำ (Prologue) เลื่อนลำดับตอนผิด
+- **ผลทดสอบจริง**: ทดสอบกับ Comic `657528` ตอนที่ 34, 35, 36 สำเร็จ 100% (ดูรายละเอียดใน `todo99.md`)
+
+#### 2. การย้าย Hardcoded Secrets เข้า `PropertiesService.getScriptProperties()` (`backend/Code.js` Deployment `@103`):
+- สร้างฟังก์ชัน `getSecretProperty()`, `seedSecretsToScriptProperties()`, และ `getSecretsStatus()` ใน `backend/Code.js`
+- บันทึกค่า `ACCESS_PASSCODE`, `FINANCIAL_PASSCODE`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, และ `AUTO_UPDATE_SECRET` ลงใน Cloud `ScriptProperties` ของโปรเจกต์ GAS จริงเรียบร้อยแล้ว
+- ลบค่า Plaintext Secrets ออกจาก `backend/Code.js` และ `old_system/Code.js` ทั้งหมด แล้ว Deploy ขึ้น Production Version `@103` พร้อมทดสอบยืนยันการทำงานของ API ครบทุกส่วน 100%
+
+---
+
+### 🏆 ปรับปรุงตารางคิวงาน (`QueueView.tsx` & `StepUpdateModal`) — ตัดลิงก์ดึงคำออโต้ & จัดสัดส่วนความกว้างคอลัมน์ให้สมส่วนไม่ล้น 2 บรรทัด สำเร็จสมบูรณ์ 100% (7 พ.ย. 2569)
+
+#### 1. รายละเอียด Requirement จาก USER:
+1. **"ดึงคำออโต้ ไม่ต้องแนบลิ้งมาด้วย เพราะเรายัดไฟล์ไว้ในไดร์ฟต้นทางแล้ว"**
+2. **"ความกว้างแต่ละคอลัมนท์ไม่ค่อยพอดีสมส่วนเท่าไหร่ มีบางช่องมันล้นจนกลายเป็น 2 บรรทัด: `1. อัป Raw` | `2. ดึงคำออโต้` | `3. QC ดึงคำ` | `แปล` | `ลงคำ` | `Publisher` | `โพสต์` | `โน้ต`"**
+
+#### 2. สิ่งที่ได้รับการปรับปรุงและแก้ไข (Frontend & UX Solutions):
+1. **ตัดการแสดงและกรอกลิงก์ในขั้นตอน `2. ดึงคำออโต้` (`QueueView.tsx` & `QueueModals.tsx`)**:
+   - ใน `QueueView.tsx` คอลัมน์ `2. ดึงคำออโต้`: นำ `renderStepLinks(q.worklink, "mtp") || renderStepLinks(q.worklink, "ดึงคำออโต้")` ออก เนื่องจากไฟล์ `.mtp` ถูกอัปโหลดไว้ในโฟลเดอร์ Google Drive ต้นทางเดียวกับ `1. อัป Raw` เรียบร้อยแล้ว
+   - ใน `StepUpdateModal` (`QueueModals.tsx`): ซ่อนช่องกรอก `🔗 ลิงก์งาน (ถ้ามี)` เมื่อ `step === "ocr"` และส่งค่า `link: ""` เสมอเมื่ออัปเดตขั้นตอน `ocr`
+2. **ปรับโครงสร้างความกว้างคอลัมน์และการจัดวางในตารางคิวงาน (`QueueView.tsx`)**:
+   - **ส่วนหัวตาราง (`TableHead`)**: เพิ่ม `whitespace-nowrap`, ปรับ `px-2.5` และกำหนดสัดส่วนความกว้าง (`w-...` / `min-w-...`) ของทุกคอลัมน์ให้สมดุลกัน (`1. อัป Raw`, `2. ดึงคำออโต้`, `3. QC ดึงคำ`, `แปล`, `ลงคำ`, `Publisher`, `โพสต์`, `โน้ต`, `จัดการ`) ป้องกันหัวคอลัมน์พับเป็น 2 บรรทัด 100%
+   - **ส่วนข้อมูลในเซลล์ (`TableCell`)**:
+     * เพิ่ม `whitespace-nowrap` บน `Badge` สถานะ (`เสร็จแล้ว`, `กำลังทำ`, `รอเริ่ม`, `skip`), ปุ่ม `Link` และเซลล์ขั้นตอนทั้ง 7 สเตป
+     * ปรับข้อความอธิบายสถานะการข้ามในคอลัมน์ `2. ดึงคำออโต้` และ `3. QC ดึงคำ` ให้กระชับ (`"Pratchaya แปล"`, `"Kikkuk ดึงแล้ว"`, `"ข้ามการดึงคำ"`) พร้อม `truncate` และ `title` tooltip
+     * จัดวางชื่อผู้ลงคำและป้าย `"เกาหลี"` ในคอลัมน์ `ลงคำ` ด้วย `flex items-center gap-1 whitespace-nowrap` ไม่ให้ป้ายดันตกบรรทัด
+     * ปรับคอลัมน์ `โน้ต` ให้ใช้ `truncate` ต่อบรรทัดพร้อม `title` tooltip แสดงข้อความเต็มเมื่อชี้เมาส์ และจำกัด `max-w-[260px]` ในคอลัมน์ `วันที่ / เรื่อง` เพื่อให้คอลัมน์ขั้นตอนทั้งหมดมีพื้นที่แสดงผลอย่างสมส่วน
+3. **การตรวจสอบและ Build**:
+   - รัน `npm --prefix frontend run build` (`tsc -b && vite build`) ผ่านสมบูรณ์ 100% ไร้ข้อผิดพลาด
+
+---
 
 ### 🏆 แก้ไขปัญหา Raw Tracker ตรวจจับต้นฉบับผิดพลาดเมื่อชื่อตอนไม่มีเลขตอน (Unnumbered Chapters / Notice Detection) สำเร็จสมบูรณ์ 100% (5 พ.ย. 2569)
 

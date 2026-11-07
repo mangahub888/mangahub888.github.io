@@ -11,8 +11,10 @@ const BUDGET_PAYEE_SHEET_NAME = 'BudgetPayees';
 const BUDGET_TRANSACTION_SHEET_NAME = 'BudgetTransactions';
 const MANGA_SALES_SHEET_NAME = 'MangaSales';
 const WEBSITE_SHEET_NAME = 'Websites';
-const ACCESS_PASSCODE = '10211032';
-const FINANCIAL_PASSCODE = '720102';
+// Secrets & Passcodes are stored in PropertiesService.getScriptProperties()
+// To set or rotate: run seedSecretsToScriptProperties({ ACCESS_PASSCODE: '...', ... }) or set via GAS Project Settings -> Script Properties
+const ACCESS_PASSCODE = getSecretProperty('ACCESS_PASSCODE', '');
+const FINANCIAL_PASSCODE = getSecretProperty('FINANCIAL_PASSCODE', '');
 const RAW_TRACKER_SHEET_NAME = 'RawTracker';
 const PAYOUT_CLAIMS_SHEET_NAME = 'PayoutClaims';
 const READREALM_GROWTH_SHEET_NAME = 'ReadRealmGrowth';
@@ -26,12 +28,101 @@ const CHAPLY_GROWTH_SHEET_NAME = 'ChaplyGrowth';
 const CHAPLY_TIMELINE_SHEET_NAME = 'Chaply_Timeline_Summary';
 
 // --- TELEGRAM CONFIGURATION ---
-const TELEGRAM_BOT_TOKEN = '7836927758:AAHpsoCToMUxoeAzo5UMtMum3Ix5rIO_VOc';
-const TELEGRAM_CHAT_ID = '-1003994957418';
+const TELEGRAM_BOT_TOKEN = getSecretProperty('TELEGRAM_BOT_TOKEN', '');
+const TELEGRAM_CHAT_ID = getSecretProperty('TELEGRAM_CHAT_ID', '');
 
 // --- AUTO UPDATE CONFIGURATION ---
 const AUTO_UPDATE_API_URL = 'https://nonstoptoon.pages.dev/api/autoupdate';
-const AUTO_UPDATE_SECRET = 'ADOBE445@CHIM9987';
+const AUTO_UPDATE_SECRET = getSecretProperty('AUTO_UPDATE_SECRET', '');
+
+/**
+ * Retrieve a secret/config value from ScriptProperties first, falling back to defaultVal if not set.
+ */
+function getSecretProperty(key, defaultVal) {
+  try {
+    const val = PropertiesService.getScriptProperties().getProperty(key);
+    if (val !== null && val !== undefined && String(val).trim() !== '') {
+      return String(val).trim();
+    }
+  } catch (e) {
+    console.warn('getSecretProperty error for ' + key + ':', e);
+  }
+  return defaultVal || '';
+}
+
+/**
+ * Seed or update secrets in ScriptProperties so hardcoded values can be removed from source code.
+ * Can be called via GAS Editor or via POST action 'SEED_SECRETS_TO_SCRIPT_PROPERTIES'.
+ */
+function seedSecretsToScriptProperties(overrides) {
+  const props = PropertiesService.getScriptProperties();
+  const payload = overrides && typeof overrides === 'object' ? overrides : {};
+  const keys = [
+    'ACCESS_PASSCODE',
+    'FINANCIAL_PASSCODE',
+    'TELEGRAM_BOT_TOKEN',
+    'TELEGRAM_CHAT_ID',
+    'AUTO_UPDATE_SECRET'
+  ];
+  const currentFallbacks = {
+    ACCESS_PASSCODE: ACCESS_PASSCODE,
+    FINANCIAL_PASSCODE: FINANCIAL_PASSCODE,
+    TELEGRAM_BOT_TOKEN: TELEGRAM_BOT_TOKEN,
+    TELEGRAM_CHAT_ID: TELEGRAM_CHAT_ID,
+    AUTO_UPDATE_SECRET: AUTO_UPDATE_SECRET
+  };
+
+  const seeded = {};
+  keys.forEach(function(k) {
+    const incoming = payload[k] !== undefined ? String(payload[k]).trim() : '';
+    const existing = String(props.getProperty(k) || '').trim();
+    const fallback = String(currentFallbacks[k] || '').trim();
+    const valToSave = incoming || existing || fallback;
+    if (valToSave) {
+      props.setProperty(k, valToSave);
+    }
+    const afterVal = String(props.getProperty(k) || '').trim();
+    seeded[k] = {
+      isSetInScriptProperties: Boolean(afterVal),
+      length: afterVal.length,
+      preview: afterVal.length > 4 ? (afterVal.substring(0, 2) + '***' + afterVal.substring(afterVal.length - 2)) : (afterVal ? '***' : '')
+    };
+  });
+
+  return {
+    success: true,
+    message: 'บันทึกและตรวจสอบค่า Secrets ใน ScriptProperties เรียบร้อยแล้ว',
+    propertiesStatus: seeded
+  };
+}
+
+/**
+ * Check status of required secrets in ScriptProperties without exposing plaintext values.
+ */
+function getSecretsStatus() {
+  const props = PropertiesService.getScriptProperties();
+  const keys = [
+    'ACCESS_PASSCODE',
+    'FINANCIAL_PASSCODE',
+    'TELEGRAM_BOT_TOKEN',
+    'TELEGRAM_CHAT_ID',
+    'AUTO_UPDATE_SECRET',
+    'GITHUB_TOKEN'
+  ];
+  const status = {};
+  keys.forEach(function(k) {
+    const val = String(props.getProperty(k) || '').trim();
+    status[k] = {
+      isSetInScriptProperties: Boolean(val),
+      length: val.length,
+      preview: val.length > 4 ? (val.substring(0, 2) + '***' + val.substring(val.length - 2)) : (val ? '***' : '')
+    };
+  });
+  return {
+    success: true,
+    propertiesStatus: status
+  };
+}
 
 /**
  * Create a standardized JSON response for GAS Web App
@@ -171,6 +262,9 @@ function doPost(e) {
         break;
       case 'BATCH_SET_DEFAULT_TRANSLATOR_RE':
         result = batchSetDefaultTranslatorRe();
+        break;
+      case 'CLEANUP_OCR_WORKLINKS':
+        result = cleanupOcrWorkLinks();
         break;
       case 'GET_WORK_QUEUE':
         result = getWorkQueue(Boolean(payload.forceRefresh), payload.month, payload.year, Boolean(payload.includeIncomplete));
@@ -507,6 +601,13 @@ function doPost(e) {
 
       case 'FIND_CHAPTERS_WITH_MTP_MISSING_TXT':
         result = findChaptersWithMtpMissingTxt(payload);
+        break;
+
+      case 'SEED_SECRETS_TO_SCRIPT_PROPERTIES':
+        result = seedSecretsToScriptProperties(payload);
+        break;
+      case 'GET_SECRETS_STATUS':
+        result = getSecretsStatus();
         break;
 
       default:
@@ -1332,8 +1433,9 @@ function addQueue(queueData) {
     try {
       if (manga && (manga.notifyonadd === true || manga.notifyonadd === 'true')) {
         let message = `🆕 <b>เพิ่มคิวงานใหม่! (Manual)</b>\n\nเรื่อง: <b>${manga.manganame}</b>\nตอนที่: ${queueData.chapter}\nสถานะ: เริ่มต้นเข้าระบบแล้ว`;
-        if (queueData.worklink) {
-          message += `\n🔗 <b>ลิงก์งาน:</b> ${queueData.worklink}`;
+        // ไม่วางลิงก์ในข้อความแจ้งเตือนอัตโนมัติ ใช้ติ๊ก "เสร็จแล้ว" แทน
+        if (queueData.uploadstatus === 'เสร็จแล้ว') {
+          message += `\n- [x] อัป Raw เสร็จแล้ว`;
         }
         sendTelegramNotification(message);
       }
@@ -1443,9 +1545,10 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
               
               const existingLinks = data[i][linkCol - 1] || '';
               const finalLink = link || extractLinkForStep(existingLinks, step);
-              
+
+              // ไม่วางลิงก์ในข้อความแจ้งเตือนอัตโนมัติ ใช้ติ๊ก "เสร็จแล้ว" แทน
               if (finalLink) {
-                message += `\n🔗 <b>ลิงก์งาน:</b> ${finalLink}`;
+                message += `\n- [x] ${stepLabel} เสร็จแล้ว`;
               }
               sendTelegramNotification(message);
 
@@ -1469,7 +1572,7 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
           }
         }
         
-        if (link && linkCol > 0) {
+        if (link && linkCol > 0 && step.toLowerCase() !== 'ocr') {
           const currentLink = data[i][linkCol - 1] || '';
           const stepLabel = getStepLabel(step);
           let links = currentLink.toString().split('\n').filter(l => l.trim());
@@ -1749,10 +1852,42 @@ function deleteQueueItem(id) {
     lock.waitLock(30000);
     const sheet = getSheet(QUEUE_SHEET_NAME);
     const data = sheet.getDataRange().getValues();
+    const headers = data.length > 0 ? data[0].map(h => h.toString().toLowerCase().trim()) : [];
+    const mIdCol = headers.indexOf('mangaid');
+
     for (let i = 1; i < data.length; i++) {
       if (data[i][0].toString() === id.toString()) {
+        const deletedMangaId = mIdCol !== -1 ? String(data[i][mIdCol] || '').trim() : '';
         sheet.deleteRow(i + 1);
         invalidateCache('workQueue');
+
+        // Recalculate and sync latest chapter for this manga after deletion
+        if (deletedMangaId) {
+          try {
+            const queueMap = getMaxWorkQueueChapterMap();
+            const newMaxChap = queueMap[deletedMangaId] || 0;
+            if (newMaxChap > 0) {
+              const chapStr = Number.isInteger(newMaxChap) ? String(newMaxChap) : String(Math.round(newMaxChap * 100) / 100);
+              const mangaSheet = getSheet(SHEET_NAME);
+              const mData = mangaSheet.getDataRange().getValues();
+              const mHeaders = mData[0].map(h => h.toString().toLowerCase().trim());
+              const lastChapCol = mHeaders.indexOf('lastchapter');
+              const lastUpdCol = mHeaders.indexOf('lastupdated');
+              for (let r = 1; r < mData.length; r++) {
+                if (String(mData[r][0]).trim() === deletedMangaId) {
+                  if (lastChapCol !== -1) mangaSheet.getRange(r + 1, lastChapCol + 1).setValue(chapStr);
+                  if (lastUpdCol !== -1) mangaSheet.getRange(r + 1, lastUpdCol + 1).setValue(new Date());
+                  invalidateCache('mangaList');
+                  break;
+                }
+              }
+              syncRawTrackerMangaInfo(deletedMangaId, null, null, chapStr);
+            }
+          } catch (syncErr) {
+            console.warn('Could not recalculate chapter on deleteQueueItem:', syncErr);
+          }
+        }
+
         return { success: true, queue: getWorkQueue(true) };
       }
     }
@@ -1862,9 +1997,10 @@ function updateFullQueueItem(queueId, updateData) {
               const assignee = updateData[assigneeMap[field]] || '';
               let message = `✅ <b>งานเสร็จแล้ว!</b>\n\nเรื่อง: <b>${mangaNameForNoti}</b>\nตอนที่: ${chapterForNoti}\nขั้นตอน: <b>${stepLabel}</b>\nโดย: ${assignee || 'ไม่ระบุ'}`;
               
-              const stepLink = extractLinkForStep(updateData.worklink, stepLabel);
-              if (stepLink) {
-                message += `\n🔗 <b>ลิงก์งาน:</b> ${stepLink}`;
+              // ไม่วางลิงก์ในข้อความแจ้งเตือนอัตโนมัติ ใช้ติ๊ก "เสร็จแล้ว" แทน
+              const stepLink = extractLinkForStep(updateData.worklink, stepKey);
+              if (stepLink || updateData[field] === 'เสร็จแล้ว') {
+                message += `\n- [x] ${stepLabel} เสร็จแล้ว`;
               }
               
               sendTelegramNotification(message);
@@ -3066,11 +3202,12 @@ function resolveSystemChapter(manga, trackerObj, queueMap) {
     }
   }
 
-  const resolvedNum = Math.max(mangaChap || 0, queueChap || 0, trkChap || 0);
+  const authoritativeNum = Math.max(mangaChap || 0, queueChap || 0);
+  const resolvedNum = authoritativeNum > 0 ? authoritativeNum : (trkChap || 0);
   const resolvedStr = resolvedNum > 0 ? (Number.isInteger(resolvedNum) ? String(resolvedNum) : String(Math.round(resolvedNum * 100) / 100)) : '0';
 
   const shouldUpdateManga = Boolean(manga && (mangaRawIsInvalid || mangaChap < resolvedNum));
-  const shouldUpdateTracker = Boolean(trackerObj && (trkRawIsInvalid || trkChap < resolvedNum));
+  const shouldUpdateTracker = Boolean(trackerObj && (trkRawIsInvalid || trkChap !== resolvedNum));
 
   return {
     chapterNum: resolvedNum,
@@ -8718,31 +8855,7 @@ function completeMangaOcr(payload) {
           sheet.getRange(rowNum, ocrNameCol).setValue('GitHub Actions (Auto OCR)');
         }
 
-        if (mtpFileId && workLinkCol > 0) {
-          const mtpUrl = 'https://drive.google.com/file/d/' + mtpFileId + '/view?usp=sharing';
-          if (!rowLink.includes(mtpFileId)) {
-            const newLink = rowLink + (rowLink ? '\n' : '') + '[mtp] ' + mtpUrl;
-            sheet.getRange(rowNum, workLinkCol).setValue(newLink);
-          }
-        }
-
-        if (txtFileId && workLinkCol > 0) {
-          const txtUrl = 'https://drive.google.com/file/d/' + txtFileId + '/view?usp=sharing';
-          const curVal = String(sheet.getRange(rowNum, workLinkCol).getValue() || rowLink);
-          if (!curVal.includes(txtFileId)) {
-            const newLink = curVal + (curVal ? '\n' : '') + '[ocr txt] ' + txtUrl;
-            sheet.getRange(rowNum, workLinkCol).setValue(newLink);
-          }
-        }
-
-        if (promptFileId && workLinkCol > 0) {
-          const promptUrl = 'https://drive.google.com/file/d/' + promptFileId + '/view?usp=sharing';
-          const curVal = String(sheet.getRange(rowNum, workLinkCol).getValue() || rowLink);
-          if (!curVal.includes(promptFileId)) {
-            const newLink = curVal + (curVal ? '\n' : '') + '[prompt] ' + promptUrl;
-            sheet.getRange(rowNum, workLinkCol).setValue(newLink);
-          }
-        }
+        // ไม่ต้องแนบลิงก์ [mtp], [ocr txt], [prompt] ลงใน worklink เนื่องจากไฟล์ถูกอัปโหลดไว้ในโฟลเดอร์ Google Drive ต้นทางเดียวกันกับ [อัป Raw] แล้ว
 
         updatedRow = {
           rowNum: rowNum,
@@ -9020,10 +9133,7 @@ function syncOcrStatusFromDrive() {
           if (ocrTimeCol > 0) sheet.getRange(rowNum, ocrTimeCol).setValue(now);
           if (ocrNameCol > 0) sheet.getRange(rowNum, ocrNameCol).setValue('GitHub Actions (Auto OCR)');
 
-          if (mtpFileId && workLinkCol > 0 && !workLink.includes(mtpFileId)) {
-            const mtpUrl = 'https://drive.google.com/file/d/' + mtpFileId + '/view?usp=sharing';
-            sheet.getRange(rowNum, workLinkCol).setValue(workLink + '\n[mtp] ' + mtpUrl);
-          }
+
 
           updated.push({
             queueId: data[i][0],
@@ -9074,29 +9184,7 @@ function uploadTextToDriveFolder(payload) {
     const fileId = created.getId();
     const fileUrl = 'https://drive.google.com/file/d/' + fileId + '/view?usp=sharing';
 
-    // Update WorkQueue if queueId provided
-    if (queueId) {
-      try {
-        const sheet = getSheet(QUEUE_SHEET_NAME);
-        const data = sheet.getDataRange().getValues();
-        const headers = data[0].map(h => h.toString().toLowerCase().trim());
-        const workLinkCol = headers.indexOf('worklink') + 1;
-        if (workLinkCol > 0) {
-          for (let i = 1; i < data.length; i++) {
-            if (String(data[i][0]).trim() === queueId) {
-              const tag = payload.linkTag || (fileName.toUpperCase().includes('PROMPT') ? '[prompt]' : '[ocr txt]');
-              const currentLink = String(data[i][workLinkCol - 1] || '');
-              if (!currentLink.includes(fileId)) {
-                sheet.getRange(i + 1, workLinkCol).setValue(currentLink + (currentLink ? '\n' : '') + tag + ' ' + fileUrl);
-              }
-              break;
-            }
-          }
-        }
-      } catch (qErr) {
-        console.warn('Could not update worklink in WorkQueue:', qErr);
-      }
-    }
+    // ไม่ต้องแนบลิงก์ [ocr txt] / [prompt] ลงใน worklink เนื่องจากไฟล์ถูกอัปโหลดไว้ในโฟลเดอร์ Google Drive ต้นทางแล้ว
 
     return {
       status: 'success',
@@ -9177,4 +9265,60 @@ function findChaptersWithMtpMissingTxt(payload) {
   }
 
   return { candidates: candidates, totalScanned: data.length - startRow };
+}
+
+
+/**
+ * ลบลิงก์ที่เกิดจากขั้นตอน 2. ดึงคำออโต้ ([mtp], [ดึงคำออโต้], [ocr], [ocr txt], [prompt]) ออกจากคอลัมน์ WorkLink
+ * โดยคงลิงก์ [อัป Raw] และลิงก์ของขั้นตอนอื่นๆ ไว้ครบถ้วน
+ */
+function cleanupOcrWorkLinks() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, updatedCount: 0 };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const workLinkCol = headers.indexOf('worklink') + 1;
+    if (workLinkCol <= 0) return { success: false, error: 'worklink column not found' };
+
+    const ocrTags = new Set(['mtp', 'ดึงคำออโต้', 'ocr', 'ocr txt', 'prompt']);
+    let updatedCount = 0;
+
+    for (let i = 1; i < data.length; i++) {
+      const rawLink = String(data[i][workLinkCol - 1] || '');
+      if (!rawLink.trim()) continue;
+
+      const lines = rawLink.split('\n');
+      const filtered = lines.filter(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return false;
+        const m = trimmed.match(/^\[(.*?)\]/);
+        if (m) {
+          const tag = m[1].trim().toLowerCase();
+          if (ocrTags.has(tag)) return false;
+        }
+        return true;
+      });
+
+      const cleanedLink = filtered.join('\n');
+      if (cleanedLink !== rawLink) {
+        sheet.getRange(i + 1, workLinkCol).setValue(cleanedLink);
+        updatedCount++;
+      }
+    }
+
+    if (updatedCount > 0) {
+      invalidateCache(['workQueue']);
+    }
+
+    return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('cleanupOcrWorkLinks error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
 }

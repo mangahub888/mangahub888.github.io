@@ -81,7 +81,7 @@ export function QueueView({
   const [stepFilter, setStepFilter] = React.useState("all")
   const [urgentFilter, setUrgentFilter] = React.useState("all")
   const [assigneeFilter, setAssigneeFilter] = React.useState("all")
-  const [showPublishPost, setShowPublishPost] = React.useState(false)
+  const [showPublishPost, setShowPublishPost] = React.useState(true)
   const { isAnyRunning, isKuaikanRunning, latestActiveRun } = useGitHubActionsStatus()
 
   const handleOcrQueueRefresh = async () => {
@@ -225,8 +225,9 @@ export function QueueView({
         // Show ONLY publish and post steps
         if (!matchesStepFilter(q, "publish_post", manga)) return false
       } else if (stepFilter === "all") {
-        // If showPublishPost is false (default), hide publish and post tasks so they don't clutter production queue
-        if (!showPublishPost && isPublishOrPost) {
+        // When stepFilter is "all", show all incomplete tasks (including publish and post) by default,
+        // unless the user explicitly toggled showPublishPost off (and is not searching or viewing all statuses).
+        if (!showPublishPost && !cleanSearch && completionFilter !== "all" && isPublishOrPost) {
           return false
         }
       } else {
@@ -376,8 +377,8 @@ export function QueueView({
         }}
         className={
           isSkipped
-            ? "cursor-pointer bg-slate-800/80 text-slate-400 border border-slate-700 hover:border-slate-500 hover:text-slate-200 transition-all font-mono text-[11px] uppercase tracking-wider"
-            : "cursor-pointer hover:scale-105 transition-transform"
+            ? "cursor-pointer whitespace-nowrap bg-slate-800/80 text-slate-400 border border-slate-700 hover:border-slate-500 hover:text-slate-200 transition-all font-mono text-[11px] uppercase tracking-wider"
+            : "cursor-pointer whitespace-nowrap hover:scale-105 transition-transform"
         }
       >
         {isSkipped ? "skip" : status}
@@ -396,9 +397,9 @@ export function QueueView({
             href={u}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-0.5 rounded bg-indigo-500/15 px-1.5 py-0.5 text-[11px] font-medium text-indigo-300 hover:bg-indigo-500/25"
+            className="inline-flex items-center gap-0.5 whitespace-nowrap rounded bg-indigo-500/15 px-1.5 py-0.5 text-[11px] font-medium text-indigo-300 hover:bg-indigo-500/25"
           >
-            <ExternalLink className="h-3 w-3" /> Link
+            <ExternalLink className="h-3 w-3 shrink-0" /> Link
           </a>
         ))}
       </div>
@@ -703,7 +704,9 @@ export function QueueView({
             onChange={(e) => {
               const newStep = e.target.value
               setStepFilter(newStep)
-              if (newStep !== "all" && completionFilter === "complete") {
+              if (newStep === "all") {
+                setShowPublishPost(true)
+              } else if (completionFilter === "complete") {
                 setCompletionFilter("incomplete")
               }
             }}
@@ -860,7 +863,7 @@ export function QueueView({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-10 text-center">
+              <TableHead className="w-10 px-2.5 text-center whitespace-nowrap">
                 <input
                   type="checkbox"
                   checked={allVisibleSelected}
@@ -868,16 +871,16 @@ export function QueueView({
                   className="h-4 w-4 accent-indigo-500 rounded cursor-pointer"
                 />
               </TableHead>
-              <TableHead>วันที่ / เรื่อง</TableHead>
-              <TableHead>1. อัป Raw</TableHead>
-              <TableHead>2. ดึงคำออโต้</TableHead>
-              <TableHead>3. QC ดึงคำ</TableHead>
-              <TableHead>แปล</TableHead>
-              <TableHead>ลงคำ</TableHead>
-              <TableHead>Publisher</TableHead>
-              <TableHead>โพสต์</TableHead>
-              <TableHead>โน้ต</TableHead>
-              <TableHead className="text-center">จัดการ</TableHead>
+              <TableHead className="min-w-[180px] max-w-[260px] px-3 whitespace-nowrap">วันที่ / เรื่อง</TableHead>
+              <TableHead className="w-[105px] min-w-[96px] px-2.5 whitespace-nowrap">1. อัป Raw</TableHead>
+              <TableHead className="w-[115px] min-w-[106px] px-2.5 whitespace-nowrap">2. ดึงคำออโต้</TableHead>
+              <TableHead className="w-[110px] min-w-[100px] px-2.5 whitespace-nowrap">3. QC ดึงคำ</TableHead>
+              <TableHead className="w-[96px] min-w-[88px] px-2.5 whitespace-nowrap">แปล</TableHead>
+              <TableHead className="w-[105px] min-w-[96px] px-2.5 whitespace-nowrap">ลงคำ</TableHead>
+              <TableHead className="w-[96px] min-w-[88px] px-2.5 whitespace-nowrap">Publisher</TableHead>
+              <TableHead className="w-[88px] min-w-[80px] px-2.5 whitespace-nowrap">โพสต์</TableHead>
+              <TableHead className="min-w-[110px] max-w-[170px] px-2.5 whitespace-nowrap">โน้ต</TableHead>
+              <TableHead className="w-[80px] min-w-[76px] px-2.5 text-center whitespace-nowrap">จัดการ</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -932,7 +935,7 @@ export function QueueView({
                     key={qid}
                     data-state={isSelected ? "selected" : undefined}
                   >
-                    <TableCell className="text-center">
+                    <TableCell className="px-2.5 py-3 text-center">
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -941,24 +944,24 @@ export function QueueView({
                       />
                     </TableCell>
 
-                    <TableCell className="min-w-[200px]">
-                      <div className="text-[11px] text-slate-400">{dateStr}</div>
+                    <TableCell className="min-w-[180px] max-w-[260px] px-3 py-3">
+                      <div className="text-[11px] text-slate-400 whitespace-nowrap">{dateStr}</div>
                       <div
-                        className={`font-semibold ${
+                        className={`font-semibold leading-snug ${
                           urgent ? "text-red-400" : "text-slate-100"
                         } flex items-center gap-1.5 flex-wrap`}
                       >
-                        <span>
+                        <span className="line-clamp-2 break-words">
                           {urgent && "🔥 "}
                           {mangaName}
                         </span>
                         {urgent && (
-                          <span className="rounded bg-red-500/20 border border-red-500/30 px-1.5 py-0.2 text-[10px] font-bold text-red-300">
+                          <span className="rounded bg-red-500/20 border border-red-500/30 px-1.5 py-0.2 text-[10px] font-bold text-red-300 whitespace-nowrap">
                             ด่วน
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-slate-400 whitespace-nowrap mt-0.5">
                         ตอนที่ {q.chapter}
                       </div>
                       {manga?.translationdocurl && (
@@ -967,21 +970,21 @@ export function QueueView({
                             href={manga.translationdocurl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-400 hover:text-blue-300 hover:underline bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-800/50 transition-colors"
+                            className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium text-blue-400 hover:text-blue-300 hover:underline bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-800/50 transition-colors"
                             title="เปิด Google Docs รวมงานแปลทุกตอน"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <FileText className="h-3 w-3 text-blue-400" />
+                            <FileText className="h-3 w-3 text-blue-400 shrink-0" />
                             Docs รวมแปล
-                            <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+                            <ExternalLink className="h-2.5 w-2.5 opacity-70 shrink-0" />
                           </a>
                         </div>
                       )}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {renderStatusBadge(q, "upload", q.uploadstatus)}
-                      <div className="text-xs text-slate-400 mt-1">
+                      <div className="text-xs text-slate-400 mt-1 truncate max-w-[115px]" title={q.uploadername || "-"}>
                         {q.uploadername || "-"}
                         {upDur && (
                           <div className="text-[11px] text-slate-500">
@@ -993,7 +996,7 @@ export function QueueView({
                     </TableCell>
 
                     {/* 2. ดึงคำออโต้ */}
-                    <TableCell>
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {(() => {
                         const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || "").toLowerCase().includes("pratchaya");
                         const extStr = String(q.extractorname || "").toLowerCase();
@@ -1002,30 +1005,31 @@ export function QueueView({
                         const effectiveOcrStatus = ((isPratchaya || isKikExtractDone) && !isOcrDoing)
                           ? "skip"
                           : (q.ocrstatus || (isStepDone(q.extractstatus) ? "เสร็จแล้ว" : (isStepDone(q.uploadstatus) ? "รอเริ่ม" : "รอเริ่ม")));
+                        const ocrSubLabel = effectiveOcrStatus === "skip"
+                          ? (isPratchaya ? "Pratchaya แปล" : (isKikExtractDone ? "Kikkuk ดึงแล้ว" : "ข้ามการดึงคำ"))
+                          : (q.ocrtime ? parseQueueDate(q.ocrtime)?.toLocaleDateString("th-TH") : "GitHub Actions");
                         return (
                           <>
                             {renderStatusBadge(q, "ocr", effectiveOcrStatus)}
-                            <div className="text-xs text-slate-400 mt-1">
-                              {effectiveOcrStatus === "skip"
-                                ? (isPratchaya ? "pratchaya แปล (ไม่ต้องดึงคำ)" : (isKikExtractDone ? "kikkuk ดึงคำแล้ว" : "ข้ามการดึงคำ"))
-                                : (q.ocrtime ? parseQueueDate(q.ocrtime)?.toLocaleDateString("th-TH") : "GitHub Actions")}
+                            <div className="text-xs text-slate-400 mt-1 truncate max-w-[115px]" title={String(ocrSubLabel || "")}>
+                              {ocrSubLabel}
                             </div>
-                            {renderStepLinks(q.worklink, "mtp") || renderStepLinks(q.worklink, "ดึงคำออโต้")}
                           </>
                         );
                       })()}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {(() => {
                         const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || "").toLowerCase().includes("pratchaya");
                         const isExtractActive = String(q.extractstatus || "").trim() === "กำลังทำ" || String(q.extractstatus || "").trim() === "รอเริ่ม";
                         const effectiveExtractStatus = (isPratchaya && !isExtractActive) ? "skip" : q.extractstatus;
+                        const extractSubLabel = isPratchaya && !isExtractActive ? "Pratchaya แปล" : (q.extractorname || "Kikkuk");
                         return (
                           <>
                             {renderStatusBadge(q, "extract", effectiveExtractStatus)}
-                            <div className="text-xs text-slate-400 mt-1">
-                              {isPratchaya && !isExtractActive ? "pratchaya แปล (ข้าม QC)" : (q.extractorname || "Kikkuk")}
+                            <div className="text-xs text-slate-400 mt-1 truncate max-w-[115px]" title={extractSubLabel}>
+                              {extractSubLabel}
                               {exDur && (
                                 <div className="text-[11px] text-slate-500">
                                   ⏱️ {exDur}
@@ -1038,9 +1042,9 @@ export function QueueView({
                       })()}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {renderStatusBadge(q, "translate", q.translatestatus)}
-                      <div className="text-xs text-slate-400 mt-1">
+                      <div className="text-xs text-slate-400 mt-1 truncate max-w-[110px]">
                         {q.translatorname || ((manga && manga.lockedtranslator && String(manga.lockedtranslator).toLowerCase().includes("pratchaya")) ? manga.lockedtranslator : ((manga && manga.lockedtranslator) || "เร"))}
                         {trDur && (
                           <div className="text-[11px] text-slate-500">
@@ -1051,15 +1055,17 @@ export function QueueView({
                       {renderStepLinks(q.worklink, "แปล")}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {renderStatusBadge(q, "typeset", q.typesetstatus)}
                       <div className="text-xs text-slate-400 mt-1">
-                        <span>{q.typesettername || "-"}</span>
-                        {(q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี") && (
-                          <span className="ml-1.5 inline-block text-[10px] text-sky-400 font-bold bg-sky-500/10 px-1 py-0.2 rounded border border-sky-500/30">
-                            เกาหลี
-                          </span>
-                        )}
+                        <div className="flex items-center gap-1 whitespace-nowrap">
+                          <span className="truncate max-w-[80px]">{q.typesettername || "-"}</span>
+                          {(q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี") && (
+                            <span className="inline-block text-[10px] text-sky-400 font-bold bg-sky-500/10 px-1 py-0.2 rounded border border-sky-500/30 shrink-0">
+                              เกาหลี
+                            </span>
+                          )}
+                        </div>
                         {tsDur && (
                           <div className="text-[11px] text-slate-500">
                             ⏱️ {tsDur}
@@ -1069,9 +1075,9 @@ export function QueueView({
                       {renderStepLinks(q.worklink, "ลงคำ")}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {renderStatusBadge(q, "publish", q.publishstatus)}
-                      <div className="text-xs text-slate-400 mt-1">
+                      <div className="text-xs text-slate-400 mt-1 truncate max-w-[110px]">
                         {q.publishername || "-"}
                         {pbDur && (
                           <div className="text-[11px] text-slate-500">
@@ -1082,21 +1088,23 @@ export function QueueView({
                       {renderStepLinks(q.worklink, "เผยแพร่")}
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {renderStatusBadge(q, "post", q.poststatus)}
-                      <div className="text-xs text-slate-400 mt-1">
+                      <div className="text-xs text-slate-400 mt-1 truncate max-w-[100px]">
                         {q.postername || "-"}
                       </div>
                     </TableCell>
 
-                    <TableCell className="max-w-[180px]">
+                    <TableCell className="min-w-[110px] max-w-[170px] px-2.5 py-3">
                       {q.note ? (
-                        <div className="space-y-1 text-xs text-slate-300 whitespace-pre-wrap">
+                        <div className="space-y-0.5 text-xs text-slate-300">
                           {String(q.note)
                             .split("\n")
                             .filter(Boolean)
                             .map((n, i) => (
-                              <div key={i}>📝 {n.trim()}</div>
+                              <div key={i} className="truncate" title={n.trim()}>
+                                📝 {n.trim()}
+                              </div>
                             ))}
                         </div>
                       ) : (
@@ -1104,12 +1112,12 @@ export function QueueView({
                       )}
                     </TableCell>
 
-                    <TableCell className="text-center">
+                    <TableCell className="px-2.5 py-3 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1.5">
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 shrink-0"
                           onClick={() => onOpenUpdateQueue(q)}
                           title="แก้ไขแบบรวม"
                         >
@@ -1118,7 +1126,7 @@ export function QueueView({
                         <Button
                           variant="destructive"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 shrink-0"
                           onClick={() => handleDeleteQueue(qid)}
                           title="ลบคิวงาน"
                         >

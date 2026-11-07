@@ -11,15 +11,15 @@ const BUDGET_PAYEE_SHEET_NAME = 'BudgetPayees';
 const BUDGET_TRANSACTION_SHEET_NAME = 'BudgetTransactions';
 const MANGA_SALES_SHEET_NAME = 'MangaSales';
 const WEBSITE_SHEET_NAME = 'Websites';
-const ACCESS_PASSCODE = '720102';
+const ACCESS_PASSCODE = PropertiesService.getScriptProperties().getProperty('ACCESS_PASSCODE') || '';
 
 // --- TELEGRAM CONFIGURATION ---
-const TELEGRAM_BOT_TOKEN = '7836927758:AAHpsoCToMUxoeAzo5UMtMum3Ix5rIO_VOc'; // Replace with your Bot Token
-const TELEGRAM_CHAT_ID = '-1003994957418';     // Replace with your Chat ID or Group ID
+const TELEGRAM_BOT_TOKEN = PropertiesService.getScriptProperties().getProperty('TELEGRAM_BOT_TOKEN') || ''; // Stored in ScriptProperties
+const TELEGRAM_CHAT_ID = PropertiesService.getScriptProperties().getProperty('TELEGRAM_CHAT_ID') || '';     // Stored in ScriptProperties
 
 // --- AUTO UPDATE CONFIGURATION ---
 const AUTO_UPDATE_API_URL = 'https://nonstoptoon.pages.dev/api/autoupdate';
-const AUTO_UPDATE_SECRET = 'ADOBE445@CHIM9987';
+const AUTO_UPDATE_SECRET = PropertiesService.getScriptProperties().getProperty('AUTO_UPDATE_SECRET') || '';
 
 /**
  * Sends an HTTP POST request to update manga episode count on the website.

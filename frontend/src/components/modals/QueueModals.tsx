@@ -422,6 +422,7 @@ export function UpdateQueueModal({
       setUploadStatus(item.uploadstatus || "รอเริ่ม")
       setUploaderName(item.uploadername || "")
       setRawLink("")
+      setOcrStatus(item.ocrstatus || "รอเริ่ม")
 
       setExtractStatus(item.extractstatus || "รอเริ่ม")
       setExtractorName(item.extractorname || "Kikkuk")
@@ -488,6 +489,7 @@ export function UpdateQueueModal({
       const updateData = {
         chapter,
         uploadstatus: uploadStatus,
+        ocrstatus: ocrStatus,
         extractstatus: extractStatus,
         translatestatus: translateStatus,
         typesetstatus: typesetStatus,
@@ -923,7 +925,7 @@ export function StepUpdateModal({
         step,
         status,
         assignee,
-        link: link.trim(),
+        link: stepLower === "ocr" ? "" : link.trim(),
         note: note.trim(),
         typesetType: stepLower === "typeset" ? typesetType : undefined,
       })
@@ -989,18 +991,20 @@ export function StepUpdateModal({
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <Label>🔗 ลิงก์งาน (ถ้ามี)</Label>
-            <Input
-              type="url"
-              placeholder="https://..."
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-            />
-            <p className="text-xs text-slate-400">
-              ลิงก์จะแสดงในคอลัมน์ของขั้นตอนนี้โดยอัตโนมัติ
-            </p>
-          </div>
+          {step.toLowerCase() !== "ocr" && (
+            <div className="space-y-1.5">
+              <Label>🔗 ลิงก์งาน (ถ้ามี)</Label>
+              <Input
+                type="url"
+                placeholder="https://..."
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+              />
+              <p className="text-xs text-slate-400">
+                ลิงก์จะแสดงในคอลัมน์ของขั้นตอนนี้โดยอัตโนมัติ
+              </p>
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <Label>📝 หมายเหตุ (ถ้ามี)</Label>

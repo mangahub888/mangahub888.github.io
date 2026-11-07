@@ -299,6 +299,131 @@ def check_offline_image_info_list(adb_path: str, serial: str, comic_id: str, cha
     return []
 
 
+def check_offline_chapter_dir(adb_path: str, serial: str, comic_id: str, chapter_id: str) -> dict:
+    """
+    Inspects the on-device offline chapter folder WITHOUT writing to Windows.
+    Returns dict: {'exists': bool, 'has_info': bool, 'info_age': float|None, 'files': int}
+    Used as a secondary progress signal while the Tencent engine writes _image_info_list.
+    """
+    chapter_dir = f"/sdcard/Android/data/com.qq.ac.android/files/comics/{comic_id}/{chapter_id}"
+    out = adb_command(
+        adb_path, serial, "shell",
+        "cd /sdcard/Android/data/com.qq.ac.android/files/comics/{cid}/{ch} 2>/dev/null && "
+        "echo FILES=$(ls | wc -l) && "
+        "echo HASINFO=$(ls _image_info_list 2>/dev/null | wc -l) && "
+        "echo AGE=$(date +%s -r _image_info_list 2>/dev/null || echo 0) && "
+        "echo NOW=$(date +%s)".format(cid=comic_id, ch=chapter_id)
+    )
+    res = {"exists": False, "has_info": False, "info_age": None, "files": 0}
+    if not out or "FILES=" not in out:
+        return res
+    res["exists"] = True
+    for line in out.splitlines():
+        line = line.strip()
+        if line.startswith("FILES="):
+            try:
+                res["files"] = int(line.split("=", 1)[1])
+            except ValueError:
+                pass
+        elif line.startswith("HASINFO="):
+            res["has_info"] = line.split("=", 1)[1].strip() == "1"
+        elif line.startswith("AGE=") and line.startswith("NOW="):
+            continue
+    try:
+        m_age = re.search(r"AGE=(\d+)", out)
+        m_now = re.search(r"NOW=(\d+)", out)
+        if res["has_info"] and m_age and m_now:
+            res["info_age"] = max(0, int(m_now.group(1)) - int(m_age.group(1)))
+    except Exception:
+        pass
+    return res
+
+
+DOWNLOAD_POLL_INTERVAL = 2.0          # seconds between polls
+DEFAULT_DOWNLOAD_POLL_WINDOW = 90.0   # soft window (when --timeout is smaller)
+DOWNLOAD_HARD_TIMEOUT = 240.0         # hard ceiling for a single attempt
+
+
+def check_download_manager_chapter_status(adb_path: str, serial: str, target_seq: str, alt_seq: str = "") -> str:
+    """
+    Dumps the current DownloadManagerActivity (离线下载 manager) UI and classifies the target chapter row:
+      'completed' -> row visible and marked finished ('已完成' / '下载完成' / '100%' / '已下载'),
+                     or row visible on DownloadManagerActivity with NO active progress/pause text
+      'progress'  -> row visible and still downloading (percentage / pause / waiting text)
+      'missing'   -> manager screen not shown, or target chapter not visible
+    """
+    xml = adb_command(
+        adb_path, serial, "shell",
+        "uiautomator dump /data/local/tmp/dm_status.xml >/dev/null 2>&1 && cat /data/local/tmp/dm_status.xml"
+    )
+    if not xml:
+        return "missing"
+    on_dm = any(k in xml for k in ["tv_actionbar_edit", "添加更多集数", "secendbar_container", "progress_bar"])
+    if not on_dm:
+        return "missing"
+
+    # Build strict target sequence set from target_seq ONLY when target_seq is present,
+    # because DownloadManagerActivity rows ALWAYS display the 1-based sequence number (seq_no),
+    # and matching alt_seq (chapter_num) when a prologue exists can match the wrong neighbor row!
+    seqs = set()
+    primary_s = str(target_seq).strip()
+    if primary_s:
+        seqs.add(primary_s)
+        if primary_s.isdigit():
+            seqs.add(str(int(primary_s)))
+    elif alt_seq:
+        alt_s = str(alt_seq).strip()
+        if alt_s:
+            seqs.add(alt_s)
+            if alt_s.isdigit():
+                seqs.add(str(int(alt_s)))
+
+    completed_words = ["已完成", "下载完成", "已下载", "100%"]
+    progress_words = ["下载中", "等待中", "暂停", "%"]
+
+    # Try structured XML row inspection first so we don't bleed across sibling rows
+    try:
+        tree = ET.fromstring(xml)
+        for row_node in tree.iter("node"):
+            # Inspect ListView / RecyclerView item containers that hold a 'seq' child within 2 levels
+            direct_seq = None
+            for child in row_node:
+                if child.attrib.get("resource-id") == "com.qq.ac.android:id/seq":
+                    direct_seq = child.attrib.get("text", "").strip()
+                    break
+                for sub in child:
+                    if sub.attrib.get("resource-id") == "com.qq.ac.android:id/seq":
+                        direct_seq = sub.attrib.get("text", "").strip()
+                        break
+            if direct_seq and (direct_seq in seqs or (direct_seq.isdigit() and str(int(direct_seq)) in seqs)):
+                row_xml = ET.tostring(row_node, encoding="unicode")
+                if any(w in row_xml for w in completed_words):
+                    return "completed"
+                if any(w in row_xml for w in progress_words):
+                    return "progress"
+                return "completed"
+    except Exception:
+        pass
+
+    # Fallback: regex chunk around 'seq' node
+    for pattern in (
+        r'resource-id="com\.qq\.ac\.android:id/seq"[^>]*text="([^"]*)"',
+        r'text="([^"]*)"[^>]*resource-id="com\.qq\.ac\.android:id/seq"',
+    ):
+        for m in re.finditer(pattern, xml):
+            val = m.group(1).strip()
+            if val in seqs or (val.isdigit() and str(int(val)) in seqs):
+                row_start = max(0, m.start() - 500)
+                row_end = min(len(xml), m.end() + 500)
+                chunk = xml[row_start:row_end]
+                if any(w in chunk for w in completed_words):
+                    return "completed"
+                if any(w in chunk for w in progress_words):
+                    return "progress"
+                return "completed"
+    return "missing"
+
+
 def pull_offline_raw_to_windows(adb_path: str, serial: str, comic_id: str, chapter_id: str):
     """Pulls all raw downloaded slices and _image_info_list from LDPlayer directly into Windows folder."""
     try:
@@ -559,6 +684,401 @@ def auto_clear_download_history_for_comic(adb_path: str, serial: str, manga_name
         return False
 
 
+def find_any_selectable_chapter_coords(xml_text: str, exclude_seq: str = "") -> tuple:
+    """
+    Finds coordinates of chapters in DownloadChapterSelectActivity that can be selected
+    to trigger entry into DownloadManagerActivity.
+    Separates into:
+      - free_clean: chapters without 'state_icon' (not downloaded ⬇️) and without 'tips' ('用券')
+      - paid_clean: chapters without 'state_icon' (not downloaded ⬇️)
+      - fallback: any other visible chapter on screen
+    Returns (free_clean, paid_clean, fallback) where each item is (cx, cy, seq_str).
+    """
+    free_clean = []
+    paid_clean = []
+    fallback = []
+    ex_clean = str(exclude_seq).strip()
+
+    if not xml_text:
+        return free_clean, paid_clean, fallback
+
+    try:
+        tree = ET.fromstring(xml_text)
+        for item_node in tree.iter("node"):
+            rid = item_node.attrib.get("resource-id", "")
+            if rid in (
+                "com.qq.ac.android:id/item_first",
+                "com.qq.ac.android:id/item_second",
+                "com.qq.ac.android:id/item_third",
+            ):
+                seq_node = None
+                has_state_icon = False
+                has_tips = False
+                for child in item_node.iter("node"):
+                    crid = child.attrib.get("resource-id", "")
+                    if crid == "com.qq.ac.android:id/seq":
+                        seq_node = child
+                    elif crid == "com.qq.ac.android:id/state_icon":
+                        has_state_icon = True
+                    elif crid == "com.qq.ac.android:id/tips":
+                        has_tips = True
+
+                if seq_node is not None:
+                    seq_str = seq_node.attrib.get("text", "").strip()
+                    nums = re.findall(r"\d+", seq_node.attrib.get("bounds", ""))
+                    if len(nums) == 4:
+                        cx = (int(nums[0]) + int(nums[2])) // 2
+                        cy = (int(nums[1]) + int(nums[3])) // 2
+                        entry = (cx, cy, seq_str)
+                        if not has_state_icon and not has_tips and seq_str != ex_clean:
+                            free_clean.append(entry)
+                        elif not has_state_icon and seq_str != ex_clean:
+                            paid_clean.append(entry)
+                        else:
+                            fallback.append(entry)
+    except Exception:
+        matches = re.findall(
+            r'text="([^"]+)"[^>]*resource-id="com.qq.ac.android:id/seq"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
+            xml_text,
+        )
+        for seq_str, x1, y1, x2, y2 in matches:
+            s_clean = seq_str.strip()
+            cx = (int(x1) + int(x2)) // 2
+            cy = (int(y1) + int(y2)) // 2
+            if s_clean != ex_clean:
+                paid_clean.append((cx, cy, s_clean))
+            else:
+                fallback.append((cx, cy, s_clean))
+
+    return free_clean, paid_clean, fallback
+
+
+def search_and_tap_target_chapter(
+    adb_path: str,
+    serial: str,
+    target_seq: str,
+    alt_seq: str = "",
+    max_attempts: int = 8
+) -> bool:
+    """
+    Searches for target_seq / alt_seq in DownloadChapterSelectActivity (handling sequence
+    order toggle and scrolling) and taps it when found.
+    """
+    for attempt in range(max_attempts):
+        xml = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml"
+        )
+        coords, min_seq, max_seq, is_reversed = find_chapter_seq_coords(xml, target_seq, alt_seq)
+
+        if coords:
+            log(f"   🎯 Found Chapter target={target_seq}/alt={alt_seq} at screen {coords}. Selecting...")
+            adb_command(adb_path, serial, "shell", f"input tap {coords[0]} {coords[1]}")
+            time.sleep(0.8)
+            return True
+
+        # Check if toggling sequence order helps on first attempt
+        if attempt == 0 and target_seq.isdigit():
+            t_val = int(target_seq)
+            m_seq_btn = re.search(r'resource-id="[^"]*btn_sequence"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml)
+            seq_x = (int(m_seq_btn.group(1)) + int(m_seq_btn.group(3))) // 2 if m_seq_btn else 855
+            seq_y = (int(m_seq_btn.group(2)) + int(m_seq_btn.group(4))) // 2 if m_seq_btn else 130
+            if not is_reversed and t_val > 15:
+                log(f"   🔄 Toggling to descending order (倒序) for target Ch {target_seq}...")
+                adb_command(adb_path, serial, "shell", f"input tap {seq_x} {seq_y}")
+                time.sleep(1.0)
+                continue
+            elif is_reversed and t_val <= min_seq:
+                log(f"   🔄 Toggling to ascending order (正序) for target Ch {target_seq}...")
+                adb_command(adb_path, serial, "shell", f"input tap {seq_x} {seq_y}")
+                time.sleep(1.0)
+                continue
+
+        # If still not found, scroll the listview
+        if target_seq.isdigit():
+            t_val = int(target_seq)
+            if (is_reversed and t_val < min_seq) or (not is_reversed and t_val > max_seq):
+                log("   📜 Scrolling listview downward to find chapter...")
+                adb_command(adb_path, serial, "shell", "input swipe 450 1100 450 350 250")
+            else:
+                log("   📜 Scrolling listview upward to find chapter...")
+                adb_command(adb_path, serial, "shell", "input swipe 450 350 450 1100 250")
+            time.sleep(1.0)
+
+    return False
+
+
+def recover_download_via_pencil_delete_all(
+    adb_path: str,
+    serial: str,
+    comic_id: str,
+    script=None,
+    exclude_seq: str = "",
+    manga_name: str = ""
+) -> bool:
+    """
+    1-Click Download Failure Recovery Workflow (per User Specification):
+      1. If on DownloadChapterSelectActivity (or not yet on DownloadManagerActivity with items),
+         select ANY available chapter (at least 1 chapter) and tap Download ('下载所选')
+         to navigate directly into the comic's DownloadManagerActivity queue screen.
+      2. Tap the Pencil / Edit icon ('รูปดินสอ' / tv_actionbar_edit) at top-right [853,54][883,84].
+      3. Tap Select All ('เลือกทั้งหมด' / '全选' / select_container) at bottom-left [0,1502][449,1600].
+      4. Tap Delete ('ลบออก' / '删除' / delete_container) at bottom-right [450,1502][900,1600]
+         and confirm the delete dialog ('是的' / positive_btn).
+      5. Tap '添加更多集数' (secendbar_container) to return to DownloadChapterSelectActivity
+         so the target 1 chapter can be cleanly selected and downloaded again.
+    """
+    log("   🛠️ [1-Click Recovery] Starting Dummy-Select -> Pencil -> Select All -> Delete All recovery flow...")
+    try:
+        xml = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+        )
+
+        # Check if we are already on DownloadManagerActivity with at least 1 chapter row
+        on_dm_screen = bool(xml and ("tv_actionbar_edit" in xml or "添加更多集数" in xml or "secendbar_container" in xml))
+        dm_has_items = bool(on_dm_screen and ("progress_bar" in xml or 'resource-id="com.qq.ac.android:id/seq"' in xml))
+
+        # Direct launch: open DownloadManagerActivity directly via intent without triggering a dummy download
+        # (avoids VerifyCodePage / slider captcha that triggers on free chapter downloads!)
+        if not on_dm_screen:
+            log(f"   🔄 [1-Click Recovery] Launching DownloadManagerActivity directly for Comic {comic_id}...")
+            adb_command(
+                adb_path, serial, "shell",
+                f"su 0 am start -n com.qq.ac.android/.view.activity.DownloadManagerActivity --es STR_MSG_COMIC_ID {comic_id}"
+            )
+            time.sleep(1.8)
+            xml = adb_command(
+                adb_path, serial, "shell",
+                "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+            )
+            if "VerifyCodePage" in xml or "安全验证" in xml or "请控制拼图块" in xml:
+                log("   ⚠️ [1-Click Recovery] VerifyCodePage detected; pressing back to dismiss...")
+                adb_command(adb_path, serial, "shell", "input keyevent 4")
+                time.sleep(1.0)
+                xml = adb_command(
+                    adb_path, serial, "shell",
+                    "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+                )
+            on_dm_screen = bool(xml and ("tv_actionbar_edit" in xml or "添加更多集数" in xml or "secendbar_container" in xml))
+            dm_has_items = bool(on_dm_screen and ("progress_bar" in xml or 'resource-id="com.qq.ac.android:id/seq"' in xml))
+
+        on_select_screen = bool(xml and ("选择下载章节" in xml or "container_download" in xml or "download_btn" in xml))
+
+        if not dm_has_items:
+            # Ensure we are on DownloadChapterSelectActivity
+            if not on_select_screen:
+                log(f"   🔄 [1-Click Recovery] Opening DownloadChapterSelectActivity for Comic {comic_id}...")
+                try:
+                    if script is not None:
+                        script.exports_sync.opendlselect(str(comic_id))
+                    else:
+                        raise RuntimeError("No script")
+                except Exception:
+                    adb_command(
+                        adb_path, serial, "shell",
+                        f"su 0 am start -n com.qq.ac.android/.view.activity.DownloadChapterSelectActivity --es STR_MSG_COMIC_ID {comic_id} --ei STR_MSG_FROM 1"
+                    )
+                time.sleep(2.0)
+                xml = adb_command(
+                    adb_path, serial, "shell",
+                    "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+                )
+
+            # Clear mass selection if > 1 chapters are currently selected
+            sel_count = get_download_selected_count(xml)
+            if sel_count > 1:
+                ensure_clear_selection(adb_path, serial)
+                xml = adb_command(
+                    adb_path, serial, "shell",
+                    "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+                )
+                sel_count = get_download_selected_count(xml)
+
+            # Select at least 1 available chapter to enter DownloadManagerActivity
+            if sel_count < 1:
+                free_clean, paid_clean, fallback = find_any_selectable_chapter_coords(xml, exclude_seq=exclude_seq)
+
+                # If no free clean chapter is visible right now, flip to ascending order or scroll up to Ch 1
+                if not free_clean:
+                    if "正序" in xml:
+                        log("   🔄 [1-Click Recovery] Toggling to ascending order (正序) to find free chapter...")
+                        m_seq_btn = re.search(r'resource-id="[^"]*btn_sequence"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml)
+                        sx = (int(m_seq_btn.group(1)) + int(m_seq_btn.group(3))) // 2 if m_seq_btn else 855
+                        sy = (int(m_seq_btn.group(2)) + int(m_seq_btn.group(4))) // 2 if m_seq_btn else 130
+                        adb_command(adb_path, serial, "shell", f"input tap {sx} {sy}")
+                        time.sleep(1.0)
+                    else:
+                        log("   📜 [1-Click Recovery] Scrolling up to top chapters to select any 1 chapter...")
+                        adb_command(adb_path, serial, "shell", "input swipe 450 350 450 1200 200")
+                        time.sleep(1.0)
+
+                    xml = adb_command(
+                        adb_path, serial, "shell",
+                        "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+                    )
+                    free_clean, paid_clean, fallback = find_any_selectable_chapter_coords(xml, exclude_seq=exclude_seq)
+
+                candidates = free_clean + paid_clean + fallback
+                for cx, cy, seq_str in candidates[:6]:
+                    log(f"   🎯 [1-Click Recovery] Selecting dummy chapter #{seq_str} at ({cx}, {cy}) (need >= 1 chapter)...")
+                    adb_command(adb_path, serial, "shell", f"input tap {cx} {cy}")
+                    time.sleep(0.7)
+                    xml_check = adb_command(
+                        adb_path, serial, "shell",
+                        "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+                    )
+                    sel_count = get_download_selected_count(xml_check)
+                    if sel_count >= 1:
+                        log(f"   ✅ [1-Click Recovery] Dummy selection active (已选择{sel_count}话).")
+                        break
+
+                # Fallback: tap '全选' if individual chapter taps still left count at 0
+                if sel_count < 1:
+                    log("   ☑️ [1-Click Recovery] Individual tap count still 0, tapping '全选' (224, 1550) to select available chapters...")
+                    adb_command(adb_path, serial, "shell", "input tap 224 1550")
+                    time.sleep(0.8)
+                    xml_check = adb_command(
+                        adb_path, serial, "shell",
+                        "uiautomator dump /data/local/tmp/rec_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_ui.xml"
+                    )
+                    sel_count = get_download_selected_count(xml_check)
+
+            if sel_count >= 1:
+                log("   🚀 [1-Click Recovery] Tapping download button ('下载所选' at 675, 1550) to enter DownloadManagerActivity...")
+                adb_command(adb_path, serial, "shell", "input tap 675 1550")
+                time.sleep(1.0)
+
+                # Confirm download dialog ('是的' / positive_btn) if shown
+                xml_dlg = adb_command(
+                    adb_path, serial, "shell",
+                    "uiautomator dump /data/local/tmp/rec_dlg.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_dlg.xml"
+                )
+                if xml_dlg and any(k in xml_dlg for k in ["positive_btn", "确定下载", "是的", "预估共"]):
+                    log("   ✅ [1-Click Recovery] Confirming download dialog ('是的')...")
+                    m_pos = re.search(r'resource-id="[^"]*positive_btn"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dlg)
+                    if m_pos:
+                        px = (int(m_pos.group(1)) + int(m_pos.group(3))) // 2
+                        py = (int(m_pos.group(2)) + int(m_pos.group(4))) // 2
+                        adb_command(adb_path, serial, "shell", f"input tap {px} {py}")
+                    else:
+                        adb_command(adb_path, serial, "shell", "input tap 557 923")
+                    time.sleep(1.2)
+
+                handle_screen_dialogs(adb_path, serial, auto_buy=True)
+            else:
+                log("   ⚠️ [1-Click Recovery] Could not select any chapter in DownloadChapterSelectActivity; trying MyDownloadActivity fallback...")
+                if manga_name:
+                    auto_clear_download_history_for_comic(adb_path, serial, manga_name)
+                return False
+
+        # Step 2: Now in DownloadManagerActivity (Image 1) -> Tap Pencil icon ('รูปดินสอ')
+        xml_dm = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/rec_dm.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_dm.xml"
+        )
+        if not xml_dm or not any(k in xml_dm for k in ["tv_actionbar_edit", "添加更多集数", "secendbar_container", "edit_container"]):
+            time.sleep(1.0)
+            xml_dm = adb_command(
+                adb_path, serial, "shell",
+                "uiautomator dump /data/local/tmp/rec_dm.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_dm.xml"
+            )
+
+        # If not yet in Edit mode (Image 2), tap the Pencil icon at top-right (tv_actionbar_edit: [853,54][883,84] -> 868, 69)
+        if "delete_container" not in xml_dm and "edit_container" not in xml_dm:
+            m_pencil = re.search(r'resource-id="[^"]*tv_actionbar_edit"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dm)
+            if m_pencil:
+                edit_x = (int(m_pencil.group(1)) + int(m_pencil.group(3))) // 2
+                edit_y = (int(m_pencil.group(2)) + int(m_pencil.group(4))) // 2
+            else:
+                edit_x, edit_y = 868, 69
+            log(f"   ✏️ [1-Click Recovery] Tapping Pencil / Edit icon ('รูปดินสอ') at ({edit_x}, {edit_y})...")
+            adb_command(adb_path, serial, "shell", f"input tap {edit_x} {edit_y}")
+            time.sleep(0.9)
+            xml_dm = adb_command(
+                adb_path, serial, "shell",
+                "uiautomator dump /data/local/tmp/rec_dm_edit.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_dm_edit.xml"
+            )
+
+        # Step 3: Tap Select All ('กด เลือกทั้งหมด' / '全选') at bottom-left (select_container: [0,1502][449,1600] -> 224, 1551)
+        if "取消全选" not in xml_dm:
+            m_sel_all = re.search(r'resource-id="[^"]*select_container"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dm)
+            if not m_sel_all:
+                m_sel_all = re.search(r'resource-id="[^"]*select_text"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dm)
+            if m_sel_all:
+                sel_x = (int(m_sel_all.group(1)) + int(m_sel_all.group(3))) // 2
+                sel_y = (int(m_sel_all.group(2)) + int(m_sel_all.group(4))) // 2
+            else:
+                sel_x, sel_y = 224, 1551
+            log(f"   ☑️ [1-Click Recovery] Tapping Select All ('เลือกทั้งหมด' / '全选') at ({sel_x}, {sel_y})...")
+            adb_command(adb_path, serial, "shell", f"input tap {sel_x} {sel_y}")
+            time.sleep(0.8)
+
+        # Step 4: Tap Delete ('กดลบออก' / '删除') at bottom-right (delete_container: [450,1502][900,1600] -> 675, 1551)
+        m_del_btn = re.search(r'resource-id="[^"]*delete_container"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dm)
+        if not m_del_btn:
+            m_del_btn = re.search(r'resource-id="[^"]*delete_text"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dm)
+        if m_del_btn:
+            del_x = (int(m_del_btn.group(1)) + int(m_del_btn.group(3))) // 2
+            del_y = (int(m_del_btn.group(2)) + int(m_del_btn.group(4))) // 2
+        else:
+            del_x, del_y = 675, 1551
+        log(f"   🗑️ [1-Click Recovery] Tapping Delete ('ลบออก' / '删除') at ({del_x}, {del_y})...")
+        adb_command(adb_path, serial, "shell", f"input tap {del_x} {del_y}")
+        time.sleep(0.9)
+
+        # Step 5: Confirm Delete Dialog ('确认删除选中的漫画章节？' -> '是的' / positive_btn: [450,840][665,921] -> 557, 880)
+        xml_del_dlg = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/rec_del_dlg.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_del_dlg.xml"
+        )
+        if xml_del_dlg and any(k in xml_del_dlg for k in ["positive_btn", "是的", "确认删除", "确定"]):
+            m_pos_del = re.search(r'resource-id="[^"]*positive_btn"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_del_dlg)
+            if m_pos_del:
+                pos_x = (int(m_pos_del.group(1)) + int(m_pos_del.group(3))) // 2
+                pos_y = (int(m_pos_del.group(2)) + int(m_pos_del.group(4))) // 2
+            else:
+                pos_x, pos_y = 557, 880
+            log(f"   ✅ [1-Click Recovery] Confirming delete dialog ('是的') at ({pos_x}, {pos_y})...")
+            adb_command(adb_path, serial, "shell", f"input tap {pos_x} {pos_y}")
+            time.sleep(1.2)
+
+        # Step 6: Navigate back to DownloadChapterSelectActivity via '添加更多集数' (secendbar_container: [0,102][900,170] -> 450, 136)
+        xml_after_del = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/rec_after_del.xml >/dev/null 2>&1 && cat /data/local/tmp/rec_after_del.xml"
+        )
+        if xml_after_del and ("secendbar_container" in xml_after_del or "添加更多集数" in xml_after_del):
+            m_add = re.search(r'resource-id="[^"]*secendbar_container"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_after_del)
+            if m_add:
+                add_x = (int(m_add.group(1)) + int(m_add.group(3))) // 2
+                add_y = (int(m_add.group(2)) + int(m_add.group(4))) // 2
+            else:
+                add_x, add_y = 450, 136
+            log(f"   🔙 [1-Click Recovery] Tapping '添加更多集数' at ({add_x}, {add_y}) to return to chapter selection...")
+            adb_command(adb_path, serial, "shell", f"input tap {add_x} {add_y}")
+            time.sleep(1.5)
+        else:
+            log(f"   🔙 [1-Click Recovery] Re-launching DownloadChapterSelectActivity for Comic {comic_id}...")
+            try:
+                if script is not None:
+                    script.exports_sync.opendlselect(str(comic_id))
+                else:
+                    raise RuntimeError("No script")
+            except Exception:
+                adb_command(
+                    adb_path, serial, "shell",
+                    f"su 0 am start -n com.qq.ac.android/.view.activity.DownloadChapterSelectActivity --es STR_MSG_COMIC_ID {comic_id} --ei STR_MSG_FROM 1"
+                )
+            time.sleep(1.8)
+
+        log("   🎉 [1-Click Recovery] All chapters deleted in DownloadManagerActivity and returned to chapter selection!")
+        return True
+    except Exception as e:
+        log(f"   ⚠️ [1-Click Recovery] Error during recovery flow: {e}")
+        return False
+
+
 def trigger_native_offline_download(
     script,
     adb_path: str,
@@ -614,45 +1134,7 @@ def trigger_native_offline_download(
         log("   ⚠️ Warning: Could not fully confirm 0 selection count, attempting to proceed with care...")
 
     # 2. Search and select target chapter in DownloadChapterSelectActivity
-    target_found = False
-    for attempt in range(8):
-        xml = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml")
-        coords, min_seq, max_seq, is_reversed = find_chapter_seq_coords(xml, target_seq, alt_seq)
-
-        if coords:
-            log(f"   🎯 Found Chapter target={target_seq}/alt={alt_seq} at screen {coords}. Selecting...")
-            adb_command(adb_path, serial, "shell", f"input tap {coords[0]} {coords[1]}")
-            time.sleep(0.8)
-            target_found = True
-            break
-
-        # Check if toggling sequence order helps on first attempt
-        if attempt == 0 and target_seq.isdigit():
-            t_val = int(target_seq)
-            m_seq_btn = re.search(r'resource-id="[^"]*btn_sequence"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml)
-            seq_x = (int(m_seq_btn.group(1)) + int(m_seq_btn.group(3))) // 2 if m_seq_btn else 855
-            seq_y = (int(m_seq_btn.group(2)) + int(m_seq_btn.group(4))) // 2 if m_seq_btn else 130
-            if not is_reversed and t_val > 15:
-                log(f"   🔄 Toggling to descending order (倒序) for target Ch {target_seq}...")
-                adb_command(adb_path, serial, "shell", f"input tap {seq_x} {seq_y}")
-                time.sleep(1.0)
-                continue
-            elif is_reversed and t_val <= min_seq:
-                log(f"   🔄 Toggling to ascending order (正序) for target Ch {target_seq}...")
-                adb_command(adb_path, serial, "shell", f"input tap {seq_x} {seq_y}")
-                time.sleep(1.0)
-                continue
-
-        # If still not found, scroll the listview
-        if target_seq.isdigit():
-            t_val = int(target_seq)
-            if (is_reversed and t_val < min_seq) or (not is_reversed and t_val > max_seq):
-                log("   📜 Scrolling listview downward to find chapter...")
-                adb_command(adb_path, serial, "shell", "input swipe 450 1100 450 350 250")
-            else:
-                log("   📜 Scrolling listview upward to find chapter...")
-                adb_command(adb_path, serial, "shell", "input swipe 450 350 450 1100 250")
-            time.sleep(1.0)
+    target_found = search_and_tap_target_chapter(adb_path, serial, target_seq, alt_seq, max_attempts=8)
 
     if not target_found:
         log(f"   ⚠️ Could not locate Chapter {target_seq} (alt: {alt_seq}) in DownloadChapterSelectActivity UI.")
@@ -670,32 +1152,30 @@ def trigger_native_offline_download(
     if guard_count != 1:
         log(f"   🚨 [SAFETY GUARD BLOCKED] Selection count is {guard_count} (expected exactly 1)!")
 
-        # 1-Click Auto-Recovery: If selection failed (likely chapter already downloaded or stuck with ⬇️ icon)
-        if manga_name:
-            log(f"   🔄 [1-Click Auto-Recovery] Triggering automatic download clean for '{manga_name}' to unlock chapter selection...")
-            auto_clear_download_history_for_comic(adb_path, serial, manga_name)
+        # 1-Click Auto-Recovery per User Workflow:
+        # Select any >= 1 chapter -> go to DownloadManagerActivity -> Pencil -> Select All -> Delete -> Return & re-select target 1 chapter
+        log(f"   🔄 [1-Click Auto-Recovery] Running Dummy Chapter -> Pencil -> Select All -> Delete recovery for Comic {comic_id}...")
+        recover_download_via_pencil_delete_all(
+            adb_path=adb_path,
+            serial=serial,
+            comic_id=comic_id,
+            script=script,
+            exclude_seq=target_seq,
+            manga_name=manga_name
+        )
 
-            # Re-launch DownloadChapterSelectActivity freshly
-            adb_command(adb_path, serial, "shell", "input keyevent 4")
-            time.sleep(0.5)
-            adb_command(adb_path, serial, "shell", f"su 0 am start -n com.qq.ac.android/.view.activity.DownloadChapterSelectActivity --es STR_MSG_COMIC_ID {comic_id} --ei STR_MSG_FROM 1")
-            time.sleep(2.0)
+        # Clear smart selection afresh on DownloadChapterSelectActivity
+        ensure_clear_selection(adb_path, serial)
 
-            # Clear smart selection afresh
-            ensure_clear_selection(adb_path, serial)
-
-            # Re-search and select chapter
-            xml_retry = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml")
-            retry_coords, _, _, _ = find_chapter_seq_coords(xml_retry, target_seq, alt_seq)
-            if retry_coords:
-                log(f"   🎯 [1-Click Auto-Recovery] Re-selecting Chapter target={target_seq}/alt={alt_seq} at {retry_coords}...")
-                adb_command(adb_path, serial, "shell", f"input tap {retry_coords[0]} {retry_coords[1]}")
-                time.sleep(1.0)
-
-                # Check guard count again
-                xml_guard_retry = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml")
-                guard_count = get_download_selected_count(xml_guard_retry)
-                log(f"   🛡️ [1-Click Auto-Recovery] Guard re-check: Currently selected = {guard_count} chapter(s)...")
+        # Re-search and select the target 1 chapter (with full scroll/sequence support)
+        retry_found = search_and_tap_target_chapter(adb_path, serial, target_seq, alt_seq, max_attempts=8)
+        if retry_found:
+            xml_guard_retry = adb_command(
+                adb_path, serial, "shell",
+                "uiautomator dump /data/local/tmp/dl_ui.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_ui.xml"
+            )
+            guard_count = get_download_selected_count(xml_guard_retry)
+            log(f"   🛡️ [1-Click Auto-Recovery] Guard re-check: Currently selected = {guard_count} chapter(s)...")
 
         if guard_count != 1:
             log(f"   🚨 [SAFETY GUARD BLOCKED] Selection count remains {guard_count} (expected exactly 1)! Aborting download click to prevent over-download!")
@@ -710,35 +1190,135 @@ def trigger_native_offline_download(
     time.sleep(1.2)
 
     # Check for confirmation dialog ("是的" / positive_btn) or VIP purchase dialog
-    xml_dlg = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_dlg.xml && cat /data/local/tmp/dl_dlg.xml")
+    xml_dlg = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_dlg.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_dlg.xml")
     if any(k in xml_dlg for k in ["positive_btn", "确定下载", "是的", "预估共"]):
         log("   ✅ Confirmation dialog detected! Confirming download ('是的')...")
         m_pos = re.search(r'resource-id="[^"]*positive_btn"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dlg)
+        if not m_pos:
+            m_pos = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*resource-id="[^"]*positive_btn"', xml_dlg)
         if m_pos:
             px = (int(m_pos.group(1)) + int(m_pos.group(3))) // 2
             py = (int(m_pos.group(2)) + int(m_pos.group(4))) // 2
             adb_command(adb_path, serial, "shell", f"input tap {px} {py}")
         else:
-            adb_command(adb_path, serial, "shell", "input tap 557 923")
-        time.sleep(1.0)
+            adb_command(adb_path, serial, "shell", "input tap 557 943")
+        time.sleep(1.5)
+        # Re-check in case the dialog is still on screen or a second confirmation / VIP prompt appeared
+        xml_dlg2 = adb_command(adb_path, serial, "shell", "uiautomator dump /data/local/tmp/dl_dlg2.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_dlg2.xml")
+        if xml_dlg2 and any(k in xml_dlg2 for k in ["确定下载", "预估共", "positive_btn"]):
+            log("   🔄 Re-tapping '是的' confirmation button at (557, 943)...")
+            adb_command(adb_path, serial, "shell", "input tap 557 943")
+            time.sleep(1.2)
 
-    # Also handle VIP point purchase dialog if it appeared
+    # Also handle VIP point purchase dialog or dismiss VerifyCodePage if it appeared
     if auto_buy:
         handle_screen_dialogs(adb_path, serial, auto_buy=True)
 
-    # Poll for _image_info_list
-    log(f"   ⏳ Waiting for Tencent Engine to finish offline download (up to {timeout:.0f}s)...")
+    # Check if VerifyCodePage / web_container popped up right after confirming download
+    xml_post_confirm = adb_command(
+        adb_path, serial, "shell",
+        "uiautomator dump /data/local/tmp/dl_post.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_post.xml"
+    )
+    if xml_post_confirm and any(k in xml_post_confirm for k in ["VerifyCodePage", "安全验证", "请控制拼图块", "web_container", "webview_container"]):
+        log("   ⚠️ Security verification (VerifyCodePage / web_container) intercepted download! Dismissing and re-tapping download...")
+        adb_command(adb_path, serial, "shell", "input keyevent 4")
+        time.sleep(2.0)
+        # Re-check selection and re-tap download after dismissing VerifyCodePage
+        xml_re = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/dl_re.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_re.xml"
+        )
+        if xml_re and get_download_selected_count(xml_re) == 1:
+            log("   🚀 Re-tapping download button after dismissing VerifyCodePage...")
+            adb_command(adb_path, serial, "shell", "input tap 675 1550")
+            time.sleep(1.5)
+            xml_dlg_re = adb_command(
+                adb_path, serial, "shell",
+                "uiautomator dump /data/local/tmp/dl_dlg_re.xml >/dev/null 2>&1 && cat /data/local/tmp/dl_dlg_re.xml"
+            )
+            if xml_dlg_re and any(k in xml_dlg_re for k in ["positive_btn", "确定下载", "是的", "预估共"]):
+                log("   ✅ Confirming download dialog ('是的') after VerifyCodePage dismiss...")
+                adb_command(adb_path, serial, "shell", "input tap 557 943")
+                time.sleep(1.5)
+
+    # Poll for _image_info_list (primary success signal).
+    # NOTE: Tencent writes _image_info_list incrementally with a cache-style suffix (e.g. 0_0_1);
+    # right after the download tap the file may briefly hold a stale/partial entry, so we require
+    # the file to have settled (unchanged for a few polls) before accepting it, and we also
+    # consult DownloadManagerActivity + the on-device folder as secondary "engine alive" signals
+    # so a real download is never declared FAILED just because the poll window was too short.
+    # `timeout` is the *soft* window (reported in the log); the hard ceiling is DOWNLOAD_HARD_TIMEOUT.
+    poll_window = max(float(timeout or 0.0), DEFAULT_DOWNLOAD_POLL_WINDOW)
+    hard_deadline = time.time() + DOWNLOAD_HARD_TIMEOUT
+    soft_deadline = time.time() + poll_window
+    log(f"   ⏳ Waiting for Tencent Engine to finish offline download (soft window {poll_window:.0f}s, max {DOWNLOAD_HARD_TIMEOUT:.0f}s)...")
     start_poll = time.time()
-    while time.time() - start_poll < timeout:
-        time.sleep(1.2)
+    last_sig = None
+    last_sig_change = time.time()
+    last_folder_sig = None
+    stable_polls = 0
+    soft_warned = False
+    while time.time() < hard_deadline:
+        time.sleep(DOWNLOAD_POLL_INTERVAL)
+
+        # 1) Ground truth: canonical _image_info_list present & stable
         urls = check_offline_image_info_list(adb_path, serial, comic_id, chapter_id)
-        if urls and len(urls) >= 5:
+        sig = (len(urls), tuple(urls[:2]), tuple(urls[-2:])) if urls else None
+        if sig != last_sig:
+            last_sig = sig
+            last_sig_change = time.time()
+            stable_polls = 0
+        else:
+            stable_polls += 1
+        if urls and len(urls) >= 5 and stable_polls >= 2:
             elapsed = time.time() - start_poll
             log(f"   🎉 Native Offline Download completed in {elapsed:.1f}s! ({len(urls)} canonical slices)")
             adb_command(adb_path, serial, "shell", "input keyevent 4")
             return urls
 
-    log("   ⚠️ Timed out waiting for native offline download.")
+        # 2) Secondary signals: folder queued on device / DownloadManager row state
+        folder = check_offline_chapter_dir(adb_path, serial, comic_id, chapter_id)
+        folder_sig = (folder["files"], folder["has_info"])
+        if folder_sig != last_folder_sig:
+            last_folder_sig = folder_sig
+            last_sig_change = time.time()
+
+        dm_status = "missing"
+        if time.time() - start_poll >= 4.0:
+            dm_status = check_download_manager_chapter_status(adb_path, serial, target_seq, alt_seq)
+
+        if not soft_warned and time.time() > soft_deadline:
+            soft_warned = True
+            log(f"   ⏳ Soft timeout reached ({poll_window:.0f}s) — still polling up to {DOWNLOAD_HARD_TIMEOUT:.0f}s "
+                f"(dm={dm_status}, files={folder['files']}, info={folder['has_info']})...")
+
+        # 3) Engine reported 'completed' in DownloadManager -> give the filesystem a short settle grace period
+        if dm_status == "completed":
+            log("   ✅ DownloadManagerActivity shows target chapter completed ('已完成'). Pulling slices...")
+            grace_end = time.time() + 6.0
+            while time.time() < grace_end:
+                time.sleep(1.5)
+                urls = check_offline_image_info_list(adb_path, serial, comic_id, chapter_id)
+                if urls and len(urls) >= 5:
+                    elapsed = time.time() - start_poll
+                    log(f"   🎉 Native Offline Download completed in {elapsed:.1f}s! ({len(urls)} canonical slices)")
+                    adb_command(adb_path, serial, "shell", "input keyevent 4")
+                    return urls
+            # Completed in UI but no usable list yet -> report "no urls" WITHOUT touching anything;
+            # execute_pipeline_for_chapter's caller treats a DM-confirmed completion as non-fatal.
+            log("   ✅ DownloadManagerActivity confirms completion but _image_info_list not yet readable; "
+                "treating download as completed-in-UI (no destructive recovery).")
+            return list(urls) if urls else []
+
+        # 4) Folder exists with data and has not changed for a while, while manager shows progress/none
+        #    -> engine likely finished writing; accept a stable list even if slightly short.
+        if folder["exists"] and folder["files"] > 0 and (time.time() - last_sig_change) > 8.0 and urls:
+            elapsed = time.time() - start_poll
+            log(f"   🎉 Offline folder settled after {elapsed:.1f}s ({folder['files']} files, {len(urls)} slices).")
+            adb_command(adb_path, serial, "shell", "input keyevent 4")
+            return urls
+
+    log(f"   ⚠️ Timed out waiting for native offline download (max {DOWNLOAD_HARD_TIMEOUT:.0f}s).")
     return []
 
 
@@ -1056,10 +1636,14 @@ def fetch_tencent_chapter_list(comic_id: str) -> tuple:
 def find_chapter_by_spec(chapters: list, spec: str) -> dict:
     """Matches user-provided chapter spec against chapter list."""
     spec_clean = str(spec).strip()
-    # 1. Match by exact chapter_num (e.g. '22' == '22')
+    # 1. Match by exact chapter_num (including numeric comparison for zero-padded strings like '035' == '35')
     for ch in chapters:
-        if ch.get("chapter_num") and str(ch["chapter_num"]) == spec_clean:
-            return ch
+        cnum = str(ch.get("chapter_num") or "").strip()
+        if cnum:
+            if cnum == spec_clean:
+                return ch
+            if cnum.isdigit() and spec_clean.isdigit() and int(cnum) == int(spec_clean):
+                return ch
 
     # 2. Match by seq_no (sequential 1-based order)
     try:
@@ -1712,8 +2296,8 @@ def handle_screen_dialogs(adb_path: str, serial: str, auto_buy: bool = True) -> 
         if not ui_check:
             return False
 
-        # Case 1: Progress Sync Alert
-        if "进度同步提醒" in ui_check or "留在这里" in ui_check or "negative_btn" in ui_check:
+        # Case 1: Progress Sync Alert (must NOT trigger on download confirmation dialog '确定下载')
+        if ("进度同步提醒" in ui_check or "留在这里" in ui_check) and "确定下载" not in ui_check and "预估共" not in ui_check:
             log("🔔 Detected '进度同步提醒' (Progress Sync Alert)!")
             m_neg = re.search(r'resource-id="[^"]*negative_btn"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', ui_check)
             if m_neg:
@@ -1790,22 +2374,89 @@ def execute_pipeline_for_chapter(
         )
 
     if not (offline_urls and len(offline_urls) >= 5):
-        # Retry once after clearing activity
-        log(f"⚠️ First attempt offline download did not return slices, retrying once for {manga_name} {chapter_name}...")
-        adb_command(adb_path, serial, "shell", "input keyevent 4 && input keyevent 4")
-        time.sleep(1.0)
-        offline_urls = trigger_native_offline_download(
-            script=script,
-            adb_path=adb_path,
-            serial=serial,
-            comic_id=comic_id,
-            chapter_id=chapter_id,
-            chapter_name=chapter_name,
-            seq_no=seq_no,
-            auto_buy=auto_buy,
-            timeout=timeout,
-            manga_name=manga_name
-        )
+        # Guard against hasty destructive recovery: if the download manager already reports the
+        # target chapter as completed, re-check the filesystem a couple of times instead of
+        # Pencil -> Select All -> Delete (which would wipe a perfectly good download).
+        target_seq_c = str(seq_no).strip() or chapter_name
+        alt_seq_c = re.sub(r"\D", "", chapter_name)
+        dm_state = check_download_manager_chapter_status(adb_path, serial, target_seq_c, alt_seq_c)
+        if dm_state == "completed":
+            log(f"   ✅ DownloadManagerActivity reports Ch {chapter_name} completed; waiting for files before any cleanup...")
+            for _ in range(5):
+                time.sleep(3.0)
+                offline_urls = check_offline_image_info_list(adb_path, serial, comic_id, chapter_id)
+                if offline_urls and len(offline_urls) >= 5:
+                    break
+            if offline_urls and len(offline_urls) >= 5:
+                log(f"   🎉 Recovered {len(offline_urls)} slices without re-downloading.")
+            else:
+                log(f"   ⚠️ Ch {chapter_name} downloaded (dm_state=completed) but _image_info_list not readable yet; "
+                    f"skipping destructive recovery (will be picked up on next run).")
+                return False
+        else:
+            # Recovery & Retry #1: Select >= 1 chapter -> DownloadManagerActivity -> Pencil -> Select All -> Delete -> Re-download target 1 chapter
+            log(f"⚠️ First attempt offline download failed for {manga_name} {chapter_name} (dm_state={dm_state}). Executing Pencil -> Select All -> Delete recovery before retry...")
+            recover_download_via_pencil_delete_all(
+                adb_path=adb_path,
+                serial=serial,
+                comic_id=comic_id,
+                script=script,
+                exclude_seq=seq_no,
+                manga_name=manga_name
+            )
+            time.sleep(0.8)
+            offline_urls = trigger_native_offline_download(
+                script=script,
+                adb_path=adb_path,
+                serial=serial,
+                comic_id=comic_id,
+                chapter_id=chapter_id,
+                chapter_name=chapter_name,
+                seq_no=seq_no,
+                auto_buy=auto_buy,
+                timeout=timeout,
+                manga_name=manga_name
+            )
+
+        if not (offline_urls and len(offline_urls) >= 5):
+            # Re-check dm_state before Retry #2 so we NEVER run destructive Pencil -> Delete on a completed download
+            dm_state_retry = check_download_manager_chapter_status(adb_path, serial, target_seq_c, alt_seq_c)
+            if dm_state == "completed" or dm_state_retry == "completed":
+                log(f"   ✅ DownloadManagerActivity reports Ch {chapter_name} completed before 2nd retry; waiting for files...")
+                for _ in range(5):
+                    time.sleep(3.0)
+                    offline_urls = check_offline_image_info_list(adb_path, serial, comic_id, chapter_id)
+                    if offline_urls and len(offline_urls) >= 5:
+                        break
+                if offline_urls and len(offline_urls) >= 5:
+                    log(f"   🎉 Recovered {len(offline_urls)} slices without 2nd destructive retry.")
+                else:
+                    log(f"   ⚠️ Ch {chapter_name} completed in DownloadManagerActivity (dm_state={dm_state_retry}) but _image_info_list not readable yet; "
+                        f"aborting Pencil -> Delete to preserve completed download for next run.")
+                    return False
+            else:
+                log(f"⚠️ Second attempt offline download needed for {manga_name} {chapter_name} (dm_state={dm_state_retry}). Executing Pencil -> Select All -> Delete recovery...")
+                recover_download_via_pencil_delete_all(
+                    adb_path=adb_path,
+                    serial=serial,
+                    comic_id=comic_id,
+                    script=script,
+                    exclude_seq=seq_no,
+                    manga_name=manga_name
+                )
+                time.sleep(0.8)
+                offline_urls = trigger_native_offline_download(
+                    script=script,
+                    adb_path=adb_path,
+                    serial=serial,
+                    comic_id=comic_id,
+                    chapter_id=chapter_id,
+                    chapter_name=chapter_name,
+                    seq_no=seq_no,
+                    auto_buy=auto_buy,
+                    timeout=timeout,
+                    manga_name=manga_name
+                )
 
     if not (offline_urls and len(offline_urls) >= 5):
         log(f"❌ Native Offline Download failed for {manga_name} {chapter_name}. (Swipe reader fallback is permanently disabled per user mandate)")
@@ -1840,6 +2491,61 @@ def execute_pipeline_for_chapter(
             log(f"   ⚠️ Raw slices cleanup notice: {e}")
 
     return ok
+
+
+def clear_device_offline_cache(adb_path: str, serial: str, comic_id: str, chapter_id: str) -> None:
+    """
+    Deletes the Tencent app's on-device offline cache for ONE chapter
+    (/sdcard/Android/data/com.qq.ac.android/files/comics/{comic_id}/{chapter_id}) AND clears the
+    DownloadManagerActivity entry so the ⬇️ badge in DownloadChapterSelectActivity is also removed.
+    This ensures the next run does not shortcut on a stale _image_info_list and does not hit
+    a stuck ⬇️ badge on the chapter grid.
+    App-private storage on Android 11+ is TCC-blocked for adb, so a permission error is only a NOTICE.
+    """
+    remote_dir = f"/sdcard/Android/data/com.qq.ac.android/files/comics/{comic_id}/{chapter_id}"
+    log(f"   🧹 [Device-Cache Cleanup] Removing on-device offline cache -> {remote_dir} ...")
+    adb_command(adb_path, serial, "shell", f"rm -rf {remote_dir}")
+    left = adb_command(adb_path, serial, "shell", f"ls {remote_dir} 2>/dev/null")
+    if left.strip():
+        log(f"   ⚠️ Device-cache deletion blocked by Android app-private storage (TCC); files remain: {left.strip()[:200]}")
+    else:
+        log("   🧹 [Device-Cache Cleanup] On-device offline cache cleared for this chapter.")
+
+    # Also clear the comic's DownloadManagerActivity queue directly so the ⬇️ badge is removed cleanly
+    try:
+        adb_command(
+            adb_path, serial, "shell",
+            f"su 0 am start -n com.qq.ac.android/.view.activity.DownloadManagerActivity --es STR_MSG_COMIC_ID {comic_id}"
+        )
+        time.sleep(1.5)
+        xml_dm = adb_command(
+            adb_path, serial, "shell",
+            "uiautomator dump /data/local/tmp/clean_dm.xml >/dev/null 2>&1 && cat /data/local/tmp/clean_dm.xml"
+        )
+        if xml_dm and ("tv_actionbar_edit" in xml_dm) and ('resource-id="com.qq.ac.android:id/seq"' in xml_dm):
+            log(f"   🧹 [Device-Cache Cleanup] Clearing DownloadManagerActivity entries for Comic {comic_id} to reset ⬇️ badge...")
+            adb_command(adb_path, serial, "shell", "input tap 868 69")
+            time.sleep(0.8)
+            adb_command(adb_path, serial, "shell", "input tap 224 1551")
+            time.sleep(0.7)
+            adb_command(adb_path, serial, "shell", "input tap 675 1551")
+            time.sleep(0.8)
+            xml_dlg = adb_command(
+                adb_path, serial, "shell",
+                "uiautomator dump /data/local/tmp/clean_dm_dlg.xml >/dev/null 2>&1 && cat /data/local/tmp/clean_dm_dlg.xml"
+            )
+            if xml_dlg and any(k in xml_dlg for k in ["positive_btn", "是的", "确认删除", "确定"]):
+                m_pos = re.search(r'resource-id="[^"]*positive_btn"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml_dlg)
+                if m_pos:
+                    px = (int(m_pos.group(1)) + int(m_pos.group(3))) // 2
+                    py = (int(m_pos.group(2)) + int(m_pos.group(4))) // 2
+                    adb_command(adb_path, serial, "shell", f"input tap {px} {py}")
+                else:
+                    adb_command(adb_path, serial, "shell", "input tap 557 880")
+                time.sleep(1.0)
+            adb_command(adb_path, serial, "shell", "input keyevent 4")
+    except Exception as e:
+        log(f"   ⚠️ [Device-Cache Cleanup] DownloadManager badge reset notice: {e}")
 
 
 def main():
@@ -2060,11 +2766,12 @@ def main():
                     if not m_name and comic_title:
                         m_name = comic_title
 
-                    # Resolve matched chapter by chapter_num or CID
+                    # Resolve matched chapter by CID first (ground truth from RawTracker_Pending), then by chapter_num
                     if ch_list:
-                        matched = find_chapter_by_spec(ch_list, ch_num)
-                        if not matched and item_cid:
+                        if item_cid:
                             matched = find_chapter_by_spec(ch_list, item_cid)
+                        if not matched:
+                            matched = find_chapter_by_spec(ch_list, ch_num)
 
                     if matched:
                         if not item_cid:
@@ -2099,6 +2806,9 @@ def main():
                         success_chapters += 1
                     else:
                         failed_chapters += 1
+
+                    # Clear THIS chapter's on-device cache immediately after it finishes
+                    clear_device_offline_cache(adb_path, serial, cid_from_url, item_cid)
 
                     if idx < len(pending_items) - 1:
                         run_cooldown(args.cooldown)
@@ -2175,6 +2885,9 @@ def main():
                     success_chapters += 1
                 else:
                     failed_chapters += 1
+
+                # Clear THIS chapter's on-device cache + DownloadManager ⬇️ badge immediately after it finishes
+                clear_device_offline_cache(adb_path, serial, comic_id, task["cid"])
 
                 if idx < len(tasks_to_run) - 1:
                     run_cooldown(args.cooldown)
