@@ -765,7 +765,7 @@ def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", o
 
 def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", txt_file_id="", prompt_file_id="", gas_url=None, passcode="10211032"):
     """
-    Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' and attach .mtp and .txt links in WorkQueue.
+    Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' in WorkQueue (without attaching links to worklink).
     """
     import urllib.request
     import json
@@ -778,10 +778,7 @@ def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", 
             "folderId": folder_id,
             "queueId": queue_id,
             "chapter": chapter,
-            "mangaName": manga_name,
-            "mtpFileId": mtp_file_id,
-            "txtFileId": txt_file_id,
-            "promptFileId": prompt_file_id
+            "mangaName": manga_name
         }
     }
     try:
@@ -807,6 +804,7 @@ def main():
     parser.add_argument("--folder-id", default="19P4c1nLybE1KshF-7HSbhfQPX2H60A54", help="Google Drive folder ID or URL")
     parser.add_argument("--manga-name", default="", help="Manga title")
     parser.add_argument("--chapter-num", default="", help="Chapter number")
+    parser.add_argument("--mtp-filename", default="tempt.mtp", help="Custom filename for the .mtp project file")
     parser.add_argument("--txt-filename", default="", help="Custom filename for the OCR text file")
     parser.add_argument("--queue-id", default="", help="WorkQueue item ID to update status in Google Sheet")
     parser.add_argument("--gas-url", default=None, help="GAS Web App exec URL")
@@ -940,15 +938,20 @@ def main():
     print(f"📄 AI Translation Prompt File: {prompt_path}")
 
     # 4. Build MangaToolPlus .mtp project file
-    mtp_path = out_dir / f"{base_filename}.mtp"
+    mtp_filename = args.mtp_filename.strip() if getattr(args, "mtp_filename", "") and args.mtp_filename.strip() else "tempt.mtp"
+    if not mtp_filename.lower().endswith(".mtp"):
+        mtp_filename += ".mtp"
+    mtp_path = out_dir / mtp_filename
     build_mtp_package(image_files, ocr_results, mtp_path)
 
     # ASCII-safe copies for cross-platform safety
     import shutil
     ascii_mtp = out_dir / "chapter.mtp"
-    shutil.copy2(mtp_path, ascii_mtp)
+    if mtp_path.resolve() != ascii_mtp.resolve() and mtp_path.name != "tempt.mtp":
+        shutil.copy2(mtp_path, ascii_mtp)
     ascii_txt = out_dir / "chapter_ocr.txt"
-    shutil.copy2(ocr_txt_path, ascii_txt)
+    if ocr_txt_path.resolve() != ascii_txt.resolve():
+        shutil.copy2(ocr_txt_path, ascii_txt)
 
     print("\n=================================================================")
     print(f"🏁 Finished OCR for {len(image_files)} pages in {total_time:.1f}s ({total_time/60:.2f} mins)!")
@@ -962,7 +965,7 @@ def main():
     uploaded_txt_id = None
     uploaded_prompt_id = None
     if args.upload_to_source and drive_service:
-        print("\n☁️ [Google Drive Upload] 1/2 Uploading .mtp directly into source folder...")
+        print(f"\n☁️ [Google Drive Upload] 1/3 Uploading {mtp_filename} directly into source folder...")
         uploaded_mtp_id = upload_file_to_source_folder(drive_service, clean_folder_id, mtp_path)
 
         print("\n☁️ [Google Drive Upload] 2/3 Uploading OCR .txt directly into source folder...")

@@ -70,6 +70,7 @@ jobs:
             --folder-id "${{ github.event.inputs.folder_id }}" \
             --manga-name "${{ github.event.inputs.manga_name }}" \
             --chapter-num "${{ github.event.inputs.chapter_num }}" \
+            --mtp-filename "tempt.mtp" \
             --queue-id "${{ github.event.inputs.queue_id }}" \
             --doc-url "${{ github.event.inputs.doc_url }}" \
             --lang "${{ github.event.inputs.lang }}" \
