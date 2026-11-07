@@ -20,6 +20,7 @@ import json
 import argparse
 import urllib.request
 import urllib.parse
+import http.cookiejar
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 from playwright.sync_api import sync_playwright
@@ -38,16 +39,16 @@ ACCOUNTS = [
     {
         "id": "lionking",
         "name": "แปลจนเมื่อย",
-        "username": os.environ.get("READREALM_USER_1", "lionking20130@gmail.com"),
-        "password": os.environ.get("READREALM_PASS_1", "aDOPifen01@"),
+        "username": os.environ.get("READREALM_USER_1") or os.environ.get("READREALM_EMAIL_1") or "lionking20130@gmail.com",
+        "password": os.environ.get("READREALM_PASS_1") or os.environ.get("READREALM_PASSWORD_1") or "aDOPifen01@",
         "profile_dir": os.path.join(BASE_DIR, ".chrome_readrealm_lionking"),
         "bearer_file": os.path.join(BASE_DIR, "readrealm_bearer_lionking.json"),
     },
     {
         "id": "adieu",
         "name": "แปลแล้วแปลอีก",
-        "username": os.environ.get("READREALM_USER_2", "adieu2547"),
-        "password": os.environ.get("READREALM_PASS_2", "alone2548"),
+        "username": os.environ.get("READREALM_USER_2") or os.environ.get("READREALM_EMAIL_2") or "adieu2547",
+        "password": os.environ.get("READREALM_PASS_2") or os.environ.get("READREALM_PASSWORD_2") or "alone2548",
         "profile_dir": os.path.join(BASE_DIR, ".chrome_readrealm"),
         "bearer_file": os.path.join(BASE_DIR, "readrealm_bearer.json"),
     }
@@ -66,29 +67,115 @@ def get_browser_executable_path() -> Optional[str]:
                 return p
     return None
 
+def authenticate_via_direct_http(acc: Dict[str, Any]) -> str:
+    """Fast & resilient direct HTTP session login via NextAuth endpoints (immune to Cloudflare Turnstile)."""
+    user = acc.get("username", "")
+    pwd = acc.get("password", "")
+    if not user or not pwd:
+        print(f"⚠️ [{acc['name']}] ไม่พบข้อมูล Username หรือ Password สำหรับล็อกอิน", flush=True)
+        return ""
+
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+
+    try:
+        # Step 1: Request CSRF Token
+        csrf_req = urllib.request.Request("https://readrealm.co/api/auth/csrf", headers={"User-Agent": ua})
+        with opener.open(csrf_req, timeout=15) as resp:
+            csrf_data = json.loads(resp.read().decode("utf-8"))
+            csrf_token = csrf_data.get("csrfToken")
+        if not csrf_token:
+            return ""
+
+        # Step 2: Submit credentials to NextAuth callback
+        payload = urllib.parse.urlencode({
+            "csrfToken": csrf_token,
+            "username_or_email": user,
+            "password": pwd,
+            "callbackUrl": "https://readrealm.co",
+            "json": "true"
+        }).encode("utf-8")
+
+        cb_req = urllib.request.Request(
+            "https://readrealm.co/api/auth/callback/credentials",
+            data=payload,
+            headers={
+                "User-Agent": ua,
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Auth-Return-Redirect": "1"
+            }
+        )
+        with opener.open(cb_req, timeout=15) as resp:
+            _ = resp.read()
+
+        # Step 3: Fetch fresh session token
+        sess_req = urllib.request.Request("https://readrealm.co/api/auth/session", headers={"User-Agent": ua})
+        with opener.open(sess_req, timeout=15) as resp:
+            session_data = json.loads(resp.read().decode("utf-8"))
+
+        raw_token = (
+            session_data.get("accessToken")
+            or session_data.get("token")
+            or (session_data.get("user") or {}).get("accessToken")
+            or (session_data.get("user") or {}).get("token")
+        )
+        if raw_token:
+            token = f"Bearer {raw_token}" if not str(raw_token).startswith("Bearer ") else str(raw_token)
+            return token
+    except Exception as e:
+        print(f"⚠️ [{acc['name']}] Direct HTTP login attempt notice: {e}", flush=True)
+
+    return ""
+
 def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
-    """Launch Playwright session to obtain fresh Bearer token."""
-    exec_path = get_browser_executable_path()
+    """Obtain fresh Bearer token using Direct NextAuth HTTP strategy (Primary) or Playwright browser (Fallback)."""
     bearer_file = acc["bearer_file"]
     profile_dir = acc["profile_dir"]
 
-    print(f"🔄 [{acc['name']}] กำลังเชื่อมต่อเบราว์เซอร์เพื่อดึง Token ใหม่...", flush=True)
+    # Strategy 1 (Primary): Direct HTTP Authentication (Fast, zero Turnstile blocking, works on headless CI)
+    print(f"🔄 [{acc['name']}] กำลังขอรับ Token ใหม่ผ่าน Direct NextAuth API...", flush=True)
+    token = authenticate_via_direct_http(acc)
+    if token:
+        try:
+            with open(bearer_file, "w", encoding="utf-8") as f:
+                json.dump({"bearer": token, "updated_at": datetime.now().isoformat()}, f, indent=2)
+            print(f"✓ [{acc['name']}] ได้รับ Bearer Token ผ่าน Direct API สำเร็จ ({len(token)} chars)", flush=True)
+            return token
+        except Exception as e:
+            print(f"⚠️ Error writing bearer file: {e}", flush=True)
+            return token
+
+    # Strategy 2 (Fallback): Headless / Persistent Browser Session via Playwright
+    print(f"🔄 [{acc['name']}] สลับไปใช้ Playwright Browser เพื่อดึง Token...", flush=True)
+    exec_path = get_browser_executable_path()
     try:
         with sync_playwright() as p:
             launch_kwargs = {
                 "headless": headless,
-                "no_viewport": True,
+                "viewport": {"width": 1280, "height": 800},
                 "ignore_default_args": ["--enable-automation"],
                 "args": [
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
-                    "--disable-infobars"
+                    "--disable-infobars",
+                    "--disable-dev-shm-usage"
                 ]
             }
             if exec_path:
                 launch_kwargs["executable_path"] = exec_path
 
-            context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+            context = p.chromium.launch_persistent_context(
+                user_data_dir=profile_dir,
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                **launch_kwargs
+            )
+            # Inject stealth helper
+            context.add_init_script("""
+                Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+                window.chrome = { runtime: {} };
+            """)
+
             page = context.pages[0] if context.pages else context.new_page()
 
             tokens = []
@@ -108,7 +195,7 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
             # If redirected to login, perform auto login
             if "/login" in page.url:
                 print(f"🔑 [{acc['name']}] ตรวจพบหน้าเข้าสู่ระบบ -> ทำการล็อกอิน...", flush=True)
-                tokens.clear()  # ล้าง Token เก่าก่อนหน้าทิ้งเพื่อไม่ให้ใช้ token ที่หมดอายุ
+                tokens.clear()
 
                 user_input = page.locator("input[name='username_or_email']").first
                 pass_input = page.locator("input[name='password']").first
@@ -123,7 +210,7 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
                 page.wait_for_timeout(1000)
 
                 btn = page.locator("button[type='submit']").first
-                for sec in range(35):
+                for sec in range(25):
                     page.wait_for_timeout(1000)
                     if "/login" not in page.url:
                         print(f"✓ [{acc['name']}] นำทางออกจากหน้าล็อกอินแล้ว")
@@ -132,7 +219,7 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
                     # พยายามคลิก Cloudflare Turnstile checkbox หากมี iframe อยู่
                     try:
                         cf_frame = page.frame_locator("#cf-turnstile iframe, iframe[src*='challenges.cloudflare.com']").first
-                        cb = cf_frame.locator("input[type='checkbox'], .cb-i, #challenge-stage").first
+                        cb = cf_frame.locator("input[type='checkbox'], .cb-i, #challenge-stage, .ctp-checkbox-label").first
                         if cb.count() and cb.is_visible():
                             cb.click(timeout=1500)
                     except Exception:
@@ -151,10 +238,9 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
                 page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
                 page.wait_for_timeout(4000)
 
-            # Strategy 1: ดึง Bearer Token ล่าสุดที่เพิ่งดักจับได้ (ไม่ใช้ tokens[0] ที่อาจเป็นของเก่า)
             token = tokens[-1] if tokens else ""
 
-            # Strategy 2: ดึงจาก NextAuth Session endpoint (/api/auth/session)
+            # Check NextAuth Session endpoint
             if not token:
                 try:
                     session_data = page.evaluate("""async () => {
@@ -170,7 +256,7 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
                 except Exception as e:
                     print(f"⚠️ Session eval error: {e}")
 
-            # Strategy 3: ดึงจาก localStorage / sessionStorage
+            # Check localStorage / sessionStorage
             if not token:
                 try:
                     stored_token = page.evaluate("""() => {
@@ -204,6 +290,13 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
                     print(f"⚠️ Error writing bearer file: {e}")
             else:
                 print(f"⚠️ [{acc['name']}] ไม่สามารถดึง Bearer Token ได้จากการเชื่อมต่อเบราว์เซอร์")
+                # Save screenshot for debugging
+                debug_ss = os.path.join(DATA_DIR, f"debug_login_{acc['id']}.png")
+                try:
+                    page.screenshot(path=debug_ss)
+                    print(f"📸 บันทึกภาพหน้าจอดักจับปัญหา: {debug_ss}")
+                except Exception:
+                    pass
 
             context.close()
             return token

@@ -19,6 +19,7 @@ import json
 import argparse
 import urllib.request
 import urllib.parse
+import http.cookiejar
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 from playwright.sync_api import sync_playwright
@@ -34,8 +35,23 @@ PROFILE_DIR = os.path.join(BASE_DIR, ".chrome_readrealm")
 DATA_FILE = os.path.join(DATA_DIR, "readrealm_stats.json")
 BEARER_FILE = os.path.join(BASE_DIR, "readrealm_bearer.json")
 
+CURRENT_ACCOUNT = "adieu"
+ACCOUNT_CONFIGS = {
+    "lionking": {
+        "name": "แปลจนเมื่อย",
+        "username": os.environ.get("READREALM_USER_1") or os.environ.get("READREALM_EMAIL_1") or "lionking20130@gmail.com",
+        "password": os.environ.get("READREALM_PASS_1") or os.environ.get("READREALM_PASSWORD_1") or "aDOPifen01@",
+    },
+    "adieu": {
+        "name": "แปลแล้วแปลอีก",
+        "username": os.environ.get("READREALM_USER_2") or os.environ.get("READREALM_EMAIL_2") or "adieu2547",
+        "password": os.environ.get("READREALM_PASS_2") or os.environ.get("READREALM_PASSWORD_2") or "alone2548",
+    }
+}
+
 def configure_account(account: str = "adieu"):
-    global PROFILE_DIR, DATA_FILE, BEARER_FILE
+    global PROFILE_DIR, DATA_FILE, BEARER_FILE, CURRENT_ACCOUNT
+    CURRENT_ACCOUNT = account
     if account == "lionking":
         PROFILE_DIR = os.path.join(BASE_DIR, ".chrome_readrealm_lionking")
         DATA_FILE = os.path.join(DATA_DIR, "readrealm_stats_lionking.json")
@@ -63,10 +79,82 @@ def get_browser_executable_path() -> Optional[str]:
                 return p
     return None
 
+def authenticate_via_direct_http(acc_key: str = "adieu") -> str:
+    """Fast & resilient direct HTTP session login via NextAuth endpoints."""
+    cfg = ACCOUNT_CONFIGS.get(acc_key, ACCOUNT_CONFIGS["adieu"])
+    user = cfg.get("username", "")
+    pwd = cfg.get("password", "")
+    if not user or not pwd:
+        return ""
+
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+
+    try:
+        csrf_req = urllib.request.Request("https://readrealm.co/api/auth/csrf", headers={"User-Agent": ua})
+        with opener.open(csrf_req, timeout=15) as resp:
+            csrf_data = json.loads(resp.read().decode("utf-8"))
+            csrf_token = csrf_data.get("csrfToken")
+        if not csrf_token:
+            return ""
+
+        payload = urllib.parse.urlencode({
+            "csrfToken": csrf_token,
+            "username_or_email": user,
+            "password": pwd,
+            "callbackUrl": "https://readrealm.co",
+            "json": "true"
+        }).encode("utf-8")
+
+        cb_req = urllib.request.Request(
+            "https://readrealm.co/api/auth/callback/credentials",
+            data=payload,
+            headers={
+                "User-Agent": ua,
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Auth-Return-Redirect": "1"
+            }
+        )
+        with opener.open(cb_req, timeout=15) as resp:
+            _ = resp.read()
+
+        sess_req = urllib.request.Request("https://readrealm.co/api/auth/session", headers={"User-Agent": ua})
+        with opener.open(sess_req, timeout=15) as resp:
+            session_data = json.loads(resp.read().decode("utf-8"))
+
+        raw_token = (
+            session_data.get("accessToken")
+            or session_data.get("token")
+            or (session_data.get("user") or {}).get("accessToken")
+            or (session_data.get("user") or {}).get("token")
+        )
+        if raw_token:
+            return f"Bearer {raw_token}" if not str(raw_token).startswith("Bearer ") else str(raw_token)
+    except Exception as e:
+        print(f"⚠️ Direct HTTP login attempt notice: {e}", flush=True)
+
+    return ""
+
 def refresh_bearer_token(headless: bool = True) -> str:
-    """Launch Playwright session to obtain fresh Bearer JWT token from NextAuth."""
+    """Obtain fresh Bearer JWT token from NextAuth using Direct HTTP (Primary) or Playwright (Fallback)."""
+    global CURRENT_ACCOUNT
+    acc_name = ACCOUNT_CONFIGS.get(CURRENT_ACCOUNT, {}).get("name", CURRENT_ACCOUNT)
+    print(f"🔄 [{acc_name}] กำลังขอรับ Token ใหม่ผ่าน Direct NextAuth API...", flush=True)
+
+    token = authenticate_via_direct_http(CURRENT_ACCOUNT)
+    if token:
+        try:
+            with open(BEARER_FILE, "w", encoding="utf-8") as f:
+                json.dump({"bearer": token, "updated_at": datetime.now().isoformat()}, f, indent=2)
+            print(f"✓ [{acc_name}] ได้รับ Bearer Token ผ่าน Direct API สำเร็จ ({len(token)} chars)")
+            return token
+        except Exception as e:
+            print(f"⚠️ Error writing bearer file: {e}")
+            return token
+
     exec_path = get_browser_executable_path()
-    print("🔄 กำลังเชื่อมต่อเบราว์เซอร์เพื่อดึง Bearer Token ล่าสุด...", flush=True)
+    print(f"🔄 [{acc_name}] สลับไปใช้ Playwright Browser เพื่อดึง Bearer Token...", flush=True)
 
     with sync_playwright() as p:
         context = p.chromium.launch_persistent_context(
@@ -107,7 +195,7 @@ def refresh_bearer_token(headless: bool = True) -> str:
         if token:
             with open(BEARER_FILE, "w", encoding="utf-8") as f:
                 json.dump({"bearer": token, "updated_at": datetime.now().isoformat()}, f, indent=2)
-            print(f"✓ ได้รับ Bearer Token สำเร็จ ({len(token)} chars)")
+            print(f"✓ [{acc_name}] ได้รับ Bearer Token สำเร็จ ({len(token)} chars)")
 
         context.close()
         return token
