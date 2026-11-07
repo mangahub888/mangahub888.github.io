@@ -587,6 +587,9 @@ function doPost(e) {
       case 'GET_COMIX_GROUPS':
         result = getComixGroups(payload ? (payload.url || payload.originalurl || '') : '');
         break;
+      case 'SEARCH_COMIX':
+        result = searchComixOnline(payload);
+        break;
       case 'TEST_COMIX_CHAPTER':
         result = testComixChapter(payload);
         break;
@@ -7334,6 +7337,78 @@ function proxyComixImage(payload) {
 
   }
 
+}
+
+
+/**
+ * ค้นหามังงะสดแบบ Real-time จาก Comix.to API v1
+ */
+function searchComixOnline(payload) {
+  try {
+    const keyword = payload ? String(payload.keyword || payload.query || '').trim() : '';
+    const limit = payload && payload.limit ? Number(payload.limit) : 20;
+    if (!keyword) {
+      return { success: true, items: [] };
+    }
+
+    const apiRes = callComixApiFromGas('/manga', { keyword: keyword, limit: limit });
+    const rawItems = (apiRes && Array.isArray(apiRes.items)) ? apiRes.items : (Array.isArray(apiRes) ? apiRes : []);
+
+    const items = rawItems.map(function(item) {
+      const hid = item.hid || '';
+      let url = item.url || '';
+      if (url && !url.startsWith('http')) {
+        url = 'https://comix.to' + (url.startsWith('/') ? '' : '/') + url;
+      } else if (!url && hid) {
+        url = 'https://comix.to/title/' + hid;
+      }
+
+      let coverUrl = '';
+      if (item.poster) {
+        if (typeof item.poster === 'string') {
+          coverUrl = item.poster;
+        } else if (item.poster.medium) {
+          coverUrl = item.poster.medium;
+        } else if (item.poster.large) {
+          coverUrl = item.poster.large;
+        }
+      }
+      if (coverUrl && !coverUrl.startsWith('http')) {
+        coverUrl = 'https://comix.to' + (coverUrl.startsWith('/') ? '' : '/') + coverUrl;
+      }
+
+      let origin = 'Manga';
+      const lang = String(item.originalLanguage || '').toLowerCase();
+      if (lang === 'ko' || lang === 'kr') origin = 'KR (Manhwa)';
+      else if (lang === 'ja' || lang === 'jp') origin = 'JP (Manga)';
+      else if (lang === 'zh' || lang === 'cn') origin = 'CN (Manhua)';
+
+      return {
+        id: hid || String(item.id || ''),
+        title: item.title || '',
+        alt_titles: Array.isArray(item.altTitles) ? item.altTitles : [],
+        url: url,
+        cover: coverUrl,
+        chapter_count: item.latestChapter !== undefined ? Number(item.latestChapter) : undefined,
+        status: item.status || 'Releasing',
+        origin: origin,
+        score: item.ratedAvg || item.ratedScore || 0,
+        genres: Array.isArray(item.genres) ? item.genres.map(function(g) { return typeof g === 'string' ? g : (g.name || ''); }) : []
+      };
+    });
+
+    return {
+      success: true,
+      items: items
+    };
+  } catch (err) {
+    console.error('searchComixOnline error:', err);
+    return {
+      success: false,
+      error: 'เกิดข้อผิดพลาดในการค้นหา Comix: ' + err.toString(),
+      items: []
+    };
+  }
 }
 
 

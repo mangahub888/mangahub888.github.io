@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import comixRawData from "@/data/comix_project_ideas_latest.json"
+import { searchComixLive, LiveComixItem } from "@/api/comixSearchService"
 import {
   Search,
   Globe,
@@ -18,8 +19,10 @@ import {
   X,
   BookOpen,
   Flame,
-  ArrowRight,
   Sparkles,
+  Loader2,
+  Radio,
+  Zap,
 } from "lucide-react"
 
 export interface ComixSearchItem {
@@ -36,6 +39,7 @@ export interface ComixSearchItem {
   genres?: string[]
   views_count?: number
   views_text?: string
+  isLive?: boolean
 }
 
 interface ComixUrlSearchDialogProps {
@@ -62,9 +66,13 @@ export function ComixUrlSearchDialog({
   const [query, setQuery] = React.useState("")
   const [originFilter, setOriginFilter] = React.useState<string>("all")
   const [manualUrl, setManualUrl] = React.useState("")
+  const [isSearchingOnline, setIsSearchingOnline] = React.useState(false)
+  const [onlineResults, setOnlineResults] = React.useState<ComixSearchItem[]>([])
+  const [hasSearchedOnline, setHasSearchedOnline] = React.useState(false)
   const searchInputRef = React.useRef<HTMLInputElement>(null)
+  const liveSearchTimerRef = React.useRef<any>(null)
 
-  // Load items from comix dataset
+  // Load items from local comix dataset
   const allItems: ComixSearchItem[] = React.useMemo(() => {
     return ((comixRawData as any)?.items || []) as ComixSearchItem[]
   }, [])
@@ -72,10 +80,13 @@ export function ComixUrlSearchDialog({
   // Sync initial query when opened
   React.useEffect(() => {
     if (open) {
-      setQuery(initialQuery.trim())
+      const q = initialQuery.trim()
+      setQuery(q)
       setOriginFilter("all")
       setManualUrl("")
-      // Auto focus search input after animation
+      setOnlineResults([])
+      setHasSearchedOnline(false)
+
       const timer = setTimeout(() => {
         searchInputRef.current?.focus()
         searchInputRef.current?.select()
@@ -90,13 +101,11 @@ export function ComixUrlSearchDialog({
     return q.startsWith("http") && (q.includes("comix.to") || q.includes("/title/"))
   }, [query])
 
-  // Filter items
-  const filteredItems = React.useMemo(() => {
+  // Local Filtered items
+  const localFilteredItems = React.useMemo(() => {
     const q = query.trim().toLowerCase()
-
     let list = allItems
 
-    // Filter by origin if selected
     if (originFilter !== "all") {
       list = list.filter((item) =>
         item.origin ? item.origin.toUpperCase().includes(originFilter) : false
@@ -104,7 +113,6 @@ export function ComixUrlSearchDialog({
     }
 
     if (!q) {
-      // If query is empty, return top 30
       return list.slice(0, 30)
     }
 
@@ -114,9 +122,7 @@ export function ComixUrlSearchDialog({
       if (item.url && item.url.toLowerCase().includes(q)) return true
       if (
         Array.isArray(item.alt_titles) &&
-        item.alt_titles.some((alt) =>
-          String(alt).toLowerCase().includes(q)
-        )
+        item.alt_titles.some((alt) => String(alt).toLowerCase().includes(q))
       ) {
         return true
       }
@@ -129,6 +135,81 @@ export function ComixUrlSearchDialog({
       return false
     })
   }, [allItems, query, originFilter])
+
+  // Combined Results (Local matches first, then Live Comix results deduped)
+  const combinedItems = React.useMemo(() => {
+    const map = new Map<string, ComixSearchItem>()
+
+    // Add local filtered items
+    for (const item of localFilteredItems) {
+      const key = (item.id || item.url || item.title).toLowerCase()
+      map.set(key, item)
+    }
+
+    // Add online results
+    for (const item of onlineResults) {
+      if (originFilter !== "all" && item.origin) {
+        if (!item.origin.toUpperCase().includes(originFilter)) continue
+      }
+      const key = (item.id || item.url || item.title).toLowerCase()
+      if (!map.has(key)) {
+        map.set(key, { ...item, isLive: true })
+      }
+    }
+
+    return Array.from(map.values())
+  }, [localFilteredItems, onlineResults, originFilter])
+
+  // Perform Live Online Search
+  const handlePerformLiveSearch = React.useCallback(
+    async (searchTerm: string) => {
+      const trimmed = searchTerm.trim()
+      if (!trimmed || isDirectUrl) return
+
+      setIsSearchingOnline(true)
+      try {
+        const results = await searchComixLive(trimmed, 25)
+        setOnlineResults(
+          results.map((r) => ({
+            ...r,
+            isLive: true,
+          }))
+        )
+        setHasSearchedOnline(true)
+      } catch (err) {
+        console.error("Live Comix search failed:", err)
+      } finally {
+        setIsSearchingOnline(false)
+      }
+    },
+    [isDirectUrl]
+  )
+
+  // Auto-trigger debounced live search when query has >= 3 chars
+  React.useEffect(() => {
+    if (!open) return
+    const q = query.trim()
+    if (!q || isDirectUrl || q.length < 3) {
+      setOnlineResults([])
+      setHasSearchedOnline(false)
+      return
+    }
+
+    if (liveSearchTimerRef.current) {
+      clearTimeout(liveSearchTimerRef.current)
+    }
+
+    // Debounce 600ms for live auto-search
+    liveSearchTimerRef.current = setTimeout(() => {
+      handlePerformLiveSearch(q)
+    }, 600)
+
+    return () => {
+      if (liveSearchTimerRef.current) {
+        clearTimeout(liveSearchTimerRef.current)
+      }
+    }
+  }, [query, isDirectUrl, open, handlePerformLiveSearch])
 
   const handleApplyDirectUrl = (urlToUse: string, fallbackTitle?: string) => {
     const cleanUrl = urlToUse.trim()
@@ -150,15 +231,21 @@ export function ComixUrlSearchDialog({
               <div className="w-8 h-8 rounded-lg bg-violet-600/20 border border-violet-500/40 flex items-center justify-center text-violet-400">
                 <Globe className="h-4 w-4" />
               </div>
-              <div>
-                <DialogTitle className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  ค้นหา URL จาก Comix.to
-                  <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30 text-[10px] px-1.5 py-0 font-normal">
-                    {allItems.length} เรื่องในระบบ
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <DialogTitle className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    ค้นหา URL จาก Comix.to
+                  </DialogTitle>
+                  <Badge className="bg-emerald-500/10 text-emerald-300 border-emerald-500/30 text-[10px] px-1.5 py-0 font-normal flex items-center gap-1">
+                    <Radio className="h-2.5 w-2.5 animate-pulse text-emerald-400" />
+                    Live API
                   </Badge>
-                </DialogTitle>
+                  <Badge className="bg-violet-500/20 text-violet-300 border-violet-500/30 text-[10px] px-1.5 py-0 font-normal">
+                    {allItems.length} แคชแนะนำ
+                  </Badge>
+                </div>
                 <DialogDescription className="text-xs text-slate-400">
-                  ค้นหาชื่อเรื่องเพื่อดึง URL ต้นฉบับไปใส่ในโปรเจคใหม่ได้ทันทีในคลิกเดียว
+                  ค้นหาได้ทุกเรื่องแบบ Real-Time จาก Comix.to API พร้อมนำ URL ไปสร้างโปรเจกต์ทันที
                 </DialogDescription>
               </div>
             </div>
@@ -172,21 +259,41 @@ export function ComixUrlSearchDialog({
                 ref={searchInputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && query.trim()) {
+                    e.preventDefault()
+                    handlePerformLiveSearch(query)
+                  }
+                }}
                 placeholder="พิมพ์ชื่อเรื่อง (ไทย / อังกฤษ / ชื่อเดิม) หรือวางลิงก์ Comix..."
-                className="pl-9 pr-9 h-10 bg-[#090d16] border-violet-500/40 focus:border-violet-400 text-sm placeholder:text-slate-500 text-slate-100"
+                className="pl-9 pr-24 h-10 bg-[#090d16] border-violet-500/40 focus:border-violet-400 text-sm placeholder:text-slate-500 text-slate-100"
               />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full hover:bg-slate-800"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                {isSearchingOnline && (
+                  <span className="flex items-center gap-1 text-[11px] text-violet-300 bg-violet-950/80 px-2 py-0.5 rounded border border-violet-500/30">
+                    <Loader2 className="h-3 w-3 animate-spin text-violet-400" />
+                    กำลังค้นหาสด...
+                  </span>
+                )}
+                {query && !isSearchingOnline && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery("")
+                      setOnlineResults([])
+                      setHasSearchedOnline(false)
+                    }}
+                    className="text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-800"
+                    title="ล้างข้อความ"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* Origin Quick Filters */}
+            {/* Origin Quick Filters & Status Bar */}
             <div className="flex items-center justify-between gap-2 flex-wrap pt-0.5">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-[11px] text-slate-400 mr-1">ประเภท:</span>
@@ -211,12 +318,24 @@ export function ComixUrlSearchDialog({
                 ))}
               </div>
 
-              <div className="text-[11px] text-slate-400 font-mono">
-                {query.trim() ? (
-                  <span>ผลการค้นหา {filteredItems.length} เรื่อง</span>
-                ) : (
-                  <span>แนะนำยอดนิยม ({filteredItems.length})</span>
+              <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
+                {query.trim() && !isSearchingOnline && (
+                  <button
+                    type="button"
+                    onClick={() => handlePerformLiveSearch(query)}
+                    className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-200 underline cursor-pointer"
+                  >
+                    <Zap className="h-3 w-3" />
+                    ค้นหาสดซ้ำ
+                  </button>
                 )}
+                <span>
+                  {query.trim()
+                    ? `พบ ${combinedItems.length} เรื่อง ${
+                        onlineResults.length > 0 ? `(สด +${onlineResults.length})` : ""
+                      }`
+                    : `แนะนำยอดนิยม (${combinedItems.length})`}
+                </span>
               </div>
             </div>
           </div>
@@ -230,9 +349,7 @@ export function ComixUrlSearchDialog({
                 <Sparkles className="h-3.5 w-3.5 text-violet-400" />
                 ตรวจพบลิงก์ Comix.to ในช่องค้นหา
               </p>
-              <p className="text-[11px] text-violet-300/80 truncate font-mono">
-                {query.trim()}
-              </p>
+              <p className="text-[11px] text-violet-300/80 truncate font-mono">{query.trim()}</p>
             </div>
             <Button
               size="sm"
@@ -247,21 +364,47 @@ export function ComixUrlSearchDialog({
 
         {/* Results Scroll Area */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2.5 min-h-[240px] max-h-[50vh]">
-          {filteredItems.length === 0 ? (
+          {isSearchingOnline && combinedItems.length === 0 ? (
+            <div className="py-12 text-center space-y-3">
+              <Loader2 className="h-8 w-8 animate-spin text-violet-400 mx-auto" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-slate-200">
+                  กำลังค้นหา &ldquo;{query}&rdquo; จาก Comix.to API...
+                </p>
+                <p className="text-xs text-slate-400">ระบบกำลังเชื่อมต่อฐานข้อมูล Comix สด</p>
+              </div>
+            </div>
+          ) : combinedItems.length === 0 ? (
             <div className="py-8 text-center space-y-3">
               <div className="w-12 h-12 rounded-full bg-slate-800/80 border border-slate-700/60 mx-auto flex items-center justify-center text-slate-500">
                 <Search className="h-5 w-5" />
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-slate-300">
-                  ไม่พบเรื่องที่ตรงกับ &ldquo;{query}&rdquo; ในระบบแคช
+                  ไม่พบเรื่องที่ตรงกับ &ldquo;{query}&rdquo;
                 </p>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  คุณสามารถเปิดค้นหาโดยตรงบน Comix.to แล้วคัดลอก URL มาวางได้เลย
+                  {hasSearchedOnline
+                    ? "ค้นหาทั้งในระบบแคชและบน Comix.to สดแล้วไม่พบ ลองใช้คำค้นหาที่สั้นลง หรือเปิดดูบนเว็บโดยตรง"
+                    : "ลองกดค้นหาสดจาก Comix.to เพื่อดึงข้อมูล Real-time"}
                 </p>
               </div>
 
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => handlePerformLiveSearch(query)}
+                  disabled={isSearchingOnline}
+                  className="bg-violet-600 hover:bg-violet-500 text-white text-xs h-8 px-3.5"
+                >
+                  {isSearchingOnline ? (
+                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                  ) : (
+                    <Zap className="h-3.5 w-3.5 mr-1.5" />
+                  )}
+                  ค้นหาสดจาก Comix.to
+                </Button>
+
                 <a
                   href={`https://comix.to/search?q=${encodeURIComponent(query)}`}
                   target="_blank"
@@ -269,7 +412,7 @@ export function ComixUrlSearchDialog({
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-600/20 border border-violet-500/40 text-violet-300 hover:bg-violet-600/30 hover:text-white text-xs transition-colors"
                 >
                   <Globe className="h-3.5 w-3.5" />
-                  เปิดค้นหา &ldquo;{query}&rdquo; บน Comix.to
+                  เปิด Comix.to บนแท็บใหม่
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
@@ -298,7 +441,7 @@ export function ComixUrlSearchDialog({
               </div>
             </div>
           ) : (
-            filteredItems.map((item) => {
+            combinedItems.map((item) => {
               const isKr = item.origin?.includes("KR")
               const isJp = item.origin?.includes("JP") || item.origin === "Manga"
               const isCn = item.origin?.includes("CN")
@@ -352,10 +495,17 @@ export function ComixUrlSearchDialog({
                           {item.origin || "Manga"}
                         </Badge>
 
+                        {item.isLive && (
+                          <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[9px] px-1.5 py-0 font-medium flex items-center gap-1">
+                            <Radio className="h-2 w-2 text-emerald-400" />
+                            Live Comix
+                          </Badge>
+                        )}
+
                         {item.status && (
                           <span
                             className={`text-[9px] px-1.5 py-0 rounded font-medium ${
-                              item.status === "Completed"
+                              item.status.toLowerCase() === "completed"
                                 ? "bg-emerald-950 text-emerald-400 border border-emerald-800/40"
                                 : "bg-slate-800 text-slate-400"
                             }`}
@@ -381,17 +531,15 @@ export function ComixUrlSearchDialog({
                       </h4>
 
                       {/* Alt Titles Preview (if any) */}
-                      {Array.isArray(item.alt_titles) &&
-                        item.alt_titles.length > 0 && (
-                          <p
-                            className="text-[11px] text-slate-400 truncate mt-0.5"
-                            title={item.alt_titles.join(" / ")}
-                          >
-                            ชื่ออื่น: {item.alt_titles[0]}
-                            {item.alt_titles.length > 1 &&
-                              ` (${item.alt_titles.length} ชื่อ)`}
-                          </p>
-                        )}
+                      {Array.isArray(item.alt_titles) && item.alt_titles.length > 0 && (
+                        <p
+                          className="text-[11px] text-slate-400 truncate mt-0.5"
+                          title={item.alt_titles.join(" / ")}
+                        >
+                          ชื่ออื่น: {item.alt_titles[0]}
+                          {item.alt_titles.length > 1 && ` (${item.alt_titles.length} ชื่อ)`}
+                        </p>
+                      )}
 
                       {/* URL Preview */}
                       <p className="text-[10px] text-violet-400/80 font-mono truncate mt-1">
@@ -432,8 +580,9 @@ export function ComixUrlSearchDialog({
 
         {/* Footer */}
         <div className="p-3 bg-[#0a0d16] border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span className="text-[11px]">
-            💡 ลิงก์ Comix.to จะถูกใส่ลงในช่อง &ldquo;URL ต้นฉบับ&rdquo; ทันที
+          <span className="text-[11px] flex items-center gap-1.5">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            รองรับค้นหาสดจาก Comix.to ทุกเรื่องแบบ Real-Time
           </span>
           <Button
             variant="ghost"
