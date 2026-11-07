@@ -3793,10 +3793,10 @@
       }
     },
     "2026-11-07": {
-      "recorded_at": "2026-11-07T15:25:34.941142",
+      "recorded_at": "2026-11-07T15:56:35.771310",
       "total_comics": 236,
-      "total_sales": 5779247.45,
-      "total_views": 20694227,
+      "total_sales": 5779326.65,
+      "total_views": 20694554,
       "comics": {
         "7vgQpJ2VjRK3V6Zr5GmX": {
           "subject": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
@@ -3804,13 +3804,13 @@
           "account_id": "lionking",
           "total_views": 181,
           "total_sales": 0.0,
-          "chapters_count": 5
+          "chapters_count": 6
         },
         "DBQ4k6PYpQnnx8qrm0J5": {
           "subject": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 1198,
+          "total_views": 1199,
           "total_sales": 0.0,
           "chapters_count": 6
         },
@@ -3818,7 +3818,7 @@
           "subject": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 3856,
+          "total_views": 3857,
           "total_sales": 1141.2,
           "chapters_count": 20
         },
@@ -3826,7 +3826,7 @@
           "subject": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 3144,
+          "total_views": 3145,
           "total_sales": 270.0,
           "chapters_count": 12
         },
@@ -3882,7 +3882,7 @@
           "subject": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 6108,
+          "total_views": 6110,
           "total_sales": 1515.6,
           "chapters_count": 37
         },
@@ -3890,8 +3890,8 @@
           "subject": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 34550,
-          "total_sales": 2448.0,
+          "total_views": 34557,
+          "total_sales": 2451.6,
           "chapters_count": 18
         },
         "m5MEjRdOnnzbOg6Ay8ZW": {
@@ -3922,9 +3922,9 @@
           "subject": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 458,
+          "total_views": 461,
           "total_sales": 0.0,
-          "chapters_count": 5
+          "chapters_count": 7
         },
         "DBQ4k6PYpQr5x8qrm0J5": {
           "subject": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
@@ -3962,15 +3962,15 @@
           "subject": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 21033,
-          "total_sales": 7320.6,
+          "total_views": 21037,
+          "total_sales": 7326.0,
           "chapters_count": 32
         },
         "NG8Qg2kxDyqvOz7Kdeo9": {
           "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 20607,
+          "total_views": 20609,
           "total_sales": 7714.8,
           "chapters_count": 28
         },
@@ -3986,7 +3986,7 @@
           "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 33815,
+          "total_views": 33818,
           "total_sales": 8533.8,
           "chapters_count": 26
         },
@@ -3994,8 +3994,8 @@
           "subject": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 13849,
-          "total_sales": 1818.0,
+          "total_views": 13850,
+          "total_sales": 1819.8,
           "chapters_count": 26
         },
         "3MjZ0qWYgJ4XVJLAreG1": {
@@ -4018,7 +4018,7 @@
           "subject": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 12761,
+          "total_views": 12767,
           "total_sales": 3389.4,
           "chapters_count": 43
         },
@@ -4042,7 +4042,7 @@
           "subject": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 41694,
+          "total_views": 41695,
           "total_sales": 6427.8,
           "chapters_count": 34
         },
@@ -4082,8 +4082,8 @@
           "subject": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 48084,
-          "total_sales": 8517.6,
+          "total_views": 48087,
+          "total_sales": 8519.4,
           "chapters_count": 44
         },
         "1E4dv9AV5M2rVogakpmQ": {
@@ -4098,7 +4098,7 @@
           "subject": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 117949,
+          "total_views": 117952,
           "total_sales": 25542.0,
           "chapters_count": 62
         },
@@ -4138,7 +4138,7 @@
           "subject": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 83528,
+          "total_views": 83532,
           "total_sales": 28236.6,
           "chapters_count": 70
         },
@@ -4186,7 +4186,7 @@
           "subject": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 165636,
+          "total_views": 165639,
           "total_sales": 33372.0,
           "chapters_count": 102
         },
@@ -4218,8 +4218,8 @@
           "subject": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 305956,
-          "total_sales": 102673.2,
+          "total_views": 305965,
+          "total_sales": 102676.8,
           "chapters_count": 64
         },
         "a7qNk8mOK595YXyvogDn": {
@@ -4290,7 +4290,7 @@
           "subject": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 140717,
+          "total_views": 140718,
           "total_sales": 29998.8,
           "chapters_count": 55
         },
@@ -4298,7 +4298,7 @@
           "subject": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 276798,
+          "total_views": 276810,
           "total_sales": 82737.0,
           "chapters_count": 73
         },
@@ -4314,8 +4314,8 @@
           "subject": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 531494,
-          "total_sales": 121876.2,
+          "total_views": 531509,
+          "total_sales": 121881.6,
           "chapters_count": 129
         },
         "RbKaMELO79JaYglzP41q": {
@@ -4338,7 +4338,7 @@
           "subject": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 155010,
+          "total_views": 155014,
           "total_sales": 26505.0,
           "chapters_count": 120
         },
@@ -4458,7 +4458,7 @@
           "subject": "อิสระทางทรัพย์ พันธะทางใจ",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 305041,
+          "total_views": 305044,
           "total_sales": 59072.4,
           "chapters_count": 128
         },
@@ -4490,8 +4490,8 @@
           "subject": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 447819,
-          "total_sales": 154463.4,
+          "total_views": 447823,
+          "total_sales": 154465.2,
           "chapters_count": 153
         },
         "wPZAJq7OkMwlYW8Dozkm": {
@@ -4546,8 +4546,8 @@
           "subject": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 375415,
-          "total_sales": 95446.8,
+          "total_views": 375468,
+          "total_sales": 95484.6,
           "chapters_count": 113
         },
         "NG8Qg2kxDpAjxz7Kdeo9": {
@@ -4578,7 +4578,7 @@
           "subject": "หลังจากลืมตาขึ้นมาศิษย์ของข้ากลับกลายเป็นจักรพรรดินีปีศาจ | My Empress's Disciple Will Become a Villain",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 81914,
+          "total_views": 81918,
           "total_sales": 16210.8,
           "chapters_count": 68
         },
@@ -4722,7 +4722,7 @@
           "subject": "ผู้ฝึกกระบี่เต็มเวลา",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 376921,
+          "total_views": 376922,
           "total_sales": 130228.2,
           "chapters_count": 125
         },
@@ -4730,7 +4730,7 @@
           "subject": "ฉันคือผู้ผูกมัดพันธสัญญารับใช้ตัวเอง",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 182175,
+          "total_views": 182177,
           "total_sales": 32294.4,
           "chapters_count": 76
         },
@@ -4746,7 +4746,7 @@
           "subject": "ที่แท้ข้าก็ไร้เทียมทานมาตั้งนานแล้วนี่เอง",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 1788200,
+          "total_views": 1788209,
           "total_sales": 425891.8,
           "chapters_count": 323
         },
@@ -4754,7 +4754,7 @@
           "subject": "เจ้าแห่งกงล้อโชคชะตา",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 1860527,
+          "total_views": 1860543,
           "total_sales": 328624.4,
           "chapters_count": 274
         },
@@ -4810,7 +4810,7 @@
           "subject": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 958828,
+          "total_views": 958912,
           "total_sales": 224286.4,
           "chapters_count": 143
         },
@@ -4858,7 +4858,7 @@
           "subject": "ยอดหมอเหนือภพ",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 227751,
+          "total_views": 227753,
           "total_sales": 74937.6,
           "chapters_count": 80
         },
@@ -4954,8 +4954,8 @@
           "subject": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 638816,
-          "total_sales": 127622.2,
+          "total_views": 638834,
+          "total_sales": 127624.0,
           "chapters_count": 239
         },
         "WrwEvg7LY81x20blNPpM": {
@@ -5002,7 +5002,7 @@
           "subject": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 1251380,
+          "total_views": 1251404,
           "total_sales": 461432.1,
           "chapters_count": 368
         },
@@ -5010,8 +5010,8 @@
           "subject": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
           "account": "แปลจนเมื่อย",
           "account_id": "lionking",
-          "total_views": 1339875,
-          "total_sales": 497124.8,
+          "total_views": 1339896,
+          "total_sales": 497141.0,
           "chapters_count": 212
         },
         "4n6r39MJVw7VNAB81yk7": {
@@ -5692,7 +5692,7 @@
   "metadata": {
     "created_at": "2026-11-04T11:12:15.239778"
   },
-  "last_updated": "2026-11-07T15:25:34.941142",
+  "last_updated": "2026-11-07T15:56:35.771310",
   "timeline": [
     {
       "recorded_at": "2026-11-04T12:30:39.307424",
@@ -5786,10 +5786,10 @@
       "total_comics": 236
     },
     {
-      "recorded_at": "2026-11-07T15:25:34.941142",
+      "recorded_at": "2026-11-07T15:56:35.771310",
       "date": "2026-11-07",
-      "total_sales": 5779247.45,
-      "total_views": 20694227,
+      "total_sales": 5779326.65,
+      "total_views": 20694554,
       "total_comics": 236
     }
   ]
