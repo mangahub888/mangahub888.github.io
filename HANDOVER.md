@@ -6,6 +6,36 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 พัฒนาระบบแสดงผลคอลัมน์ "ช่องทาง" (Multi-Platform Channels) ในสมุดบันทึกกำไรขาดทุน (MangaSales Ledger) ให้ตรวจจับและแสดงครบทุกแพลตฟอร์ม สำเร็จ 100% (8 พ.ย. 2569)
+
+#### 1. รายละเอียดปัญหาจาก USER:
+- "ในสมุดบันทึก ช่องทาง ย่องมีแค่แพลตฟอร์ม 1"
+- ในตารางสมุดบันทึกยอดขายและต้นทุน คอลัมน์ "ช่องทาง" เดิมแสดงเพียงสตริงเดียวจากชีต (เช่น `ReadRealm แปลจนเมื่อย` หรือ `websiteA.co`) ทั้งๆ ที่การ์ตูนเรื่องนั้นลงขายและสร้างรายได้จากหลายแพลตฟอร์ม (ReadRealm, Kairew, Chaply)
+
+#### 2. สิ่งที่ดำเนินการแก้ไขและพัฒนา (Implemented Solutions):
+1. **Multi-Platform Resolution Engine (`allMangaPlatformsMap` & `getSalePlatforms`)**:
+   - บูรณาการข้อมูลข้ามระบบจาก 4 แหล่ง: `comic_cross_platform_mapping.json`, `grouped_matched_comics.json`, `unifiedComics` (Growth Tracker 3 แพลตฟอร์ม), และ `mangaList`
+   - ตรวจจับแพลตฟอร์มที่มังงะนั้นๆ มีตัวตน, มีตอน, หรือมียอดขายข้ามแพลตฟอร์ม
+2. **Interactive Platform Badges**:
+   - 🟢 **RR (ReadRealm)**: Badge สีเขียวมรกต (`bg-emerald-500/15 text-emerald-300 border-emerald-500/40`) พร้อมจุดเรืองแสง
+   - 🔵 **KW (Kairew)**: Badge สีฟ้า (`bg-blue-500/15 text-blue-300 border-blue-500/40`) พร้อมจุดเรืองแสง
+   - 🟡 **CH (Chaply)**: Badge สีเหลืองอำพัน (`bg-amber-500/15 text-amber-300 border-amber-500/40`) พร้อมจุดเรืองแสง
+   - 🏷️ **Platform Counter (`2P` / `3P`)**: แสดงจำนวนช่องทางที่ครอบคลุม
+   - 🔍 **Rich Tooltip Details**: เมื่อชี้เมาส์ที่แต่ละ Badge จะแสดงชื่อเต็ม, จำนวนตอน และยอดขายของแพลตฟอร์มนั้นๆ
+3. **MangaSales Toolbar (Search & Platform Filter)**:
+   - เพิ่มช่องค้นหาชื่อมังงะแบบ Real-time
+   - ปุ่ม Filter คัดกรองรวดเร็ว: `ทั้งหมด`, `หลายช่องทาง (2P+)`, `🟢 RR`, `🔵 KW`, `🟡 CH`
+4. **Auto-Fill ใน Dialog บันทึกยอดขาย**:
+   - ตรวจจับช่องทางอัตโนมัติเมื่อเลือกเรื่อง และเพิ่มตัวเลือก Multi-platform ใน Dropdown
+5. **Enhanced Reconciled Summary & Revenue Tooltip**:
+   - สรุปสัดส่วนยอดขายตามแพลตฟอร์มจริง (RR, KW, CH) ในการกระทบยอด
+
+#### 3. ผลการตรวจสอบ (Verification):
+- การ์ตูนที่ลงหลายแพลตฟอร์ม เช่น `เปิดเกมด้วยระบบคูณสิบ...`, `จอมมารแสนดี...`, `เจ้าแห่งกงล้อโชคชะตา...` แสดง Badge ครบทั้ง 3 แพลตฟอร์ม (`RR + KW + CH`) อย่างถูกต้อง
+- ตรวจสอบและรัน `npm --prefix frontend run build` ผ่าน 100% ไม่มีข้อผิดพลาด
+
+---
+
 ### 🏆 แก้ไขปัญหายอดขายมังงะดึงไม่ได้ในสมุดบันทึกกำไรขาดทุน (MangaSales Ledger) & วิเคราะห์ระบบรายเดือน 3 แพลตฟอร์ม & เพิ่ม Tooltip แยกยอดขาย สำเร็จ 100% (8 พ.ย. 2569)
 
 #### 1. รายละเอียดปัญหาและผลการตรวจสอบ (Root Cause Analysis):

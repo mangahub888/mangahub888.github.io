@@ -107,17 +107,14 @@ ChartJS.register(
 );
 
 const DEFAULT_WEBSITES = [
-  "ReadRealm แปลจนเมื่อย",
-
-  "ReadRealm น้องแมวส้ม",
-
-  "ReadRealm แปลแล้วแปลอีก",
-
-  "ReadRealm แปลจนแขนหัก",
-
+  "ReadRealm + Kairew + Chaply",
+  "ReadRealm",
   "kairew",
-
   "chaply",
+  "ReadRealm แปลจนเมื่อย",
+  "ReadRealm น้องแมวส้ม",
+  "ReadRealm แปลแล้วแปลอีก",
+  "ReadRealm แปลจนแขนหัก",
 ];
 
 interface FinancialsViewProps {
@@ -1141,6 +1138,8 @@ export function FinancialsView({
   const [selectedLedgerMonth, setSelectedLedgerMonth] = React.useState<string>("all");
   const [salesSortBy, setSalesSortBy] = React.useState<"profit" | "date" | "revenue" | "cost" | "chapters" | "name">("profit");
   const [salesSortOrder, setSalesSortOrder] = React.useState<"desc" | "asc">("desc");
+  const [salesSearchText, setSalesSearchText] = React.useState<string>("");
+  const [salesPlatformFilter, setSalesPlatformFilter] = React.useState<"all" | "multi" | "rr" | "kw" | "ch">("all");
   const [syncModalOpen, setSyncModalOpen] = React.useState<boolean>(false);
   const [syncTargetMonth, setSyncTargetMonth] = React.useState<string>(() => {
     const d = new Date();
@@ -1218,6 +1217,331 @@ export function FinancialsView({
     return Array.from(setM).sort().reverse();
   }, [salesList]);
 
+  // Memoized platform breakdown index for MangaSales ledger Tooltip
+  const platformBreakdownMap = React.useMemo(() => {
+    const map = new Map<string, { readrealm: number; kairew: number; chaply: number; total: number }>();
+    if (!groupedList || !Array.isArray(groupedList)) return map;
+
+    for (const g of groupedList) {
+      const norm = normalizeMangaTitle(g.title || g.key);
+      const rr = Number(g.readrealm?.sales) || 0;
+      const kr = Number(g.kairew?.sales) || 0;
+      const ch = Number(g.chaply?.sales) || 0;
+      const total = Number(g.total_sales) || (rr + kr + ch);
+
+      const entry = { readrealm: rr, kairew: kr, chaply: ch, total };
+      if (norm) map.set(norm, entry);
+      if (g.key) map.set(g.key, entry);
+    }
+    return map;
+  }, [groupedList]);
+
+  // Comprehensive multi-platform dictionary combining grouped_matched_comics, comic_cross_platform_mapping, and trackerData
+  const allMangaPlatformsMap = React.useMemo(() => {
+    const map = new Map<string, {
+      readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      other?: { name: string };
+      platformCount: number;
+    }>();
+
+    const addOrMerge = (key: string, data: {
+      readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      other?: { name: string };
+    }) => {
+      if (!key) return;
+      const cleanKey = key.trim();
+      if (!cleanKey) return;
+      const current = map.get(cleanKey) || { platformCount: 0 };
+
+      if (data.readrealm?.exists) {
+        current.readrealm = {
+          exists: true,
+          sales: Math.max(current.readrealm?.sales || 0, data.readrealm.sales || 0),
+          chapters: Math.max(current.readrealm?.chapters || 0, data.readrealm.chapters || 0),
+          account: data.readrealm.account || current.readrealm?.account,
+        };
+      }
+      if (data.kairew?.exists) {
+        current.kairew = {
+          exists: true,
+          sales: Math.max(current.kairew?.sales || 0, data.kairew.sales || 0),
+          chapters: Math.max(current.kairew?.chapters || 0, data.kairew.chapters || 0),
+          account: data.kairew.account || current.kairew?.account,
+        };
+      }
+      if (data.chaply?.exists) {
+        current.chaply = {
+          exists: true,
+          sales: Math.max(current.chaply?.sales || 0, data.chaply.sales || 0),
+          chapters: Math.max(current.chaply?.chapters || 0, data.chaply.chapters || 0),
+          account: data.chaply.account || current.chaply?.account,
+        };
+      }
+      if (data.other?.name) {
+        current.other = data.other;
+      }
+
+      current.platformCount =
+        (current.readrealm?.exists ? 1 : 0) +
+        (current.kairew?.exists ? 1 : 0) +
+        (current.chaply?.exists ? 1 : 0);
+
+      map.set(cleanKey, current);
+    };
+
+    // 1. Ingest comic_cross_platform_mapping
+    if (initialMappingData && Array.isArray((initialMappingData as any).mappings)) {
+      for (const m of (initialMappingData as any).mappings) {
+        const rr = !!m.platforms?.readrealm;
+        const kw = !!m.platforms?.kairew;
+        const ch = !!m.platforms?.chaply;
+        const pData = {
+          readrealm: rr ? { exists: true, account: m.platforms?.readrealm?.account } : undefined,
+          kairew: kw ? { exists: true, account: m.platforms?.kairew?.account } : undefined,
+          chaply: ch ? { exists: true, account: m.platforms?.chaply?.account } : undefined,
+        };
+
+        if (m.canonical_key) {
+          addOrMerge(m.canonical_key, pData);
+          addOrMerge(normalizeMangaTitle(m.canonical_key), pData);
+        }
+        if (m.canonical_title) {
+          addOrMerge(m.canonical_title, pData);
+          addOrMerge(normalizeMangaTitle(m.canonical_title), pData);
+        }
+        if (Array.isArray(m.aliases)) {
+          for (const alias of m.aliases) {
+            addOrMerge(alias, pData);
+            addOrMerge(normalizeMangaTitle(alias), pData);
+          }
+        }
+      }
+    }
+
+    // 2. Ingest groupedList (grouped_matched_comics.json)
+    if (Array.isArray(groupedList)) {
+      for (const g of groupedList) {
+        const pData = {
+          readrealm: g.readrealm?.exists ? {
+            exists: true,
+            sales: Number(g.readrealm.sales) || 0,
+            chapters: Number(g.readrealm.eps) || 0,
+          } : undefined,
+          kairew: g.kairew?.exists ? {
+            exists: true,
+            sales: Number(g.kairew.sales) || 0,
+            chapters: Number(g.kairew.eps) || 0,
+          } : undefined,
+          chaply: g.chaply?.exists ? {
+            exists: true,
+            sales: Number(g.chaply.sales) || 0,
+            chapters: Number(g.chaply.eps) || 0,
+          } : undefined,
+        };
+
+        if (g.key) {
+          addOrMerge(g.key, pData);
+          addOrMerge(normalizeMangaTitle(g.key), pData);
+        }
+        if (g.title) {
+          addOrMerge(g.title, pData);
+          addOrMerge(normalizeMangaTitle(g.title), pData);
+        }
+      }
+    }
+
+    // 3. Ingest unifiedComics (live tracker data)
+    if (Array.isArray(unifiedComics)) {
+      for (const u of unifiedComics) {
+        const pData = {
+          readrealm: u.readrealm?.exists ? {
+            exists: true,
+            sales: Number(u.readrealm.sales) || 0,
+            chapters: Number(u.readrealm.chapters) || 0,
+            account: u.readrealm.account,
+          } : undefined,
+          kairew: u.kairew?.exists ? {
+            exists: true,
+            sales: Number(u.kairew.sales) || 0,
+            chapters: Number(u.kairew.chapters) || 0,
+            account: u.kairew.account,
+          } : undefined,
+          chaply: u.chaply?.exists ? {
+            exists: true,
+            sales: Number(u.chaply.sales) || 0,
+            chapters: Number(u.chaply.chapters) || 0,
+            account: u.chaply.account,
+          } : undefined,
+        };
+
+        if (u.key) {
+          addOrMerge(u.key, pData);
+          addOrMerge(normalizeMangaTitle(u.key), pData);
+        }
+        if (u.subject) {
+          addOrMerge(u.subject, pData);
+          addOrMerge(normalizeMangaTitle(u.subject), pData);
+        }
+      }
+    }
+
+    // 4. Ingest mangaList (by id and name)
+    if (Array.isArray(mangaList)) {
+      for (const m of mangaList) {
+        if (!m.mangaid) continue;
+        const norm = normalizeMangaTitle(m.manganame || m.title || "");
+        let existing = norm ? map.get(norm) : null;
+        if (!existing && m.manganame) existing = map.get(m.manganame.trim());
+        if (existing) {
+          map.set(String(m.mangaid), existing);
+        }
+      }
+    }
+
+    return map;
+  }, [groupedList, unifiedComics, mangaList]);
+
+  // Resolver for all platforms of any manga sale item
+  const getSalePlatforms = React.useCallback(
+    (sale: any): Array<{
+      id: "readrealm" | "kairew" | "chaply" | "other";
+      code: string;
+      name: string;
+      badgeClass: string;
+      dotClass: string;
+      exists: boolean;
+      sales?: number;
+      chapters?: number;
+      account?: string;
+    }> => {
+      const normKey = normalizeMangaTitle(sale.seriesname);
+      let match = normKey ? allMangaPlatformsMap.get(normKey) : null;
+      if (!match && sale.mangaid != null) {
+        match = allMangaPlatformsMap.get(String(sale.mangaid));
+      }
+      if (!match && sale.seriesname) {
+        match = allMangaPlatformsMap.get(sale.seriesname.trim());
+      }
+
+      const platBreakdown = normKey ? platformBreakdownMap.get(normKey) : null;
+
+      const platforms: Array<{
+        id: "readrealm" | "kairew" | "chaply" | "other";
+        code: string;
+        name: string;
+        badgeClass: string;
+        dotClass: string;
+        exists: boolean;
+        sales?: number;
+        chapters?: number;
+        account?: string;
+      }> = [];
+
+      const rawWeb = String(sale.website || "").trim();
+      const lowerWeb = rawWeb.toLowerCase();
+
+      const rrExists =
+        Boolean(match?.readrealm?.exists) ||
+        (platBreakdown ? platBreakdown.readrealm > 0 : false) ||
+        lowerWeb.includes("readrealm") ||
+        lowerWeb.includes("websitea.co") ||
+        lowerWeb === "rr";
+
+      const kwExists =
+        Boolean(match?.kairew?.exists) ||
+        (platBreakdown ? platBreakdown.kairew > 0 : false) ||
+        lowerWeb.includes("kairew") ||
+        lowerWeb === "kw";
+
+      const chExists =
+        Boolean(match?.chaply?.exists) ||
+        (platBreakdown ? platBreakdown.chaply > 0 : false) ||
+        lowerWeb.includes("chaply") ||
+        lowerWeb === "ch";
+
+      if (rrExists) {
+        platforms.push({
+          id: "readrealm",
+          code: "RR",
+          name: "ReadRealm",
+          badgeClass: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/25",
+          dotClass: "bg-emerald-400 shadow-xs shadow-emerald-400/50",
+          exists: true,
+          sales: platBreakdown?.readrealm || match?.readrealm?.sales,
+          chapters: match?.readrealm?.chapters,
+          account: match?.readrealm?.account,
+        });
+      }
+
+      if (kwExists) {
+        platforms.push({
+          id: "kairew",
+          code: "KW",
+          name: "Kairew",
+          badgeClass: "bg-blue-500/15 text-blue-300 border-blue-500/40 hover:bg-blue-500/25",
+          dotClass: "bg-blue-400 shadow-xs shadow-blue-400/50",
+          exists: true,
+          sales: platBreakdown?.kairew || match?.kairew?.sales,
+          chapters: match?.kairew?.chapters,
+          account: match?.kairew?.account,
+        });
+      }
+
+      if (chExists) {
+        platforms.push({
+          id: "chaply",
+          code: "CH",
+          name: "Chaply",
+          badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/40 hover:bg-amber-500/25",
+          dotClass: "bg-amber-400 shadow-xs shadow-amber-400/50",
+          exists: true,
+          sales: platBreakdown?.chaply || match?.chaply?.sales,
+          chapters: match?.chaply?.chapters,
+          account: match?.chaply?.account,
+        });
+      }
+
+      // If rawWeb contains a custom/distinct site not covered by the big 3
+      const isKnown =
+        lowerWeb.includes("readrealm") ||
+        lowerWeb.includes("kairew") ||
+        lowerWeb.includes("chaply") ||
+        lowerWeb.includes("websitea.co") ||
+        lowerWeb === "other" ||
+        lowerWeb === "" ||
+        lowerWeb.includes("ช่องทาง readrealm");
+
+      if (!isKnown && rawWeb.length > 0) {
+        platforms.push({
+          id: "other",
+          code: rawWeb.length <= 4 ? rawWeb.toUpperCase() : rawWeb.slice(0, 3).toUpperCase(),
+          name: rawWeb,
+          badgeClass: "bg-slate-800/60 text-slate-300 border-slate-700/60 hover:bg-slate-800",
+          dotClass: "bg-slate-400",
+          exists: true,
+        });
+      }
+
+      if (platforms.length === 0) {
+        platforms.push({
+          id: "readrealm",
+          code: "RR",
+          name: rawWeb || "ReadRealm",
+          badgeClass: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/25",
+          dotClass: "bg-emerald-400 shadow-xs shadow-emerald-400/50",
+          exists: true,
+        });
+      }
+
+      return platforms;
+    },
+    [allMangaPlatformsMap, platformBreakdownMap],
+  );
+
   // Requirement: เรียงมีกำไรไว้บน เริ่มขาดทุนไว้ล่าง จากคอลัมนท์ กำไร/ขาดทุน
   const filteredSales = React.useMemo(() => {
     let list = [...(salesList || [])];
@@ -1236,6 +1560,27 @@ export function FinancialsView({
         if (s.month && String(s.month).trim() === selectedLedgerMonth) return true;
         if (s.date && String(s.date).startsWith(selectedLedgerMonth)) return true;
         return false;
+      });
+    }
+
+    if (salesSearchText.trim()) {
+      const q = salesSearchText.trim().toLowerCase();
+      list = list.filter((s) => {
+        const name = String(s.seriesname || "").toLowerCase();
+        const id = String(s.serieschapterid || s.mangaid || "").toLowerCase();
+        const web = String(s.website || "").toLowerCase();
+        return name.includes(q) || id.includes(q) || web.includes(q);
+      });
+    }
+
+    if (salesPlatformFilter !== "all") {
+      list = list.filter((s) => {
+        const plats = getSalePlatforms(s);
+        if (salesPlatformFilter === "multi") return plats.length > 1;
+        if (salesPlatformFilter === "rr") return plats.some((p) => p.id === "readrealm");
+        if (salesPlatformFilter === "kw") return plats.some((p) => p.id === "kairew");
+        if (salesPlatformFilter === "ch") return plats.some((p) => p.id === "chaply");
+        return true;
       });
     }
 
@@ -1275,26 +1620,7 @@ export function FinancialsView({
     });
 
     return list;
-  }, [salesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder]);
-
-  // Memoized platform breakdown index for MangaSales ledger Tooltip
-  const platformBreakdownMap = React.useMemo(() => {
-    const map = new Map<string, { readrealm: number; kairew: number; chaply: number; total: number }>();
-    if (!groupedList || !Array.isArray(groupedList)) return map;
-
-    for (const g of groupedList) {
-      const norm = normalizeMangaTitle(g.title || g.key);
-      const rr = Number(g.readrealm?.sales) || 0;
-      const kr = Number(g.kairew?.sales) || 0;
-      const ch = Number(g.chaply?.sales) || 0;
-      const total = Number(g.total_sales) || (rr + kr + ch);
-
-      const entry = { readrealm: rr, kairew: kr, chaply: ch, total };
-      if (norm) map.set(norm, entry);
-      if (g.key) map.set(g.key, entry);
-    }
-    return map;
-  }, [groupedList]);
+  }, [salesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms]);
 
   // Dynamic Monthly Reconciliation Data based on focused month
   const reconciledMonthData = React.useMemo(() => {
@@ -1562,6 +1888,15 @@ export function FinancialsView({
 
     if (manga) {
       setFinCostPerChapter(manga.costperchapter || 0);
+      if (!finWebsite) {
+        const dummySale = { seriesname: manga.manganame, mangaid: manga.mangaid, website: manga.website };
+        const plats = getSalePlatforms(dummySale);
+        if (plats.length > 1) {
+          setFinWebsite(plats.map((p) => p.name).join(" + "));
+        } else if (plats.length === 1) {
+          setFinWebsite(plats[0].name);
+        }
+      }
     }
 
     try {
@@ -3904,15 +4239,101 @@ export function FinancialsView({
           {/* Sales Table */}
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div>
-                <CardTitle className="text-base">
-                  รายการยอดขายประจำเดือน
+                <CardTitle className="text-base flex items-center gap-2">
+                  <span>รายการยอดขายประจำเดือน</span>
+                  <Badge variant="outline" className="text-xs font-mono font-normal">
+                    {filteredSales.length} รายการ
+                  </Badge>
                 </CardTitle>
 
-                <p className="text-xs text-slate-400">
-                  ทั้งหมด {filteredSales.length} รายการ
+                <p className="text-xs text-slate-400 mt-0.5">
+                  ตารางบันทึกกำไรขาดทุน แยกตามรายเรื่อง พร้อมตรวจจับช่องทางเผยแพร่ทุกแพลตฟอร์ม (RR / KW / CH)
                 </p>
+              </div>
+
+              {/* Search & Platform Filter toolbar */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative w-44 sm:w-52">
+                  <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <Input
+                    placeholder="ค้นหาชื่อมังงะ..."
+                    value={salesSearchText}
+                    onChange={(e) => setSalesSearchText(e.target.value)}
+                    className="h-8 pl-8 pr-6 text-xs bg-[#0b1120] border-[#26334d] focus:border-indigo-500"
+                  />
+                  {salesSearchText && (
+                    <button
+                      onClick={() => setSalesSearchText("")}
+                      className="absolute right-2 top-2 text-xs text-slate-400 hover:text-white"
+                      title="ล้างคำค้นหา"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1 bg-[#0b1120] border border-[#26334d] p-1 rounded-lg text-xs">
+                  <Filter className="h-3.5 w-3.5 text-slate-400 ml-1.5 mr-0.5" />
+                  <button
+                    onClick={() => setSalesPlatformFilter("all")}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
+                      salesPlatformFilter === "all"
+                        ? "bg-indigo-600 text-white font-bold"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    ทั้งหมด
+                  </button>
+                  <button
+                    onClick={() => setSalesPlatformFilter("multi")}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors ${
+                      salesPlatformFilter === "multi"
+                        ? "bg-purple-600 text-white font-bold"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                    title="แสดงเฉพาะเรื่องที่มีมากกว่า 1 แพลตฟอร์ม"
+                  >
+                    หลายช่องทาง (2P+)
+                  </button>
+                  <button
+                    onClick={() => setSalesPlatformFilter("rr")}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
+                      salesPlatformFilter === "rr"
+                        ? "bg-emerald-600 text-white font-bold"
+                        : "text-emerald-400/80 hover:text-emerald-300"
+                    }`}
+                    title="ReadRealm"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                    RR
+                  </button>
+                  <button
+                    onClick={() => setSalesPlatformFilter("kw")}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
+                      salesPlatformFilter === "kw"
+                        ? "bg-blue-600 text-white font-bold"
+                        : "text-blue-400/80 hover:text-blue-300"
+                    }`}
+                    title="Kairew"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />
+                    KW
+                  </button>
+                  <button
+                    onClick={() => setSalesPlatformFilter("ch")}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
+                      salesPlatformFilter === "ch"
+                        ? "bg-amber-600 text-white font-bold"
+                        : "text-amber-400/80 hover:text-amber-300"
+                    }`}
+                    title="Chaply"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+                    CH
+                  </button>
+                </div>
               </div>
             </CardHeader>
 
@@ -3942,7 +4363,7 @@ export function FinancialsView({
                       </div>
                     </TableHead>
 
-                    <TableHead>ช่องทาง</TableHead>
+                    <TableHead className="min-w-[130px]">ช่องทาง</TableHead>
 
                     <TableHead className="text-right cursor-pointer hover:text-white transition-colors" onClick={() => handleToggleSalesSort("chapters")}>
                       <div className="flex items-center justify-end gap-1">
@@ -4022,9 +4443,10 @@ export function FinancialsView({
                       const profit = rev - cost;
                       const isUrgent = isTitleUrgent(sale.seriesname, sale.mangaid);
 
-                      // Calculate Platform Breakdown for Tooltip
+                      // Calculate Platform Breakdown for Tooltip & Columns
                       const normSaleKey = normalizeMangaTitle(sale.seriesname);
                       const matchedPlatBreakdown = normSaleKey ? platformBreakdownMap.get(normSaleKey) : null;
+                      const salePlatforms = getSalePlatforms(sale);
                       let rrSaleAmt = 0;
                       let krSaleAmt = 0;
                       let chSaleAmt = 0;
@@ -4033,11 +4455,18 @@ export function FinancialsView({
                         krSaleAmt = matchedPlatBreakdown.kairew;
                         chSaleAmt = matchedPlatBreakdown.chaply;
                       } else {
-                        const webStr = String(sale.website || "").toLowerCase();
-                        if (webStr.includes("readrealm")) rrSaleAmt = rev;
-                        else if (webStr.includes("kairew")) krSaleAmt = rev;
-                        else if (webStr.includes("chaply")) chSaleAmt = rev;
-                        else rrSaleAmt = rev;
+                        const platMatch = normSaleKey ? allMangaPlatformsMap.get(normSaleKey) : null;
+                        if (platMatch && (platMatch.readrealm?.sales || platMatch.kairew?.sales || platMatch.chaply?.sales)) {
+                          rrSaleAmt = platMatch.readrealm?.sales || 0;
+                          krSaleAmt = platMatch.kairew?.sales || 0;
+                          chSaleAmt = platMatch.chaply?.sales || 0;
+                        } else {
+                          const webStr = String(sale.website || "").toLowerCase();
+                          if (webStr.includes("readrealm")) rrSaleAmt = rev;
+                          else if (webStr.includes("kairew")) krSaleAmt = rev;
+                          else if (webStr.includes("chaply")) chSaleAmt = rev;
+                          else rrSaleAmt = rev;
+                        }
                       }
 
                       return (
@@ -4074,9 +4503,45 @@ export function FinancialsView({
                           </TableCell>
 
                           <TableCell>
-                            <Badge variant="outline" className="text-xs">
-                              {sale.website}
-                            </Badge>
+                            <div className="flex flex-wrap items-center gap-1 min-w-[110px]">
+                              {salePlatforms.map((p) => {
+                                let tooltipText = p.name;
+                                const details: string[] = [];
+                                if (p.chapters) details.push(`${p.chapters} ตอน`);
+                                if (p.sales != null && p.sales > 0) {
+                                  details.push(
+                                    `฿${p.sales.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,
+                                  );
+                                }
+                                if (details.length > 0) {
+                                  tooltipText += ` (${details.join(" • ")})`;
+                                }
+
+                                return (
+                                  <Badge
+                                    key={p.id + p.code}
+                                    variant="outline"
+                                    className={`text-[10px] font-semibold px-1.5 py-0.2 border transition-all cursor-default select-none shadow-xs flex items-center gap-1 ${p.badgeClass}`}
+                                    title={tooltipText}
+                                  >
+                                    <span
+                                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${p.dotClass}`}
+                                    />
+                                    <span>{p.code}</span>
+                                  </Badge>
+                                );
+                              })}
+
+                              {salePlatforms.length > 1 && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-[9px] font-mono px-1 py-0 text-slate-400 border-slate-700/60 bg-slate-900/60"
+                                  title={`เผยแพร่ทั้งหมด ${salePlatforms.length} แพลตฟอร์ม (${salePlatforms.map((p) => p.name).join(", ")})`}
+                                >
+                                  {salePlatforms.length}P
+                                </Badge>
+                              )}
+                            </div>
                           </TableCell>
 
                           <TableCell className="text-right">
@@ -4134,9 +4599,12 @@ export function FinancialsView({
                                     </span>
                                   </div>
                                 </div>
-                                <div className="mt-2 pt-1.5 border-t border-slate-800 text-[10px] text-slate-400 flex justify-between">
-                                  <span>ช่องทางที่บันทึก:</span>
-                                  <span className="text-slate-300 font-medium truncate max-w-[120px]">{sale.website || "ReadRealm"}</span>
+                                <div className="mt-2 pt-1.5 border-t border-slate-800 text-[10px] text-slate-400 flex justify-between items-center">
+                                  <span>ช่องทางเผยแพร่:</span>
+                                  <span className="text-slate-300 font-medium truncate max-w-[130px] flex items-center gap-1">
+                                    {salePlatforms.map((p) => p.code).join(" • ")}
+                                    {salePlatforms.length > 1 ? ` (${salePlatforms.length}P)` : ""}
+                                  </span>
                                 </div>
                               </div>
                             </div>
