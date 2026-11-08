@@ -1197,14 +1197,21 @@ export function FinancialsView({
   };
 
     // Pre-resolve all series names in salesList using live mangaList & KNOWN_MANGA_ID_MAP
+  // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องเอามาแสดงในสมุดบันทึก
   const resolvedSalesList = React.useMemo(() => {
-    return (salesList || []).map((sale) => {
-      const resolved = resolveMangaName(sale.serieschapterid || sale.mangaid, sale.seriesname, mangaList);
-      if (resolved && resolved !== sale.seriesname) {
-        return { ...sale, seriesname: resolved };
-      }
-      return sale;
-    });
+    return (salesList || [])
+      .filter((sale) => {
+        const rawId = sale.serieschapterid !== undefined ? sale.serieschapterid : (sale.mangaid !== undefined ? sale.mangaid : sale.manga_id);
+        const strId = String(rawId === null || rawId === undefined ? "" : rawId).trim();
+        return strId !== "" && strId !== "0" && strId.toLowerCase() !== "undefined" && strId.toLowerCase() !== "null";
+      })
+      .map((sale) => {
+        const resolved = resolveMangaName(sale.serieschapterid || sale.mangaid, sale.seriesname, mangaList);
+        if (resolved && resolved !== sale.seriesname) {
+          return { ...sale, seriesname: resolved };
+        }
+        return sale;
+      });
   }, [salesList, mangaList]);
 
   // Extract all distinct months available in salesList
@@ -1556,6 +1563,12 @@ export function FinancialsView({
   // Requirement: เรียงมีกำไรไว้บน เริ่มขาดทุนไว้ล่าง จากคอลัมนท์ กำไร/ขาดทุน
   const filteredSales = React.useMemo(() => {
     let list = [...(resolvedSalesList || [])];
+
+    // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องเอามาแสดงในสมุดบันทึก
+    list = list.filter((s) => {
+      const id = String(s.serieschapterid || s.mangaid || s.manga_id || "").trim();
+      return id !== "" && id !== "0" && id.toLowerCase() !== "undefined" && id.toLowerCase() !== "null";
+    });
 
     if (yearFilter !== "all") {
       list = list.filter((s) => {
@@ -2067,6 +2080,12 @@ export function FinancialsView({
       const monthlyTarget = cleanNum(cols[9]);
 
       const chapters = cleanNum(cols[5]);
+
+      const rawMId = (cols[2] || "").trim();
+      // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องนำมาบันทึก
+      if (!rawMId || rawMId === "0" || rawMId.toLowerCase() === "undefined" || rawMId.toLowerCase() === "null") {
+        return;
+      }
 
       sales.push({
         date: normalizedDate,

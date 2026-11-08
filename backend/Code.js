@@ -2664,15 +2664,23 @@ function getMangaSales() {
     const rawHeaders = data.shift();
     const headers = rawHeaders.map(h => h.toString().toLowerCase().trim());
     
-    return data.map((row, idx) => {
+    const results = [];
+    data.forEach((row, idx) => {
       let obj = { _rowIndex: idx };
       headers.forEach((header, i) => {
         let val = row[i];
         if (val instanceof Date) val = val.toISOString();
         obj[header] = val;
       });
-      return obj;
+      // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องเอามาแสดงในสมุดบันทึก
+      const mId = obj.serieschapterid !== undefined ? obj.serieschapterid : (obj.mangaid !== undefined ? obj.mangaid : obj.manga_id);
+      const strId = String(mId === null || mId === undefined ? '' : mId).trim();
+      if (!strId || strId === '0' || strId.toLowerCase() === 'undefined' || strId.toLowerCase() === 'null') {
+        return; // ข้ามแถวที่ไม่มี mangaid
+      }
+      results.push(obj);
     });
+    return results;
   } catch (err) {
     console.error('getMangaSales Error:', err);
     return [];
@@ -2680,6 +2688,10 @@ function getMangaSales() {
 }
 
 function addMangaSale(sale) {
+  const mId = String(sale.serieschapterid || sale.mangaid || sale.manga_id || '').trim();
+  if (!mId || mId === '0' || mId.toLowerCase() === 'undefined' || mId.toLowerCase() === 'null') {
+    return { error: 'ไม่สามารถเพิ่มรายการได้: ขาดข้อมูล mangaid' };
+  }
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(30000);
@@ -2729,7 +2741,18 @@ function bulkAddMangaSales(salesArray) {
     const websiteSheet = getSheet(WEBSITE_SHEET_NAME);
     const existingWebsites = getWebsiteList();
     
-    const newRows = salesArray.map(sale => {
+    // กรองเฉพาะรายการที่มี mangaid เท่านั้น
+    const validSales = (salesArray || []).filter(sale => {
+      const mid = String(sale.serieschapterid || sale.mangaid || sale.manga_id || '').trim();
+      return mid !== '' && mid !== '0' && mid.toLowerCase() !== 'undefined' && mid.toLowerCase() !== 'null';
+    });
+
+    if (validSales.length === 0) {
+      return { success: true, count: 0, list: getMangaSales(), websites: getWebsiteList() };
+    }
+
+    const newRows = validSales.map(sale => {
+      const saleMId = String(sale.serieschapterid || sale.mangaid || sale.manga_id || '').trim();
       if (sale.website && !existingWebsites.includes(sale.website)) {
         websiteSheet.appendRow([sale.website]);
         existingWebsites.push(sale.website);
@@ -2965,22 +2988,29 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
       } catch(e) {}
 
       tasks.forEach(t => {
+        const rawMid = t.mangaId || t.mangaid || t.manga_id;
+        const strMid = String(rawMid === null || rawMid === undefined ? '' : rawMid).trim();
+        // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องนำมาคำนวณ
+        if (!strMid || strMid === '0' || strMid.toLowerCase() === 'undefined' || strMid.toLowerCase() === 'null') {
+          return;
+        }
+
         let mName = (t.mangaName || '').trim();
-        if ((!mName || mName === 'Unknown') && t.mangaId && mangaIdMap[String(t.mangaId)]) {
-          mName = mangaIdMap[String(t.mangaId)].manganame;
+        if ((!mName || mName === 'Unknown') && mangaIdMap[strMid]) {
+          mName = mangaIdMap[strMid].manganame;
         }
         if (!mName) mName = 'Unknown';
-        const mObj = mangaNameMap[mName] || (t.mangaId && mangaIdMap[String(t.mangaId)]) || {};
+        const mObj = mangaNameMap[mName] || mangaIdMap[strMid] || {};
         const metaStatus = mObj.status ? String(mObj.status).trim().toLowerCase() : '';
         if (metaStatus === 'ยังไม่เปิดเรื่อง' || metaStatus === 'ยังไม่ได้เปิดเรื่อง' || metaStatus === 'unopened') {
           return; // Requirement: ยกเว้นบางเรื่องที่ยังไม่ได้เปิดเรื่อง
         }
 
         if (!mangaStats[mName]) {
-          const mObj = mangaNameMap[mName] || mangaIdMap[String(t.mangaId)] || {};
+          const mObj = mangaNameMap[mName] || mangaIdMap[strMid] || {};
           mangaStats[mName] = {
             name: mName,
-            mangaId: mObj.mangaid || t.mangaId || '',
+            mangaId: mObj.mangaid || strMid,
             chapters: {},
             totalCost: 0,
             revenue: 0,
@@ -3005,6 +3035,12 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
 
     // ถ้าเดือนนั้นยังไม่มี PayoutClaims หรือมีมังงะใน WorkQueue ที่ยังไม่ได้เบิก ให้คำนวณจาก WorkQueue
     allWorkQueue.forEach(q => {
+      // Requirement: ใน calculateAndSyncMonthlyMangaSales: ในลูปที่นำคิวงานจาก WorkQueue มารวมต้นทุน หากรายการใดไม่มี mangaid (ว่างเปล่า, null, undefined, หรือเป็น 0 / "") ให้ continue ข้ามไปเลยทันที ไม่ต้องนำมาคำนวณหรือสร้างแถวใน MangaSales
+      const qMId = String(q.mangaid === null || q.mangaid === undefined ? '' : q.mangaid).trim();
+      if (!qMId || qMId === '0' || qMId.toLowerCase() === 'undefined' || qMId.toLowerCase() === 'null') {
+        return; // continue ข้ามไปเลยทันที
+      }
+
       if (!q.createdat) return;
       try {
         const d = new Date(q.createdat);
@@ -3127,9 +3163,14 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     Object.keys(existingMonthSalesMap).forEach(mName => {
       if (!mangaStats[mName]) {
         const oldSale = existingMonthSalesMap[mName];
+        const oldMid = String(oldSale.serieschapterid || oldSale.mangaid || oldSale.manga_id || '').trim();
+        // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องนำมาคำนวณ
+        if (!oldMid || oldMid === '0' || oldMid.toLowerCase() === 'undefined' || oldMid.toLowerCase() === 'null') {
+          return;
+        }
         mangaStats[mName] = {
           name: mName,
-          mangaId: oldSale.serieschapterid || '',
+          mangaId: oldMid,
           chapters: {},
           totalCost: parseFloat(oldSale.totalcost) || 0,
           revenue: parseFloat(oldSale.revenue) || 0,
@@ -3149,8 +3190,14 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     let runningTotalCost = 0;
 
     const statsKeys = Object.keys(mangaStats);
-    statsKeys.forEach((mName, idx) => {
+    statsKeys.forEach((mName) => {
       const item = mangaStats[mName];
+      const strMid = String(item.mangaId || '').trim();
+      // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องนำมาคำนวณหรือสร้างแถวใน MangaSales
+      if (!strMid || strMid === '0' || strMid.toLowerCase() === 'undefined' || strMid.toLowerCase() === 'null') {
+        return;
+      }
+
       const chaptersCount = Object.keys(item.chapters).length || 1;
       const totalCost = Math.round((item.totalCost || 0) * 100) / 100;
       const costPerChap = chaptersCount > 0 ? Math.round((totalCost / chaptersCount) * 100) / 100 : 0;
@@ -3163,7 +3210,7 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
       calculatedSalesRows.push({
         date: lastDayStr,
         month: targetMonth,
-        serieschapterid: item.mangaId || (idx + 1),
+        serieschapterid: strMid,
         seriesname: item.name,
         chapterscount: chaptersCount,
         category: item.category || 'Manhua',
@@ -3182,8 +3229,11 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     calculatedSalesRows.sort((a, b) => (Number(b.profit) || 0) - (Number(a.profit) || 0));
 
     // 9. อัปเดตข้อมูลลง Google Sheet MangaSales
-    // รวมรายการของเดือนอื่น + รายการของเดือนเป้าหมายที่คำนวณเสร็จ
-    const allFinalSales = existingOtherMonthsSales.concat(calculatedSalesRows);
+    // รวมรายการของเดือนอื่น + รายการของเดือนเป้าหมายที่คำนวณเสร็จ (กรองเฉพาะรายการที่มี mangaid)
+    const allFinalSales = existingOtherMonthsSales.concat(calculatedSalesRows).filter(sale => {
+      const mid = String(sale.serieschapterid || sale.mangaid || sale.manga_id || '').trim();
+      return mid !== '' && mid !== '0' && mid.toLowerCase() !== 'undefined' && mid.toLowerCase() !== 'null';
+    });
 
     const lastCol = sheet.getLastColumn();
     const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(h => h.toString().toLowerCase().trim());

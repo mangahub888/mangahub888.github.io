@@ -6,6 +6,30 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 กรองข้ามรายการที่ไม่มี mangaid ในสมุดบันทึก (P&L Ledger / MangaSales) และการคำนวณทั้งหมด 100% (8 พ.ย. 2569)
+
+#### 1. รายละเอียดความต้องการจาก USER:
+- "ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องเอามาแสดงในสมุดบันทึก"
+
+#### 2. สิ่งที่ดำเนินการแก้ไขและปรับปรุง:
+1. **Backend (`backend/Code.js`)**:
+   - `getMangaSales()`: กรองข้อมูลที่ไม่มี `mangaid` (ว่างเปล่า, `null`, `undefined`, `"0"`) ออกทันที ไม่ส่งต่อไปยัง Frontend
+   - `calculateAndSyncMonthlyMangaSales()`:
+     - ในลูป `allWorkQueue`: หากคิวงานใดไม่มี `mangaid` ให้ `continue` ข้ามไปทันที ไม่นำมาคำนวณต้นทุนหรือสร้างแถวใน `MangaSales`
+     - ในลูป `targetMonthClaims`: หากงานเบิกใดไม่มี `mangaId` ให้ข้ามทันที
+     - ใน fallback `existingMonthSalesMap`: หากประวัติเดิมไม่มี `mangaid` ให้ข้ามทันที
+     - ในการสร้าง `calculatedSalesRows`: ตรวจสอบ `strMid` ต้องมีค่าและไม่ใช่ `"0"` ไม่ใช้ fallback `(idx + 1)` ที่สร้าง ID ปลอมอีกต่อไป
+     - ใน `allFinalSales`: กรองอีกชั้นด้วย `filter(sale => sale.serieschapterid)` ก่อนบันทึกทับลงชีต Google Sheet
+   - `addMangaSale()` & `bulkAddMangaSales()`: ปฏิเสธการเพิ่มและกรองรายการที่ไม่มี `mangaid` ออกทั้งหมด 100%
+2. **Frontend (`frontend/src/components/views/FinancialsView.tsx`)**:
+   - `resolvedSalesList`: กรองรายการที่ไม่มี `serieschapterid` / `mangaid` / `manga_id` ออกตั้งแต่ต้น ทำให้ทั้ง `availableSalesMonths`, `reconciledMonthData`, `summary`, และ `chartsData` ได้รับเฉพาะข้อมูลที่มี mangaid ที่ถูกต้อง
+   - `filteredSales`: เพิ่มการกรอง mangaid ป้องกันซ้ำสองชั้นในตารางสมุดบันทึกยอดขายและต้นทุน
+   - `handleBulkImport`: ตรวจสอบคอลัมน์รหัสเรื่องใน CSV/TSV หากว่างหรือเป็น 0 ให้ข้ามทันที
+3. **Automated Test Suite**:
+   - สร้างชุดทดสอบ `frontend/test_manga_sales_mangaid_filter.mjs` ทดสอบ 4 กรณี (การกรองข้อมูลว่าง/0/undefined, WorkQueue filter, PayoutClaims filter, ยอดรวม Summary)
+   - รวมเข้ากับ `npm run test` และผ่านการทดสอบทั้งหมด 31 ข้อ ครบถ้วน 100%
+   - รัน `npm run build` ผ่าน 100%
+
 ### 🏆 แก้ไขปัญหามังงะแสดงเป็น 'Manga #n' (Manga ID Fallback Resolution) ในสมุดบันทึกกำไรขาดทุนและทุกหน้าจอ สำเร็จ 100% (8 พ.ย. 2569)
 
 #### 1. รายละเอียดปัญหาจาก USER:
