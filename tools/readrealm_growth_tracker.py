@@ -411,13 +411,13 @@ def restore_account_comics_from_cache(acc_id: str, acc_name: str) -> List[Dict[s
             for c in data.get("comics", []):
                 ch_list = c.get("chapters", [])
                 last_ep_str = ch_list[-1].get("created_at") if ch_list else None
-                days_inact = 0
+                days_inact = 999
                 if last_ep_str:
                     try:
                         ep_dt = datetime.fromisoformat(last_ep_str.replace("Z", "+00:00"))
                         days_inact = max(0, (now_utc - ep_dt).days)
                     except Exception:
-                        days_inact = 0
+                        days_inact = 999
                 recovered.append({
                     "comic_id": str(c.get("comic_id")),
                     "subject": c.get("subject", ""),
@@ -745,13 +745,13 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                     for c in data.get("comics", []):
                         ch_list = c.get("chapters", [])
                         last_ep_str = ch_list[-1].get("created_at") if ch_list else None
-                        days_inact = 0
+                        days_inact = 999
                         if last_ep_str:
                             try:
                                 ep_dt = datetime.fromisoformat(last_ep_str.replace("Z", "+00:00"))
                                 days_inact = max(0, (now.replace(tzinfo=timezone.utc) - ep_dt).days)
                             except Exception:
-                                days_inact = 0
+                                days_inact = 999
                         all_current_comics.append({
                             "comic_id": str(c.get("comic_id")),
                             "subject": c.get("subject", ""),

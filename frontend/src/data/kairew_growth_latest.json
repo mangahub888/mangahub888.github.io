@@ -50,7 +50,7 @@
       "total_sales": 21150.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 02:21:34",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -78,7 +78,7 @@
       "total_sales": 14929.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 22:43:41",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -106,7 +106,7 @@
       "total_sales": 9577.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-05 12:42:55",
-      "days_inactive": 0,
+      "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -134,7 +134,7 @@
       "total_sales": 6760.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-20 15:04:09",
-      "days_inactive": 0,
+      "days_inactive": 18,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -162,7 +162,7 @@
       "total_sales": 6291.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-26 01:41:11",
-      "days_inactive": 0,
+      "days_inactive": 12,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -218,7 +218,7 @@
       "total_sales": 3502.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 02:16:15",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -246,7 +246,7 @@
       "total_sales": 3439.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-28 01:23:00",
-      "days_inactive": 0,
+      "days_inactive": 10,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -274,7 +274,7 @@
       "total_sales": 3342.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-04 23:29:03",
-      "days_inactive": 0,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -302,7 +302,7 @@
       "total_sales": 3186.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-04 23:43:13",
-      "days_inactive": 0,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -330,8 +330,8 @@
       "total_sales": 3078.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-04-07 22:09:36",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 214,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -358,7 +358,7 @@
       "total_sales": 2814.9,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-04 00:56:19",
-      "days_inactive": 0,
+      "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -386,8 +386,8 @@
       "total_sales": 2185.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-06-13 10:59:22",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 147,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -414,7 +414,7 @@
       "total_sales": 2068.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 02:22:26",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -442,7 +442,7 @@
       "total_sales": 1893.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 21:34:52",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -470,8 +470,8 @@
       "total_sales": 1492.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-06-07 14:21:09",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 153,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -498,7 +498,7 @@
       "total_sales": 1468.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 22:41:17",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -526,8 +526,8 @@
       "total_sales": 1346.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-03-15 21:45:25",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 237,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -554,7 +554,7 @@
       "total_sales": 1224.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 02:31:18",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -638,7 +638,7 @@
       "total_sales": 1160.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 17:01:52",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -666,7 +666,7 @@
       "total_sales": 1026.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 21:36:12",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -694,7 +694,7 @@
       "total_sales": 963.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-28 13:35:30",
-      "days_inactive": 0,
+      "days_inactive": 10,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -722,7 +722,7 @@
       "total_sales": 946.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-01 01:45:26",
-      "days_inactive": 0,
+      "days_inactive": 6,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -750,8 +750,8 @@
       "total_sales": 912.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-02-12 12:48:56",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 268,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -778,8 +778,8 @@
       "total_sales": 871.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-04-10 18:43:08",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 211,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -806,7 +806,7 @@
       "total_sales": 829.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-28 00:45:40",
-      "days_inactive": 0,
+      "days_inactive": 11,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -834,8 +834,8 @@
       "total_sales": 826.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-05-07 21:56:21",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 184,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -862,7 +862,7 @@
       "total_sales": 811.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 02:17:47",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -890,7 +890,7 @@
       "total_sales": 716.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 02:23:34",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -918,7 +918,7 @@
       "total_sales": 624.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 18:05:39",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -946,7 +946,7 @@
       "total_sales": 523.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-06 22:42:20",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -974,8 +974,8 @@
       "total_sales": 504.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-05-21 23:05:26",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 170,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1002,7 +1002,7 @@
       "total_sales": 493.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 16:38:23",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1030,7 +1030,7 @@
       "total_sales": 460.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 16:39:35",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1086,8 +1086,8 @@
       "total_sales": 405.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-03-04 23:25:19",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 248,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1114,7 +1114,7 @@
       "total_sales": 405.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-28 13:11:48",
-      "days_inactive": 0,
+      "days_inactive": 10,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1142,7 +1142,7 @@
       "total_sales": 302.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-14 12:20:58",
-      "days_inactive": 0,
+      "days_inactive": 24,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1170,8 +1170,8 @@
       "total_sales": 300.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-03-13 01:47:02",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 239,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1198,8 +1198,8 @@
       "total_sales": 284.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-12-19 12:38:54",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 323,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1226,7 +1226,7 @@
       "total_sales": 277.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 20:17:08",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1282,8 +1282,8 @@
       "total_sales": 268.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-07-31 21:38:55",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 99,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1310,8 +1310,8 @@
       "total_sales": 264.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-03-31 11:13:02",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 221,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1338,7 +1338,7 @@
       "total_sales": 255.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 16:58:46",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1366,7 +1366,7 @@
       "total_sales": 244.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-02 23:35:05",
-      "days_inactive": 0,
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1394,8 +1394,8 @@
       "total_sales": 241.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-06-12 17:04:08",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 148,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1422,8 +1422,8 @@
       "total_sales": 214.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-09-04 11:20:27",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 64,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1450,8 +1450,8 @@
       "total_sales": 198.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-04-07 15:07:30",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 214,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1506,8 +1506,8 @@
       "total_sales": 149.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-12-10 21:58:07",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 332,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1534,7 +1534,7 @@
       "total_sales": 149.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-20 14:26:51",
-      "days_inactive": 0,
+      "days_inactive": 18,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1590,7 +1590,7 @@
       "total_sales": 95.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-02 22:14:32",
-      "days_inactive": 0,
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1618,8 +1618,8 @@
       "total_sales": 93.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-08-28 09:50:16",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 71,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1646,7 +1646,7 @@
       "total_sales": 90.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-28 13:32:56",
-      "days_inactive": 0,
+      "days_inactive": 10,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1674,8 +1674,8 @@
       "total_sales": 63.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-10-20 22:48:36",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 383,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1702,8 +1702,8 @@
       "total_sales": 59.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-04-30 12:22:25",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 191,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1730,7 +1730,7 @@
       "total_sales": 52.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-19 16:22:27",
-      "days_inactive": 0,
+      "days_inactive": 19,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1758,8 +1758,8 @@
       "total_sales": 34.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-11-27 21:47:09",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 345,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1786,7 +1786,7 @@
       "total_sales": 30.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-28 13:23:11",
-      "days_inactive": 0,
+      "days_inactive": 10,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -1814,8 +1814,8 @@
       "total_sales": 28.8,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-12-27 21:40:45",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 315,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1842,8 +1842,8 @@
       "total_sales": 25.2,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-12-11 12:01:59",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 331,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1870,8 +1870,8 @@
       "total_sales": 21.6,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-11-22 19:10:30",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 350,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1898,8 +1898,8 @@
       "total_sales": 5.4,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-11-23 20:14:13",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 349,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1926,8 +1926,8 @@
       "total_sales": 3.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-09-28 20:53:20",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 405,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1954,8 +1954,8 @@
       "total_sales": 0.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2025-11-17 22:48:59",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 355,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -1982,8 +1982,8 @@
       "total_sales": 0.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-03-25 21:58:32",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 227,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2010,8 +2010,8 @@
       "total_sales": 0.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-06-06 15:42:08",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 154,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -2038,7 +2038,7 @@
       "total_sales": 0.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 17:30:53",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -2122,7 +2122,7 @@
       "total_sales": 0.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-23 17:57:49",
-      "days_inactive": 0,
+      "days_inactive": 15,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -2150,7 +2150,7 @@
       "total_sales": 0.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-10-20 14:16:19",
-      "days_inactive": 0,
+      "days_inactive": 18,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -2178,7 +2178,7 @@
       "total_sales": 0.0,
       "recorded_at": "2026-11-07T23:56:28.266162+00:00",
       "last_chapter_updated_at": "2026-11-04 01:29:33",
-      "days_inactive": 0,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,

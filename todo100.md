@@ -143,3 +143,25 @@
 - [x] **การทดสอบและ Build Frontend**:
   - รัน `group_matching_comics.py` และ `multi_platform_tracker.py --consolidate-only` สำเร็จ 100%
   - รัน `npm run build` ใน `frontend/` ผ่าน 100%
+
+
+---
+
+## 4. แก้ไขบั๊กแสดงแท็ก "วันนี้" (Today Badge) วันที่ย้อนหลัง และ Inactivity Tracker ผิดพลาด (8 พ.ย. 2569)
+
+- [x] **การสืบค้นและระบุสาเหตุ (Root Cause)**:
+  - เรื่อง "บุปผาไร้ใจเบ่งบานในยามสิบราตรี" แสดงแท็ก "วันนี้" แต่วันที่ระบุเป็น `2026-03-15`
+  - ตรวจพบ `TypeError` ใน `tools/kairew_growth_tracker.py` จากการลบ aware datetime กับ naive datetime ทำให้ 78/79 เรื่องใน Kairew ตกไปเข้า `except` แล้วเซ็ต `days_inactive = 0` ("วันนี้")
+  - `FinancialsView.tsx` ใช้ `c.days_inactive < g.days_inactive` ดึงเอาวันที่ 2026-03-15 ไปทับวันที่อัปเดตล่าสุดของ Chaply (`2026-10-07`)
+  - ตารางแสดงผล `c.days_inactive === 0 ? "วันนี้" : ...` โดยไม่ได้ตรวจทานกับวัน-เดือน-ปี จริง
+- [x] **การแก้ไข Backend & Data**:
+  - แก้ไข `tools/kairew_growth_tracker.py` ให้คำนวณ aware datetime ถูกต้อง และ fallback เป็น `999` (ห้ามเป็น 0)
+  - แก้ไข fallback ใน `tools/readrealm_growth_tracker.py` เป็น `999`
+  - รีเฟรช `days_inactive` ใน `kairew_growth_latest.json` และรัน `multi_platform_tracker.py --consolidate-only`
+- [x] **การแก้ไข Frontend**:
+  - เพิ่ม `parseDateSafe` และ `getInactivityRecency` ใน `frontend/src/lib/utils.ts` เปรียบเทียบ ปี-เดือน-วัน (Year, Month, Day) แท้จริง
+  - ปรับปรุงการรวมกลุ่มมังงะข้ามแพลตฟอร์มใน `FinancialsView.tsx` ให้เลือกตอนที่ใหม่ที่สุดตาม Timestamp (`max(timestamp)`)
+  - ปรับปรุงการแสดง Badge ในตารางให้ใช้ `getInactivityRecency`
+- [x] **การตรวจสอบ (Verification)**:
+  - "บุปผาไร้ใจเบ่งบานในยามสิบราตรี": ReadRealm (`277 วันก่อน`), Kairew (`238 วันก่อน`), Chaply (`32 วันก่อน`), Unified (`32 วันก่อน` - Chaply ล่าสุด) แท็ก "วันนี้" ไม่ปรากฏอีกต่อไป
+  - รัน `npm --prefix frontend run build` ผ่าน 100%

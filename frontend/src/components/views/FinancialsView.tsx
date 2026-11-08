@@ -47,7 +47,7 @@ import {
 
 import { SearchableSelect } from "@/components/ui/searchable-select";
 
-import { THAI_SHORT_MONTHS, getChapterCount, isUrgentManga } from "@/lib/utils";
+import { THAI_SHORT_MONTHS, getChapterCount, isUrgentManga, parseDateSafe, getInactivityRecency } from "@/lib/utils";
 
 import initialGrowthData from "@/data/multi_platform_growth_latest.json";
 
@@ -565,10 +565,19 @@ export function FinancialsView({
       g.total_views_7_chapters = (g.total_views_7_chapters || 0) + v7;
       g.chapters_count = Math.max(g.chapters_count, eps);
 
-      if (c.days_inactive != null) {
-        if (g.days_inactive === null || c.days_inactive < g.days_inactive) {
-          g.days_inactive = c.days_inactive;
-          g.last_chapter_updated_at = c.last_chapter_updated_at;
+      const cRecency = getInactivityRecency(c.last_chapter_updated_at, c.days_inactive);
+      c.days_inactive = cRecency.days;
+
+      const cDate = parseDateSafe(c.last_chapter_updated_at);
+      const gDate = parseDateSafe(g.last_chapter_updated_at);
+
+      if (cDate && (!gDate || cDate.getTime() > gDate.getTime())) {
+        g.last_chapter_updated_at = c.last_chapter_updated_at;
+        g.days_inactive = cRecency.days;
+      } else if (!gDate && cRecency.days != null) {
+        if (g.days_inactive === null || cRecency.days < g.days_inactive) {
+          g.days_inactive = cRecency.days;
+          if (c.last_chapter_updated_at) g.last_chapter_updated_at = c.last_chapter_updated_at;
         }
       }
 
@@ -644,6 +653,9 @@ export function FinancialsView({
       if (g.chaply.exists && g.chaply.account) accs.add(g.chaply.account);
 
       g.account = Array.from(accs).join(", ");
+
+      const finalGRecency = getInactivityRecency(g.last_chapter_updated_at, g.days_inactive);
+      g.days_inactive = finalGRecency.days;
 
       return g;
     });
@@ -967,9 +979,12 @@ export function FinancialsView({
       );
     }
 
-    list = list.map((c) => ({
-      ...c,
-      display_sales: c.total_sales || 0,
+    list = list.map((c) => {
+      const rec = getInactivityRecency(c.last_chapter_updated_at, c.days_inactive);
+      return {
+        ...c,
+        days_inactive: rec.days,
+        display_sales: c.total_sales || 0,
       display_views: c.total_views || 0,
       display_sales_7_chapters: c.sales_7_chapters || 0,
       display_views_7_chapters: c.views_7_chapters || 0,
@@ -1001,7 +1016,8 @@ export function FinancialsView({
         account: c.account,
       },
       platform_count: 1,
-    }));
+    };
+    });
 
     const getAvg7SalesRaw = (x: any) => {
       const eps = Math.max(1, Math.min(7, x.chapters_count || 7));
@@ -2904,37 +2920,34 @@ export function FinancialsView({
                           {/* Last Chapter Update / Inactivity Badge */}
 
                           <TableCell className="text-center">
-                            {c.days_inactive != null ? (
-                              <div className="flex flex-col items-center">
-                                <Badge
-                                  className={`text-[10px] font-mono px-2 py-0.5 border ${
-                                    c.days_inactive > 90
-                                      ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                                      : c.days_inactive > 30
-                                        ? "bg-amber-500/10 text-amber-400 border-amber-500/30 font-medium"
-                                        : c.days_inactive <= 7
-                                          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-medium"
-                                          : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
-                                  }`}
-                                >
-                                  {c.days_inactive === 0
-                                    ? "วันนี้"
-                                    : c.days_inactive > 365
-                                      ? `> 1 ปี (${c.days_inactive}d)`
-                                      : `${c.days_inactive} วันก่อน`}
-                                </Badge>
+                            {(() => {
+                              const recency = getInactivityRecency(
+                                c.last_chapter_updated_at,
+                                c.days_inactive
+                              );
+                              if (recency.days != null) {
+                                return (
+                                  <div className="flex flex-col items-center">
+                                    <Badge
+                                      className={`text-[10px] font-mono px-2 py-0.5 border ${recency.badgeClass}`}
+                                    >
+                                      {recency.label}
+                                    </Badge>
 
-                                {c.last_chapter_updated_at && (
-                                  <span className="text-[10px] text-slate-500 font-mono mt-0.5">
-                                    {c.last_chapter_updated_at.substring(0, 10)}
-                                  </span>
-                                )}
-                              </div>
-                            ) : (
-                              <span className="text-xs text-slate-500 font-mono">
-                                -
-                              </span>
-                            )}
+                                    {c.last_chapter_updated_at && (
+                                      <span className="text-[10px] text-slate-500 font-mono mt-0.5">
+                                        {c.last_chapter_updated_at.substring(0, 10)}
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              }
+                              return (
+                                <span className="text-xs text-slate-500 font-mono">
+                                  -
+                                </span>
+                              );
+                            })()}
                           </TableCell>
 
                           {/* 7-Day Growth */}

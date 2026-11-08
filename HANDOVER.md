@@ -6,6 +6,48 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ไขบั๊กแสดงแท็ก "วันนี้" (Today Badge) วันที่ย้อนหลัง และ Inactivity Tracker ผิดพลาด สำเร็จ 100% (8 พ.ย. 2569)
+
+#### 1. การสืบค้นและระบุสาเหตุ (Root Cause Analysis):
+- **ปัญหาที่ตรวจพบ**: เรื่อง "บุปผาไร้ใจเบ่งบานในยามสิบราตรี" (ReadRealm: `3E8jmDbO0ePeVZwR5qpa`, Kairew: `333`, Chaply: `cmuwogcnt0rx1t5hjln5y8r2f`) แสดงแท็ก badge ว่า "วันนี้" แต่ใต้ badge แสดงวันที่เป็น `2026-03-15` (15 มีนาคม 2569) ซึ่งย้อนหลังหลายเดือน
+- **สาเหตุเชิงลึก**:
+  1. **Python Inactivity TypeError ใน `tools/kairew_growth_tracker.py`**:
+     - `now` ถูกสร้างเป็น timezone-aware (`datetime.now(timezone.utc)`)
+     - `last_ep_dt` ถูก parse จากสตริงเป็น timezone-naive
+     - เมื่อลบกัน `(now - last_ep_dt)` เกิด `TypeError: can't subtract offset-naive and offset-aware datetimes`
+     - ในบล็อก `except Exception:` เดิมเขียน fallback ไว้ว่า `days_inactive = 0`!
+     - ส่งผลให้การ์ตูนทุกเรื่องใน Kairew (78 จาก 79 เรื่อง) ถูกบันทึกเป็น `days_inactive = 0` ("วันนี้") เสมอ!
+  2. **Multi-Platform Title Grouping ใน `FinancialsView.tsx`**:
+     - เมื่อรวมข้อมูลข้ามแพลตฟอร์ม โค้ดเดิมใช้ `if (c.days_inactive < g.days_inactive)` ในการเลือก `g.last_chapter_updated_at`
+     - ค่า `0` ของ Kairew ที่เป็นบั๊กจึงเอาชนะค่าจริงของ Chaply (32 วันก่อน: `2026-10-07`) ทำให้ `g.last_chapter_updated_at` ถูกแทนที่ด้วย `2026-03-15`
+  3. **Frontend Inactivity Badge Calculation**:
+     - ใน `FinancialsView.tsx` โค้ดเดิมแสดง `c.days_inactive === 0 ? "วันนี้" : ...` โดยไม่ได้ตรวจทานว่า `last_chapter_updated_at` ตรงกับวันปัจจุบันจริงหรือไม่
+
+#### 2. สิ่งที่ดำเนินการแก้ไข (Implemented Solutions):
+1. **แก้ไข Engine คำนวณ Inactivity Backend (`tools/kairew_growth_tracker.py` & `tools/readrealm_growth_tracker.py`)**:
+   - ปรับ timezone ให้เป็น UTC ให้ตรงกัน และล้าง string วันที่ก่อน parse
+   - เปลี่ยน fallback เมื่อ parse ไม่ได้ให้เป็น `999` (ห้าม default เป็น 0 เด็ดขาด)
+   - ปรับ fallback ใน `readrealm_growth_tracker.py` เป็น `999` เช่นเดียวกัน
+2. **สร้าง Helper Functions ที่ปลอดภัยใน Frontend (`frontend/src/lib/utils.ts`)**:
+   - `parseDateSafe(dateInput)`: รองรับทั้ง ISO string, Space ISO, Slash format (DD/MM/YYYY หรือปี พ.ศ.), Timestamp
+   - `getInactivityRecency(lastUpdatedStr, fallbackDays)`:
+     - ตรวจสอบความถูกต้องของปี-เดือน-วัน (Year, Month, Day) เทียบกับปัจจุบัน
+     - แสดง "วันนี้" (0 วัน) เฉพาะเมื่อวัน-เดือน-ปี ตรงกับวันปัจจุบันจริง
+     - แสดง "เมื่อวาน" (1 วัน) และนับจำนวนวันจริง เช่น `32 วันก่อน`, `238 วันก่อน` พร้อมกำหนดสี Badge ที่ถูกต้อง
+3. **ปรับปรุงการรวมข้อมูลข้ามแพลตฟอร์มและการแสดงผลใน `FinancialsView.tsx`**:
+   - ในการรวมกลุ่มการ์ตูนหลายแพลตฟอร์ม ปรับให้เลือก `last_chapter_updated_at` จากตอนที่อัปเดตใหม่ล่าสุดจริงตาม Timestamp (`max(timestamp)`)
+   - นำ `getInactivityRecency` มาใช้ในการคำนวณและแสดงผล Inactivity Badge ในตาราง
+4. **อัปเดตข้อมูลและทดสอบ Build Frontend**:
+   - รันคำนวณ `days_inactive` ใน `kairew_growth_latest.json` และ `multi_platform_growth_latest.json` ใหม่ทั้งหมด
+   - บุปผาไร้ใจเบ่งบานในยามสิบราตรี:
+     - ReadRealm: `277 วันก่อน` (`2026-02-04`)
+     - Kairew: `238 วันก่อน` (`2026-03-15`)
+     - Chaply: `32 วันก่อน` (`2026-10-07`)
+     - ภาพรวมกลุ่ม (Unified): แสดงอัปเดตล่าสุดของ Chaply คือ `32 วันก่อน` (`2026-10-07`) แท็ก "วันนี้" หายไปอย่างสิ้นเชิง 100%
+   - ทดสอบ build ผ่านฉลุย (`tsc -b && vite build`)
+
+---
+
 ### 🏆 แก้ไขปัญหาจำนวนตอน Chaply ถูกจำกัด (Cap) ไว้ที่ 100 ตอน — ปลดล็อกตอนจริง 154 ตอน และแก้ไขทั้ง 9 เรื่อง สำเร็จ 100% (8 พ.ย. 2569)
 
 #### 1. การสืบค้นและระบุสาเหตุ (Root Cause Analysis):

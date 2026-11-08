@@ -249,11 +249,12 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         # Inactivity calculation
         if last_ep_str:
             try:
-                # Format: "2026-11-03 13:21:15"
-                last_ep_dt = datetime.strptime(last_ep_str, "%Y-%m-%d %H:%M:%S")
+                # Format: "2026-11-03 13:21:15" or ISO
+                clean_str = last_ep_str.strip().replace("T", " ").replace("Z", "").split(".")[0]
+                last_ep_dt = datetime.strptime(clean_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
                 days_inactive = max(0, (now - last_ep_dt).days)
-            except Exception:
-                days_inactive = 0
+            except Exception as e:
+                days_inactive = 999
         else:
             days_inactive = 999
 

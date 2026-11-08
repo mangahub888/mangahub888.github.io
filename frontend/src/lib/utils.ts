@@ -313,3 +313,129 @@ export function sanitizeTrackerStatus(status?: string, safeDiff: number = 0): st
   }
   return s
 }
+
+/**
+ * Safely parse any date input (ISO string, standard date string, slash date, timestamp)
+ * Handles "YYYY-MM-DD HH:mm:ss", ISO with Z, Buddhist era, etc.
+ */
+export function parseDateSafe(dateInput: any): Date | null {
+  if (!dateInput) return null
+  if (dateInput instanceof Date) return isNaN(dateInput.getTime()) ? null : dateInput
+  if (typeof dateInput === "number") {
+    const d = new Date(dateInput)
+    return isNaN(d.getTime()) ? null : d
+  }
+  if (typeof dateInput === "string") {
+    const s = dateInput.trim()
+    if (!s) return null
+
+    // Check for DD/MM/YYYY or DD/MM/BBBB (Buddhist era)
+    if (s.includes("/")) {
+      const parts = s.split(" ")[0].split("/")
+      if (parts.length === 3) {
+        let yr = +parts[2]
+        if (yr > 2400) yr -= 543
+        const d = new Date(yr, +parts[1] - 1, +parts[0])
+        if (!isNaN(d.getTime())) return d
+      }
+    }
+
+    // Check "YYYY-MM-DD HH:mm:ss" without timezone (replace space with T for cross-browser safety)
+    const spaceMatch = s.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})/)
+    if (spaceMatch) {
+      const d = new Date(`${spaceMatch[1]}T${spaceMatch[2]}`)
+      if (!isNaN(d.getTime())) return d
+    }
+
+    // Standard new Date parse
+    const d = new Date(s)
+    if (!isNaN(d.getTime())) return d
+
+    // Regex fallback for YYYY-MM-DD
+    const isoDateMatch = s.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/)
+    if (isoDateMatch) {
+      const d2 = new Date(Number(isoDateMatch[1]), Number(isoDateMatch[2]) - 1, Number(isoDateMatch[3]))
+      if (!isNaN(d2.getTime())) return d2
+    }
+  }
+  return null
+}
+
+/**
+ * Calculates inactivity recency label, days count, and badge styling.
+ * Prevents stale dates (e.g. months ago) from ever being labeled as "วันนี้".
+ * Accurately compares Year, Month, Day against the current date.
+ */
+export function getInactivityRecency(
+  lastUpdatedStr?: string | null,
+  fallbackDays?: number | null
+): {
+  days: number | null
+  label: string
+  badgeClass: string
+} {
+  const d = parseDateSafe(lastUpdatedStr)
+  const now = new Date()
+
+  let daysDiff: number | null = null
+
+  if (d) {
+    // Midnight comparison for calendar days
+    const dYear = d.getFullYear()
+    const dMonth = d.getMonth()
+    const dDate = d.getDate()
+
+    const nYear = now.getFullYear()
+    const nMonth = now.getMonth()
+    const nDate = now.getDate()
+
+    const isSameDay = dYear === nYear && dMonth === nMonth && dDate === nDate
+
+    if (isSameDay) {
+      daysDiff = 0
+    } else {
+      const startOfNow = new Date(nYear, nMonth, nDate).getTime()
+      const startOfTarget = new Date(dYear, dMonth, dDate).getTime()
+      const rawDays = Math.round((startOfNow - startOfTarget) / (1000 * 60 * 60 * 24))
+      daysDiff = Math.max(0, rawDays)
+    }
+  } else if (fallbackDays != null && !isNaN(fallbackDays)) {
+    daysDiff = Math.max(0, Math.floor(fallbackDays))
+  }
+
+  if (daysDiff === null) {
+    return {
+      days: null,
+      label: "-",
+      badgeClass: "bg-slate-500/10 text-slate-400 border-slate-500/30",
+    }
+  }
+
+  let label = ""
+  let badgeClass = ""
+
+  if (daysDiff === 0) {
+    label = "วันนี้"
+    badgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-medium"
+  } else if (daysDiff === 1) {
+    label = "เมื่อวาน"
+    badgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-medium"
+  } else if (daysDiff <= 7) {
+    label = `${daysDiff} วันก่อน`
+    badgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-medium"
+  } else if (daysDiff <= 30) {
+    label = `${daysDiff} วันก่อน`
+    badgeClass = "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
+  } else if (daysDiff <= 90) {
+    label = `${daysDiff} วันก่อน`
+    badgeClass = "bg-amber-500/10 text-amber-400 border-amber-500/30 font-medium"
+  } else if (daysDiff > 365) {
+    label = `> 1 ปี (${daysDiff}d)`
+    badgeClass = "bg-rose-500/10 text-rose-400 border-rose-500/30"
+  } else {
+    label = `${daysDiff} วันก่อน`
+    badgeClass = "bg-rose-500/10 text-rose-400 border-rose-500/30"
+  }
+
+  return { days: daysDiff, label, badgeClass }
+}
