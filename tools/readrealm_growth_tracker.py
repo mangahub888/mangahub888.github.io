@@ -953,6 +953,31 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     with_30d.sort(key=lambda x: x["growth_30d"]["sales_growth_pct"], reverse=True)
     top_growth_30d = with_30d[0]["subject"] if with_30d else ""
 
+    # Attach monthly_sales from readrealm_stats files so growth_results has full monthly_sales parity
+    stats_map = {}
+    for p_name in ["readrealm_stats_lionking.json", "readrealm_stats.json"]:
+        p_path = os.path.join(DATA_DIR, p_name)
+        if os.path.exists(p_path):
+            try:
+                with open(p_path, "r", encoding="utf-8") as f:
+                    s_data = json.load(f)
+                    for c_item in s_data.get("comics", []):
+                        if c_item.get("comic_id"):
+                            stats_map[c_item["comic_id"]] = c_item.get("monthly_sales", {})
+                        if c_item.get("subject"):
+                            stats_map[c_item["subject"].strip()] = c_item.get("monthly_sales", {})
+            except Exception:
+                pass
+
+    for c in growth_results:
+        cid = c.get("comic_id")
+        subj = (c.get("subject") or "").strip()
+        m_sales = stats_map.get(cid) or stats_map.get(subj)
+        if m_sales:
+            c["monthly_sales"] = m_sales
+        elif "monthly_sales" not in c:
+            c["monthly_sales"] = {}
+
     # 6. Save latest growth report file
     report_output = {
         "pipeline_recorded_at": recorded_at,

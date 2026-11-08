@@ -124,6 +124,8 @@ interface FinancialsViewProps {
 
   websiteList: string[];
 
+  transactionList?: any[];
+
   onSalesChange: (newSales: any[], newWebsites?: string[]) => void;
 }
 
@@ -175,6 +177,8 @@ export function FinancialsView({
   salesList,
 
   websiteList,
+
+  transactionList = [],
 
   onSalesChange,
 }: FinancialsViewProps) {
@@ -1699,19 +1703,49 @@ export function FinancialsView({
       return false;
     });
 
-    const totalRev = monthSales.reduce((acc, s) => acc + (parseFloat(s.revenue) || 0), 0);
-    const totalCost = monthSales.reduce((acc, s) => acc + (parseFloat(s.totalcost) || 0), 0);
+    // User Requirement: "รายรับให้ดึงจาก งบประมาณ & บัญชี ซึ่งต้องได้ 60k+"
+    const budgetIncomeItems = (transactionList || []).filter((t) => {
+      if (!t.date) return false;
+      const dStr = String(t.date).slice(0, 7);
+      const isTargetMonth = dStr === targetM || (t.date && String(t.date).startsWith(targetM));
+      const tType = String(t.type || "").toLowerCase();
+      return isTargetMonth && (tType === "income" || tType === "รายรับ");
+    });
+    const totalBudgetRev = budgetIncomeItems.reduce((acc, t) => acc + (parseFloat(t.amount) || 0), 0);
+
+    const budgetExpenseItems = (transactionList || []).filter((t) => {
+      if (!t.date) return false;
+      const dStr = String(t.date).slice(0, 7);
+      const isTargetMonth = dStr === targetM || (t.date && String(t.date).startsWith(targetM));
+      const tType = String(t.type || "").toLowerCase();
+      return isTargetMonth && (tType === "expense" || tType === "รายจ่าย");
+    });
+    const totalBudgetExp = budgetExpenseItems.reduce((acc, t) => acc + (parseFloat(t.amount) || 0), 0);
+
+    const ledgerRev = monthSales.reduce((acc, s) => acc + (parseFloat(s.revenue) || 0), 0);
+    const ledgerCost = monthSales.reduce((acc, s) => acc + (parseFloat(s.totalcost) || 0), 0);
+
+    // Primary Total Revenue is strictly from Budget Transactions if available
+    const totalRev = totalBudgetRev > 0 ? totalBudgetRev : ledgerRev;
+    const totalCost = ledgerCost > 0 ? ledgerCost : totalBudgetExp;
     const netProfit = totalRev - totalCost;
     const margin = totalRev > 0 ? (netProfit / totalRev) * 100 : 0;
     const totalChapters = monthSales.reduce((acc, s) => acc + (parseInt(s.chapterscount, 10) || 0), 0);
     const avgCostPerChapter = totalChapters > 0 ? totalCost / totalChapters : 0;
 
-    // Platform breakdown
+    // Platform breakdown: from Budget Transactions if available, else from MangaSales
     const platformMap: Record<string, number> = {};
-    monthSales.forEach((s) => {
-      const plat = s.website || "ReadRealm แปลจนเมื่อย";
-      platformMap[plat] = (platformMap[plat] || 0) + (parseFloat(s.revenue) || 0);
-    });
+    if (totalBudgetRev > 0) {
+      budgetIncomeItems.forEach((t) => {
+        const cat = t.category || "งบประมาณ & บัญชี";
+        platformMap[cat] = (platformMap[cat] || 0) + (parseFloat(t.amount) || 0);
+      });
+    } else {
+      monthSales.forEach((s) => {
+        const plat = s.website || "ReadRealm แปลจนเมื่อย";
+        platformMap[plat] = (platformMap[plat] || 0) + (parseFloat(s.revenue) || 0);
+      });
+    }
 
     // Month label in Thai
     let monthLabel = targetM;
@@ -1739,9 +1773,12 @@ export function FinancialsView({
       totalChapters,
       avgCostPerChapter,
       platformMap,
-      hasData: monthSales.length > 0,
+      hasData: monthSales.length > 0 || totalBudgetRev > 0,
+      hasBudgetRevenue: totalBudgetRev > 0,
+      budgetRevenue: totalBudgetRev,
+      ledgerRevenue: ledgerRev,
     };
-  }, [resolvedSalesList, selectedLedgerMonth, availableSalesMonths]);
+  }, [resolvedSalesList, selectedLedgerMonth, availableSalesMonths, transactionList]);
 
   const summary = React.useMemo(() => {
     let totalRev = 0;
@@ -1788,18 +1825,23 @@ export function FinancialsView({
 
       .slice(0, 5);
 
+    const finalSummaryRev = reconciledMonthData.hasBudgetRevenue
+      ? reconciledMonthData.totalRev
+      : totalRev;
+    const finalSummaryCost = totalCost > 0 ? totalCost : (reconciledMonthData.totalCost || 0);
+
     return {
-      totalRev,
+      totalRev: finalSummaryRev,
 
-      totalCost,
+      totalCost: finalSummaryCost,
 
-      totalProfit: totalRev - totalCost,
+      totalProfit: finalSummaryRev - finalSummaryCost,
 
       topProfits,
 
       topLosses,
     };
-  }, [filteredSales]);
+  }, [filteredSales, reconciledMonthData]);
 
   const chartsData = React.useMemo(() => {
     const websiteRevenue: Record<string, number> = {};
@@ -3942,7 +3984,9 @@ export function FinancialsView({
                     ฿{reconciledMonthData.totalRev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    ดึงจากระบบสรุปยอดขายแพลตฟอร์มรอบ {reconciledMonthData.monthLabel}
+                    {reconciledMonthData.hasBudgetRevenue
+                      ? `ดึงจากงบประมาณ & บัญชี (${reconciledMonthData.monthLabel}) • ยอดขายสมุดรายเรื่อง ฿${reconciledMonthData.ledgerRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      : `ดึงจากระบบสรุปยอดขายแพลตฟอร์มรอบ ${reconciledMonthData.monthLabel}`}
                   </p>
                 </div>
                 <div className="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs text-slate-300 max-h-36 overflow-y-auto">
@@ -4575,12 +4619,8 @@ export function FinancialsView({
                       let krSaleAmt = 0;
                       let chSaleAmt = 0;
 
-                      if (rev <= 0) {
-                        rrSaleAmt = 0;
-                        krSaleAmt = 0;
-                        chSaleAmt = 0;
-                      } else if (isRrExact || isKrExact || isChExact) {
-                        // Priority 1: Use verified round sales directly. Kairew and Chaply are NEVER inflated with lifetime total!
+                      if (isRrExact || isKrExact || isChExact) {
+                        // Priority 1: Use verified round sales directly.
                         rrSaleAmt = rrExists ? rrMonthSales : 0;
                         krSaleAmt = kwExists ? krMonthSales : 0;
                         chSaleAmt = chExists ? chMonthSales : 0;
@@ -4602,6 +4642,10 @@ export function FinancialsView({
                             rrSaleAmt += remainder;
                           }
                         }
+                      } else if (rev <= 0) {
+                        rrSaleAmt = 0;
+                        krSaleAmt = 0;
+                        chSaleAmt = 0;
                       } else if (activePlatCount <= 1) {
                         if (kwExists) krSaleAmt = rev;
                         else if (chExists) chSaleAmt = rev;
@@ -4722,7 +4766,7 @@ export function FinancialsView({
                           <TableCell className="text-right font-semibold">
                             <div className="relative group inline-block hover:z-50">
                               <span className="text-indigo-400 hover:text-indigo-300 underline decoration-dotted decoration-indigo-400/50 cursor-pointer transition-colors">
-                                {rev.toLocaleString()} ฿
+                                {((rev > 0 ? rev : (rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿
                               </span>
                               {/* Tooltip Hover Card: แยกยอดขายตามแพลตฟอร์ม (Smart Positioning: idx < 3 พุ่งลงล่าง idx >= 3 พุ่งขึ้นบน ไม่ชนหัวตาราง) */}
                               <div
@@ -4732,7 +4776,7 @@ export function FinancialsView({
                               >
                                 <div className="text-[11px] font-bold text-slate-200 border-b border-slate-700/70 pb-1.5 mb-1.5 flex items-center justify-between">
                                   <span className="truncate pr-2">📊 แยกยอดขายตามแพลตฟอร์ม {rowMonthLabel ? `(${rowMonthLabel})` : ""}</span>
-                                  <span className="text-indigo-300 shrink-0">฿{rev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                  <span className="text-indigo-300 shrink-0">฿{((rev > 0 ? rev : (rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 </div>
                                 <div className="space-y-1.5 text-[11px]">
                                   {rrExists && (

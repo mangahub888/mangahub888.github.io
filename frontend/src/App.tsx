@@ -227,7 +227,7 @@ export default function App() {
     isLoading: loadingFinancials,
     isFetching: fetchingFinancials,
     refetch: refetchFinancials,
-  } = useQuery<{ manga?: any[]; sales?: any[]; websites?: string[] }>({
+  } = useQuery<{ manga?: any[]; sales?: any[]; websites?: string[]; transactions?: any[] }>({
     queryKey: ["financialData", passcode],
     queryFn: () => callGasApi("GET_FINANCIAL_DATA"),
     enabled: Boolean(passcode) && activeView === "financials",
@@ -243,7 +243,7 @@ export default function App() {
   } = useQuery<{ payees?: any[]; transactions?: any[]; websites?: string[] }>({
     queryKey: ["budgetData", passcode],
     queryFn: () => callGasApi("GET_BUDGET_DATA"),
-    enabled: Boolean(passcode) && activeView === "budget",
+    enabled: Boolean(passcode) && (activeView === "budget" || activeView === "financials"),
     staleTime: 3 * 60 * 1000,
   })
 
@@ -253,7 +253,9 @@ export default function App() {
   const payeeList = Array.isArray(budgetData?.payees)
     ? budgetData.payees
     : []
-  const transactionList = Array.isArray(budgetData?.transactions)
+  const transactionList = Array.isArray(financialData?.transactions)
+    ? financialData.transactions
+    : Array.isArray(budgetData?.transactions)
     ? budgetData.transactions
     : []
   const websiteList = Array.isArray(financialData?.websites)
@@ -731,6 +733,7 @@ export default function App() {
               mangaList={mangaList}
               salesList={salesList}
               websiteList={websiteList}
+              transactionList={transactionList}
               onSalesChange={(newSales, newWebsites) => {
                 queryClient.setQueryData(
                   ["financialData", passcode],

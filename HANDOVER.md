@@ -6,6 +6,54 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ไขระบบดึงยอดรายรับรวมจากชีต "งบประมาณ & บัญชี" (60k+) และแก้ไขยอดขายเดือนตุลาคมจริงทุกเรื่อง (ผู้ฝึกกระบี่เต็มเวลา = 583.20 ฿) (8 พ.ย. 2569)
+
+#### 1. รายละเอียดปัญหาจากผู้ใช้:
+1. *"รายรับให้ดึงจาก งบประมาณ & บัญชี ซึ่งต้องได้ 60k+ แต่ตอนนี้ได้มา ฿37,210.28 ซึ่งมันน่าจะคำนวณผิดด้วย"*
+2. *"และยอดรายเดือนรวมก็ยังน่าจะผิดอยู่ เพราะผมสุ่มตรวจดู ผู้ฝึกกระบี่เต็มเวลาต้องได้ RR ยอดขายรวมรายเดือน : Icon ReadCoin 583.20"* (ปัจจุบันใน Tooltip และตารางแสดงเป็น ฿0.00 ทั้งที่หลังบ้านนักเขียนมี 583.20 ReadCoin)
+
+#### 2. ผลการตรวจสอบและสาเหตุต้นตอ (Root Cause Analysis):
+1. **สาเหตุของยอด ฿37,210.28**:
+   - ในการ์ดสรุปภาพรวม (`Summary Cards` & `reconciledMonthData` ใน `FinancialsView.tsx`) ดึงยอดรายรับรวมจากการบวกผลรวมคอลัมน์ `revenue` ในตาราง `MangaSales` (49 เรื่อง) ซึ่งเป็นเพียงยอดขายรายเรื่องบางส่วนที่คำนวณได้ แทนที่จะดึงจากชีต `BudgetTransactions` (งบประมาณ & บัญชี)
+   - ในชีต `BudgetTransactions` ประจำเดือนตุลาคม 2569 มียอดรายรับจริงทั้งหมด 3 รายการ รวมเป็น **฿65,601.45** (เกิน 60k+):
+     - `TR1793704013850`: ReadRealm แปลจนเมื่อย = `฿54,796.16`
+     - `TR1793704053519`: ReadRealm แปลจนแขนหัก = `฿1,225.29`
+     - `TR1793753815684`: chaply = `฿9,580.00`
+   - ใน `calculateAndSyncMonthlyMangaSales` (Backend `Code.js` บรรทัด 3370) มีเงื่อนไข `finalRevenue = runningTotalRev || totalBudgetRevenue;` ซึ่งทำให้ runningTotalRev (37,210.28) บดบัง totalBudgetRevenue (65,601.45)
+2. **สาเหตุของเรื่อง "ผู้ฝึกกระบี่เต็มเวลา" และเรื่องอื่นๆ แสดง ฿0.00**:
+   - ในชีต `ReadRealmGrowth` บน GAS เดิมไม่มีคอลัมน์เก็บ `monthly_sales` เมื่อ `calculateAndSyncMonthlyMangaSales` ดึงข้อมูลผ่าน `getReadRealmGrowthData().comics` จึงได้ `c.monthly_sales = undefined` และ fallback ไปเป็น 0.00
+   - ใน `backend/Code.js` บรรทัดที่ 403 มีการตัด payload เหลือเฉพาะ string targetMonth ทำให้ object mapping ยอดขายรายเดือนถูกตัดทิ้ง
+   - ใน `FinancialsView.tsx` บรรทัดที่ 4578 มีเงื่อนไข `if (rev <= 0) { rrSaleAmt = 0; }` ซึ่งบล็อกการแสดงผลแม้ในระบบจะมีข้อมูลรอบจริง `isRrExact = true` (583.20 ฿)
+
+#### 3. สิ่งที่ดำเนินการแก้ไขในระบบ:
+1. **Backend (`backend/Code.js`)**:
+   - ปรับปรุงให้ยึดรายรับจาก `BudgetTransactions` (`type === 'income'`) เป็นหลัก: `finalRevenue = totalBudgetRevenue > 0 ? totalBudgetRevenue : runningTotalRev;`
+   - คืนค่า `totalRevenue: 65601.45` และ `budgetRevenue: 65601.45` พร้อม breakdown ตามช่องทางใน summary
+   - ปรับปรุง `doPost` บรรทัด 403 ให้ส่ง `payload` ทั้งก้อนไปยัง `calculateAndSyncMonthlyMangaSales` เพื่อรับ `monthlySalesMap` และ `readRealmComics`
+   - เพิ่มคอลัมน์ `MonthlySales` ในชีต `ReadRealmGrowth` (ทั้ง `saveReadRealmGrowthData` และ `getReadRealmGrowthData`)
+   - ส่งคืน `transactions: getBudgetTransactions()` ใน `getFinancialInitData()` สำหรับ Financials
+   - Deploy ขึ้น Google Apps Script Web App Deployment ID `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` สำเร็จ (@118)
+2. **Data Pipeline & Trackers (`tools/readrealm_growth_tracker.py`, `tools/group_matching_comics.py`)**:
+   - แนบ `monthly_sales` ลงใน `growth_results` ทุกเรื่อง 236 เรื่อง 100%
+   - ซิงก์ข้อมูลลง `readrealm_growth_latest.json` และ `multi_platform_growth_latest.json` ทั่วทั้ง repo
+   - รันซิงก์ขึ้นชีต Google Sheet `MangaSales` บนคลาวด์จริง:
+     - เรื่อง "ผู้ฝึกกระบี่เต็มเวลา" ได้รับยอดขาย `583.20 ฿`, ต้นทุน `130 ฿`, กำไร `+453.20 ฿` จัดเรียงขึ้นกลุ่มมีกำไรเรียบร้อย
+     - ยอดขายรวมของสมุดรายเรื่อง 49 เรื่องอัปเดตเป็นยอดจริงตามรอบ
+3. **Frontend (`frontend/src/App.tsx` & `FinancialsView.tsx`)**:
+   - `App.tsx`: เชื่อมโยง `transactionList` ส่งให้ `FinancialsView` และเปิด fetch on-demand ร่วมกับมุมมอง financials
+   - `FinancialsView.tsx`:
+     - ใน `reconciledMonthData` และ `Summary Cards`: ดึงยอดรายรับรวมจาก `transactionList` (ชีตงบประมาณ & บัญชี) สำหรับเดือนที่เลือก = **฿65,601.45**
+     - กำไรสุทธิคำนวณจาก `รายรับรวม (จากงบประมาณ & บัญชี) - ต้นทุนรวม`
+     - แสดงป้ายกำกับการกระทบยอด (Reconciliation) ระหว่างรายรับจากงบประมาณ (฿65,601.45) และยอดขายรวมรายเรื่อง
+     - ปรับลำดับเงื่อนไขการคำนวณในแถวให้ใช้ `isRrExact` (รอบจริง) แสดงผลทันทีแม้ค่าเริ่มต้นในแถวจะเป็น 0
+     - เรื่อง "ผู้ฝึกกระบี่เต็มเวลา" แสดงตัวเลข `583.20 ฿` ในคอลัมน์รายได้ และ Tooltip แสดง `ReadRealm: (รอบจริง) ฿583.20` ถูกต้อง 100%
+4. **การทดสอบและตรวจสอบ (Verification)**:
+   - รัน Automated Test Suite `test_october_financial_revenue.mjs` ครอบคลุม 4 ชุดทดสอบ ผ่าน 100%
+   - รัน Test Suite `test_readrealm_sale_report.mjs` ผ่าน 100%
+   - รัน Frontend Build (`npm run build`) ผ่าน 100% (Vite production build ใช้เวลา 3.41s)
+
+---
+
 ### 🏆 แก้ไขปัญหายอดขาย Kairew และ Chaply ดึงยอดสะสมตลอดกาล (Lifetime Total) ในสมุดบันทึกเดือนตุลาคม 2569 (8 พ.ย. 2569)
 
 #### 1. รายละเอียดปัญหาจากผู้ใช้:

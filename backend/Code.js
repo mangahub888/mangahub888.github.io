@@ -400,7 +400,7 @@ function doPost(e) {
       case 'SYNC_MONTHLY_MANGA_SALES':
       case 'CALCULATE_MONTHLY_P_L':
       case 'SYNC_AND_CALCULATE_MONTHLY_PL':
-        result = calculateAndSyncMonthlyMangaSales(payload ? (payload.targetMonth || payload.month || payload) : null);
+        result = calculateAndSyncMonthlyMangaSales(payload);
         break;
       case 'COUNT_FINISHED_CHAPTERS':
         result = countFinishedChapters(payload.mangaId, payload.year, payload.month);
@@ -963,7 +963,8 @@ function getSheet(name = SHEET_NAME) {
         'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
         'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
         'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
-        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d',
+        'MonthlySales'
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#3b82f6').setFontColor('#ffffff');
@@ -2861,7 +2862,11 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     lock.waitLock(60000);
 
     // 1. จัดการ Format ของเดือนเป้าหมาย (เช่น "2026-10", "2026-11")
+    let customMonthlySalesMap = null;
+    let customReadRealmComics = null;
     if (typeof targetMonth === 'object' && targetMonth !== null) {
+      if (targetMonth.monthlySalesMap) customMonthlySalesMap = targetMonth.monthlySalesMap;
+      if (Array.isArray(targetMonth.readRealmComics)) customReadRealmComics = targetMonth.readRealmComics;
       targetMonth = targetMonth.targetMonth || targetMonth.month;
     }
     if (!targetMonth || typeof targetMonth !== 'string') {
@@ -2895,10 +2900,12 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     const allWorkQueue = getWorkQueue();
 
     // ดึง Growth Data (สำหรับช่วยแมตช์รายได้)
-    let readRealmComics = [];
+    let readRealmComics = customReadRealmComics || [];
     let chaplyComics = [];
     let kairewComics = [];
-    try { readRealmComics = (getReadRealmGrowthData().comics || []); } catch(e) {}
+    if (!readRealmComics || readRealmComics.length === 0) {
+      try { readRealmComics = (getReadRealmGrowthData().comics || []); } catch(e) {}
+    }
     try { chaplyComics = (getChaplyGrowthData().comics || []); } catch(e) {}
     try { kairewComics = (getKairewGrowthData().comics || []); } catch(e) {}
 
@@ -2919,6 +2926,14 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         let mAmt = 0;
         if (c.monthly_sales && targetThaiMonth && c.monthly_sales[targetThaiMonth] !== undefined) {
           mAmt = parseFloat(c.monthly_sales[targetThaiMonth]) || 0;
+        }
+        if (customMonthlySalesMap) {
+          const normTitle = normalizeMangaTitle(title);
+          if (customMonthlySalesMap[title] !== undefined) {
+            mAmt = parseFloat(customMonthlySalesMap[title]) || mAmt;
+          } else if (normTitle && customMonthlySalesMap[normTitle] !== undefined) {
+            mAmt = parseFloat(customMonthlySalesMap[normTitle]) || mAmt;
+          }
         }
 
         // Raw exact title
@@ -3207,6 +3222,8 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
       // ห้ามดึงยอดขายสะสมตลอดกาล (total_sales) มาใส่เด็ดขาด และล้างค่าเก่าที่ถูกพิษยอดสะสมออก
       if (platData && typeof platData.monthly_sales === 'number' && platData.monthly_sales > 0) {
         item.revenue = platData.monthly_sales;
+      } else if (customMonthlySalesMap && (customMonthlySalesMap[mName] !== undefined || (normKey && customMonthlySalesMap[normKey] !== undefined))) {
+        item.revenue = parseFloat(customMonthlySalesMap[mName] || customMonthlySalesMap[normKey]) || 0;
       } else if (platData && platData.sales_delta30d > 0) {
         item.revenue = platData.sales_delta30d;
       } else if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0) {
@@ -3367,7 +3384,9 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     invalidateCache(['manga_sales', 'financial_sales']);
 
     const totalChapters = calculatedSalesRows.reduce((acc, r) => acc + (r.chapterscount || 0), 0);
-    const finalRevenue = runningTotalRev || totalBudgetRevenue;
+    // User Requirement: "รายรับให้ดึงจาก งบประมาณ & บัญชี ซึ่งต้องได้ 60k+"
+    // ยึดรายรับจาก BudgetTransactions (งบประมาณ & บัญชี) เป็นหลัก หากไม่มีจึง fallback ไปใช้ runningTotalRev
+    const finalRevenue = totalBudgetRevenue > 0 ? totalBudgetRevenue : runningTotalRev;
     const finalProfit = finalRevenue - runningTotalCost;
     const marginPct = finalRevenue > 0 ? (finalProfit / finalRevenue) * 100 : 0;
 
@@ -3386,7 +3405,9 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         totalChapters: totalChapters,
         avgCostPerChapter: totalChapters > 0 ? Math.round((runningTotalCost / totalChapters) * 100) / 100 : 0,
         staffBreakdown: Object.values(staffClaimsSummary),
-        platformBreakdown: platformIncomeBreakdown
+        platformBreakdown: platformIncomeBreakdown,
+        budgetRevenue: totalBudgetRevenue,
+        ledgerMangaRevenue: runningTotalRev
       }
     };
   } catch (err) {
@@ -3439,7 +3460,8 @@ function getFinancialInitData() {
   return {
     manga: getMangaList(),
     sales: getMangaSales(),
-    websites: getWebsiteList()
+    websites: getWebsiteList(),
+    transactions: getBudgetTransactions()
   };
 }
 
@@ -8759,7 +8781,8 @@ function saveReadRealmGrowthData(payload) {
         (c.growth_30d && c.growth_30d.sales_delta) || 0,
         (c.growth_30d && c.growth_30d.sales_growth_pct) || 0,
         (c.growth_30d && c.growth_30d.views_delta) || 0,
-        (c.growth_30d && c.growth_30d.views_growth_pct) || 0
+        (c.growth_30d && c.growth_30d.views_growth_pct) || 0,
+        JSON.stringify(c.monthly_sales || {})
       ]);
 
       if (rows.length > 0) {
@@ -8871,7 +8894,10 @@ function getReadRealmGrowthData() {
           sales_growth_pct: row[headers.indexOf('salesgrowthpct30d')],
           views_delta: row[headers.indexOf('viewsdelta30d')],
           views_growth_pct: row[headers.indexOf('viewsgrowthpct30d')]
-        }
+        },
+        monthly_sales: (headers.indexOf('monthlysales') !== -1 && row[headers.indexOf('monthlysales')]) ? (function() {
+          try { return JSON.parse(row[headers.indexOf('monthlysales')]); } catch(e) { return {}; }
+        })() : {}
       });
     }
 

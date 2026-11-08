@@ -519,3 +519,25 @@
    - `test_manga_sales_mangaid_filter.mjs` (ผ่าน 100%)
    - `test_monthly_sales_breakdown.mjs` (ผ่าน 100%)
    - `npm --prefix frontend run build` (ผ่าน 100%)
+
+---
+
+## 🏆 บันทึกงานเสร็จสมบูรณ์: แก้ไขระบบดึงยอดรายรับรวมจากชีต "งบประมาณ & บัญชี" (60k+) และแก้ไขยอดขายเดือนตุลาคมจริงทุกเรื่อง (ผู้ฝึกกระบี่เต็มเวลา = 583.20 ฿) (8 พ.ย. 2569)
+
+### ปัญหาที่พบและแก้ไข:
+1. **ยอดรายรับรวมแสดง ฿37,210.28 แทนที่จะเป็น 60k+**:
+   - เดิมคำนวณจากผลรวมของคอลัมน์ `revenue` ใน `MangaSales` (37,210.28 ฿)
+   - ปรับให้ดึงยอดรายรับรวมจริงจากชีต `BudgetTransactions` (`type === 'income'`) ซึ่งรวมได้ **฿65,601.45** (เกิน 60k+ ถูกต้องตามงบประมาณจริง):
+     - ReadRealm แปลจนเมื่อย: ฿54,796.16
+     - ReadRealm แปลจนแขนหัก: ฿1,225.29
+     - chaply: ฿9,580.00
+   - กำไรสุทธิคำนวณจาก `รายรับรวม (฿65,601.45) - ต้นทุนรวม (฿29,395.00)` = `+฿36,206.45`
+2. **เรื่อง "ผู้ฝึกกระบี่เต็มเวลา" และเรื่องอื่นๆ แสดง ReadRealm เป็น ฿0.00**:
+   - ปรับปรุงให้ดึงยอดขายเดือนตุลาคมจริงของ ReadRealm (583.20 ฿) จาก `readrealm_stats_lionking.json` เข้าสู่ทั้ง `ReadRealmGrowth` บน GAS, `grouped_matched_comics.json`, และตาราง `MangaSales`
+   - ปรับเงื่อนไขการเรนเดอร์ใน `FinancialsView.tsx` ไม่ให้บล็อกการแสดงผลเมื่อมียอดรอบจริง `isRrExact`
+   - เรื่อง "ผู้ฝึกกระบี่เต็มเวลา" แสดงตัวเลข `583.20 ฿` ในตาราง และ Tooltip แสดง `ReadRealm: (รอบจริง) ฿583.20`
+3. **การ Deploy & Verification**:
+   - Deploy backend Code.js ขึ้น Google Apps Script (Deployment ID `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` @118)
+   - ซิงก์ข้อมูลคลาวด์ Google Sheet `MangaSales` สำเร็จครบ 49 เรื่อง
+   - รัน Automated Tests (`test_october_financial_revenue.mjs`, `test_readrealm_sale_report.mjs`) ผ่าน 100%
+   - รัน Frontend Build (`npm run build`) ผ่าน 100%
