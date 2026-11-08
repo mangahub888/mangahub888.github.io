@@ -1203,7 +1203,17 @@ export function FinancialsView({
       .filter((sale) => {
         const rawId = sale.serieschapterid !== undefined ? sale.serieschapterid : (sale.mangaid !== undefined ? sale.mangaid : sale.manga_id);
         const strId = String(rawId === null || rawId === undefined ? "" : rawId).trim();
-        return strId !== "" && strId !== "0" && strId.toLowerCase() !== "undefined" && strId.toLowerCase() !== "null";
+        if (!strId || strId === "0" || strId.toLowerCase() === "undefined" || strId.toLowerCase() === "null") return false;
+        
+        const rawName = String(sale.seriesname || "").trim().toLowerCase();
+        if (rawName === "unknown" || rawName.startsWith("manga #")) return false;
+
+        const rev = parseFloat(sale.revenue) || 0;
+        const cost = parseFloat(sale.totalcost) || 0;
+        const ch = parseInt(sale.chapterscount, 10) || 0;
+        if (rev <= 0 && cost <= 0 && ch <= 0) return false;
+
+        return true;
       })
       .map((sale) => {
         const resolved = resolveMangaName(sale.serieschapterid || sale.mangaid, sale.seriesname, mangaList);
@@ -1576,7 +1586,14 @@ export function FinancialsView({
     // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องเอามาแสดงในสมุดบันทึก
     list = list.filter((s) => {
       const id = String(s.serieschapterid || s.mangaid || s.manga_id || "").trim();
-      return id !== "" && id !== "0" && id.toLowerCase() !== "undefined" && id.toLowerCase() !== "null";
+      if (!id || id === "0" || id.toLowerCase() === "undefined" || id.toLowerCase() === "null") return false;
+      const name = String(s.seriesname || "").trim().toLowerCase();
+      if (name === "unknown" || name.startsWith("manga #")) return false;
+      const rev = parseFloat(s.revenue) || 0;
+      const cost = parseFloat(s.totalcost) || 0;
+      const ch = parseInt(s.chapterscount, 10) || 0;
+      if (rev <= 0 && cost <= 0 && ch <= 0) return false;
+      return true;
     });
 
     if (yearFilter !== "all") {

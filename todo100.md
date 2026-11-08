@@ -428,3 +428,46 @@
 3. อัปเดตข้อมูลยอดขายเดือนตุลาคมของ "ข้าคือจอมวายร้าย" ในชุดข้อมูล JSON ทั้งหมด (`readrealm_stats_lionking.json`, `grouped_matched_comics.json`, `multi_platform_growth_latest.json`, `readrealm_growth_latest.json`) เป็น `5,733.00 ฿` (และยอดรวม `461,493.30 ฿`)
 4. เพิ่ม Automated Test `frontend/test_readrealm_sale_report.mjs` ยืนยันความสอดคล้อง 100%
 5. Build Frontend สำเร็จเรียบร้อย
+
+
+---
+
+## 12. กรองและแก้ไขรายการมังงะในสมุดบันทึกเดือนตุลาคม (แก้ปัญหาเรื่องไม่ได้ลงภายใน 30 วันโผล่ในสมุดบันทึก)
+
+### 12.1 ข้อมูลปัญหา (Problem Statement)
+- **ผู้ใช้แจ้งปัญหา**: "เช็คเทียบๆ ดีๆ เพราะมีบางเรื่องไม่ได้ลงภายใน 30 วันแน่ๆ ทำไมมีในสมุดบันทึกเดือนตุลาคม"
+- **การตรวจสอบเบื้องต้น**:
+  - ในชีต `MangaSales` ประจำเดือนตุลาคม 2569 (`2026-10`) และหน้า `FinancialsView` มีรายการมังงะโผล่ขึ้นมามากถึง 90 เรื่อง
+  - ในบรรดา 90 เรื่องนี้ มีมากกว่า 20 เรื่องที่เป็นมังงะหยุดอัปเดตไปนานหลายเดือน (ไม่ได้ลงตอนใหม่เกินกว่า 30 วันจนถึงหลายร้อยวัน เช่น มังงะที่จบไปแล้วตั้งแต่ ก.พ.–ก.ค. 2569) เช่น:
+    - Manga #18 (ก๊อบลินกระจอก), Manga #20 (ยอดหมอเหนือภพ), Manga #31 (เลือดหยดเดียวชั่วนิรันดร์), Manga #33 (วันเดอร์แมน), Manga #43 (บังเกอร์), Manga #48 (วิหาร), Manga #49 (แร้นแค้น), Manga #50 (ผู้กล้า), Manga #55, #57, #58, #61, #62, #65, #66, #68, #70, #71, #74, #75 เป็นต้น
+  - แต่ละเรื่องมีบันทึกค้างว่ามี 1 ตอน, ยอดขาย 0 บาท, มีต้นทุนค่าจ้าง 55–155 บาท และขึ้นสถานะขาดทุนสีแดง
+
+### 12.2 ผลการวิเคราะห์สาเหตุเชิงลึก (Root Cause Analysis)
+1. **Timestamp `createdat` ใน WorkQueue ถูก Backfill เป็นต้นเดือนตุลาคม**:
+   - ในชีต `WorkQueue` มีคิวงานเก่าจำนวน **1,481 รายการ** (งานตั้งแต่ กุมภาพันธ์ - กรกฎาคม 2569) ที่คอลัมน์ `createdat` ถูกระบุเป็น `2026-09-30T17:00:01.000Z` (เวลาไทยคือ `2026-10-01 00:00:01`)
+2. **ฟังก์ชัน `calculateAndSyncMonthlyMangaSales` ใน `backend/Code.js` ดึงวันที่จาก `q.createdat` อย่างเดียว**:
+   - โค้ดเดิมตรวจสอบแค่ `Utilities.formatDate(new Date(q.createdat), "GMT+7", "yyyy-MM") === targetMonth`
+   - เมื่อ `createdat` ตรงกับเดือนตุลาคม ระบบจึงดึงงานเก่าของมังงะที่จบ/หยุดลงไปนานแล้วมาคำนวณต้นทุนและสร้างแถวในเดือนตุลาคม
+3. **การคืนค่าแถวเดิม (Restoring Existing Rows) ใน Step 7 ไม่ได้ตรวจสอบยอดขายจริง**:
+   - โค้ดดึงแถวเดิมจาก `existingMonthSalesMap` มาใส่กลับเข้าไปโดยไม่เช็ค `revenue > 0` ทำให้แถวขยะที่เคยถูกสร้างขึ้นมาค้างอยู่ในชีตตลอดไป
+4. **GAS Deployment ถูกตรึงไว้ที่ Version เก่า**:
+   - Web App deployment URL ถูกผูกไว้กับเวอร์ชันเก่า (`@114`) ทำให้การซิงก์รันโค้ดเก่า
+
+### 12.3 การแก้ไขและผลลัพธ์ (Solution & Implementation)
+1. **Backend (`backend/Code.js`)**:
+   - เพิ่ม Helper `getQueueItemEffectiveMonth(q)` เพื่อพิจารณาเวลาตามขั้นตอนการผลิตจริง: `publishtime` (เวลาลงเว็บ) ➔ `typesettime` ➔ `translatetime` ➔ `uploadtime` ➔ `createdat`
+   - กรองคิวงานที่ไม่มี `mangaid`, ชื่องาน `Unknown` หรือ `Manga #...`
+   - ปรับเงื่อนไขการกู้คืนแถวเดิม: ต้องมี `revenue > 0` เท่านั้น
+   - กรองแถวที่ไม่มีกิจกรรม (`totalCost <= 0 && rev <= 0 && chaptersCount <= 0`) ออกจากสมุดบันทึกทั้งหมด
+2. **Frontend (`frontend/src/components/views/FinancialsView.tsx`)**:
+   - ปรับ `resolvedSalesList` และ `filteredSales` ให้กรองแถว `Unknown`, `Manga #...`, และแถวที่ไม่มีกิจกรรม (`rev <= 0 && cost <= 0 && ch <= 0`) ออก
+3. **Google Apps Script & Live Sheet**:
+   - Deploy โค้ดขึ้นเวอร์ชันใหม่ `@115` บน Deployment `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw`
+   - เรียก Action `CALCULATE_AND_SYNC_MONTHLY_MANGA_SALES` เดือน `2026-10`
+   - ชีต `MangaSales` เดือนตุลาคมถูกคลีนจาก 90 เรื่องเหลือ **49 เรื่องจริงที่มีการลงตอนในเดือนตุลาคม 100%**
+   - ตรวจสอบ `days_inactive`: **0 เรื่องที่มี days_inactive > 30 วัน**
+4. **การทดสอบ (Verification)**:
+   - `frontend/test_october_sales_inactivity_filter.mjs` (ผ่าน 100%)
+   - `frontend/test_manga_sales_mangaid_filter.mjs` (ผ่าน 100%)
+   - `test_monthly_sales_breakdown.mjs` (ผ่าน 100%)
+   - Frontend Build `npm run build` (ผ่าน 100% ไม่มี error)

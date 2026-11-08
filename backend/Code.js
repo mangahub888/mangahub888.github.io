@@ -3012,7 +3012,7 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         if ((!mName || mName === 'Unknown') && mangaIdMap[strMid]) {
           mName = mangaIdMap[strMid].manganame;
         }
-        if (!mName) mName = 'Unknown';
+        if (!mName || mName === 'Unknown') return; // Requirement: ข้าม task ที่ไม่ทราบชื่อมังงะ
         const mObj = mangaNameMap[mName] || mangaIdMap[strMid] || {};
         const metaStatus = mObj.status ? String(mObj.status).trim().toLowerCase() : '';
         if (metaStatus === 'ยังไม่เปิดเรื่อง' || metaStatus === 'ยังไม่ได้เปิดเรื่อง' || metaStatus === 'unopened') {
@@ -3029,6 +3029,7 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
             revenue: 0,
             website: mObj.website || 'ReadRealm แปลจนเมื่อย',
             category: mObj.category || 'Manhua',
+            hasClaimCost: true,
             staff: {},
             steps: {}
           };
@@ -3047,6 +3048,35 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     });
 
     // ถ้าเดือนนั้นยังไม่มี PayoutClaims หรือมีมังงะใน WorkQueue ที่ยังไม่ได้เบิก ให้คำนวณจาก WorkQueue
+    // Helper: ตรวจสอบเดือนที่มีกิจกรรมจริงของคิวงาน (GMT+7)
+    // ลำดับความสำคัญ: publishtime -> typesettime -> translatetime -> uploadtime -> createdat
+    const getQueueItemEffectiveMonth = (q) => {
+      const getMonthStr = (val) => {
+        if (!val) return null;
+        try {
+          const d = new Date(val);
+          return !isNaN(d.getTime()) ? Utilities.formatDate(d, "GMT+7", "yyyy-MM") : null;
+        } catch(e) { return null; }
+      };
+
+      // 1. หากเผยแพร่แล้ว ให้ยึดเวลาเผยแพร่เป็นหลัก
+      const pubM = getMonthStr(q.publishtime);
+      if (pubM) return pubM;
+
+      // 2. หากยังไม่เผยแพร่ ให้ยึดขั้นตอนการผลิตล่าสุดที่มีเวลาบันทึก
+      const typeM = getMonthStr(q.typesettime);
+      if (typeM) return typeM;
+
+      const transM = getMonthStr(q.translatetime);
+      if (transM) return transM;
+
+      const upM = getMonthStr(q.uploadtime);
+      if (upM) return upM;
+
+      // 3. Fallback กรณีไม่มี timestamp การผลิตเลย
+      return getMonthStr(q.createdat);
+    };
+
     allWorkQueue.forEach(q => {
       // Requirement: ใน calculateAndSyncMonthlyMangaSales: ในลูปที่นำคิวงานจาก WorkQueue มารวมต้นทุน หากรายการใดไม่มี mangaid (ว่างเปล่า, null, undefined, หรือเป็น 0 / "") ให้ continue ข้ามไปเลยทันที ไม่ต้องนำมาคำนวณหรือสร้างแถวใน MangaSales
       const qMId = String(q.mangaid === null || q.mangaid === undefined ? '' : q.mangaid).trim();
@@ -3054,11 +3084,8 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         return; // continue ข้ามไปเลยทันที
       }
 
-      if (!q.createdat) return;
       try {
-        const d = new Date(q.createdat);
-        if (isNaN(d.getTime())) return;
-        const qMonth = Utilities.formatDate(d, "GMT+7", "yyyy-MM");
+        const qMonth = getQueueItemEffectiveMonth(q);
         if (qMonth !== targetMonth) return;
 
         const mObj = mangaIdMap[String(q.mangaid)] || {};
@@ -3075,11 +3102,12 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
           }
         }
         if (!mName) {
-          mName = qMId ? `เรื่องรหัส #${qMId}` : 'มังงะไม่ทราบชื่อ';
+          mName = qMId ? KNOWN_MANGA_ID_MAP[qMId] || mObj.manganame || '' : '';
         }
+        if (!mName || mName.startsWith('Manga #') || mName.toLowerCase() === 'unknown') return;
 
         // หากมังงะนี้ยังไม่มีใน mangaStats หรือยังไม่มี Claims ในเดือนนี้
-        if (!mangaStats[mName] || targetMonthClaims.length === 0) {
+        if (!mangaStats[mName] || !mangaStats[mName].hasClaimCost) {
           if (!mangaStats[mName]) {
             mangaStats[mName] = {
               name: mName,
@@ -3141,7 +3169,12 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
       }
 
       if (isSameMonth) {
-        if (s.seriesname) existingMonthSalesMap[s.seriesname.trim()] = s;
+        if (s.seriesname) {
+          const sName = s.seriesname.trim();
+          if (!existingMonthSalesMap[sName] || parseFloat(s.revenue) > parseFloat(existingMonthSalesMap[sName].revenue || 0)) {
+            existingMonthSalesMap[sName] = s;
+          }
+        }
       } else {
         existingOtherMonthsSales.push(s);
       }
@@ -3181,6 +3214,14 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         if (!oldMid || oldMid === '0' || oldMid.toLowerCase() === 'undefined' || oldMid.toLowerCase() === 'null') {
           return;
         }
+        if (mName.toLowerCase() === 'unknown' || mName.startsWith('Manga #')) {
+          return;
+        }
+        const oldRev = parseFloat(oldSale.revenue) || 0;
+        // ต้องมียอดขายจริงเท่านั้น จึงจะคงรายการไว้สำหรับเรื่องที่ไม่มีงานทำในเดือนนี้
+        if (oldRev <= 0) {
+          return;
+        }
         mangaStats[mName] = {
           name: mName,
           mangaId: oldMid,
@@ -3211,11 +3252,20 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         return;
       }
 
-      const chaptersCount = Object.keys(item.chapters).length || 1;
+      if (item.name.toLowerCase() === 'unknown' || item.name.startsWith('Manga #')) {
+        return;
+      }
+      const chaptersCount = Object.keys(item.chapters).length || 0;
       const totalCost = Math.round((item.totalCost || 0) * 100) / 100;
-      const costPerChap = chaptersCount > 0 ? Math.round((totalCost / chaptersCount) * 100) / 100 : 0;
       const rev = Math.round((item.revenue || 0) * 100) / 100;
       const profit = Math.round((rev - totalCost) * 100) / 100;
+
+      // กรองเรื่องที่ไม่มีกิจกรรมจริงในเดือนนี้ (ไม่มีต้นทุน ไม่มียอดขาย และไม่มีจำนวนตอน)
+      if (totalCost <= 0 && rev <= 0 && chaptersCount <= 0) {
+        return;
+      }
+
+      const costPerChap = chaptersCount > 0 ? Math.round((totalCost / chaptersCount) * 100) / 100 : 0;
 
       runningTotalRev += rev;
       runningTotalCost += totalCost;
