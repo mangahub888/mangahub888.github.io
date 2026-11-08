@@ -2669,7 +2669,21 @@ function getMangaSales() {
       let obj = { _rowIndex: idx };
       headers.forEach((header, i) => {
         let val = row[i];
-        if (val instanceof Date) val = val.toISOString();
+        if (val instanceof Date) {
+          if (header === 'month') {
+            val = Utilities.formatDate(val, "GMT+7", "yyyy-MM");
+          } else if (header === 'date') {
+            val = Utilities.formatDate(val, "GMT+7", "yyyy-MM-dd");
+          } else {
+            val = val.toISOString();
+          }
+        } else if (header === 'month' && typeof val === 'string' && val.length > 7) {
+          const mMatch = val.match(/^(\d{4}-\d{2})/);
+          if (mMatch) val = mMatch[1];
+        } else if (header === 'date' && typeof val === 'string' && val.length > 10) {
+          const dMatch = val.match(/^(\d{4}-\d{2}-\d{2})/);
+          if (dMatch) val = dMatch[1];
+        }
         obj[header] = val;
       });
       // Requirement: ถ้าไม่มี mangaid ให้ข้ามไปเลย ไม่ต้องเอามาแสดงในสมุดบันทึก
@@ -2760,8 +2774,8 @@ function bulkAddMangaSales(salesArray) {
       }
       
       return headers.map(header => {
-        if (header === 'date') return sale.date ? new Date(sale.date) : new Date();
-        if (header === 'month') return sale.month || '';
+        if (header === 'date') return sale.date ? String(sale.date).slice(0, 10) : '';
+        if (header === 'month') return sale.month ? String(sale.month).slice(0, 7) : '';
         if (header === 'serieschapterid') return sale.serieschapterid || '';
         if (header === 'seriesname') return sale.seriesname || '';
         if (header === 'chapterscount') return sale.chapterscount || 0;
@@ -3188,12 +3202,25 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
       const normKey = normalizeMangaTitle(mName);
       const platData = platformSalesMap[mName] || (normKey ? platformSalesNormMap[normKey] : null);
 
-      if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0) {
-        item.revenue = parseFloat(existingMonthSalesMap[mName].revenue);
-      } else if (platData && platData.monthly_sales > 0) {
+      // 7. แมตช์รายได้ (Revenue)
+      // รายได้ประจำเดือนต้องมาจากยอดขายจริงในเดือนนั้น (ReadRealm + Kairew + Chaply)
+      // ห้ามดึงยอดขายสะสมตลอดกาล (total_sales) มาใส่เด็ดขาด และล้างค่าเก่าที่ถูกพิษยอดสะสมออก
+      if (platData && typeof platData.monthly_sales === 'number' && platData.monthly_sales > 0) {
         item.revenue = platData.monthly_sales;
       } else if (platData && platData.sales_delta30d > 0) {
         item.revenue = platData.sales_delta30d;
+      } else if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0) {
+        const existRev = parseFloat(existingMonthSalesMap[mName].revenue);
+        // หากยอดเดิมที่บันทึกไว้ในชีตตรงกับยอดสะสมตลอดกาล (total_sales) หรือสูงผิดปกติ ให้ล้างออกทันที
+        const isLifetimePoisoned = platData && (
+          (platData.total_sales > 0 && Math.abs(existRev - platData.total_sales) < 500) ||
+          (existRev > 20000 && (!platData.monthly_sales || platData.monthly_sales < 10000))
+        );
+        if (isLifetimePoisoned) {
+          item.revenue = (platData && platData.monthly_sales > 0) ? platData.monthly_sales : 0;
+        } else {
+          item.revenue = existRev;
+        }
       } else {
         item.revenue = 0;
       }
@@ -3218,8 +3245,15 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
           return;
         }
         const oldRev = parseFloat(oldSale.revenue) || 0;
+        const normKey = normalizeMangaTitle(mName);
+        const platData = platformSalesMap[mName] || (normKey ? platformSalesNormMap[normKey] : null);
+        const isLifetimePoisoned = platData && (
+          (platData.total_sales > 0 && Math.abs(oldRev - platData.total_sales) < 500) ||
+          (oldRev > 20000 && (!platData.monthly_sales || platData.monthly_sales < 10000))
+        );
+        const realRev = isLifetimePoisoned ? (platData && platData.monthly_sales > 0 ? platData.monthly_sales : 0) : oldRev;
         // ต้องมียอดขายจริงเท่านั้น จึงจะคงรายการไว้สำหรับเรื่องที่ไม่มีงานทำในเดือนนี้
-        if (oldRev <= 0) {
+        if (realRev <= 0) {
           return;
         }
         mangaStats[mName] = {
@@ -3303,8 +3337,8 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
 
     const sheetRows = allFinalSales.map(sale => {
       return headers.map(header => {
-        if (header === 'date') return sale.date ? new Date(sale.date) : new Date();
-        if (header === 'month') return sale.month || '';
+        if (header === 'date') return sale.date ? String(sale.date).slice(0, 10) : lastDayStr;
+        if (header === 'month') return targetMonth;
         if (header === 'serieschapterid') return sale.serieschapterid || '';
         if (header === 'seriesname') return sale.seriesname || '';
         if (header === 'chapterscount') return sale.chapterscount || 0;

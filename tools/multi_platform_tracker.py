@@ -326,6 +326,7 @@ def main():
     print("📊 รวมสถิติอัตราการเติบโตทุกแพลตฟอร์ม (Consolidating Multi-Platform Stats)...")
     print("=" * 70)
     unified = consolidate_multi_platform_data()
+    run_script("group_matching_comics.py", [])
 
     print("\n" + "=" * 70)
     print("🌟 สรุปภาพรวมทุกแพลตฟอร์ม (ReadRealm + Kairew + Chaply):")

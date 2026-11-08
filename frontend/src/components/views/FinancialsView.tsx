@@ -1253,6 +1253,8 @@ export function FinancialsView({
       chaply: number;
       total: number;
       readrealm_monthly?: Record<string, number>;
+      kairew_monthly?: Record<string, number>;
+      chaply_monthly?: Record<string, number>;
     }>();
     if (!groupedList || !Array.isArray(groupedList)) return map;
 
@@ -1263,8 +1265,18 @@ export function FinancialsView({
       const ch = Number(g.chaply?.sales) || 0;
       const total = Number(g.total_sales) || (rr + kr + ch);
       const rrMonthly = (g.readrealm as any)?.monthly_sales || undefined;
+      const krMonthly = (g.kairew as any)?.monthly_sales || undefined;
+      const chMonthly = (g.chaply as any)?.monthly_sales || undefined;
 
-      const entry = { readrealm: rr, kairew: kr, chaply: ch, total, readrealm_monthly: rrMonthly };
+      const entry = {
+        readrealm: rr,
+        kairew: kr,
+        chaply: ch,
+        total,
+        readrealm_monthly: rrMonthly,
+        kairew_monthly: krMonthly,
+        chaply_monthly: chMonthly,
+      };
       if (norm) map.set(norm, entry);
       if (g.key) map.set(g.key, entry);
     }
@@ -1275,16 +1287,16 @@ export function FinancialsView({
   const allMangaPlatformsMap = React.useMemo(() => {
     const map = new Map<string, {
       readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
-      kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string };
-      chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
+      chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
       other?: { name: string };
       platformCount: number;
     }>();
 
     const addOrMerge = (key: string, data: {
       readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
-      kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string };
-      chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
+      chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
       other?: { name: string };
     }) => {
       if (!key) return;
@@ -1307,6 +1319,7 @@ export function FinancialsView({
           sales: Math.max(current.kairew?.sales || 0, data.kairew.sales || 0),
           chapters: Math.max(current.kairew?.chapters || 0, data.kairew.chapters || 0),
           account: data.kairew.account || current.kairew?.account,
+          monthly_sales: data.kairew.monthly_sales || current.kairew?.monthly_sales,
         };
       }
       if (data.chaply?.exists) {
@@ -1315,6 +1328,7 @@ export function FinancialsView({
           sales: Math.max(current.chaply?.sales || 0, data.chaply.sales || 0),
           chapters: Math.max(current.chaply?.chapters || 0, data.chaply.chapters || 0),
           account: data.chaply.account || current.chaply?.account,
+          monthly_sales: data.chaply.monthly_sales || current.chaply?.monthly_sales,
         };
       }
       if (data.other?.name) {
@@ -4505,16 +4519,19 @@ export function FinancialsView({
                       const platMatch = normSaleKey ? allMangaPlatformsMap.get(normSaleKey) : null;
                       const salePlatforms = getSalePlatforms(sale);
 
-                      // Determine row's month and Thai month name for monthly breakdown
+                      // Determine row's month and Thai month name for monthly breakdown (Robust ISO date / month string parsing)
                       let rowMonth = "";
-                      if (sale.month && /^\d{4}-\d{2}$/.test(String(sale.month).trim())) {
-                        rowMonth = String(sale.month).trim();
-                      } else if (sale.date) {
-                        const mMatch = String(sale.date).match(/^(\d{4}-\d{2})/);
+                      if (sale.month) {
+                        const mMatch = String(sale.month).match(/^(\d{4}-\d{2})/);
                         if (mMatch) rowMonth = mMatch[1];
                       }
-                      if (!rowMonth && selectedLedgerMonth && selectedLedgerMonth !== "all" && /^\d{4}-\d{2}$/.test(selectedLedgerMonth)) {
-                        rowMonth = selectedLedgerMonth;
+                      if (!rowMonth && sale.date) {
+                        const dMatch = String(sale.date).match(/^(\d{4}-\d{2})/);
+                        if (dMatch) rowMonth = dMatch[1];
+                      }
+                      if (!rowMonth && selectedLedgerMonth && selectedLedgerMonth !== "all") {
+                        const selMatch = String(selectedLedgerMonth).match(/^(\d{4}-\d{2})/);
+                        if (selMatch) rowMonth = selMatch[1];
                       }
 
                       let rowThaiMonth = "";
@@ -4541,50 +4558,57 @@ export function FinancialsView({
                       const chLifetime = matchedPlatBreakdown?.chaply || platMatch?.chaply?.sales || 0;
                       const totalLifetime = (rrExists ? rrLifetime : 0) + (kwExists ? krLifetime : 0) + (chExists ? chLifetime : 0);
 
-                      // ReadRealm actual monthly sales if available
+                      // Ground-truth actual monthly sales per platform
                       const rrMonthlyMap = matchedPlatBreakdown?.readrealm_monthly || platMatch?.readrealm?.monthly_sales;
-                      const rrMonthSales = (rowThaiMonth && rrMonthlyMap && typeof rrMonthlyMap[rowThaiMonth] === "number")
-                        ? Number(rrMonthlyMap[rowThaiMonth])
-                        : 0;
+                      const isRrExact = Boolean(rowThaiMonth && rrMonthlyMap && typeof rrMonthlyMap[rowThaiMonth] === "number");
+                      const rrMonthSales = isRrExact ? Number(rrMonthlyMap![rowThaiMonth]) : 0;
+
+                      const krMonthlyMap = matchedPlatBreakdown?.kairew_monthly || platMatch?.kairew?.monthly_sales;
+                      const isKrExact = Boolean(rowThaiMonth && krMonthlyMap && typeof krMonthlyMap[rowThaiMonth] === "number");
+                      const krMonthSales = isKrExact ? Number(krMonthlyMap![rowThaiMonth]) : 0;
+
+                      const chMonthlyMap = matchedPlatBreakdown?.chaply_monthly || platMatch?.chaply?.monthly_sales;
+                      const isChExact = Boolean(rowThaiMonth && chMonthlyMap && typeof chMonthlyMap[rowThaiMonth] === "number");
+                      const chMonthSales = isChExact ? Number(chMonthlyMap![rowThaiMonth]) : 0;
 
                       let rrSaleAmt = 0;
                       let krSaleAmt = 0;
                       let chSaleAmt = 0;
-                      let isRrExact = false;
 
                       if (rev <= 0) {
                         rrSaleAmt = 0;
                         krSaleAmt = 0;
                         chSaleAmt = 0;
+                      } else if (isRrExact || isKrExact || isChExact) {
+                        // Priority 1: Use verified round sales directly. Kairew and Chaply are NEVER inflated with lifetime total!
+                        rrSaleAmt = rrExists ? rrMonthSales : 0;
+                        krSaleAmt = kwExists ? krMonthSales : 0;
+                        chSaleAmt = chExists ? chMonthSales : 0;
+
+                        const knownSum = Math.round((rrSaleAmt + krSaleAmt + chSaleAmt) * 100) / 100;
+                        // Handle manual cell revenue overrides
+                        if (rev > knownSum) {
+                          const remainder = Math.round((rev - knownSum) * 100) / 100;
+                          // If platforms do NOT have exact records, distribute remainder capped strictly at lifetime sales
+                          const availKw = (!isKrExact && kwExists) ? Math.max(0, krLifetime - krSaleAmt) : 0;
+                          const availCh = (!isChExact && chExists) ? Math.max(0, chLifetime - chSaleAmt) : 0;
+                          const availTot = availKw + availCh;
+                          if (availTot > 0) {
+                            const allocKw = Math.min(availKw, Math.round((remainder * (availKw / availTot)) * 100) / 100);
+                            const allocCh = Math.min(availCh, Math.round((remainder - allocKw) * 100) / 100);
+                            krSaleAmt += allocKw;
+                            chSaleAmt += allocCh;
+                          } else if (!isRrExact && rrExists) {
+                            rrSaleAmt += remainder;
+                          }
+                        }
                       } else if (activePlatCount <= 1) {
                         if (kwExists) krSaleAmt = rev;
                         else if (chExists) chSaleAmt = rev;
                         else rrSaleAmt = rev;
                       } else {
-                        // Multi-platform title: sum of breakdown MUST equal rev
-                        if (rrExists && rrMonthSales > 0 && rev >= rrMonthSales) {
-                          rrSaleAmt = rrMonthSales;
-                          isRrExact = true;
-                          const remainder = Math.round((rev - rrSaleAmt) * 100) / 100;
-                          const otherLifetime = (kwExists ? krLifetime : 0) + (chExists ? chLifetime : 0);
-                          if (otherLifetime > 0) {
-                            if (kwExists && chExists) {
-                              krSaleAmt = Math.round((remainder * (krLifetime / otherLifetime)) * 100) / 100;
-                              chSaleAmt = Math.round((remainder - krSaleAmt) * 100) / 100;
-                            } else if (kwExists) {
-                              krSaleAmt = remainder;
-                            } else if (chExists) {
-                              chSaleAmt = remainder;
-                            }
-                          } else {
-                            const otherCount = (kwExists ? 1 : 0) + (chExists ? 1 : 0);
-                            if (otherCount > 0) {
-                              const share = Math.round((remainder / otherCount) * 100) / 100;
-                              if (kwExists) krSaleAmt = share;
-                              if (chExists) chSaleAmt = Math.round((remainder - krSaleAmt) * 100) / 100;
-                            }
-                          }
-                        } else if (totalLifetime > 0) {
+                        // Multi-platform title without monthly records
+                        if (totalLifetime > 0) {
                           const shareRR = rrExists ? (rrLifetime / totalLifetime) : 0;
                           const shareKW = kwExists ? (krLifetime / totalLifetime) : 0;
                           rrSaleAmt = Math.round((rev * shareRR) * 100) / 100;
@@ -4732,6 +4756,11 @@ export function FinancialsView({
                                       <span className="flex items-center gap-1.5 text-slate-300">
                                         <span className="w-2 h-2 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50"></span>
                                         Kairew:
+                                        {isKrExact && (
+                                          <span className="text-[9px] text-blue-400/80 font-normal">
+                                            (รอบจริง)
+                                          </span>
+                                        )}
                                       </span>
                                       <span className="font-semibold text-blue-300">
                                         ฿{krSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -4743,6 +4772,11 @@ export function FinancialsView({
                                       <span className="flex items-center gap-1.5 text-slate-300">
                                         <span className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
                                         Chaply:
+                                        {isChExact && (
+                                          <span className="text-[9px] text-amber-400/80 font-normal">
+                                            (รอบจริง)
+                                          </span>
+                                        )}
                                       </span>
                                       <span className="font-semibold text-amber-300">
                                         ฿{chSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

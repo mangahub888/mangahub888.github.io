@@ -471,3 +471,51 @@
    - `frontend/test_manga_sales_mangaid_filter.mjs` (ผ่าน 100%)
    - `test_monthly_sales_breakdown.mjs` (ผ่าน 100%)
    - Frontend Build `npm run build` (ผ่าน 100% ไม่มี error)
+
+
+## 13. แก้ไขปัญหายอดขาย Kairew และ Chaply ดึงยอดสะสมตลอดกาล (Lifetime Total) ในสมุดบันทึกเดือนตุลาคม 2569
+
+### 13.1 ข้อมูลปัญหา (Problem Statement)
+- **ผู้ใช้แจ้งปัญหา**: "แก้อีก 2 เวปด้วย มันเป็นยอดรวมด้วย" พร้อมภาพประกอบ Tooltip ในสมุดบันทึกเดือนตุลาคม 2569:
+  - การ์ตูนเรื่อง: `หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์` (Manga ID: 27, ต้นทุน 7 ตอน 1,085 ฿, ยอดขาย 131,376.6 ฿)
+  - Tooltip:
+    - 🟢 ReadRealm: (รอบจริง) ฿212.40
+    - 🔵 Kairew: ฿129,301.73 (บั๊ก: ยอดขายสะสมหลายปี)
+    - 🟡 Chaply: ฿1,862.47 (บั๊ก: ยอดขายสะสมหลายปี)
+    - ยอดขายรวมในแถว: ฿131,376.60
+
+### 13.2 สาเหตุเชิงลึก (Root Cause Analysis)
+1. **Frontend `FinancialsView.tsx` คำนวณ Remainder แบบ Blind Distribution**:
+   - เมื่อแถวมี `rev` = 131,376.60 ฿ และ ReadRealm มีรอบจริง `rrMonthSales` = 212.40 ฿ โค้ดเดิมนำผลต่าง `remainder = rev - rrMonthSales` (131,164.20 ฿) ไปเกลี่ยให้ Kairew และ Chaply ตามสัดส่วนยอดขายสะสมตลอดกาล (`krLifetime / otherLifetime`) ทำให้ Kairew ได้รับ 129,301.73 ฿ และ Chaply ได้รับ 1,862.47 ฿ ทั้งที่ในเดือนตุลาคมทั้งสองเว็บไม่มียอดขายจำนวนนี้
+2. **Backend `Code.js` (`calculateAndSyncMonthlyMangaSales`) คงค่ายอดสะสมเก่าไว้ในชีต**:
+   - ก่อนหน้านี้เคยมี logic fallback `item.revenue = platData.total_sales;` ซึ่งบันทึกยอดสะสม 131,376.60 ฿ ลง Google Sheet `MangaSales`
+   - เมื่อรันรอบใหม่ มีเงื่อนไข `if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0)` ทำให้ระบบยอมรับค่ายอดขายสะสมเดิมและไม่ยอมคำนวณใหม่
+3. **Data Pipeline ไม่มีโครงสร้าง `monthly_sales` สำหรับ Kairew และ Chaply**:
+   - ใน `grouped_matched_comics.json` มีเฉพาะ `monthly_sales` ของ ReadRealm ทำให้ Kairew และ Chaply ไม่มีข้อมูลรายเดือนยืนยัน
+4. **การแปลงฟอร์แมต Date ใน GAS ส่งคืน ISO String ที่มีเวลา**:
+   - คอลัมน์ `month` ใน Google Sheet ถูกส่งออกมาเป็น `"2026-10-31T17:00:00.000Z"` ทำให้ Regex `/^\d{4}-\d{2}$/` ตรวจไม่ผ่านและตกไปใช้คอลัมน์ `date` ที่เป็นเดือนพฤศจิกายน
+
+### 13.3 การแก้ไขและผลลัพธ์ (Solution & Implementation)
+1. **Data Pipeline (`tools/group_matching_comics.py` & `tools/multi_platform_tracker.py`)**:
+   - เพิ่มโครงสร้าง `monthly_sales` ให้ครบทั้ง 3 แพลตฟอร์ม (ReadRealm, Kairew, Chaply) โดยกำหนดค่าเริ่มต้น 0.00 บาทสำหรับเดือนที่ไม่มีประวัติซื้อ
+   - อัปเดต `grouped_matched_comics.json` ทั้งใน `tools/data`, `frontend/src/data`, และ `frontend/public/data`
+2. **Frontend (`frontend/src/components/views/FinancialsView.tsx`)**:
+   - ปรับปรุงการแกะ `rowMonth` ให้รองรับรูปแบบ ISO string เช่น `2026-10-31T17:00:00.000Z` โดยดึงเฉพาะ `yyyy-MM` อย่างถูกต้อง
+   - ปรับการคำนวณแยกยอดขายตามแพลตฟอร์มใน Tooltip ให้ดึงจาก `monthly_sales` ของแต่ละแพลตฟอร์มโดยตรง
+   - หาก Kairew และ Chaply ไม่มียอดขายในเดือนนั้น ให้แสดง **฿0.00 (รอบจริง)** โดยเด็ดขาด ห้ามนำยอดสะสมตลอดกาลมาเกลี่ย
+   - ป้องกันไม่ให้แพลตฟอร์มใดได้รับส่วนแบ่งเกินยอดขายสะสมตลอดกาลเด็ดขาด
+3. **Backend (`backend/Code.js`)**:
+   - ใน `getMangaSales()`: แปลงคอลัมน์ `month` ให้เป็นสตริง `"yyyy-MM"` และ `date` ให้เป็น `"yyyy-MM-dd"` เสมอ
+   - ใน `calculateAndSyncMonthlyMangaSales()`: ปรับการตรวจจับ Poisoned Lifetime Total (หากค่าเดิมตรงกับ `total_sales` หรือเกิน 20,000 บาทโดยไม่มี monthly_sales รองรับ ให้ล้างออกเป็นยอดขายรายเดือนจริงทันที)
+4. **Google Apps Script & Live Sheet Data Cleansing**:
+   - Deploy โค้ดเวอร์ชันล่าสุด `@116` บน Deployment ID `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw`
+   - รัน `CALCULATE_AND_SYNC_MONTHLY_MANGA_SALES` สำหรับเดือน `2026-10`
+   - ชีต `MangaSales` ถูกทำความสะอาด ยอดขายของเรื่องในภาพปรับจาก 131,376.60 ฿ เป็น 0.00 ฿ (ต้นทุน 1,085 ฿ ขาดทุน -1,085 ฿ ตามจริง)
+   - ยอดขายรวมทั้งเดือนตุลาคมปรับจากยอดสะสมลวงเป็นยอดขายจริง 37,210.28 ฿ (กำไรสุทธิ 7,815.28 ฿)
+5. **การทดสอบ (Verification)**:
+   - `test_monthly_sales_clean.mjs` (ผ่าน 100%)
+   - `test_readrealm_sale_report.mjs` (ผ่าน 100%)
+   - `test_october_sales_inactivity_filter.mjs` (ผ่าน 100%)
+   - `test_manga_sales_mangaid_filter.mjs` (ผ่าน 100%)
+   - `test_monthly_sales_breakdown.mjs` (ผ่าน 100%)
+   - `npm --prefix frontend run build` (ผ่าน 100%)

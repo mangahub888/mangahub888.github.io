@@ -123,6 +123,15 @@ for c in rr1 + rr2:
                 groups[k]['readrealm']['monthly_sales'][m_k] = round(
                     groups[k]['readrealm']['monthly_sales'].get(m_k, 0.0) + m_v, 2
                 )
+# Standard Thai Month List for Multi-Platform Monthly Sales
+THAI_MONTHS = [
+    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+]
+
+def init_empty_monthly_sales():
+    return {m: 0.0 for m in THAI_MONTHS}
+
 # Kairew
 for c in kairew:
     t = c.get('name', '').strip()
@@ -130,31 +139,27 @@ for c in kairew:
     if not k:
         continue
     clean_display = get_canonical_display(t, k)
+    kw_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else init_empty_monthly_sales()
+    kw_obj = {
+        'exists': True,
+        'title': t,
+        'id': str(c.get('id', '')),
+        'sales': float(c.get('sales') or 0),
+        'views': int(c.get('view_count') or 0),
+        'eps': int(c.get('episode_count') or 0),
+        'monthly_sales': kw_monthly
+    }
     if k not in groups:
         groups[k] = {
             'key': k,
             'title': clean_display,
-            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0},
-            'kairew': {
-                'exists': True,
-                'title': t,
-                'id': str(c.get('id', '')),
-                'sales': float(c.get('sales') or 0),
-                'views': int(c.get('view_count') or 0),
-                'eps': int(c.get('episode_count') or 0)
-            },
-            'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0}
+            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
+            'kairew': kw_obj,
+            'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0, 'monthly_sales': init_empty_monthly_sales()}
         }
     else:
         groups[k]['title'] = clean_display
-        groups[k]['kairew'] = {
-            'exists': True,
-            'title': t,
-            'id': str(c.get('id', '')),
-            'sales': float(c.get('sales') or 0),
-            'views': int(c.get('view_count') or 0),
-            'eps': int(c.get('episode_count') or 0)
-        }
+        groups[k]['kairew'] = kw_obj
 
 # Chaply
 for c in chaply:
@@ -168,6 +173,7 @@ for c in chaply:
     c_views = int(c.get('total_views') or c.get('totalView') or 0)
     c_eps = int(c.get('chapters_count') or c.get('totalEpisode') or 0)
     c_fav = int(c.get('totalFavorite') or 0)
+    ch_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else init_empty_monthly_sales()
 
     chaply_obj = {
         'exists': True,
@@ -176,15 +182,16 @@ for c in chaply:
         'sales': c_sales,
         'views': c_views,
         'eps': c_eps,
-        'fav': c_fav
+        'fav': c_fav,
+        'monthly_sales': ch_monthly
     }
 
     if k not in groups:
         groups[k] = {
             'key': k,
             'title': clean_display,
-            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0},
-            'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0},
+            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
+            'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
             'chaply': chaply_obj
         }
     else:
