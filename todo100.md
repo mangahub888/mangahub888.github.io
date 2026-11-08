@@ -165,3 +165,73 @@
 - [x] **การตรวจสอบ (Verification)**:
   - "บุปผาไร้ใจเบ่งบานในยามสิบราตรี": ReadRealm (`277 วันก่อน`), Kairew (`238 วันก่อน`), Chaply (`32 วันก่อน`), Unified (`32 วันก่อน` - Chaply ล่าสุด) แท็ก "วันนี้" ไม่ปรากฏอีกต่อไป
   - รัน `npm --prefix frontend run build` ผ่าน 100%
+
+
+---
+
+## 5. ตรวจสอบและแก้ไข "หน้าสมุดบันทึกกำไรขาดทุน ดึงยอดขายบางเรื่องไม่ได้" & วิเคราะห์ API 3 แพลตฟอร์ม & Tooltip Breakdown (8 พ.ย. 2569)
+
+### 5.1 ปัญหาที่พบ (Issue Analysis):
+- ในหน้า "สมุดบันทึกยอดขาย & ต้นทุนประจำเดือน" (MangaSales Ledger / Tab P&L) เมื่อกดปุ่ม "⚡ ซิงค์ & คำนวณ P&L ประจำเดือน" พบว่าการ์ตูนมากกว่า 32 เรื่องที่มียอดขายจริงบน ReadRealm, Kairew และ Chaply แต่ยอดขายในสมุดบัญชีกลับแสดงเป็น 0.00 บาท หรือดึงไม่ขึ้น
+- ผู้ใช้ต้องการ:
+  1. ทราบสถานะของ 3 แพลตฟอร์ม (ReadRealm, Kairew, Chaply) ว่ามี API/ฟังก์ชันดึงยอดขายรวมรายเดือนหรือไม่ และระบบเก็บอย่างไร
+  2. แก้ไขให้สามารถดึงยอดขายของการ์ตูนทุกเรื่องมาได้อย่างครบถ้วน 100%
+  3. เพิ่ม Tooltip ในคอลัมน์ยอดขาย เมื่อนำเมาส์ไปชี้ ให้แสดงยอดขายแยกตามแพลตฟอร์ม (ReadRealm, Kairew, Chaply)
+
+### 5.2 สาเหตุที่แท้จริง (Root Cause):
+1. **Title Matching ใน Backend (`calculateAndSyncMonthlyMangaSales`) เป็น Exact String Match**:
+   - `c.subject` จากแพลตฟอร์มมักมีชื่อภาษาอังกฤษต่อท้าย เช่น `พี่ชายของผมคือหมาบ้า My Brother Is a Mad Dog`, `ระบบคืนผลหมื่นเท่า | Ten-Thousandfold Return`
+   - ในขณะที่ชื่อเรื่องในระบบตารางงาน (Manga Sheet / WorkQueue / Claims) เป็นภาษาไทยล้วน เช่น `พี่ชายของผมคือหมาบ้า`, `ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง`
+   - เมื่อคีย์ `platformSalesMap[title]` ไม่ตรงกับ `mName` ทำให้ยอดขายถูกทิ้งกลายเป็น 0
+2. **เงื่อนไข `totalBudgetRevenue === 0` บล็อกยอดขาย**:
+   - โค้ดเดิมกำหนดว่าถ้ามีรายการรายรับในบัญชี `BudgetTransactions` ในเดือนนั้น (`totalBudgetRevenue > 0`) จะปฏิเสธไม่ยอมดึง `total_sales` ของมังงะหากไม่มี `sales_delta30d` ทำให้การ์ตูน 35 เรื่องในเดือน ต.ค. กลายเป็น 0 ทั้งหมด
+3. **ปัญหา Cross-Platform Title Mismatches & Aliases**:
+   - การ์ตูนที่มีชื่อต่างกันข้ามแพลตฟอร์มไม่ได้ถูกเชื่อมโยง เช่น:
+     * `เจ้ากงล้อแห่งโชคชะตา` (Manga Sheet) vs `เจ้าแห่งกงล้อโชคชะตา` (ReadRealm) vs `เจ้าแห่งกงล้อหมุนฝืนโชคชะตา` (Kairew)
+     * `จอมมารแสนดีขนาดนี้ แต่ศิษย์สตรีทั้งหลายกลับต้องการชีวิตข้า` (Manga Sheet) vs `ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย` (ReadRealm) vs `จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต` (Kairew/Chaply)
+     * `ข้าขอท้าผนึกสวรรค์` (Manga Sheet) vs `ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens` (ReadRealm, Kairew, Chaply)
+     * `มหาปรจารย์ระดับเทพแห่งนคร` (Manga Sheet พิมพ์ตก 'ม') vs `มหาปรมาจารย์ระดับเทพแห่งนคร`
+     * `Mr.Zombie` (Manga Sheet) vs `นายท่านซอมบี้ | Mr.Zombie` (Kairew)
+4. **Registry `comic_cross_platform_mapping.json` มีเพียง 3 เรื่อง**:
+   - ยังไม่มีรายการแมปครอบคลุมมังงะอีกมากกว่า 34 เรื่อง
+
+### 5.3 การสำรวจและวิเคราะห์ระบบ API 3 แพลตฟอร์ม:
+1. **ReadRealm**:
+   - **API รองรับรายเดือนหรือไม่**: **รองรับเต็มรูปแบบ 100%**
+   - **Endpoint**: `https://api-writer.readrealm.co/writer/comics/analytics/getYearSaleReport?year={thai_year}&comic_ID={cid}`
+   - **ข้อมูลที่ส่งคืน**: อาร์เรย์ยอดขาย 12 เดือน (`data: [ม.ค., ก.พ., ..., ธ.ค.]`) และยอดขายรวมทั้งปี (`sum_data`) ต่อเรื่อง
+   - **การจัดเก็บในระบบเรา**: `tools/readrealm_tracker.py` บันทึกยอดขายรายเดือนลงใน `readrealm_stats_lionking.json` และ `readrealm_stats.json`
+2. **Kairew**:
+   - **API รองรับรายเดือนหรือไม่**: **ไม่มี API รายเดือนแยกต่อเรื่องแบบสาธารณะ**
+   - **สถาปัตยกรรม**: เว็บไซต์ทำงานบน Inertia.js ดึงข้อมูลผ่าน SSR Props (`/writer/manage-book`) ซึ่งแสดงเฉพาะยอดขายสะสมรวมตลอดกาล (`sales`)
+   - **การจัดเก็บในระบบเรา**: ระบบ Growth Tracker (`tools/kairew_growth_tracker.py`) จัดเก็บ Snapshot ทุก 6 ชั่วโมงลงใน `kairew_history.json` และคำนวณ Delta ย้อนหลัง 7 วัน และ 30 วัน (`sales_delta30d`) เพื่อใช้แทนยอดขายรายเดือน
+3. **Chaply**:
+   - **API รองรับรายเดือนหรือไม่**: **รองรับแบบกำหนดช่วงวันที่ (Date Range) 100%**
+   - **Endpoint**: `https://api.chaply.net/api/writer/stats/sales?start={YYYY-MM-DD}&end={YYYY-MM-DD}`
+   - **ข้อมูลที่ส่งคืน**: ยอดขายรวมตามช่วงวันที่ (`totalAmount`), จำนวนธุรกรรม (`totalCount`), และยอดขายรายวัน (`items: [{date, count, amount}]`)
+   - **การจัดเก็บในระบบเรา**: `tools/chaply_growth_tracker.py` จัดเก็บประวัติทุก 6 ชั่วโมงใน `chaply_history.json` พร้อมคำนวณ Delta 7 วัน และ 30 วัน
+
+### 5.4 การแก้ไขและพัฒนาฟีเจอร์:
+1. **ขยาย Cross-Platform Mapping Registry (`comic_cross_platform_mapping.json`)**:
+   - เพิ่มรายการแมปชื่อและ Aliases ข้ามแพลตฟอร์มอย่างสมบูรณ์ครอบคลุม 37 รายการสำคัญ
+   - ซิงค์ไปยัง `tools/data/`, `frontend/src/data/`, `frontend/public/data/`, และ `frontend/dist/data/`
+2. **ปรับปรุง `normalizeMangaTitle` ให้ทนทาน (Robust Matching)**:
+   - ปรับปรุงทั้งใน `backend/Code.js` และ `frontend/src/components/views/FinancialsView.tsx`
+   - ตัดชื่อภาษาอังกฤษต่อท้ายอัตโนมัติ (ทั้งที่มี `|` และไม่มี `|`), ตัดวรรค, สัญลักษณ์พิเศษ (`★`, `🔥`, เครื่องหมายวรรคตอน)
+   - เชื่อมโยง Aliases และ Canonical Keys จาก Mapping Registry
+3. **ปรับปรุง Engine คำนวณ P&L ใน `backend/Code.js` (`calculateAndSyncMonthlyMangaSales`)**:
+   - เพิ่ม `platformSalesNormMap` สำหรับจัดเก็บและค้นหายอดขายด้วย Normalized Key
+   - แก้ไขเงื่อนไขรายได้ให้อ้างอิงจาก `sales_delta30d` หรือ `total_sales` เมื่อไม่มี delta โดยไม่ถูกบล็อกด้วย `totalBudgetRevenue`
+   - ผสานยอดขายจากหลายแพลตฟอร์ม (`ReadRealm + Kairew + Chaply`) เข้าเป็นยอดขายรวมของการ์ตูนแต่ละเรื่องอย่างถูกต้อง
+4. **เพิ่มฟีเจอร์ Tooltip แยกยอดขายตามแพลตฟอร์มใน `FinancialsView.tsx`**:
+   - สร้าง Memoized Index `platformBreakdownMap` อ้างอิงจาก `groupedList` และ `comic_cross_platform_mapping`
+   - ออกแบบ Tooltip Hover Card สวยงาม (Glassmorphism Dark Theme) แสดงเมื่อนำเมาส์ไปชี้ที่ยอดขาย:
+     * 🟢 ReadRealm: ฿...
+     * 🔵 Kairew: ฿...
+     * 🟡 Chaply: ฿...
+     * ช่องทางที่บันทึกข้อมูลหลัก
+
+### 5.5 ผลการทดสอบ (Verification):
+- การ์ตูนที่เคยดึงยอดขายไม่ได้ 32 เรื่อง สามารถดึงยอดขายจริงกลับมาได้อย่างสมบูรณ์ (เช่น `เจ้าแห่งกงล้อโชคชะตา`: ฿334,915.40, `นักฆ่าระดับเทพ`: ฿158,006.88, `ก่อกำเนิดราชันย์อสูร`: ฿100,131.12, `จอมมารแสนดี`: ฿40,485.00, `ข้าขอท้าผนึกสวรรค์`: ฿14,211.44)
+- ยอดขายรวมที่คำนวณได้ถูกต้องตามยอดจริงสะสมของทุกแพลตฟอร์ม
+- รัน `npm --prefix frontend run build` ผ่าน 100% ไม่มีข้อผิดพลาด

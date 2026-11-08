@@ -1,11 +1,20 @@
 {
   "description": "Cross-platform comic title and ID mapping registry for MangaHub",
-  "version": "1.0.0",
-  "updated_at": "2026-11-08T07:15:00Z",
+  "version": "1.1.0",
+  "updated_at": "2026-11-08T09:10:00Z",
   "mappings": [
     {
       "canonical_title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
       "canonical_key": "จอมมารแสนดี",
+      "aliases": [
+        "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+        "จอมมารแสนดีขนาดนี้ แต่ศิษย์สตรีทั้งหลายกลับต้องการชีวิตข้า",
+        "ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย",
+        "จอมมารแสนดีขนาดนี้",
+        "จอมมารแสนดีเช่นข้า",
+        "ผู้ชายแสนดีเช่นข้า",
+        "The Disciple Wants to Kill Me"
+      ],
       "platforms": {
         "readrealm": {
           "comic_id": "GpeQDXZlx2jvx5n0JWoR",
@@ -22,32 +31,890 @@
           "subject": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต | The Disciple Wants to Kill Me",
           "account": "แปลจนเมื่อย (Chaply)"
         }
-      },
-      "aliases": [
-        "ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย",
-        "ผู้ชายแสนดีเช่นข้า",
-        "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
-        "จอมมารแสนดีเช่นข้า",
-        "จอมมารแสนดีขนาดนี้ แต่ศิษย์สตรีทั้งหลายกลับต้องการชีวิตข้า",
-        "จอมมารแสนดีขนาดนี้",
-        "The Disciple Wants to Kill Me"
-      ]
+      }
     },
     {
       "canonical_title": "เจ้าแห่งกงล้อโชคชะตา",
       "canonical_key": "เจ้าแห่งกงล้อโชคชะตา",
       "aliases": [
+        "เจ้ากงล้อแห่งโชคชะตา",
         "เจ้าแห่งกงล้อหมุนฝืนโชคชะตา",
-        "เจ้าแห่งกงล้อโชคชะตา"
-      ]
+        "เจ้าแห่งกงล้อโชคชะตา",
+        "เจ้ากงล้อโชคชะตา"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "5qDAm32WxX9XOogPnaGe",
+          "subject": "เจ้าแห่งกงล้อโชคชะตา",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "341",
+          "subject": "เจ้าแห่งกงล้อหมุนฝืนโชคชะตา",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmw69pgg5001ct5o7y6pqze0r",
+          "subject": "เจ้าแห่งกงล้อโชคชะตา | The Lord of Wheel of Destiny",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
     },
     {
       "canonical_title": "กบฏแห่งตระกูลขุนนางทรราช",
       "canonical_key": "กบฏแห่งตระกูลขุนนางทรราช",
       "aliases": [
         "เกิดใหม่เป็นกบฏแห่งตระกูลขุนนางทรราช",
-        "กบฏแห่งตระกูลขุนนางทรราช"
-      ]
+        "กบฏแห่งตระกูลขุนนางทรราช",
+        "The Rebel of the Tyrant Noble House"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "3MjZ0qWYgJ4XVJLAreG1",
+          "subject": "กบฏแห่งตระกูลขุนนางทรราช | The Rebel of the Tyrant Noble House",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "4388",
+          "subject": "เกิดใหม่เป็นกบฏแห่งตระกูลขุนนางทรราช| The Rebel of the Tyrant Noble Hous",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5qaxb320d96kdh0230bmq2",
+          "subject": "กบฏแห่งตระกูลขุนนางทรราช | The Rebel of the Tyrant Noble House",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ",
+      "canonical_key": "ผนึกสวรรค์สยบมารสะท้านเทพ",
+      "aliases": [
+        "ข้าขอท้าผนึกสวรรค์",
+        "ผนึกสวรรค์ สยบมาร สะท้านเทพ",
+        "I Shall Seal the Heavens"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "EQwLk1zYR9RXV50y2Wed",
+          "subject": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "431",
+          "subject": "ผนึกสวรรค์ สยบมาร สะท้านเทพ I Shall Seal the Heavens",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmuk7y4dr0gcpt5im40yny60d",
+          "subject": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "Mr.Zombie",
+      "canonical_key": "mrzombie",
+      "aliases": [
+        "Mr.Zombie",
+        "นายท่านซอมบี้",
+        "นายท่านซอมบี้ | Mr.Zombie"
+      ],
+      "platforms": {
+        "kairew": {
+          "comic_id": "388",
+          "subject": "นายท่านซอมบี้ | Mr.Zombie",
+          "account": "แปลจนเมื่อย (Kairew)"
+        }
+      }
+    },
+    {
+      "canonical_title": "มหาปรมาจารย์ระดับเทพแห่งนคร",
+      "canonical_key": "มหาปรมาจารย์ระดับเทพแห่งนคร",
+      "aliases": [
+        "มหาปรจารย์ระดับเทพแห่งนคร",
+        "มหาปรมาจารย์ระดับเทพแห่งนคร",
+        "City God Level Grandmaster"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "NG8Qg2kxDyqvOz7Kdeo9",
+          "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "5076",
+          "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5lttk91ygj6kdgu18gt0i5",
+          "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร | City God Level Grandmaster",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน",
+      "canonical_key": "พลิกอักษรเปลี่ยนสกิลบงการโลกจนยับเยิน",
+      "aliases": [
+        "พลิกอักษรเปลี่ยนสกิลบงการโลกจนยับเยิน",
+        "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน",
+        "I Turn Skills into Broken Ones with a Single Word"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "kJy7ZdeYZRJJYX5PAwB6",
+          "subject": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "5077",
+          "subject": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5lkq6z1zi36kdeaw12cfwi",
+          "subject": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด!",
+      "canonical_key": "สกิลไร้คูลดาวน์งั้นข้าขอจุติเป็นภัยพิบัติอันเดด",
+      "aliases": [
+        "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด!",
+        "With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+        "No Cooldown? Then I Shall Be an Undead Calamity!"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "3MjZ0qWYgw1oYJLAreG1",
+          "subject": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "7301",
+          "subject": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu55dp6m1xyq6kdc3hxp43hz",
+          "subject": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+      "canonical_key": "เพราะมีหนี้เป็นพันล้านก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+      "aliases": [
+        "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+        "I Owe Billions in Debt, So I Was Forced to Work for an Evil God"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "NG8Qg2kxDk7gYz7Kdeo9",
+          "subject": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "345",
+          "subject": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmuu97eqw0d44t5hg6zfwvyf8",
+          "subject": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "การกลับมาของจักรพรรดิเขมือบล้างโลก",
+      "canonical_key": "การกลับมาของจักรพรรดิเขมือบล้างโลก",
+      "aliases": [
+        "การกลับมาของจักรพรรดิเขมือบล้างโลก",
+        "Return of the Devourer"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "kJy7ZdeYZRaJYX5PAwB6",
+          "subject": "การกลับมาของจักรพรรดิเขมือบล้างโลก | Return of the Devourer",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "765",
+          "subject": "การกลับมาของจักรพรรดิเขมือบล้างโลก | Return of the Devourer",
+          "account": "แปลจนเมื่อย (Kairew)"
+        }
+      }
+    },
+    {
+      "canonical_title": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์",
+      "canonical_key": "เลเวล0ที่แข็งแกร่งที่สุดครองความไร้เทียมทานด้วยสกิลวิเคราะห์",
+      "aliases": [
+        "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์",
+        "Absolute Domination at Level 0 with My Analysis Skill"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "aDZ1qlAOelRbx5k7gmeM",
+          "subject": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "730",
+          "subject": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์ | Absolute Domination at Level 0 with My Analysis Skill",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmub9wokr2r0a6kdap2d91i5q",
+          "subject": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์ | Absolute Domination at Level 0 with My Analysis Skill",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี",
+      "canonical_key": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี",
+      "aliases": [
+        "บุปผาไร้ใจเบ่งบานในยามสิบราตรี",
+        "Revenge of the Bloom Flower"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "3E8jmDbO0ePeVZwR5qpa",
+          "subject": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี | Revenge of the Bloom Flower",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "333",
+          "subject": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี | Revenge of the Bloom Flower",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmuwogcnt0rx1t5hjln5y8r2f",
+          "subject": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี | Revenge of the Bloom Flower",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด",
+      "canonical_key": "mrwarอดีตทหารที่แข็งแกร่งที่สุด",
+      "aliases": [
+        "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด",
+        "Mr.War: The Ultimate Ex-soldier"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "m5MEjRdOnzKZOg6Ay8ZW",
+          "subject": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "729",
+          "subject": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmublli8h2t4o6kda14eepw3r",
+          "subject": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น",
+      "canonical_key": "เอาชีวิตรอดวันสิ้นโลกด้วยบังเกอร์เทพเหนือชั้น",
+      "aliases": [
+        "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น",
+        "Surviving the Heat Apocalypse with My God-Tier Safehouse"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "rKk19Eexy8DRYWAyR3qL",
+          "subject": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "613",
+          "subject": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmucb79dt2wea6kdacrxzee3d",
+          "subject": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร",
+      "canonical_key": "ดวงตาแห่งสรรพสิ่งจอมบงการค่ายกลสังหาร",
+      "aliases": [
+        "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร",
+        "The Omniscient Trapmaster"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "qDAm32WxX12BOogPnaGe",
+          "subject": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "897",
+          "subject": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu9zzov52m2l6kdfmsxf6jnq",
+          "subject": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "วันโลกาวินาศ จุติราชันย์สีชาด",
+      "canonical_key": "วันโลกาวินาศจุติราชันย์สีชาด",
+      "aliases": [
+        "วันโลกาวินาศ จุติราชันย์สีชาด",
+        "Doomsday Arrival: Evolution into the Crimson King"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "qDAm32WxXdXBxogPnaGe",
+          "subject": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "367",
+          "subject": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmulhvthl0pkjt5ivukga1d8g",
+          "subject": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "เพราะฉันคือระดับ SSS ที่สมบูรณ์แบบ",
+      "canonical_key": "เพราะฉันคือระดับsssที่สมบูรณ์แบบ",
+      "aliases": [
+        "เพราะฉันคือระดับ SSS ที่สมบูรณ์แบบ",
+        "The Chosen SSS-Rank"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "MvyBR09xzjQlxbd1NrqE",
+          "subject": "เพราะฉันคือระดับ SSS ที่สมบูรณ์แบบ | The Chosen SSS-Rank",
+          "account": "แปลจนเมื่อย"
+        },
+        "chaply": {
+          "comic_id": "cmv6so0dp107at5ewv8eopw5f",
+          "subject": "เพราะฉันคือระดับ SSS ที่สมบูรณ์แบบ | The Chosen SSS-Rank",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ผู้นำพรรคมารคอยแอบเฝ้ามองข้าอยู่อย่างลับๆ",
+      "canonical_key": "ผู้นำพรรคมารคอยแอบเฝ้ามองข้าอยู่อย่างลับๆ",
+      "aliases": [
+        "ผู้นำพรรคมารคอยแอบเฝ้ามองข้าอยู่อย่างลับๆ",
+        "Secretly Cultivating by the Demon Cult Leader's Side"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "9ZazJMeV9pXpO4wK6vRq",
+          "subject": "ผู้นำพรรคมารคอยแอบเฝ้ามองข้าอยู่อย่างลับๆ | Secretly Cultivating by the Demon Cult Leader's Side",
+          "account": "แปลจนเมื่อย"
+        },
+        "chaply": {
+          "comic_id": "cmulnck7v0pskt5ito6c44uqt",
+          "subject": "ผู้นำพรรคมารคอยแอบเฝ้ามองข้าอยู่อย่างลับๆ | Secretly Cultivating by the Demon Cult Leader's Side",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
+      "canonical_key": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
+      "aliases": [
+        "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
+        "Axe God Path of Invincibility"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "a7qNk8mOK6EKxXyvogDn",
+          "subject": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "589",
+          "subject": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmull5smm0qfdt5ipmerc8kjs",
+          "subject": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน | Axe God Path of Invincibility",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน",
+      "canonical_key": "ฟูลแอคเตอร์จากไอ้ไร้ค่าสู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน",
+      "aliases": [
+        "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน",
+        "The Skill-Devouring Nobody’s Rampage of Revenge"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "n6r39MJVwDZvYNAB81yk",
+          "subject": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "659",
+          "subject": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmucaq9nm30dq6kdcwwjkbygk",
+          "subject": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า",
+      "canonical_key": "จุติใหม่มหาโจรพลิกโลกออนไลน์สยบใต้หล้า",
+      "aliases": [
+        "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า",
+        "Rebirth of the Thief Who Roamed The World"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "vGkNElzYlMjDxq27mKdM",
+          "subject": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "1104",
+          "subject": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu9qqrcp2plk6kdbaaqa4i6y",
+          "subject": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า",
+      "canonical_key": "เนโครแมนเซอร์จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า",
+      "aliases": [
+        "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า",
+        "Necromancer: From Skeleton Clone to Godhood"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "GmA4egMxWRADYB8PWbyp",
+          "subject": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "4673",
+          "subject": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5ofcn422d36kdd9ox2ccvd",
+          "subject": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "พี่ชายของผมคือหมาบ้า",
+      "canonical_key": "พี่ชายของผมคือหมาบ้า",
+      "aliases": [
+        "พี่ชายของผมคือหมาบ้า",
+        "My Brother Is a Mad Dog"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "n6r39MJVwpqjYNAB81yk",
+          "subject": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "6682",
+          "subject": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu57f4i51wi96kdepjdx8u96",
+          "subject": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน!",
+      "canonical_key": "กำเนิดใหม่ไซอิ๋วมหาปราชญ์กระดูกขาวไร้เทียมทาน",
+      "aliases": [
+        "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน!",
+        "Journey to the West: The Invincible White Bone Great Sage"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "wPZAJq7OkDryVW8Dozkm",
+          "subject": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "7303",
+          "subject": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu54cw331xcm6kddlj7skzbf",
+          "subject": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก",
+      "canonical_key": "เกิดใหม่อีกครั้งล้างแค้นอาฆาตด้วยพลังโลกกระจก",
+      "aliases": [
+        "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก",
+        "Reborn: Revenge with Mirror World Powers"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "le0bk9XVGdJ0Yj34oaQw",
+          "subject": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "344",
+          "subject": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmun1mjxm0yu7t5ioj5wa6031",
+          "subject": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์",
+      "canonical_key": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์",
+      "aliases": [
+        "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์",
+        "Reborn as a Streamer Thunder Lord"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "NG8Qg2kxDy5KOz7Kdeo9",
+          "subject": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "661",
+          "subject": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmubpx26j2u1v6kdgil3fq5o8",
+          "subject": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์",
+      "canonical_key": "จุติฮันเตอร์วันสิ้นโลกฉันมีระบบค่าประสบการณ์",
+      "aliases": [
+        "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์",
+        "Apocalyptic Hunter: I Have an EXP System"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "Z41KDdWY1989Yw7MA5Pk",
+          "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "4674",
+          "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5mrfj01zyt6kden87j1ch7",
+          "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ | Cataclysm Hunter: I Have an XP System",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด!",
+      "canonical_key": "หลังตัดขาดตระกูลอสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด",
+      "aliases": [
+        "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด!",
+        "Severed Family: My Summons Are Creatures of Darkness"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "aDZ1qlAOewl3Y5k7gmeM",
+          "subject": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "6065",
+          "subject": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark Creatures",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu599yt01yj56kddr5yp4zaz",
+          "subject": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี!",
+      "canonical_key": "ราชันย์แห่งยมโลกข้านี่แหละคือห้วงอเวจี",
+      "aliases": [
+        "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี!",
+        "Underworld King: I Am the Abyss"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "zkJdZa0Y6n5NYrv4KR5n",
+          "subject": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "7302",
+          "subject": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu54x6jl1xul6kdc7qbb0we0",
+          "subject": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย",
+      "canonical_key": "จุติเทพนักดาบไร้พ่ายจากอาชีพสุดรั้งท้าย",
+      "aliases": [
+        "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย",
+        "Reincarnation of the Invincible Sword God"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "ng5GbmNxBrg8x9AlMyk0",
+          "subject": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "5356",
+          "subject": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5jxqqr20ss6kddg7es62wu",
+          "subject": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ!",
+      "canonical_key": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนานเพียงหนึ่งกระบี่พิฆาตเทพ",
+      "aliases": [
+        "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ!",
+        "Legendary Talent: One Sword Slashes Gods"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "GmA4egMxWR5KYB8PWbyp",
+          "subject": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "486",
+          "subject": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmuk2isn40ff1t5imkxirfqoc",
+          "subject": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล",
+      "canonical_key": "อดีตแชมเปี้ยนไร้เทียมทานจุติใหม่เป็นขยะของตระกูล",
+      "aliases": [
+        "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล",
+        "The Invincible Champion Reborn as Trash"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "RbKaMELO7p6PVglzP41q",
+          "subject": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "766",
+          "subject": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmub9scyd2qzl6kdax0weqtow",
+          "subject": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ยอดอัจฉริยะอหังการ์",
+      "canonical_key": "ยอดอัจฉริยะอหังการ์",
+      "aliases": [
+        "ยอดอัจฉริยะอหังการ์",
+        "Peerless Genius"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "nvEqQwJYPz8NOedr65l2",
+          "subject": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "7304",
+          "subject": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu53j7bu1urc6kdgjv42ackr",
+          "subject": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย",
+      "canonical_key": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย",
+      "aliases": [
+        "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย",
+        "King of Assassins Reborn as Son-in-Law"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "Z41KDdWY19goYw7MA5Pk",
+          "subject": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "3569",
+          "subject": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5rxd0p25jk6kdbt4wnhweh",
+          "subject": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง",
+      "canonical_key": "ระบบคืนผลหมื่นเท่าชะตานี้ข้าขอกำหนดเอง",
+      "aliases": [
+        "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง",
+        "Ten-Thousandfold Return, Senior Sister, Please Behave"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "peQDXZlx2laqV5n0JWoR",
+          "subject": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "784",
+          "subject": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmua459q82p666kdcoll0jcwa",
+          "subject": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด!",
+      "canonical_key": "ยุคเปลี่ยนอาชีพผู้หลอมรวมเปิดฉากฟิวชั่นกองทัพอันเดด",
+      "aliases": [
+        "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด!",
+        "Global Awakening: The Synthesis Master Starts with an Undead"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "rwEvg7LY8QnJx20blNPp",
+          "subject": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "7300",
+          "subject": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead Army",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu55krov20aa6kdb4kzmjpr9",
+          "subject": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
+    },
+    {
+      "canonical_title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด!",
+      "canonical_key": "ยุคเปลี่ยนอาชีพราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด",
+      "aliases": [
+        "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด!",
+        "Global Class Awakening: The Mage King’s Skills Gain Infinite Upg"
+      ],
+      "platforms": {
+        "readrealm": {
+          "comic_id": "EQwLk1zYRR9KY50y2Wed",
+          "subject": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+          "account": "แปลจนเมื่อย"
+        },
+        "kairew": {
+          "comic_id": "6062",
+          "subject": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upgrades",
+          "account": "แปลจนเมื่อย (Kairew)"
+        },
+        "chaply": {
+          "comic_id": "cmu5hk40d1xsh6kdh2y1fw76m",
+          "subject": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+          "account": "แปลจนเมื่อย (Chaply)"
+        }
+      }
     }
   ]
 }

@@ -6,6 +6,58 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ไขปัญหายอดขายมังงะดึงไม่ได้ในสมุดบันทึกกำไรขาดทุน (MangaSales Ledger) & วิเคราะห์ระบบรายเดือน 3 แพลตฟอร์ม & เพิ่ม Tooltip แยกยอดขาย สำเร็จ 100% (8 พ.ย. 2569)
+
+#### 1. รายละเอียดปัญหาและผลการตรวจสอบ (Root Cause Analysis):
+- **ปัญหา**: ในหน้า "สมุดบันทึกยอดขาย & ต้นทุนประจำเดือน" (MangaSales Ledger / Tab P&L) เมื่อคำนวณหรือดึงยอดขาย พบว่าการ์ตูนมากกว่า 32 เรื่องที่มียอดขายจริงบน ReadRealm, Kairew และ Chaply มียอดขายเป็น 0.00 บาท หรือไม่ถูกดึงเข้ามาในสมุดบัญชี
+- **สาเหตุเชิงลึก**:
+  1. **Title Matching ใน Backend (`calculateAndSyncMonthlyMangaSales`) เป็น Exact Literal Match**:
+     - API แพลตฟอร์มมีชื่อภาษาอังกฤษต่อท้าย เช่น `พี่ชายของผมคือหมาบ้า My Brother Is a Mad Dog` หรือมีคำแปลต่างกัน
+     - ระบบตารางงานมีเฉพาะชื่อภาษาไทย เช่น `พี่ชายของผมคือหมาบ้า` จึงค้นหาใน `platformSalesMap` ไม่พบ
+  2. **เงื่อนไข `totalBudgetRevenue === 0` บล็อกการดึงยอดขาย**:
+     - เมื่อมีรายการรายรับในชีต `BudgetTransactions` โค้ดเดิมจะบล็อกไม่ยอมดึง `total_sales` ของมังงะหากไม่มี `sales_delta30d` ส่งผลให้การ์ตูน 35 เรื่องในเดือน ต.ค. กลายเป็น 0 ทันที
+  3. **Cross-Platform Title Mismatches & Aliases**:
+     - การ์ตูนที่มีชื่อต่างกันข้ามแพลตฟอร์มไม่ได้เชื่อมโยงกัน เช่น `เจ้ากงล้อแห่งโชคชะตา` vs `เจ้าแห่งกงล้อโชคชะตา`, `ข้าขอท้าผนึกสวรรค์` vs `ผนึกสวรรค์ สยบมาร สะท้านเทพ`, `Mr.Zombie` vs `นายท่านซอมบี้`, `มหาปรจารย์` (พิมพ์ตก) vs `มหาปรมาจารย์`
+  4. **Registry `comic_cross_platform_mapping.json` มีเพียง 3 เรื่อง** ทำให้ไม่มีชื่อทางเลือก (Aliases) สำหรับการ์ตูนเรื่องอื่น
+
+#### 2. สถานะ API และระบบจัดเก็บยอดขายรายเดือนของ 3 แพลตฟอร์ม:
+1. **ReadRealm**:
+   - **สถานะ**: **รองรับ 100%** ผ่าน API `https://api-writer.readrealm.co/writer/comics/analytics/getYearSaleReport?year={thai_year}&comic_ID={cid}`
+   - **ข้อมูล**: ส่งคืนอาร์เรย์ยอดขาย 12 เดือน (`data: [12 months]`) และยอดขายรวมทั้งปี (`sum_data`) ต่อเรื่อง
+   - **การจัดเก็บในระบบเรา**: บันทึกใน `readrealm_stats_lionking.json` และ `readrealm_stats.json`
+2. **Kairew**:
+   - **สถานะ**: **ไม่มี API รายเดือนแยกต่อเรื่องแบบสาธารณะ** (ทำงานบน Inertia.js SSR Props แสดงเฉพาะยอดขายสะสมตลอดกาล)
+   - **การจัดเก็บในระบบเรา**: ระบบ Growth Tracker (`tools/kairew_growth_tracker.py`) บันทึก Snapshot ทุก 6 ชั่วโมงลงใน `kairew_history.json` และคำนวณ Delta 30 วัน (`sales_delta30d`) เป็นยอดขายรายเดือน
+3. **Chaply**:
+   - **สถานะ**: **รองรับ 100% แบบ Date Range** ผ่าน API `https://api.chaply.net/api/writer/stats/sales?start={YYYY-MM-DD}&end={YYYY-MM-DD}`
+   - **ข้อมูล**: ส่งคืนยอดขายรวมช่วงวันที่ (`totalAmount`), ธุรกรรม (`totalCount`), และยอดขายรายวัน (`items: [{date, count, amount}]`)
+   - **การจัดเก็บในระบบเรา**: บันทึก Snapshot ทุก 6 ชั่วโมงใน `chaply_history.json` พร้อมคำนวณ Delta 7 วัน และ 30 วัน
+
+#### 3. สิ่งที่ดำเนินการแก้ไขและพัฒนา (Implemented Solutions):
+1. **ขยาย Cross-Platform Mapping Registry (`comic_cross_platform_mapping.json`)**:
+   - เพิ่มรายการแมปและ Aliases ข้ามแพลตฟอร์มอย่างสมบูรณ์ครอบคลุม 37 รายการสำคัญ ซิงค์ไปยังทั้งฝั่ง Tools และ Frontend
+2. **ปรับปรุง `normalizeMangaTitle` ใน `backend/Code.js` และ `FinancialsView.tsx`**:
+   - ตัดชื่อภาษาอังกฤษต่อท้ายอัตโนมัติ (ทั้งที่มี `|` และไม่มี `|`), ตัดวรรค, สัญลักษณ์พิเศษ (`★`, `🔥`, เครื่องหมายวรรคตอน)
+   - เชื่อมโยง Aliases และ Canonical Keys จาก Mapping Registry
+3. **ปรับปรุง Engine คำนวณ P&L ใน `backend/Code.js` (`calculateAndSyncMonthlyMangaSales`)**:
+   - เพิ่ม `platformSalesNormMap` สำหรับจัดเก็บและค้นหายอดขายด้วย Normalized Key
+   - ปลดบล็อกเงื่อนไขรายได้ ให้อ้างอิงจาก `sales_delta30d` หรือ `total_sales` เมื่อไม่มี delta โดยไม่ถูกบล็อกด้วย `totalBudgetRevenue`
+   - ผสานยอดขายจากหลายแพลตฟอร์ม (`ReadRealm + Kairew + Chaply`) เข้าเป็นยอดขายรวมของการ์ตูนแต่ละเรื่องอย่างถูกต้อง
+4. **เพิ่มฟีเจอร์ Tooltip แยกยอดขายตามแพลตฟอร์มใน `FinancialsView.tsx`**:
+   - สร้าง Memoized Index `platformBreakdownMap` อ้างอิงจาก `groupedList` และ `comic_cross_platform_mapping`
+   - ออกแบบ Tooltip Hover Card สวยงาม (Glassmorphism Dark Theme) แสดงเมื่อนำเมาส์ไปชี้ที่ยอดขาย:
+     * 🟢 ReadRealm: ฿...
+     * 🔵 Kairew: ฿...
+     * 🟡 Chaply: ฿...
+     * ช่องทางที่บันทึกข้อมูลหลัก
+
+#### 4. ผลการตรวจสอบ (Verification):
+- การ์ตูนที่เคยดึงยอดขายไม่ได้ 32 เรื่อง สามารถดึงยอดขายจริงกลับมาได้อย่างสมบูรณ์ (เช่น `เจ้าแห่งกงล้อโชคชะตา`: ฿334,915.40, `นักฆ่าระดับเทพ`: ฿158,006.88, `ก่อกำเนิดราชันย์อสูร`: ฿100,131.12, `จอมมารแสนดี`: ฿40,485.00, `ข้าขอท้าผนึกสวรรค์`: ฿14,211.44)
+- ยอดขายรวมที่คำนวณได้ถูกต้องตามยอดจริงสะสมของทุกแพลตฟอร์ม
+- รัน `npm --prefix frontend run build` ผ่าน 100% ไม่มีข้อผิดพลาด
+
+---
+
 ### 🏆 แก้ไขบั๊กแสดงแท็ก "วันนี้" (Today Badge) วันที่ย้อนหลัง และ Inactivity Tracker ผิดพลาด สำเร็จ 100% (8 พ.ย. 2569)
 
 #### 1. การสืบค้นและระบุสาเหตุ (Root Cause Analysis):

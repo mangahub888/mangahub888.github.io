@@ -2835,6 +2835,7 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     try { kairewComics = (getKairewGrowthData().comics || []); } catch(e) {}
 
     const platformSalesMap = {};
+    const platformSalesNormMap = {};
     const ingestComicSales = (cList, platName) => {
       cList.forEach(c => {
         const title = (c.subject || '').trim();
@@ -2845,6 +2846,10 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         if (eps <= 0 || cStat === 'ยังไม่เปิดเรื่อง' || cStat === 'ยังไม่ได้เปิดเรื่อง' || cStat === 'unopened') {
           return;
         }
+        const sAmt = parseFloat(c.total_sales) || 0;
+        const dAmt = parseFloat(c.growth_30d?.sales_delta || c.sales_delta30d) || 0;
+
+        // Raw exact title
         if (!platformSalesMap[title]) {
           platformSalesMap[title] = {
             title: title,
@@ -2853,9 +2858,26 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
             platform: platName
           };
         }
-        platformSalesMap[title].total_sales += (parseFloat(c.total_sales) || 0);
-        const delta = parseFloat(c.growth_30d?.sales_delta || c.sales_delta30d) || 0;
-        platformSalesMap[title].sales_delta30d += delta;
+        platformSalesMap[title].total_sales += sAmt;
+        platformSalesMap[title].sales_delta30d += dAmt;
+
+        // Normalized key for robust cross-platform matching
+        const normKey = normalizeMangaTitle(title);
+        if (normKey) {
+          if (!platformSalesNormMap[normKey]) {
+            platformSalesNormMap[normKey] = {
+              title: title,
+              total_sales: 0,
+              sales_delta30d: 0,
+              platforms: []
+            };
+          }
+          platformSalesNormMap[normKey].total_sales += sAmt;
+          platformSalesNormMap[normKey].sales_delta30d += dAmt;
+          if (platformSalesNormMap[normKey].platforms.indexOf(platName) === -1) {
+            platformSalesNormMap[normKey].platforms.push(platName);
+          }
+        }
       });
     };
     ingestComicSales(readRealmComics, 'ReadRealm');
@@ -3041,18 +3063,27 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     });
 
     // 7. แมตช์รายได้ (Revenue)
-    // - คงค่ายอดขายเดิมที่เคยบันทึกไว้ในเดือนนั้น (เช่น ยอดขายเดือน ต.ค. หรือที่ผู้ใช้กรอกเอง)
-    // - หรือใช้ delta ยอดขายจาก Multi-Platform Growth ถ้ามี
+    // - ดึงยอดขายจาก Multi-Platform Growth (ReadRealm + Chaply + Kairew) แบบ Robust Normalized Matching
+    // - คงค่ายอดขายเดิมที่เคยบันทึกไว้ในเดือนนั้น (เช่น กรณีแก้ไขตัวเลขด้วยตนเอง)
     Object.keys(mangaStats).forEach(mName => {
       const item = mangaStats[mName];
+      const normKey = normalizeMangaTitle(mName);
+      const platData = platformSalesMap[mName] || (normKey ? platformSalesNormMap[normKey] : null);
+
       if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0) {
         item.revenue = parseFloat(existingMonthSalesMap[mName].revenue);
-      } else if (platformSalesMap[mName] && platformSalesMap[mName].sales_delta30d > 0) {
-        item.revenue = platformSalesMap[mName].sales_delta30d;
-      } else if (platformSalesMap[mName] && platformSalesMap[mName].total_sales > 0 && totalBudgetRevenue === 0) {
-        item.revenue = platformSalesMap[mName].total_sales;
+      } else if (platData && platData.sales_delta30d > 0) {
+        item.revenue = platData.sales_delta30d;
+      } else if (platData && platData.total_sales > 0) {
+        item.revenue = platData.total_sales;
       } else {
         item.revenue = 0;
+      }
+
+      if (platData && platData.platforms && platData.platforms.length > 1) {
+        item.website = platData.platforms.join(' + ');
+      } else if (platData && platData.platform) {
+        item.website = platData.platform;
       }
     });
 
@@ -3473,10 +3504,24 @@ function extractComicIdFromUrl(url) {
  */
 function normalizeMangaTitle(title) {
   if (!title || typeof title !== 'string') return '';
-  return title
-    .toLowerCase()
-    .replace(/[\s\-_–—~:：!！?？,，.。'"“”‘’()[\]{}【】]/g, '')
-    .trim();
+  let t = title.split('|')[0].trim();
+  // If title contains Thai characters and has a trailing English subtitle without '|', strip trailing English words
+  if (/[\u0E00-\u0E7F]/.test(t)) {
+    t = t.replace(/\s+[A-Za-z][A-Za-z0-9\s:'’,-]{3,}$/g, '').trim();
+  }
+  t = t.toLowerCase().replace(/[\s\-_–—~:：!！?？,，.。'"“”‘’()[\]{}【】★🔥]/g, '');
+
+  // Cross-Platform & Spelling Aliases Normalization
+  if (t.includes('กงล้อ') && t.includes('โชคชะตา')) return 'เจ้าแห่งกงล้อโชคชะตา';
+  if (t.includes('จอมมารแสนดี') || t.includes('ผู้ชายแสนดี') || t.includes('thedisciplewantstokillme')) return 'จอมมารแสนดี';
+  if (t.includes('กบฏแห่งตระกูลขุนนางทรราช')) return 'กบฏแห่งตระกูลขุนนางทรราช';
+  if (t.includes('มหาปรจารย์') || t.includes('มหาปรมาจารย์')) return 'มหาปรมาจารย์ระดับเทพแห่งนคร';
+  if (t.includes('พลิกอักษรเปลี่ยนสกิล')) return 'พลิกอักษรเปลี่ยนสกิลบงการโลกจนยับเยิน';
+  if (t.includes('สกิลไร้คูลดาวน์') && t.includes('ภัยพิบัติอันเดด')) return 'สกิลไร้คูลดาวน์งั้นข้าขอจุติเป็นภัยพิบัติอันเดด';
+  if (t.includes('ผนึกสวรรค์')) return 'ผนึกสวรรค์สยบมารสะท้านเทพ';
+  if (t.includes('zombie') || t.includes('ซอมบี้')) return 'mrzombie';
+
+  return t;
 }
 
 /**

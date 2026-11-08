@@ -52,6 +52,7 @@ import { THAI_SHORT_MONTHS, getChapterCount, isUrgentManga, parseDateSafe, getIn
 import initialGrowthData from "@/data/multi_platform_growth_latest.json";
 
 import initialGroupedData from "@/data/grouped_matched_comics.json";
+import initialMappingData from "@/data/comic_cross_platform_mapping.json";
 
 import { callGasApi } from "@/api/gasClient";
 
@@ -138,32 +139,34 @@ function normalizeMangaTitle(title: string): string {
 
   // If title contains Thai characters and has a trailing English subtitle without '|', strip trailing English words
   if (/[\u0E00-\u0E7F]/.test(t)) {
-    t = t.replace(/\s+[A-Za-z][A-Za-z0-9\s:'’,-]{5,}$/g, "").trim();
+    t = t.replace(/\s+[A-Za-z][A-Za-z0-9\s:'’,-]{3,}$/g, "").trim();
   }
 
-  t = t.toLowerCase().replace(/[\s\-_–—()[\]{}:：.,!！?？"']+/g, "");
+  t = t.toLowerCase().replace(/[\s\-_–—~:：!！?？,，.。'"“”‘’()[\]{}【】★🔥]+/g, "");
 
-  if (
-    t.includes("เจ้าแห่งกงล้อหมุนฝืนโชคชะตา") ||
-    t.includes("เจ้าแห่งกงล้อโชคชะตา")
-  ) {
-    return "เจ้าแห่งกงล้อโชคชะตา";
-  }
+  // Cross-Platform & Spelling Aliases Normalization
+  if (t.includes("กงล้อ") && t.includes("โชคชะตา")) return "เจ้าแห่งกงล้อโชคชะตา";
+  if (t.includes("จอมมารแสนดี") || t.includes("ผู้ชายแสนดี") || t.includes("thedisciplewantstokillme")) return "จอมมารแสนดี";
+  if (t.includes("กบฏแห่งตระกูลขุนนางทรราช")) return "กบฏแห่งตระกูลขุนนางทรราช";
+  if (t.includes("มหาปรจารย์") || t.includes("มหาปรมาจารย์")) return "มหาปรมาจารย์ระดับเทพแห่งนคร";
+  if (t.includes("พลิกอักษรเปลี่ยนสกิล")) return "พลิกอักษรเปลี่ยนสกิลบงการโลกจนยับเยิน";
+  if (t.includes("สกิลไร้คูลดาวน์") && t.includes("ภัยพิบัติอันเดด")) return "สกิลไร้คูลดาวน์งั้นข้าขอจุติเป็นภัยพิบัติอันเดด";
+  if (t.includes("ผนึกสวรรค์")) return "ผนึกสวรรค์สยบมารสะท้านเทพ";
+  if (t.includes("zombie") || t.includes("ซอมบี้")) return "mrzombie";
 
-  if (
-    t.includes("เกิดใหม่เป็นกบฏแห่งตระกูลขุนนางทรราช") ||
-    t.includes("กบฏแห่งตระกูลขุนนางทรราช")
-  ) {
-    return "กบฏแห่งตระกูลขุนนางทรราช";
-  }
-
-  if (
-    t.includes("จอมมารแสนดีขนาดนี้") ||
-    t.includes("จอมมารแสนดีเช่นข้า") ||
-    t.includes("ผู้ชายแสนดีเช่นข้า") ||
-    t.includes("thedisciplewantstokillme")
-  ) {
-    return "จอมมารแสนดี";
+  // Check against comic_cross_platform_mapping registry
+  if (initialMappingData && Array.isArray((initialMappingData as any).mappings)) {
+    for (const m of (initialMappingData as any).mappings) {
+      const cKey = m.canonical_key || m.canonical_title;
+      if (m.aliases && Array.isArray(m.aliases)) {
+        for (const alias of m.aliases) {
+          const cleanAlias = alias.split("|")[0].toLowerCase().replace(/[\s\-_–—~:：!！?？,，.。'"“”‘’()[\]{}【】★🔥]+/g, "");
+          if (cleanAlias && (t === cleanAlias || (cleanAlias.length > 5 && (t.includes(cleanAlias) || cleanAlias.includes(t))))) {
+            return cKey;
+          }
+        }
+      }
+    }
   }
 
   return t;
@@ -1273,6 +1276,25 @@ export function FinancialsView({
 
     return list;
   }, [salesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder]);
+
+  // Memoized platform breakdown index for MangaSales ledger Tooltip
+  const platformBreakdownMap = React.useMemo(() => {
+    const map = new Map<string, { readrealm: number; kairew: number; chaply: number; total: number }>();
+    if (!groupedList || !Array.isArray(groupedList)) return map;
+
+    for (const g of groupedList) {
+      const norm = normalizeMangaTitle(g.title || g.key);
+      const rr = Number(g.readrealm?.sales) || 0;
+      const kr = Number(g.kairew?.sales) || 0;
+      const ch = Number(g.chaply?.sales) || 0;
+      const total = Number(g.total_sales) || (rr + kr + ch);
+
+      const entry = { readrealm: rr, kairew: kr, chaply: ch, total };
+      if (norm) map.set(norm, entry);
+      if (g.key) map.set(g.key, entry);
+    }
+    return map;
+  }, [groupedList]);
 
   // Dynamic Monthly Reconciliation Data based on focused month
   const reconciledMonthData = React.useMemo(() => {
@@ -4000,6 +4022,24 @@ export function FinancialsView({
                       const profit = rev - cost;
                       const isUrgent = isTitleUrgent(sale.seriesname, sale.mangaid);
 
+                      // Calculate Platform Breakdown for Tooltip
+                      const normSaleKey = normalizeMangaTitle(sale.seriesname);
+                      const matchedPlatBreakdown = normSaleKey ? platformBreakdownMap.get(normSaleKey) : null;
+                      let rrSaleAmt = 0;
+                      let krSaleAmt = 0;
+                      let chSaleAmt = 0;
+                      if (matchedPlatBreakdown && matchedPlatBreakdown.total > 0) {
+                        rrSaleAmt = matchedPlatBreakdown.readrealm;
+                        krSaleAmt = matchedPlatBreakdown.kairew;
+                        chSaleAmt = matchedPlatBreakdown.chaply;
+                      } else {
+                        const webStr = String(sale.website || "").toLowerCase();
+                        if (webStr.includes("readrealm")) rrSaleAmt = rev;
+                        else if (webStr.includes("kairew")) krSaleAmt = rev;
+                        else if (webStr.includes("chaply")) chSaleAmt = rev;
+                        else rrSaleAmt = rev;
+                      }
+
                       return (
                         <TableRow
                           key={sale._rowIndex || idx}
@@ -4054,8 +4094,52 @@ export function FinancialsView({
                             {cost.toLocaleString()} ฿
                           </TableCell>
 
-                          <TableCell className="text-right text-indigo-400 font-semibold">
-                            {rev.toLocaleString()} ฿
+                          <TableCell className="text-right font-semibold">
+                            <div className="relative group inline-block">
+                              <span className="text-indigo-400 hover:text-indigo-300 underline decoration-dotted decoration-indigo-400/50 cursor-pointer transition-colors">
+                                {rev.toLocaleString()} ฿
+                              </span>
+                              {/* Tooltip Hover Card: แยกยอดขายตามแพลตฟอร์ม */}
+                              <div className="absolute right-0 bottom-full mb-2 hidden group-hover:flex flex-col z-50 w-60 p-2.5 bg-[#0f172a] border border-slate-700/80 rounded-lg shadow-2xl shadow-black/80 text-left pointer-events-none backdrop-blur-md">
+                                <div className="text-[11px] font-bold text-slate-200 border-b border-slate-700/70 pb-1.5 mb-1.5 flex items-center justify-between">
+                                  <span className="truncate pr-2">📊 แยกยอดขายตามแพลตฟอร์ม</span>
+                                  <span className="text-indigo-300 shrink-0">฿{rev.toLocaleString()}</span>
+                                </div>
+                                <div className="space-y-1.5 text-[11px]">
+                                  <div className="flex items-center justify-between">
+                                    <span className="flex items-center gap-1.5 text-slate-300">
+                                      <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></span>
+                                      ReadRealm:
+                                    </span>
+                                    <span className="font-semibold text-emerald-300">
+                                      ฿{rrSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="flex items-center gap-1.5 text-slate-300">
+                                      <span className="w-2 h-2 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50"></span>
+                                      Kairew:
+                                    </span>
+                                    <span className="font-semibold text-blue-300">
+                                      ฿{krSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="flex items-center gap-1.5 text-slate-300">
+                                      <span className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
+                                      Chaply:
+                                    </span>
+                                    <span className="font-semibold text-amber-300">
+                                      ฿{chSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="mt-2 pt-1.5 border-t border-slate-800 text-[10px] text-slate-400 flex justify-between">
+                                  <span>ช่องทางที่บันทึก:</span>
+                                  <span className="text-slate-300 font-medium truncate max-w-[120px]">{sale.website || "ReadRealm"}</span>
+                                </div>
+                              </div>
+                            </div>
                           </TableCell>
 
                           <TableCell
