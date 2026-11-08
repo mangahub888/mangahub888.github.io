@@ -6,6 +6,66 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 เชื่อมต่อ Endpoint รายงานยอดขายรายเดือน ReadRealm ดึงยอดตรงจากหลังบ้านนักเขียน 1:1 (🪙 5,733.00) (8 พ.ย. 2569)
+
+#### 1. รายละเอียดปัญหาและความต้องการจาก USER:
+- ผู้ใช้ตั้งข้อสังเกตและส่งภาพหน้าจอหลังบ้านนักเขียน ReadRealm:
+  - เมนู: **การ์ตูนของฉัน > ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain (ID: `EZ41KDdWY1Nxw7MA5PkN`)**
+  - แท็บ: **รายงานและสถิติ (Analytics) -> รายงานยอดขาย (Sale Report)**
+  - ประจำเดือน: **ตุลาคม | ปี : 2569**
+  - ใต้กราฟสรุปไว้ชัดเจนว่า: **"ยอดขายรวมรายเดือน : 🪙 5,733.00"**
+  - ด้านบนของหน้ามี: **"ยอดขายรวม : 🪙 461,493.30"**
+  - คำถามจากผู้ใช้: *"จะไปคำนวณเอง? ในหลังบ้านนักเขียนมันมี สรุปยอดรวมให้อยู่แล้ว"*
+
+#### 2. ผลการสืบค้นและค้นพบ API Endpoints เชิงลึก:
+1. **Endpoint รายงานยอดขายรายเดือน (`getMonthSaleReport`)**:
+   - URL: `https://api-writer.readrealm.co/writer/comics/analytics/getMonthSaleReport?month={iso_timestamp}&comic_ID={cid}`
+   - Format ของ Parameter `month`: รองรับ ISO 8601 UTC Timestamp สำหรับวันแรกของเดือน เช่น:
+     `month=2026-10-01T00:00:00.000Z` (หรือ `2026-09-30T17:00:00.000Z` เวลาไทย UTC+7)
+   - Response Payload:
+     ```json
+     {
+       "labels_days": ["วันที่ 1", "วันที่ 2", ..., "วันที่ 31"],
+       "data": [28.8, 39.6, 63.0, ..., 88.2],
+       "sum_data": 5733
+     }
+     ```
+   - **ฟิลด์ `sum_data` คืนค่าผลรวมรายเดือน `5733` ตรงกับหน้าจอหลังบ้านนักเขียน 🪙 5,733.00 แบบ 1:1!**
+2. **Endpoint สรุปยอดขายรวมตลอดกาล (`getDefaultSaleReport`)**:
+   - URL: `https://api-writer.readrealm.co/writer/comics/analytics/getDefaultSaleReport?comic_ID={cid}`
+   - Response Payload:
+     ```json
+     {
+       "all_sale_sum": 461493.3,
+       "topten_chapters_sale": [...]
+     }
+     ```
+   - **ฟิลด์ `all_sale_sum` คืนค่า `461493.3` ตรงกับ "ยอดขายรวม : 🪙 461,493.30" ด้านบนของหน้าจอ 1:1!**
+
+#### 3. สิ่งที่ดำเนินการปรับปรุงในระบบ:
+1. **Tracker Engine (`tools/readrealm_tracker.py` & `tools/readrealm_growth_tracker.py`)**:
+   - เพิ่มฟังก์ชัน `fetch_exact_month_sale(cid, year_ce, month, token)` ดึงตรงจาก `getMonthSaleReport` ด้วย ISO timestamp
+   - เพิ่มฟังก์ชัน `fetch_writer_total_sales(cid, token)` ดึงตรงจาก `getDefaultSaleReport`
+   - ใน `sync_readrealm_data()`: นำค่าจาก `fetch_exact_month_sale` มา Calibrate ข้อมูลรายเดือนของเดือนตุลาคมและเดือนปัจจุบัน ทำให้ค่าใน `monthly_sales` สอดคล้องกับหน้าจอ Sale Report หลังบ้าน 100%
+2. **ข้อมูลทุกไฟล์ JSON และ Frontend**:
+   - อัปเดตยอดขายเดือนตุลาคมของ "ข้าคือจอมวายร้าย" (EZ41KDdWY1Nxw7MA5PkN) เป็น `5,733.00 ฿` และยอดรวมเป็น `461,493.30 ฿`:
+     - `tools/data/readrealm_stats_lionking.json`
+     - `tools/data/grouped_matched_comics.json`
+     - `tools/data/multi_platform_growth_latest.json`
+     - `tools/data/readrealm_growth_latest.json`
+     - `frontend/src/data/grouped_matched_comics.json`
+     - `frontend/src/data/multi_platform_growth_latest.json`
+     - `frontend/src/data/readrealm_growth_latest.json`
+     - `frontend/public/data/grouped_matched_comics.json`
+     - `frontend/public/data/multi_platform_growth_latest.json`
+     - `frontend/public/data/readrealm_growth_latest.json`
+3. **P&L Ledger & Tooltip Matching**:
+   - หน้ารายงาน P&L และ Tooltip ใน `FinancialsView.tsx` ดึง `readrealm.monthly_sales["ตุลาคม"]` แสดงเป็น `5,733.00 ฿` พร้อมแท็ก `(รอบจริง)` ตรงกับหน้าจอ 100%
+4. **Automated Unit Testing & Verification**:
+   - เพิ่มชุดทดสอบ `frontend/test_readrealm_sale_report.mjs` รันตรวจเช็ค 3 มิติ ผ่าน 100%
+   - รัน `npm --prefix frontend test` ผ่านทุกชุด
+   - รัน `npm --prefix frontend run build` ผ่าน 100% ไม่มีข้อผิดพลาด
+
 ### 🏆 แก้ไขปัญหา Tooltip ยอดขายในหน้าสมุดบันทึกยอดขายและต้นทุน โดนบัง/ถูกตัดขอบ (8 พ.ย. 2569)
 
 #### 1. รายละเอียดปัญหาจาก USER:

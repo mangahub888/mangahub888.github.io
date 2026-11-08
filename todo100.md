@@ -383,3 +383,48 @@
    - สร้างชุดทดสอบ `test_monthly_sales_breakdown.mjs` ทดสอบการคำนวณยอดขายประจำเดือนตุลาคม, การตรวจสอบโครงสร้าง JSON, และการตรวจสอบโค้ด Backend
    - ผลการทดสอบผ่าน 100% (ReadRealm: 7,196.40 ฿, Kairew: 3,509.79 ฿, Chaply: 83.28 ฿ รวมเท่ากับ 10,789.47 ฿ พอดี)
    - รัน `npm --prefix frontend run build` ผ่าน 100% เรียบร้อย
+
+
+---
+
+## 11. ดึงยอดขายรวมรายเดือน ReadRealm จาก Endpoint สรุปรายเดือนของหน้าหลังบ้านนักเขียน (รายงานยอดขาย) 🪙 5,733.00
+
+### 11.1 รายละเอียดปัญหา (Problem Statement)
+- ผู้ใช้ตั้งคำถามว่า: *"จะไปคำนวณเอง? ในหลังบ้านนักเขียนมันมี สรุปยอดรวมให้อยู่แล้ว"*
+- ภาพหน้าจอหลังบ้านนักเขียน ReadRealm แสดงชัดเจน:
+  - เมนู: **การ์ตูนของฉัน > ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain (`EZ41KDdWY1Nxw7MA5PkN`)**
+  - แท็บ: **รายงานและสถิติ -> รายงานยอดขาย (Sale Report)**
+  - ประจำเดือน: **ตุลาคม | ปี : 2569**
+  - ใต้กราฟมีสรุปตรงๆ: **"ยอดขายรวมรายเดือน : 🪙 5,733.00"**
+  - ด้านบนของหน้ามี: **"ยอดขายรวม : 🪙 461,493.30"**
+
+### 11.2 ผลการ Reverse Engineering และค้นพบ Endpoint ที่แท้จริง
+1. **Endpoint รายงานยอดขายรายเดือน (`getMonthSaleReport`)**:
+   - `GET https://api-writer.readrealm.co/writer/comics/analytics/getMonthSaleReport?month={iso_timestamp}&comic_ID={cid}`
+   - Parameter `month` รับเป็น ISO 8601 UTC timestamp เช่น `2026-10-01T00:00:00.000Z` (หรือ `2026-09-30T17:00:00.000Z` UTC+7)
+   - Payload Response:
+     ```json
+     {
+       "labels_days": ["วันที่ 1", "วันที่ 2", ..., "วันที่ 31"],
+       "data": [28.8, 39.6, ..., 88.2],
+       "sum_data": 5733
+     }
+     ```
+   - **ฟิลด์ `sum_data` ให้ผลลัพธ์เป็น `5733` ตรงกับ 🪙 5,733.00 บนหน้าจอหลังบ้าน 1:1!**
+2. **Endpoint สรุปยอดขายรวมตลอดกาล (`getDefaultSaleReport`)**:
+   - `GET https://api-writer.readrealm.co/writer/comics/analytics/getDefaultSaleReport?comic_ID={cid}`
+   - Payload Response:
+     ```json
+     {
+       "all_sale_sum": 461493.3,
+       "topten_chapters_sale": [...]
+     }
+     ```
+   - **ฟิลด์ `all_sale_sum` ให้ผลลัพธ์เป็น `461493.3` ตรงกับ "ยอดขายรวม : 🪙 461,493.30" ด้านบน 1:1!**
+
+### 11.3 การดำเนินการปรับปรุงระบบ
+1. เพิ่มฟังก์ชัน `fetch_exact_month_sale` และ `fetch_writer_total_sales` ใน `tools/readrealm_tracker.py` และ `tools/readrealm_growth_tracker.py`
+2. Calibrate ยอดขายรายเดือนด้วย `fetch_exact_month_sale` ตรงจาก `getMonthSaleReport`
+3. อัปเดตข้อมูลยอดขายเดือนตุลาคมของ "ข้าคือจอมวายร้าย" ในชุดข้อมูล JSON ทั้งหมด (`readrealm_stats_lionking.json`, `grouped_matched_comics.json`, `multi_platform_growth_latest.json`, `readrealm_growth_latest.json`) เป็น `5,733.00 ฿` (และยอดรวม `461,493.30 ฿`)
+4. เพิ่ม Automated Test `frontend/test_readrealm_sale_report.mjs` ยืนยันความสอดคล้อง 100%
+5. Build Frontend สำเร็จเรียบร้อย

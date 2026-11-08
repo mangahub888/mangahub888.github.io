@@ -241,6 +241,35 @@ def call_api(endpoint_url: str, token: str, retries: int = 2) -> Dict[str, Any]:
             time.sleep(1)
     return {}
 
+def fetch_exact_month_sale(cid: str, year_ce: int, month: int, token: str) -> Optional[float]:
+    """
+    Fetch exact monthly sale from writer Sale Report endpoint (getMonthSaleReport) 1:1 with writer portal.
+    Endpoint: https://api-writer.readrealm.co/writer/comics/analytics/getMonthSaleReport?month={iso}&comic_ID={cid}
+    """
+    try:
+        iso_ts = f"{year_ce}-{month:02d}-01T00:00:00.000Z"
+        url = f"https://api-writer.readrealm.co/writer/comics/analytics/getMonthSaleReport?month={urllib.parse.quote(iso_ts)}&comic_ID={cid}"
+        res = call_api(url, token)
+        if res and "sum_data" in res and res["sum_data"] is not None:
+            return float(res["sum_data"])
+    except Exception:
+        pass
+    return None
+
+def fetch_writer_total_sales(cid: str, token: str) -> Optional[float]:
+    """
+    Fetch all_sale_sum from getDefaultSaleReport matching total sales header shown on writer portal 1:1.
+    Endpoint: https://api-writer.readrealm.co/writer/comics/analytics/getDefaultSaleReport?comic_ID={cid}
+    """
+    try:
+        url = f"https://api-writer.readrealm.co/writer/comics/analytics/getDefaultSaleReport?comic_ID={cid}"
+        res = call_api(url, token)
+        if res and "all_sale_sum" in res and res["all_sale_sum"] is not None:
+            return float(res["all_sale_sum"])
+    except Exception:
+        pass
+    return None
+
 def sync_readrealm_data(target_comic_only: Optional[str] = None) -> Dict[str, Any]:
     """
     Sync all comics, yearly/monthly sales, and chapter stats from ReadRealm.
@@ -334,6 +363,31 @@ def sync_readrealm_data(target_comic_only: Optional[str] = None) -> Dict[str, An
             if m_idx < 12:
                 m_name = THAI_MONTHS[m_idx]
                 monthly_sales_dict[m_name] = float(m_val or 0.0)
+
+        # Check Writer Portal Default Sale Report (matches 'ยอดขายรวม' on writer portal header 1:1)
+        writer_total_sales = fetch_writer_total_sales(cid, token)
+        if writer_total_sales is not None and writer_total_sales > 0:
+            sales = writer_total_sales
+
+        # Exact Monthly Sales Report Calibration (ดึงตรงจาก getMonthSaleReport สำหรับรายงานยอดขาย 1:1)
+        try:
+            now_dt = datetime.now()
+            cur_year_ce = now_dt.year
+            months_to_verify = [now_dt.month]
+            if now_dt.month > 1:
+                months_to_verify.append(now_dt.month - 1)
+            # Guarantee October (month 10) calibration for 2026
+            if 10 not in months_to_verify and cur_year_ce == 2026:
+                months_to_verify.append(10)
+
+            for m_num in sorted(set(months_to_verify)):
+                exact_m_val = fetch_exact_month_sale(cid, cur_year_ce, m_num, token)
+                if exact_m_val is not None:
+                    th_name = THAI_MONTHS[m_num - 1]
+                    monthly_sales_dict[th_name] = float(exact_m_val)
+            year_sum_sales = round(sum(monthly_sales_dict.values()), 2)
+        except Exception:
+            pass
 
         # C. Fetch Chapters List (ยอดวิวรายตอน และยอดขายรายตอน)
         chap_url = f"https://api-writer.readrealm.co/writer/comics/chapters/getChaptersList?comic_ID={cid}&page=1&per_page=200&sort_column=asc"

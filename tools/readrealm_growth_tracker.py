@@ -529,6 +529,35 @@ def fetch_public_readrealm_chapters(cid: str) -> int:
     except Exception:
         return total
 
+def fetch_exact_month_sale(cid: str, year_ce: int, month: int, token: str) -> Optional[float]:
+    """
+    Fetch exact monthly sale from writer Sale Report endpoint (getMonthSaleReport) 1:1 with writer portal.
+    Endpoint: https://api-writer.readrealm.co/writer/comics/analytics/getMonthSaleReport?month={iso}&comic_ID={cid}
+    """
+    try:
+        iso_ts = f"{year_ce}-{month:02d}-01T00:00:00.000Z"
+        url = f"https://api-writer.readrealm.co/writer/comics/analytics/getMonthSaleReport?month={urllib.parse.quote(iso_ts)}&comic_ID={cid}"
+        res = call_api(url, token)
+        if res and "sum_data" in res and res["sum_data"] is not None:
+            return float(res["sum_data"])
+    except Exception:
+        pass
+    return None
+
+def fetch_writer_total_sales(cid: str, token: str) -> Optional[float]:
+    """
+    Fetch all_sale_sum from getDefaultSaleReport matching total sales header shown on writer portal 1:1.
+    Endpoint: https://api-writer.readrealm.co/writer/comics/analytics/getDefaultSaleReport?comic_ID={cid}
+    """
+    try:
+        url = f"https://api-writer.readrealm.co/writer/comics/analytics/getDefaultSaleReport?comic_ID={cid}"
+        res = call_api(url, token)
+        if res and "all_sale_sum" in res and res["all_sale_sum"] is not None:
+            return float(res["all_sale_sum"])
+    except Exception:
+        pass
+    return None
+
 def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Fetch complete comics list and latest stats for an account."""
     token = acc.get("_cached_token") or get_valid_token(acc)
