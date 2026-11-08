@@ -13,6 +13,7 @@ import {
   isUrgentManga,
   parseQueueDate,
   timeSince,
+  resolveMangaName,
 } from "@/lib/utils"
 import {
   BookOpen,
@@ -442,7 +443,7 @@ export function DashboardView({
                         q.mangaid != null &&
                         String(m.mangaid) === String(q.mangaid)
                     )
-                    const fullName = manga ? manga.manganame : "Unknown"
+                    const fullName = resolveMangaName(q.mangaid, manga?.manganame, mangaList)
                     let displayName = fullName
                     if (displayName.length > 20) {
                       displayName = displayName.substring(0, 20) + "..."
@@ -538,7 +539,7 @@ export function DashboardView({
                                 q.mangaid != null &&
                                 String(m.mangaid) === String(q.mangaid)
                             )
-                            const fullName = manga ? manga.manganame : "Unknown"
+                            const fullName = resolveMangaName(q.mangaid, manga?.manganame, mangaList)
                             let displayName = fullName
                             if (displayName.length > 18) {
                               displayName = displayName.substring(0, 18) + "..."
@@ -616,7 +617,7 @@ export function DashboardView({
                               q.mangaid != null &&
                               String(m.mangaid) === String(q.mangaid)
                           )
-                          const fullName = manga ? manga.manganame : "Unknown"
+                          const fullName = resolveMangaName(q.mangaid, manga?.manganame, mangaList)
                           let displayName = fullName
                           if (displayName.length > 18) {
                             displayName = displayName.substring(0, 18) + "..."

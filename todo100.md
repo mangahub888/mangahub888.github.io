@@ -265,3 +265,38 @@
 ### 6.3 การทดสอบและ Build:
 - ทดสอบการแมปและการแสดงผล Badge ครบถ้วน (เรื่องที่ลง 3 แพลตฟอร์มแสดง `RR + KW + CH` ครบ 100%)
 - รัน `npm --prefix frontend run build` ผ่าน 100% ไม่มีข้อผิดพลาด
+
+
+## 7. แก้ไขปัญหามังงะแสดงเป็น "manga#n" ในสมุดบันทึกกำไรขาดทุน (MangaSales Ledger) และทุกหน้าจอ (8 พ.ย. 2569)
+
+### 7.1 สาเหตุของปัญหา (Root Cause)
+- ในชีต `WorkQueue` มีคิวงานในอดีตจำนวนมากที่ `mangaid` ไม่ได้อยู่ในตาราง `MangaList` ปัจจุบัน
+- ฟังก์ชัน `calculateAndSyncMonthlyMangaSales` ใน backend เมื่อค้นหาชื่อไม่เจอจึง fallback เป็นสตริง `Manga #${id}` และบันทึกลงสู่ตารางชีต `MangaSales`
+- ทำให้ในหน้าสมุดบันทึกกำไรขาดทุนแสดงชื่อเรื่องเป็น `Manga #48`, `Manga #49`, `Manga #50`, `Manga #31`, `Manga #18`, `Manga #20` ฯลฯ
+
+### 7.2 สิ่งที่ดำเนินการสำเร็จ
+1. **กู้คืนชื่อเรื่องจริงจากการตรวจสอบเอกสาร Google Docs & Drive ใน WorkLink ครบทุกเรื่อง 100%**:
+   - ID 18: "ก๊อบลินกระจอกอย่างข้าจะไปสู่เทพก๊อบลินให้ดู!"
+   - ID 20: "ยอดหมอเหนือภพ"
+   - ID 31: "สีชาด"
+   - ID 33: "เกมเปลี่ยนโลกของช่างเหล็กในตำนาน"
+   - ID 43: "ชาวนา"
+   - ID 48: "เลือดหยดเดียวชั่วนิรันดร์"
+   - ID 49: "วันต้องสาปแห่งพันธนาการโลก"
+   - ID 50: "บังเกอร์"
+   - ID 51: "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์"
+   - ID 55: "Mr. Warː The Ultimate Ex-Soldier"
+   - ID 57: "พลังยุทธ์ขั้นสูง"
+   - ID 58: "Return of the Devourer"
+   - ID 61: "คารวะจอมมารแห่งยุทธภพ"
+   - ID 62: "The Zero Stats warrior"
+   - ID 65: "จุติใหม่มหาโจร พลิกโลกออนไลน์ สยบใต้หล้า"
+   - ID 66: "超级魔法学院的SS级新生"
+   - ID 68: "Absolute Domination at Level 0 with My Analysis Skill"
+   - ID 70: "Demonificationː Origin of the Returner"
+   - ID 71: "我在火葬场噬魂成神"
+   - ID 74: "The Rebel of the Tyrant Noble House"
+2. **สร้าง `resolveMangaName` และ `KNOWN_MANGA_ID_MAP`** ใน `frontend/src/lib/utils.ts` และ `backend/Code.js`
+3. **ปรับปรุง Frontend ทุกหน้าจอ**: `FinancialsView.tsx`, `QueueView.tsx`, `DashboardView.tsx`, `ExpensesView.tsx`
+4. **ปรับปรุง Backend**: `getMangaSales`, `calculateAndSyncMonthlyMangaSales`, `getMangaNameById`
+5. **อัปเดตชีต Google Sheet MangaSales จริง**: แก้ไขทั้ง 19 แถวให้กลายเป็นชื่อเรื่องจริงเรียบร้อยแล้ว

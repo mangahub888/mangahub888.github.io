@@ -47,7 +47,7 @@ import {
 
 import { SearchableSelect } from "@/components/ui/searchable-select";
 
-import { THAI_SHORT_MONTHS, getChapterCount, isUrgentManga, parseDateSafe, getInactivityRecency } from "@/lib/utils";
+import { THAI_SHORT_MONTHS, getChapterCount, isUrgentManga, parseDateSafe, getInactivityRecency, resolveMangaName } from "@/lib/utils";
 
 import initialGrowthData from "@/data/multi_platform_growth_latest.json";
 
@@ -1196,10 +1196,21 @@ export function FinancialsView({
     }
   };
 
+    // Pre-resolve all series names in salesList using live mangaList & KNOWN_MANGA_ID_MAP
+  const resolvedSalesList = React.useMemo(() => {
+    return (salesList || []).map((sale) => {
+      const resolved = resolveMangaName(sale.serieschapterid || sale.mangaid, sale.seriesname, mangaList);
+      if (resolved && resolved !== sale.seriesname) {
+        return { ...sale, seriesname: resolved };
+      }
+      return sale;
+    });
+  }, [salesList, mangaList]);
+
   // Extract all distinct months available in salesList
   const availableSalesMonths = React.useMemo(() => {
     const setM = new Set<string>();
-    (salesList || []).forEach((s) => {
+    (resolvedSalesList || []).forEach((s) => {
       if (s.month && /^\d{4}-\d{2}$/.test(s.month)) {
         setM.add(s.month);
       } else if (s.date) {
@@ -1215,7 +1226,7 @@ export function FinancialsView({
     setM.add("2026-10");
     setM.add("2026-11");
     return Array.from(setM).sort().reverse();
-  }, [salesList]);
+  }, [resolvedSalesList]);
 
   // Memoized platform breakdown index for MangaSales ledger Tooltip
   const platformBreakdownMap = React.useMemo(() => {
@@ -1544,7 +1555,7 @@ export function FinancialsView({
 
   // Requirement: เรียงมีกำไรไว้บน เริ่มขาดทุนไว้ล่าง จากคอลัมนท์ กำไร/ขาดทุน
   const filteredSales = React.useMemo(() => {
-    let list = [...(salesList || [])];
+    let list = [...(resolvedSalesList || [])];
 
     if (yearFilter !== "all") {
       list = list.filter((s) => {
@@ -1620,7 +1631,7 @@ export function FinancialsView({
     });
 
     return list;
-  }, [salesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms]);
+  }, [resolvedSalesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms]);
 
   // Dynamic Monthly Reconciliation Data based on focused month
   const reconciledMonthData = React.useMemo(() => {
@@ -1629,7 +1640,7 @@ export function FinancialsView({
         ? selectedLedgerMonth
         : availableSalesMonths[0] || "2026-10";
 
-    const monthSales = (salesList || []).filter((s) => {
+    const monthSales = (resolvedSalesList || []).filter((s) => {
       if (s.month && String(s.month).trim() === targetM) return true;
       if (s.date && String(s.date).startsWith(targetM)) return true;
       return false;
@@ -1677,7 +1688,7 @@ export function FinancialsView({
       platformMap,
       hasData: monthSales.length > 0,
     };
-  }, [salesList, selectedLedgerMonth, availableSalesMonths]);
+  }, [resolvedSalesList, selectedLedgerMonth, availableSalesMonths]);
 
   const summary = React.useMemo(() => {
     let totalRev = 0;

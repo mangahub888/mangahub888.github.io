@@ -36,6 +36,82 @@ export function isUrgentManga(manga: any): boolean {
   return v === true || String(v).toLowerCase() === 'true'
 }
 
+/**
+ * Global Fallback Dictionary for unlisted/historical Manga IDs
+ * Ensures that whenever a manga ID is not in live MangaList, the system can still resolve its true name.
+ */
+export const KNOWN_MANGA_ID_MAP: Record<string, string> = {
+  "18": "ก๊อบลินกระจอกอย่างข้าจะไปสู่เทพก๊อบลินให้ดู!",
+  "20": "ยอดหมอเหนือภพ",
+  "31": "สีชาด",
+  "33": "เกมเปลี่ยนโลกของช่างเหล็กในตำนาน",
+  "43": "ชาวนา",
+  "48": "เลือดหยดเดียวชั่วนิรันดร์",
+  "49": "วันต้องสาปแห่งพันธนาการโลก",
+  "50": "บังเกอร์",
+  "51": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์",
+  "55": "Mr. Warː The Ultimate Ex-Soldier",
+  "57": "พลังยุทธ์ขั้นสูง",
+  "58": "Return of the Devourer",
+  "61": "คารวะจอมมารแห่งยุทธภพ",
+  "62": "The Zero Stats warrior",
+  "65": "จุติใหม่มหาโจร พลิกโลกออนไลน์ สยบใต้หล้า",
+  "66": "超级魔法学院的SS级新生",
+  "68": "Absolute Domination at Level 0 with My Analysis Skill",
+  "70": "Demonificationː Origin of the Returner",
+  "71": "我在火葬场噬魂成神",
+  "74": "The Rebel of the Tyrant Noble House"
+};
+
+/**
+ * Resolves manga name reliably from mangaList, known fallback map, or cleans up "Manga #n"
+ */
+export function resolveMangaName(mangaId: any, currentName?: string, mangaList?: any[]): string {
+  const mIdStr = mangaId != null ? String(mangaId).trim() : "";
+
+  // 1. Try finding in live mangaList
+  if (Array.isArray(mangaList) && mIdStr) {
+    const found = mangaList.find(m => m.mangaid != null && String(m.mangaid).trim() === mIdStr);
+    if (found && found.manganame && String(found.manganame).trim()) {
+      return String(found.manganame).trim();
+    }
+  }
+
+  // 2. Try looking up in KNOWN_MANGA_ID_MAP
+  if (mIdStr && KNOWN_MANGA_ID_MAP[mIdStr]) {
+    return KNOWN_MANGA_ID_MAP[mIdStr];
+  }
+
+  // 3. If currentName is given and NOT a fallback placeholder (not "Unknown", not "Manga #...")
+  if (currentName && typeof currentName === 'string') {
+    const trimmed = currentName.trim();
+    const hashMatch = trimmed.match(/^manga\s*#\s*(\d+)$/i);
+    if (hashMatch) {
+      const extractedId = hashMatch[1];
+      if (KNOWN_MANGA_ID_MAP[extractedId]) {
+        return KNOWN_MANGA_ID_MAP[extractedId];
+      }
+      if (Array.isArray(mangaList)) {
+        const found = mangaList.find(m => m.mangaid != null && String(m.mangaid).trim() === extractedId);
+        if (found && found.manganame && String(found.manganame).trim()) {
+          return String(found.manganame).trim();
+        }
+      }
+    } else if (trimmed !== 'Unknown' && trimmed !== 'มังงะไม่ทราบชื่อ' && trimmed !== '') {
+      return trimmed;
+    }
+  }
+
+  // 4. Fallback if currentName has meaningful value
+  if (currentName && currentName !== 'Unknown' && !/^manga\s*#/i.test(currentName)) {
+    return currentName;
+  }
+
+  // 5. Friendly fallback label
+  return mIdStr ? `เรื่องรหัส #${mIdStr}` : "มังงะไม่ทราบชื่อ";
+}
+
+
 export function parseQueueDate(dateStr: any): Date | null {
   if (!dateStr) return null
   if (dateStr instanceof Date) return isNaN(dateStr.getTime()) ? null : dateStr

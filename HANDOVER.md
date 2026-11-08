@@ -6,6 +6,70 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ไขปัญหามังงะแสดงเป็น 'Manga #n' (Manga ID Fallback Resolution) ในสมุดบันทึกกำไรขาดทุนและทุกหน้าจอ สำเร็จ 100% (8 พ.ย. 2569)
+
+#### 1. รายละเอียดปัญหาจาก USER:
+- ผู้ใช้พบว่าในหน้าสมุดบันทึกกำไรขาดทุน (MangaSales Ledger) และส่วนต่างๆ ของระบบ มีบางแถวแสดงชื่อเรื่องเป็น **"manga#n"** (เช่น `Manga #48`, `Manga #49`, `Manga #50`, `Manga #31`, `Manga #18`, `Manga #20` ฯลฯ) แทนที่จะเป็นชื่อเรื่องมังงะภาษาไทย
+
+#### 2. ผลการตรวจสอบสาเหตุเชิงลึก (Root Cause Analysis):
+1. **มังงะใน WorkQueue ไม่มีอยู่ใน MangaList (Unlisted / Orphaned Manga IDs)**:
+   - ตรวจพบว่ามีคิวงานใน `WorkQueue` จำนวนมาก (รวมกว่า 350+ ตอน) ที่มี `MangaID` เป็นตัวเลขในอดีต (เช่น 18, 20, 31, 33, 43, 48, 49, 50, 51, 55, 57, 58, 61, 62, 65, 66, 68, 70, 71, 74)
+   - แต่ในชีต `MangaList` ปัจจุบัน มีการ์ตูนเพียง 53 เรื่อง ซึ่งไม่มี Manga IDs เหล่านี้อยู่ (อาจเกิดจากการลบ/ย้าย/หรือชื่อว่างในอดีต)
+2. **Fallback ใน Backend (`calculateAndSyncMonthlyMangaSales`) สร้างสตริง `Manga #${id}`**:
+   - ใน `backend/Code.js` เมื่อคำนวณ P&L ประจำเดือน หากค้นหา `mangaid` ใน `mangaIdMap` ไม่พบ โค้ดเดิมเขียนไว้ว่า:
+     ```javascript
+     const mName = (mObj.manganame || `Manga #${q.mangaid}`).trim();
+     ```
+   - ส่งผลให้ชื่อ `Manga #18`, `Manga #48`, `Manga #50` ฯลฯ ถูกบันทึกลงสู่คอลัมน์ `seriesname` ใน Google Sheet `MangaSales` จริงจำนวน 19 แถว!
+3. **Frontend ขาด Resolution Fallback**:
+   - ในตารางสมุดบันทึกกำไรขาดทุน (`FinancialsView.tsx`), คิวงาน (`QueueView.tsx`), Dashboard (`DashboardView.tsx`), และใบเบิก (`ExpensesView.tsx`) เมื่อ lookup `mangaid` ไม่พบใน `mangaList` จะแสดงผลเป็น `Unknown` หรือ `Manga #n` โดยตรง
+
+#### 3. สิ่งที่ดำเนินการแก้ไขและปรับปรุง (Implemented Solutions):
+1. **สืบค้นและกู้คืนชื่อเรื่องจริงของการ์ตูนทุกเรื่อง 100% (Title Recovery)**:
+   - ดึงข้อมูลเอกสาร Google Docs และ Google Drive จากคอลัมน์ `WorkLink` ของแต่ละคิวงานมาแกะชื่อเรื่องจริง:
+     - ID 18 -> **"ก๊อบลินกระจอกอย่างข้าจะไปสู่เทพก๊อบลินให้ดู!"** (118 ตอน)
+     - ID 20 -> **"ยอดหมอเหนือภพ"** (80 ตอน)
+     - ID 31 -> **"สีชาด"**
+     - ID 33 -> **"เกมเปลี่ยนโลกของช่างเหล็กในตำนาน"**
+     - ID 43 -> **"ชาวนา"**
+     - ID 48 -> **"เลือดหยดเดียวชั่วนิรันดร์"**
+     - ID 49 -> **"วันต้องสาปแห่งพันธนาการโลก"**
+     - ID 50 -> **"บังเกอร์"**
+     - ID 51 -> **"จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์"**
+     - ID 55 -> **"Mr. Warː The Ultimate Ex-Soldier"**
+     - ID 57 -> **"พลังยุทธ์ขั้นสูง"**
+     - ID 58 -> **"Return of the Devourer"**
+     - ID 61 -> **"คารวะจอมมารแห่งยุทธภพ"**
+     - ID 62 -> **"The Zero Stats warrior"**
+     - ID 65 -> **"จุติใหม่มหาโจร พลิกโลกออนไลน์ สยบใต้หล้า"**
+     - ID 66 -> **"超级魔法学院的SS级新生"**
+     - ID 68 -> **"Absolute Domination at Level 0 with My Analysis Skill"**
+     - ID 70 -> **"Demonificationː Origin of the Returner"**
+     - ID 71 -> **"我在火葬场噬魂成神"**
+     - ID 74 -> **"The Rebel of the Tyrant Noble House"**
+2. **สร้าง Global Resolution Dictionary & Engine (`resolveMangaName` & `KNOWN_MANGA_ID_MAP`)**:
+   - พัฒนาฟังก์ชัน `resolveMangaName` ใน `frontend/src/lib/utils.ts` และ Dictionary `KNOWN_MANGA_ID_MAP`
+   - หากชื่อเป็น `Manga #...`, `Unknown`, หรือไม่มีชื่อ จะ resolve กลับเป็นชื่อจริงเสมอ
+3. **ปรับปรุง Frontend ทุกหน้าจอ**:
+   - `FinancialsView.tsx`: สร้าง `resolvedSalesList` อัตโนมัติ ทำให้ตาราง P&L, การค้นหา, และการแมตช์ยอดขายข้ามแพลตฟอร์มทำงานได้ 100%
+   - `QueueView.tsx`: ใช้ `resolveMangaName` ในตารางคิวงาน
+   - `DashboardView.tsx`: ใช้ `resolveMangaName` ในการ์ดและรายการงานค้าง
+   - `ExpensesView.tsx`: ใช้ `resolveMangaName` ในรายการคำนวณเบิกจ่าย
+4. **ปรับปรุง Backend (`backend/Code.js`)**:
+   - เพิ่ม `KNOWN_MANGA_ID_MAP` ในระบบ Backend
+   - อัปเดต `getMangaSales()` ให้ auto-resolve `seriesname` ทุกครั้ง
+   - อัปเดต `calculateAndSyncMonthlyMangaSales()` ไม่ให้สร้างสตริง `Manga #...` อีกต่อไป
+   - อัปเดต `getMangaNameById()` ให้ค้นหาจาก Known Map และ Thai Info
+5. **ทำความสะอาดชีต Google Sheet MangaSales ทันที (Live Data Cleanup)**:
+   - รันการอัปเดตข้อมูลบน Google Sheet `MangaSales` จริงทั้ง 19 รายการให้เป็นชื่อเรื่องจริงเรียบร้อยแล้ว ตรวจสอบสถานะพบ remaining bad seriesnames = 0
+
+#### 4. ผลการตรวจสอบ (Verification):
+- รัน `verify_clean.mjs` ตรวจสอบชีต `MangaSales` จริง: เหลือ 0 รายการที่เป็น Manga #n (สมบูรณ์ 100%)
+- รัน `npm --prefix frontend run build` ผ่านฉลุย 100%
+- รันชุดทดสอบอัตโนมัติ `npm --prefix frontend test -- --run` ผ่านครบ 27 ข้อ (0 ข้อผิดพลาด)
+
+---
+
 ### 🏆 พัฒนาระบบแสดงผลคอลัมน์ "ช่องทาง" (Multi-Platform Channels) ในสมุดบันทึกกำไรขาดทุน (MangaSales Ledger) ให้ตรวจจับและแสดงครบทุกแพลตฟอร์ม สำเร็จ 100% (8 พ.ย. 2569)
 
 #### 1. รายละเอียดปัญหาจาก USER:

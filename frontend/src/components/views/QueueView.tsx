@@ -27,6 +27,7 @@ import {
   isUrgentManga,
   matchesStepFilter,
   parseQueueDate,
+  resolveMangaName,
 } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { useGitHubActionsStatus } from "@/lib/useGitHubActionsStatus"
@@ -912,7 +913,7 @@ export function QueueView({
                     q.mangaid != null &&
                     String(m.mangaid) === String(q.mangaid)
                 )
-                const mangaName = manga ? manga.manganame : "Unknown"
+                const mangaName = resolveMangaName(q.mangaid, manga?.manganame, mangaList)
                 const urgent = isUrgentManga(manga)
                 const createdDate = parseQueueDate(q.createdat)
                 const dateStr = createdDate

@@ -10,6 +10,32 @@ const TEAM_SHEET_NAME = 'TeamMembers';
 const BUDGET_PAYEE_SHEET_NAME = 'BudgetPayees';
 const BUDGET_TRANSACTION_SHEET_NAME = 'BudgetTransactions';
 const MANGA_SALES_SHEET_NAME = 'MangaSales';
+/**
+ * Global Fallback Dictionary for unlisted/historical Manga IDs
+ */
+const KNOWN_MANGA_ID_MAP = {
+  '18': 'ก๊อบลินกระจอกอย่างข้าจะไปสู่เทพก๊อบลินให้ดู!',
+  '20': 'ยอดหมอเหนือภพ',
+  '31': 'สีชาด',
+  '33': 'เกมเปลี่ยนโลกของช่างเหล็กในตำนาน',
+  '43': 'ชาวนา',
+  '48': 'เลือดหยดเดียวชั่วนิรันดร์',
+  '49': 'วันต้องสาปแห่งพันธนาการโลก',
+  '50': 'บังเกอร์',
+  '51': 'จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์',
+  '55': 'Mr. Warː The Ultimate Ex-Soldier',
+  '57': 'พลังยุทธ์ขั้นสูง',
+  '58': 'Return of the Devourer',
+  '61': 'คารวะจอมมารแห่งยุทธภพ',
+  '62': 'The Zero Stats warrior',
+  '65': 'จุติใหม่มหาโจร พลิกโลกออนไลน์ สยบใต้หล้า',
+  '66': '超级魔法学院的SS级新生',
+  '68': 'Absolute Domination at Level 0 with My Analysis Skill',
+  '70': 'Demonificationː Origin of the Returner',
+  '71': '我在火葬场噬魂成神',
+  '74': 'The Rebel of the Tyrant Noble House'
+};
+
 const WEBSITE_SHEET_NAME = 'Websites';
 // Secrets & Passcodes are stored in PropertiesService.getScriptProperties()
 // To set or rotate: run seedSecretsToScriptProperties({ ACCESS_PASSCODE: '...', ... }) or set via GAS Project Settings -> Script Properties
@@ -2991,7 +3017,17 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         if (metaStatus === 'ยังไม่เปิดเรื่อง' || metaStatus === 'ยังไม่ได้เปิดเรื่อง' || metaStatus === 'unopened') {
           return; // Requirement: ยกเว้นบางเรื่องที่ยังไม่ได้เปิดเรื่อง
         }
-        const mName = (mObj.manganame || `Manga #${q.mangaid}`).trim();
+        const qMId = String(q.mangaid || '').trim();
+        let mName = (mObj.manganame || KNOWN_MANGA_ID_MAP[qMId] || '').trim();
+        if (!mName) {
+          const thai = getThaiMangaInfo(qMId);
+          if (thai && thai.manganame && !thai.manganame.startsWith('Manga #')) {
+            mName = thai.manganame.trim();
+          }
+        }
+        if (!mName) {
+          mName = qMId ? `เรื่องรหัส #${qMId}` : 'มังงะไม่ทราบชื่อ';
+        }
 
         // หากมังงะนี้ยังไม่มีใน mangaStats หรือยังไม่มี Claims ในเดือนนี้
         if (!mangaStats[mName] || targetMonthClaims.length === 0) {

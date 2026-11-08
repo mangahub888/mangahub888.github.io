@@ -36,6 +36,7 @@ import {
   getChapterCount,
   isStepDone,
   parseQueueDate,
+  resolveMangaName,
 } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
@@ -562,7 +563,7 @@ export function ExpensesView({
           q.mangaid != null &&
           String(m.mangaid) === String(q.mangaid)
       )
-      const mangaName = manga ? manga.manganame : "Unknown"
+      const mangaName = resolveMangaName(q.mangaid, manga?.manganame, mangaList)
 
       // 1. Upload
       if (
@@ -983,7 +984,7 @@ export function ExpensesView({
           q.mangaid != null &&
           String(m.mangaid) === String(q.mangaid)
       )
-      const mangaName = manga ? manga.manganame : "Unknown"
+      const mangaName = resolveMangaName(q.mangaid, manga?.manganame, mangaList)
 
       let rowUploadCost = 0
       let rowExtractCost = 0
