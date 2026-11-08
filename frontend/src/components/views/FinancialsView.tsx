@@ -2845,7 +2845,7 @@ export function FinancialsView({
                       return (
                         <TableRow
                           key={c.comic_id || idx}
-                          className={`border-slate-800/60 hover:bg-[#151d2f]/50 transition-colors ${
+                          className={`border-slate-800/60 hover:bg-[#151d2f]/50 transition-colors relative hover:z-30 ${
                             isUrgent
                               ? "bg-red-950/20 border-l-2 border-l-red-500 hover:bg-red-950/30"
                               : ""
@@ -3099,7 +3099,7 @@ export function FinancialsView({
 
                               return (
                                 <div
-                                  className="group relative inline-flex flex-col items-end cursor-help"
+                                  className="group relative inline-flex flex-col items-end cursor-help hover:z-50"
                                   title={nativeTooltipLines.join("\n")}
                                 >
                                   <div className="font-mono text-xs font-bold text-amber-300">
@@ -3133,7 +3133,7 @@ export function FinancialsView({
                                   <div
                                     className={`hidden group-hover:block absolute right-0 ${
                                       idx < 3 ? "top-full mt-1.5" : "bottom-full mb-1.5"
-                                    } z-50 w-64 rounded-xl border border-slate-700 bg-[#0b1120] p-3 text-left shadow-2xl pointer-events-none`}
+                                    } z-[60] w-64 rounded-xl border border-slate-700 bg-[#0b1120] p-3 text-left shadow-2xl pointer-events-none`}
                                   >
                                     <div className="text-[11px] font-semibold text-amber-300 border-b border-slate-800 pb-1.5 mb-2">
                                       📊 ยอดขาย 7 ตอนล่าสุด (แยกแพลตฟอร์ม)
@@ -3613,7 +3613,7 @@ export function FinancialsView({
           {/* Table */}
 
           <Card className="border-slate-800 bg-[#0d1322] shadow-xl overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-h-[260px]">
               <Table>
                 <TableHeader className="bg-[#0b101d]/90">
                   <TableRow className="border-slate-800 hover:bg-transparent">
@@ -4367,7 +4367,7 @@ export function FinancialsView({
               </div>
             </CardHeader>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-h-[260px]">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -4502,11 +4502,11 @@ export function FinancialsView({
                       return (
                         <TableRow
                           key={sale._rowIndex || idx}
-                          className={
+                          className={`relative transition-colors hover:bg-[#151d2f]/50 hover:z-30 ${
                             isUrgent
-                              ? "bg-red-950/20 border-l-2 border-l-red-500"
+                              ? "bg-red-950/20 border-l-2 border-l-red-500 hover:bg-red-950/30"
                               : ""
-                          }
+                          }`}
                         >
                           <TableCell className="text-xs text-slate-400">
                             {sale.date ? sale.date.split("T")[0] : "-"}
@@ -4590,12 +4590,16 @@ export function FinancialsView({
                           </TableCell>
 
                           <TableCell className="text-right font-semibold">
-                            <div className="relative group inline-block">
+                            <div className="relative group inline-block hover:z-50">
                               <span className="text-indigo-400 hover:text-indigo-300 underline decoration-dotted decoration-indigo-400/50 cursor-pointer transition-colors">
                                 {rev.toLocaleString()} ฿
                               </span>
-                              {/* Tooltip Hover Card: แยกยอดขายตามแพลตฟอร์ม */}
-                              <div className="absolute right-0 bottom-full mb-2 hidden group-hover:flex flex-col z-50 w-60 p-2.5 bg-[#0f172a] border border-slate-700/80 rounded-lg shadow-2xl shadow-black/80 text-left pointer-events-none backdrop-blur-md">
+                              {/* Tooltip Hover Card: แยกยอดขายตามแพลตฟอร์ม (Smart Positioning: idx < 3 พุ่งลงล่าง idx >= 3 พุ่งขึ้นบน ไม่ชนหัวตาราง) */}
+                              <div
+                                className={`absolute right-0 ${
+                                  idx < 3 ? "top-full mt-2" : "bottom-full mb-2"
+                                } hidden group-hover:flex flex-col z-[60] w-64 p-2.5 bg-[#0f172a] border border-slate-700/80 rounded-lg shadow-2xl shadow-black/80 text-left pointer-events-none backdrop-blur-md`}
+                              >
                                 <div className="text-[11px] font-bold text-slate-200 border-b border-slate-700/70 pb-1.5 mb-1.5 flex items-center justify-between">
                                   <span className="truncate pr-2">📊 แยกยอดขายตามแพลตฟอร์ม</span>
                                   <span className="text-indigo-300 shrink-0">฿{rev.toLocaleString()}</span>
