@@ -31,9 +31,18 @@ if os.path.exists(kairew_path):
 
 # 3. Chaply
 chaply = []
-chaply_path = os.path.join(DATA_DIR, 'chaply_all_comics.json')
-if os.path.exists(chaply_path):
-    with open(chaply_path, 'r', encoding='utf-8') as f:
+chaply_growth_path = os.path.join(DATA_DIR, 'chaply_growth_latest.json')
+chaply_all_path = os.path.join(DATA_DIR, 'chaply_all_comics.json')
+if os.path.exists(chaply_growth_path):
+    try:
+        with open(chaply_growth_path, 'r', encoding='utf-8') as f:
+            growth_data = json.load(f)
+            chaply = growth_data.get('comics', [])
+    except Exception:
+        chaply = []
+
+if not chaply and os.path.exists(chaply_all_path):
+    with open(chaply_all_path, 'r', encoding='utf-8') as f:
         chaply = json.load(f)
 
 # Load cross-platform mapping if present
@@ -140,37 +149,37 @@ for c in kairew:
 
 # Chaply
 for c in chaply:
-    t = c.get('title', '').strip()
+    t = (c.get('subject') or c.get('title') or '').strip()
     k = normalize_title(t)
     if not k:
         continue
     clean_display = get_canonical_display(t, k)
+    c_id = str(c.get('comic_id') or c.get('id') or '')
+    c_sales = float(c.get('total_sales') or c.get('sales') or 0.0)
+    c_views = int(c.get('total_views') or c.get('totalView') or 0)
+    c_eps = int(c.get('chapters_count') or c.get('totalEpisode') or 0)
+    c_fav = int(c.get('totalFavorite') or 0)
+
+    chaply_obj = {
+        'exists': True,
+        'title': t,
+        'id': c_id,
+        'sales': c_sales,
+        'views': c_views,
+        'eps': c_eps,
+        'fav': c_fav
+    }
+
     if k not in groups:
         groups[k] = {
             'key': k,
             'title': clean_display,
             'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0},
             'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0},
-            'chaply': {
-                'exists': True,
-                'title': t,
-                'id': str(c.get('id', '')),
-                'sales': 0.0,
-                'views': int(c.get('totalView') or 0),
-                'eps': int(c.get('totalEpisode') or 0),
-                'fav': int(c.get('totalFavorite') or 0)
-            }
+            'chaply': chaply_obj
         }
     else:
-        groups[k]['chaply'] = {
-            'exists': True,
-            'title': t,
-            'id': str(c.get('id', '')),
-            'sales': 0.0,
-            'views': int(c.get('totalView') or 0),
-            'eps': int(c.get('totalEpisode') or 0),
-            'fav': int(c.get('totalFavorite') or 0)
-        }
+        groups[k]['chaply'] = chaply_obj
 
 # Filter matching only (exists in >= 2 platforms)
 matched_groups = []

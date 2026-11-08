@@ -112,3 +112,34 @@
 - [x] **ทดสอบและคอมมิต**:
   - รัน `group_matching_comics.py` และ `multi_platform_tracker.py --consolidate-only` ผลลัพธ์สมบูรณ์ 100%
   - รัน `npm run build` ผ่าน 100%
+
+
+---
+
+## 5. ปัญหาจำนวนตอน Chaply ถูกจำกัดที่ 100 ตอน (เรื่อง "นักฆ่าระดับเทพ ข้าคือเงามืด" และอื่นๆ) (เสร็จสมบูรณ์ 100%)
+
+- [x] **การสืบค้นและระบุสาเหตุ (Root Cause Analysis)**:
+  - ผู้ใช้แจ้ง: เรื่อง "🔥 นักฆ่าระดับเทพ ข้าคือเงามืด" (`cmvscqbse140ot5i8vfzbibtm`) Chaply ลง 154 ตอน แต่ในระบบแสดง 100 ตอน
+  - ตรวจสอบ `tools/chaply_growth_tracker.py`: บรรทัดดึง `content-episodes` ดึงด้วย `pageSize=100&pageIndex=0` หน้าเดียว
+  - บรรทัดที่ 250 เดิมมีโค้ด `if len(ep_items) > 0: eps = len(ep_items)` ทำให้ `eps` ถูกเขียนทับด้วย 100 แทนที่จะเป็น 154
+  - ยอดขายของตอนที่ 101–154 ตกหล่น และมีมังงะอีก 8 เรื่อง (รวมเป็น 9 เรื่อง) ที่ถูกแคปไว้ที่ 100 ตอนพอดี
+- [x] **การปรับปรุง Engine Chaply Growth Tracker**:
+  - ปรับปรุง `tools/chaply_growth_tracker.py` เพิ่ม `pageSize=500` และลูป Pagination แบบ `while True` (รองรับสูงสุด 10,000 ตอน)
+  - คำนวณ `eps = max(eps, total_items_from_api, len(all_ep_items), max_index)` ไม่ให้ถูกแคปอีกต่อไป
+  - คำนวณยอดขายสะสมและยอดวิว 7 ตอนล่าสุดจากทุกหน้าครบถ้วน
+  - บันทึก `chaply_all_comics.json` ทุกรอบ
+- [x] **การปรับปรุง Cross-Platform Grouping & Consolidate**:
+  - ปรับปรุง `tools/group_matching_comics.py` ให้อ่านจาก `chaply_growth_latest.json` เพื่อดึงยอดขายจริงและตอนที่ถูกต้องของ Chaply
+  - อัปเดตข้อมูลมังงะ 9 เรื่องที่เคยติด 100 ตอน:
+    - `cmvscqbse140ot5i8vfzbibtm` (นักฆ่าระดับเทพ): **154 ตอน** (ยอดขาย ฿6.48)
+    - `cmu8mjor52dc36kdg6vlj2zw2` (จอมมารแสนดีเช่นข้า): **150 ตอน** (ยอดขาย ฿16.20)
+    - `cmuua0knr0dggt5h971a8fsib` (หลังจากโดนดาวโรงเรียนทิ้ง): **130 ตอน** (ยอดขาย ฿137.70)
+    - `cmvezsehy25w0t5eupwauchpa` (อิสระทางทรัพย์): **130 ตอน** (ยอดขาย ฿42.12)
+    - `cmw4jffvx2x4vt5i7sjfydn7d` (ผู้ฝึกกระบี่เต็มเวลา): **126 ตอน** (ยอดขาย ฿4.86)
+    - `cmujtou700ea2t5iqi3fhllox` (ฉันกลายเป็นอัจฉริยะ): **124 ตอน** (ยอดขาย ฿184.68)
+    - `cmuzqktr60f70t5kkpqz1btwu` (ทรราชวิวัฒนาการ): **120 ตอน** (ยอดขาย ฿171.72)
+    - `cmw34uhdn2l07t5i45r53h94c` (ก่อกำเนิดราชันย์อสูร): **114 ตอน** (ยอดขาย ฿123.12)
+    - `cmujt3jjs0ebkt5iohzuzr2fq` (เกิดใหม่ในแดนวีรบุรุษ): **102 ตอน** (ยอดขาย ฿1.62)
+- [x] **การทดสอบและ Build Frontend**:
+  - รัน `group_matching_comics.py` และ `multi_platform_tracker.py --consolidate-only` สำเร็จ 100%
+  - รัน `npm run build` ใน `frontend/` ผ่าน 100%

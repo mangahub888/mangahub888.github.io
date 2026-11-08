@@ -35,6 +35,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 HISTORY_FILE = os.path.join(DATA_DIR, "chaply_history.json")
 LATEST_GROWTH_FILE = os.path.join(DATA_DIR, "chaply_growth_latest.json")
+ALL_COMICS_FILE = os.path.join(DATA_DIR, "chaply_all_comics.json")
 BEARER_FILE = os.path.join(DATA_DIR, "chaply_bearer.json")
 AUTH_FILE = os.path.join(DATA_DIR, "chaply_auth.json")
 
@@ -205,6 +206,12 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # 2. Fetch all comics
     raw_comics = fetch_all_chaply_comics(token, ACCOUNT_INFO["user_id"])
     print(f"🎯 ดึงข้อมูลการ์ตูนสำเร็จทั้งหมด: {len(raw_comics)} เรื่อง")
+    try:
+        with open(ALL_COMICS_FILE, "w", encoding="utf-8") as f:
+            json.dump(raw_comics, f, ensure_ascii=False, indent=2)
+        print(f"✓ บันทึกรายการการ์ตูนดิบทั้งหมดลงใน {ALL_COMICS_FILE}")
+    except Exception as e:
+        print(f"⚠️ ไม่สามารถบันทึก {ALL_COMICS_FILE}: {e}")
 
     # 3. Build current snapshot dict
     current_snap_dict = {}
@@ -232,24 +239,54 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
         is_inactive_30d = (days_inactive > 30)
 
-        # Fetch chapter sales and 7-chapter revenue via writer API
+        # Fetch chapter sales and 7-chapter revenue via writer API (with full pagination)
         tot_sales = 0.0
         s7 = 0.0
         v7 = 0
         try:
-            ep_url = f"https://api.chaply.net/api/writer/content-episodes/group/{cid}?pageIndex=0&pageSize=100&includeSales=true"
+            all_ep_items = []
+            page_idx = 0
+            total_items_from_api = None
             ep_headers = {"Authorization": f"Bearer {token}", "Origin": "https://www.chaply.net"}
-            r_ep = requests.get(ep_url, headers=ep_headers, timeout=12)
-            if r_ep.status_code == 200:
-                ep_items = r_ep.json().get("data", {}).get("items", [])
-                tot_sales = round(sum(float(i.get("total_revenue") or 0) for i in ep_items), 2)
-                ep_sorted = sorted(ep_items, key=lambda x: int(x.get("index") or 0))
+
+            while True:
+                ep_url = f"https://api.chaply.net/api/writer/content-episodes/group/{cid}?pageIndex={page_idx}&pageSize=500&includeSales=true"
+                r_ep = requests.get(ep_url, headers=ep_headers, timeout=20)
+                if r_ep.status_code != 200:
+                    break
+                ep_res = r_ep.json().get("data", {})
+                page_items = ep_res.get("items", [])
+                all_ep_items.extend(page_items)
+
+                pag = ep_res.get("pagination", {})
+                if total_items_from_api is None and "totalItems" in pag:
+                    try:
+                        total_items_from_api = int(pag["totalItems"])
+                    except (ValueError, TypeError):
+                        pass
+
+                if not pag.get("hasNextPage") or not page_items:
+                    break
+                page_idx += 1
+                if page_idx > 20:  # safety break (supports up to 10,000 chapters)
+                    break
+
+            # Resolve actual total chapters without capping
+            if total_items_from_api is not None and total_items_from_api > 0:
+                eps = max(eps, total_items_from_api)
+
+            if len(all_ep_items) > 0:
+                eps = max(eps, len(all_ep_items))
+                max_idx = max((int(i.get("index") or 0) for i in all_ep_items), default=0)
+                if max_idx > eps:
+                    eps = max_idx
+
+                tot_sales = round(sum(float(i.get("total_revenue") or 0) for i in all_ep_items), 2)
+                ep_sorted = sorted(all_ep_items, key=lambda x: int(x.get("index") or 0))
                 last_7 = ep_sorted[-7:] if len(ep_sorted) >= 7 else ep_sorted
                 s7 = round(sum(float(i.get("total_revenue") or 0) for i in last_7), 2)
                 v7 = sum(int(i.get("total_views") or i.get("totalView") or 0) for i in last_7)
-                if len(ep_items) > 0:
-                    eps = len(ep_items)
-        except Exception:
+        except Exception as e:
             pass
 
         current_snap_dict[cid] = {
