@@ -1928,17 +1928,29 @@ export function FinancialsView({
       }`;
     });
 
+    const effectivePlatformRevenue: Record<string, number> = {};
+    if (
+      reconciledMonthData.hasBudgetRevenue &&
+      Object.keys(reconciledMonthData.platformMap).length > 0
+    ) {
+      Object.assign(effectivePlatformRevenue, reconciledMonthData.platformMap);
+    } else {
+      Object.assign(effectivePlatformRevenue, websiteRevenue);
+    }
+
+    const chartWebsites = Object.keys(effectivePlatformRevenue).sort();
+
     return {
       barData: {
-        labels: websites,
+        labels: chartWebsites,
 
         datasets: [
           {
             label: "รายรับรวม (฿)",
 
-            data: websites.map((w) => websiteRevenue[w] || 0),
+            data: chartWebsites.map((w) => effectivePlatformRevenue[w] || 0),
 
-            backgroundColor: websites.map(
+            backgroundColor: chartWebsites.map(
               (_, i) => palette[i % palette.length],
             ),
 
@@ -1948,13 +1960,13 @@ export function FinancialsView({
       },
 
       pieData: {
-        labels: websites,
+        labels: chartWebsites,
 
         datasets: [
           {
-            data: websites.map((w) => websiteRevenue[w] || 0),
+            data: chartWebsites.map((w) => effectivePlatformRevenue[w] || 0),
 
-            backgroundColor: websites.map(
+            backgroundColor: chartWebsites.map(
               (_, i) => palette[i % palette.length],
             ),
 
@@ -1983,7 +1995,7 @@ export function FinancialsView({
         })),
       },
     };
-  }, [filteredSales]);
+  }, [filteredSales, reconciledMonthData]);
 
   const autoFillFinDetails = async (mId: string, dStr: string) => {
     if (!mId || !dStr) return;

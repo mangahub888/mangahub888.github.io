@@ -2927,14 +2927,6 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         if (c.monthly_sales && targetThaiMonth && c.monthly_sales[targetThaiMonth] !== undefined) {
           mAmt = parseFloat(c.monthly_sales[targetThaiMonth]) || 0;
         }
-        if (customMonthlySalesMap) {
-          const normTitle = normalizeMangaTitle(title);
-          if (customMonthlySalesMap[title] !== undefined) {
-            mAmt = parseFloat(customMonthlySalesMap[title]) || mAmt;
-          } else if (normTitle && customMonthlySalesMap[normTitle] !== undefined) {
-            mAmt = parseFloat(customMonthlySalesMap[normTitle]) || mAmt;
-          }
-        }
 
         // Raw exact title
         if (!platformSalesMap[title]) {
@@ -3218,12 +3210,15 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
       const platData = platformSalesMap[mName] || (normKey ? platformSalesNormMap[normKey] : null);
 
       // 7. แมตช์รายได้ (Revenue)
-      // รายได้ประจำเดือนต้องมาจากยอดขายจริงในเดือนนั้น (ReadRealm + Kairew + Chaply)
-      // ห้ามดึงยอดขายสะสมตลอดกาล (total_sales) มาใส่เด็ดขาด และล้างค่าเก่าที่ถูกพิษยอดสะสมออก
-      if (platData && typeof platData.monthly_sales === 'number' && platData.monthly_sales > 0) {
+      // ลำดับความสำคัญ:
+      // 1. customMonthlySalesMap ถ้ามีการส่งค่ายอดขายจริงรายเรื่องมา
+      // 2. platData.monthly_sales (ยอดขายจริงเดือนนั้นจาก Multi-Platform Growth รวมทุกแพลตฟอร์มแบบไม่บวกซ้ำ)
+      // 3. platData.sales_delta30d
+      // 4. existingMonthSalesMap (ที่ไม่ถูกพิษยอดสะสม)
+      if (customMonthlySalesMap && (customMonthlySalesMap[mName] !== undefined || (normKey && customMonthlySalesMap[normKey] !== undefined))) {
+        item.revenue = parseFloat(customMonthlySalesMap[mName] !== undefined ? customMonthlySalesMap[mName] : customMonthlySalesMap[normKey]) || 0;
+      } else if (platData && typeof platData.monthly_sales === 'number' && platData.monthly_sales > 0) {
         item.revenue = platData.monthly_sales;
-      } else if (customMonthlySalesMap && (customMonthlySalesMap[mName] !== undefined || (normKey && customMonthlySalesMap[normKey] !== undefined))) {
-        item.revenue = parseFloat(customMonthlySalesMap[mName] || customMonthlySalesMap[normKey]) || 0;
       } else if (platData && platData.sales_delta30d > 0) {
         item.revenue = platData.sales_delta30d;
       } else if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0) {
