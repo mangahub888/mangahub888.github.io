@@ -36,6 +36,16 @@ READREALM_LATEST = os.path.join(DATA_DIR, "readrealm_growth_latest.json")
 KAIREW_LATEST = os.path.join(DATA_DIR, "kairew_growth_latest.json")
 CHAPLY_LATEST = os.path.join(DATA_DIR, "chaply_growth_latest.json")
 UNIFIED_LATEST = os.path.join(DATA_DIR, "multi_platform_growth_latest.json")
+MAPPING_FILE = os.path.join(DATA_DIR, "comic_cross_platform_mapping.json")
+
+def load_cross_platform_mappings() -> List[Dict[str, Any]]:
+    if os.path.exists(MAPPING_FILE):
+        try:
+            with open(MAPPING_FILE, "r", encoding="utf-8") as f:
+                return json.load(f).get("mappings", [])
+        except Exception as e:
+            print(f"⚠️ Failed to load cross platform mapping: {e}")
+    return []
 
 def run_script(script_name: str, args: List[str]) -> bool:
     """Run an individual platform tracker script."""
@@ -70,6 +80,23 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
     total_inactive_30d = 0
     total_active_30d = 0
 
+    mappings = load_cross_platform_mappings()
+
+    def apply_cross_platform_canonical(c: Dict[str, Any], platform_name: str):
+        sub = c.get("subject", "")
+        cid = str(c.get("comic_id") or "")
+        for m in mappings:
+            plat_info = m.get("platforms", {}).get(platform_name, {})
+            if plat_info.get("comic_id") and str(plat_info.get("comic_id")) == cid:
+                c["canonical_title"] = m.get("canonical_title")
+                c["cross_platform_key"] = m.get("canonical_key")
+                return
+            for alias in m.get("aliases", []):
+                if alias.lower() in sub.lower() or sub.lower() in alias.lower():
+                    c["canonical_title"] = m.get("canonical_title")
+                    c["cross_platform_key"] = m.get("canonical_key")
+                    return
+
     # 1. ReadRealm
     if os.path.exists(READREALM_LATEST):
         try:
@@ -78,6 +105,7 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
             rr_comics = rr_data.get("comics", [])
             for c in rr_comics:
                 c["platform"] = "readrealm"
+                apply_cross_platform_canonical(c, "readrealm")
                 unified_comics.append(c)
 
             rr_sales = float(rr_data.get("total_sales_portfolio", sum(c.get("total_sales", 0.0) for c in rr_comics)))
@@ -109,6 +137,7 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
             kr_comics = kr_data.get("comics", [])
             for c in kr_comics:
                 c["platform"] = "kairew"
+                apply_cross_platform_canonical(c, "kairew")
                 unified_comics.append(c)
 
             kr_sales = float(kr_data.get("total_sales_portfolio", sum(c.get("total_sales", 0.0) for c in kr_comics)))
@@ -140,6 +169,7 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
             ch_comics = ch_data.get("comics", [])
             for c in ch_comics:
                 c["platform"] = "chaply"
+                apply_cross_platform_canonical(c, "chaply")
                 unified_comics.append(c)
 
             ch_sales = float(ch_data.get("total_sales_portfolio", sum(c.get("total_sales", 0.0) for c in ch_comics)))
@@ -169,6 +199,14 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
     # query ReadRealm Public Reader API (which requires no login) to resolve the real chapter count.
     import re
     def normalize_thai(text: str) -> str:
+        if not text:
+            return ""
+        for m in mappings:
+            for alias in m.get("aliases", []):
+                if alias.lower() in text.lower():
+                    return m.get("canonical_key", "")
+        if any(k in text for k in ["ผู้ชายแสนดีเช่นข้า", "จอมมารแสนดีเช่นข้า", "จอมมารแสนดีขนาดนี้"]):
+            return "จอมมารแสนดี"
         return "".join(re.findall(r'[\u0E00-\u0E7F]', text or ""))
 
     other_platform_max_chapters: Dict[str, int] = {}

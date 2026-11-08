@@ -6,6 +6,37 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ไขปัญหาการจับคู่ข้ามแพลตฟอร์ม (Cross-Platform Matching) เรื่อง "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต" ครบ 3 แพลตฟอร์ม สำเร็จ 100% (8 พ.ย. 2569)
+
+#### 1. การสืบค้นและระบุข้อมูลบน ReadRealm (Root Cause Identification):
+- **ชื่อเรื่องบน ReadRealm**: `"ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย"`
+- **Comic ID**: `GpeQDXZlx2jvx5n0JWoR`
+- **บัญชี**: `แปลจนเมื่อย` (lionking account)
+- **จำนวนตอนจริง**: **158 ตอน** (ตรวจสอบยืนยันผ่าน Public Reader API: `https://api.readrealm.co/reader/book/getListChaptersSectionPage?book_type=comic&book_id=GpeQDXZlx2jvx5n0JWoR` ส่งคืน 158 ตอนครบถ้วน)
+- **สถิติสะสม**: ยอดวิวรวม **219,361 วิว** | ยอดขายรวม **฿39,000.00**
+- **สาเหตุที่ไม่ Match**: ฝั่ง Kairew (ID: `389`) และ Chaply (ID: `cmu8mjor52dc36kdg6vlj2zw2`) ใช้ชื่อ `"จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต"` ขณะที่ฝั่ง ReadRealm ใช้ชื่อ `"ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย"` ซึ่งคำหลักแตกต่างกันทำให้ Thai text normalization แบบเดิมไม่สามารถจับคู่ได้
+
+#### 2. สิ่งที่ดำเนินการแก้ไข (Implemented Solutions):
+1. **สร้างไฟล์ Cross-Platform Mapping Registry (`comic_cross_platform_mapping.json`)**:
+   - เพิ่มไฟล์ `tools/data/comic_cross_platform_mapping.json` (พร้อม sync ไปยัง `frontend/src/data/` และ `frontend/public/data/`)
+   - กำหนด `canonical_title: "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต"`, `canonical_key: "จอมมารแสนดี"`
+   - แมป ID ทั้ง 3 แพลตฟอร์ม: ReadRealm (`GpeQDXZlx2jvx5n0JWoR`), Kairew (`389`), Chaply (`cmu8mjor52dc36kdg6vlj2zw2`)
+   - รองรับทุก Aliases เช่น `"ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย"`, `"The Disciple Wants to Kill Me"`
+2. **ปรับปรุง `tools/multi_platform_tracker.py`**:
+   - เพิ่มกลไกโหลด Mapping Registry และใส่ `canonical_title`, `cross_platform_key` ให้กับการ์ตูนทุกเรื่องที่ตรงกับกฎ
+   - ปรับ `normalize_thai()` ใน Phase 3 ให้ตรวจจับ Mapping aliases
+   - เมื่อรัน `--consolidate-only` ข้อมูลของ ReadRealm (158 ตอน, ฿39,000.00), Kairew (150 ตอน, ฿1,468.80) และ Chaply (100 ตอน, ฿0.00) ถูกรวมเป็นเรื่องเดียวกันใน `multi_platform_growth_latest.json`
+3. **ปรับปรุง `tools/group_matching_comics.py`**:
+   - เปลี่ยนจากการใช้ Path แบบ hardcoded เป็น Dynamic relative path (`BASE_DIR`)
+   - เพิ่ม Mapping normalization และเก็บ `id` ของทั้ง 3 แพลตฟอร์ม
+   - อัปเดต `grouped_matched_comics.json` ให้เรื่องนี้ขึ้นครบ 3 แพลตฟอร์ม (ReadRealm + Kairew + Chaply) ยอดขายรวม ฿40,468.80 | ยอดวิวรวม 277,020 ครั้ง | ตอนสูงสุด 158 ตอน
+4. **ปรับปรุง `frontend/src/components/views/FinancialsView.tsx`**:
+   - ปรับ `normalizeMangaTitle` ให้รองรับ `"ผู้ชายแสนดีเช่นข้า"` และ `"thedisciplewantstokillme"`
+   - ใน `unifiedComics` ใช้ `c.cross_platform_key` และตั้งชื่อเรื่องหลัก (Canonical display title) เป็น `"จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต"` เสมอ
+   - ป้ายระบุ ID แสดงครบ 3 แพลตฟอร์ม: `RR: GpeQDXZlx2jvx5n0JWoR`, `KW: 389`, `CH: cmu8mjor52dc36kdg6vlj2zw2`
+
+---
+
 ### 🏆 แก้ไขและพัฒนาระบบ Chapter Discrepancy & Protection (Phase 1, 2, 3) สำเร็จสมบูรณ์ 100% (8 พ.ย. 2569)
 
 #### 1. การดำเนินงานทั้ง 3 ระยะ (Three-Phase Resolution):

@@ -159,7 +159,9 @@ function normalizeMangaTitle(title: string): string {
 
   if (
     t.includes("จอมมารแสนดีขนาดนี้") ||
-    t.includes("จอมมารแสนดีเช่นข้า")
+    t.includes("จอมมารแสนดีเช่นข้า") ||
+    t.includes("ผู้ชายแสนดีเช่นข้า") ||
+    t.includes("thedisciplewantstokillme")
   ) {
     return "จอมมารแสนดี";
   }
@@ -466,13 +468,16 @@ export function FinancialsView({
     const groups: Record<string, any> = {};
 
     for (const c of trackerData.comics) {
-      const k = normalizeMangaTitle(c.subject);
+      const k = c.cross_platform_key || normalizeMangaTitle(c.canonical_title || c.subject);
 
       if (!k) continue;
 
       const plat = String(c.platform || "readrealm").toLowerCase();
 
-      const cleanTitle = (c.subject || "").split("|")[0].trim();
+      let cleanTitle = c.canonical_title || (c.subject || "").split("|")[0].trim();
+      if (k === "จอมมารแสนดี") {
+        cleanTitle = "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต";
+      }
 
       if (!groups[k]) {
         groups[k] = {
@@ -542,6 +547,9 @@ export function FinancialsView({
       }
 
       const g = groups[k];
+      if (k === "จอมมารแสนดี") {
+        g.subject = "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต";
+      }
 
       g.items.push(c);
 

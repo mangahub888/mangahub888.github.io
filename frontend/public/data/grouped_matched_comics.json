@@ -5,6 +5,7 @@
     "readrealm": {
       "exists": true,
       "title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+      "id": "7vgQpJ2VjRK3V6Zr5GmX",
       "sales": 0.0,
       "views": 181,
       "eps": 5
@@ -12,6 +13,7 @@
     "kairew": {
       "exists": true,
       "title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+      "id": "8128",
       "sales": 0.0,
       "views": 278,
       "eps": 6
@@ -19,6 +21,7 @@
     "chaply": {
       "exists": true,
       "title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+      "id": "cmuobknyt1597t5ivrj12kch2",
       "sales": 0.0,
       "views": 730,
       "eps": 6,
@@ -40,6 +43,7 @@
     "readrealm": {
       "exists": true,
       "title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+      "id": "DBQ4k6PYpQnnx8qrm0J5",
       "sales": 0.0,
       "views": 1073,
       "eps": 6
@@ -47,6 +51,7 @@
     "kairew": {
       "exists": true,
       "title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+      "id": "8127",
       "sales": 0.0,
       "views": 305,
       "eps": 7
@@ -54,6 +59,7 @@
     "chaply": {
       "exists": true,
       "title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+      "id": "cmuobh13c158at5ive3im4waa",
       "sales": 0.0,
       "views": 843,
       "eps": 7,
@@ -66,7 +72,7 @@
       "Chaply"
     ],
     "total_sales": 0.0,
-    "total_views": 1421,
+    "total_views": 2221,
     "max_eps": 7
   },
   {
@@ -75,6 +81,7 @@
     "readrealm": {
       "exists": true,
       "title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+      "id": "BAyoRlNxvJEbxdqp18wL",
       "sales": 1092.6,
       "views": 3774,
       "eps": 19
@@ -82,6 +89,7 @@
     "kairew": {
       "exists": true,
       "title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+      "id": "8126",
       "sales": 129.6,
       "views": 1244,
       "eps": 19
@@ -89,6 +97,7 @@
     "chaply": {
       "exists": true,
       "title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+      "id": "cmuobbvll17smt5invj3xzl8e",
       "sales": 0.0,
       "views": 6049,
       "eps": 19,
@@ -100,8 +109,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 1222.1999999999998,
-    "total_views": 11053,
+    "total_sales": 1222.2,
+    "total_views": 11067,
     "max_eps": 19
   },
   {
@@ -110,6 +119,7 @@
     "readrealm": {
       "exists": true,
       "title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+      "id": "9ZazJMeV9LJwO4wK6vRq",
       "sales": 268.2,
       "views": 3132,
       "eps": 12
@@ -117,6 +127,7 @@
     "kairew": {
       "exists": true,
       "title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+      "id": "8124",
       "sales": 82.8,
       "views": 2145,
       "eps": 12
@@ -124,6 +135,7 @@
     "chaply": {
       "exists": true,
       "title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+      "id": "cmuob7ddh15eft5ip2uz7v3i7",
       "sales": 0.0,
       "views": 8683,
       "eps": 12,
@@ -135,8 +147,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 336.6,
-    "total_views": 13895,
+    "total_sales": 351.0,
+    "total_views": 13960,
     "max_eps": 12
   },
   {
@@ -145,6 +157,7 @@
     "readrealm": {
       "exists": true,
       "title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+      "id": "jamDek8YoebyO0Pz1JNw",
       "sales": 0.0,
       "views": 373,
       "eps": 4
@@ -152,6 +165,7 @@
     "kairew": {
       "exists": true,
       "title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+      "id": "8123",
       "sales": 0.0,
       "views": 391,
       "eps": 4
@@ -159,6 +173,7 @@
     "chaply": {
       "exists": true,
       "title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+      "id": "cmuob2q0t15rht5iwh2m2w0rw",
       "sales": 0.0,
       "views": 837,
       "eps": 4,
@@ -171,7 +186,7 @@
       "Chaply"
     ],
     "total_sales": 0.0,
-    "total_views": 1594,
+    "total_views": 1601,
     "max_eps": 4
   },
   {
@@ -180,6 +195,7 @@
     "readrealm": {
       "exists": true,
       "title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+      "id": "nvEqQwJYPz8NOedr65l2",
       "sales": 307.8,
       "views": 2469,
       "eps": 16
@@ -187,6 +203,7 @@
     "kairew": {
       "exists": true,
       "title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+      "id": "7304",
       "sales": 30.6,
       "views": 1246,
       "eps": 17
@@ -194,6 +211,7 @@
     "chaply": {
       "exists": true,
       "title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+      "id": "cmu53j7bu1urc6kdgjv42ackr",
       "sales": 0.0,
       "views": 282,
       "eps": 17,
@@ -205,8 +223,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 338.40000000000003,
-    "total_views": 3990,
+    "total_sales": 338.4,
+    "total_views": 3997,
     "max_eps": 17
   },
   {
@@ -215,6 +233,7 @@
     "readrealm": {
       "exists": true,
       "title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+      "id": "wPZAJq7OkDryVW8Dozkm",
       "sales": 995.4,
       "views": 6763,
       "eps": 24
@@ -222,6 +241,7 @@
     "kairew": {
       "exists": true,
       "title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+      "id": "7303",
       "sales": 95.4,
       "views": 1385,
       "eps": 25
@@ -229,6 +249,7 @@
     "chaply": {
       "exists": true,
       "title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+      "id": "cmu54cw331xcm6kddlj7skzbf",
       "sales": 0.0,
       "views": 453,
       "eps": 25,
@@ -240,8 +261,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 1076.4,
-    "total_views": 8496,
+    "total_sales": 1090.8,
+    "total_views": 8601,
     "max_eps": 25
   },
   {
@@ -250,6 +271,7 @@
     "readrealm": {
       "exists": true,
       "title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+      "id": "zkJdZa0Y6n5NYrv4KR5n",
       "sales": 165.6,
       "views": 1990,
       "eps": 11
@@ -257,6 +279,7 @@
     "kairew": {
       "exists": true,
       "title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+      "id": "7302",
       "sales": 45.0,
       "views": 6715,
       "eps": 12
@@ -264,6 +287,7 @@
     "chaply": {
       "exists": true,
       "title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+      "id": "cmu54x6jl1xul6kdc7qbb0we0",
       "sales": 0.0,
       "views": 3474,
       "eps": 12,
@@ -275,8 +299,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 207.0,
-    "total_views": 12164,
+    "total_sales": 210.6,
+    "total_views": 12179,
     "max_eps": 12
   },
   {
@@ -285,6 +309,7 @@
     "readrealm": {
       "exists": true,
       "title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+      "id": "3MjZ0qWYgw1oYJLAreG1",
       "sales": 1105.2,
       "views": 4027,
       "eps": 14
@@ -292,6 +317,7 @@
     "kairew": {
       "exists": true,
       "title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+      "id": "7301",
       "sales": 302.4,
       "views": 6292,
       "eps": 14
@@ -299,6 +325,7 @@
     "chaply": {
       "exists": true,
       "title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+      "id": "cmu55dp6m1xyq6kdc3hxp43hz",
       "sales": 0.0,
       "views": 10357,
       "eps": 14,
@@ -311,7 +338,7 @@
       "Chaply"
     ],
     "total_sales": 1407.6,
-    "total_views": 20671,
+    "total_views": 20676,
     "max_eps": 14
   },
   {
@@ -320,6 +347,7 @@
     "readrealm": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+      "id": "rwEvg7LY8QnJx20blNPp",
       "sales": 2988.0,
       "views": 6566,
       "eps": 25
@@ -327,6 +355,7 @@
     "kairew": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead Army",
+      "id": "7300",
       "sales": 405.0,
       "views": 1777,
       "eps": 26
@@ -334,6 +363,7 @@
     "chaply": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+      "id": "cmu55krov20aa6kdb4kzmjpr9",
       "sales": 0.0,
       "views": 10114,
       "eps": 26,
@@ -345,8 +375,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 3371.4,
-    "total_views": 18404,
+    "total_sales": 3393.0,
+    "total_views": 18457,
     "max_eps": 26
   },
   {
@@ -355,6 +385,7 @@
     "readrealm": {
       "exists": true,
       "title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+      "id": "n6r39MJVwpqjYNAB81yk",
       "sales": 1515.6,
       "views": 6090,
       "eps": 37
@@ -362,6 +393,7 @@
     "kairew": {
       "exists": true,
       "title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+      "id": "6682",
       "sales": 405.0,
       "views": 2450,
       "eps": 37
@@ -369,6 +401,7 @@
     "chaply": {
       "exists": true,
       "title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+      "id": "cmu57f4i51wi96kdepjdx8u96",
       "sales": 0.0,
       "views": 425,
       "eps": 37,
@@ -380,8 +413,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 1915.2,
-    "total_views": 8954,
+    "total_sales": 1920.6,
+    "total_views": 8965,
     "max_eps": 37
   },
   {
@@ -390,6 +423,7 @@
     "readrealm": {
       "exists": true,
       "title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
+      "id": "aDZ1qlAOewl3Y5k7gmeM",
       "sales": 2448.0,
       "views": 34524,
       "eps": 18
@@ -397,6 +431,7 @@
     "kairew": {
       "exists": true,
       "title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark Creatures",
+      "id": "6065",
       "sales": 271.8,
       "views": 12054,
       "eps": 18
@@ -404,6 +439,7 @@
     "chaply": {
       "exists": true,
       "title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
+      "id": "cmu599yt01yj56kddr5yp4zaz",
       "sales": 0.0,
       "views": 1346,
       "eps": 18,
@@ -415,8 +451,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 2716.2000000000003,
-    "total_views": 47840,
+    "total_sales": 2719.8,
+    "total_views": 47924,
     "max_eps": 18
   },
   {
@@ -425,6 +461,7 @@
     "readrealm": {
       "exists": true,
       "title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack S",
+      "id": "m5MEjRdOnnzbOg6Ay8ZW",
       "sales": 0.0,
       "views": 286,
       "eps": 6
@@ -432,6 +469,7 @@
     "kairew": {
       "exists": true,
       "title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack Speed",
+      "id": "6064",
       "sales": 0.0,
       "views": 471,
       "eps": 7
@@ -439,6 +477,7 @@
     "chaply": {
       "exists": true,
       "title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack S",
+      "id": "cmu5akdig1xmj6kdfkhi81lpw",
       "sales": 0.0,
       "views": 766,
       "eps": 7,
@@ -451,7 +490,7 @@
       "Chaply"
     ],
     "total_sales": 0.0,
-    "total_views": 1521,
+    "total_views": 1523,
     "max_eps": 7
   },
   {
@@ -460,6 +499,7 @@
     "readrealm": {
       "exists": true,
       "title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+      "id": "a7qNk8mOK95RYXyvogDn",
       "sales": 487.8,
       "views": 4476,
       "eps": 12
@@ -467,6 +507,7 @@
     "kairew": {
       "exists": true,
       "title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+      "id": "6063",
       "sales": 147.6,
       "views": 1883,
       "eps": 13
@@ -474,6 +515,7 @@
     "chaply": {
       "exists": true,
       "title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+      "id": "cmu5aojjy21k26kdbtrqxx43l",
       "sales": 0.0,
       "views": 7732,
       "eps": 13,
@@ -485,8 +527,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 630.0,
-    "total_views": 14067,
+    "total_sales": 635.4,
+    "total_views": 14091,
     "max_eps": 13
   },
   {
@@ -495,6 +537,7 @@
     "readrealm": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+      "id": "EQwLk1zYRR9KY50y2Wed",
       "sales": 1220.4,
       "views": 6901,
       "eps": 20
@@ -502,6 +545,7 @@
     "kairew": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upgrades",
+      "id": "6062",
       "sales": 257.4,
       "views": 3939,
       "eps": 20
@@ -509,6 +553,7 @@
     "chaply": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+      "id": "cmu5hk40d1xsh6kdh2y1fw76m",
       "sales": 0.0,
       "views": 1185,
       "eps": 20,
@@ -520,8 +565,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 1449.0,
-    "total_views": 11984,
+    "total_sales": 1477.8,
+    "total_views": 12025,
     "max_eps": 20
   },
   {
@@ -530,6 +575,7 @@
     "readrealm": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+      "id": "7vgQpJ2VjRM9V6Zr5GmX",
       "sales": 0.0,
       "views": 458,
       "eps": 5
@@ -537,6 +583,7 @@
     "kairew": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+      "id": "6061",
       "sales": 0.0,
       "views": 1507,
       "eps": 6
@@ -544,6 +591,7 @@
     "chaply": {
       "exists": true,
       "title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+      "id": "cmu5jeo6p238k6kdbhw868cqm",
       "sales": 0.0,
       "views": 938,
       "eps": 6,
@@ -556,7 +604,7 @@
       "Chaply"
     ],
     "total_sales": 0.0,
-    "total_views": 2895,
+    "total_views": 2903,
     "max_eps": 6
   },
   {
@@ -565,6 +613,7 @@
     "readrealm": {
       "exists": true,
       "title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+      "id": "DBQ4k6PYpQr5x8qrm0J5",
       "sales": 0.0,
       "views": 11,
       "eps": 0
@@ -572,6 +621,7 @@
     "kairew": {
       "exists": true,
       "title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+      "id": "6060",
       "sales": 0.0,
       "views": 184,
       "eps": 0
@@ -579,6 +629,7 @@
     "chaply": {
       "exists": true,
       "title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+      "id": "cmu5jkndf1z9l6kdfzd09qnhi",
       "sales": 0.0,
       "views": 6,
       "eps": 0,
@@ -600,6 +651,7 @@
     "readrealm": {
       "exists": true,
       "title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+      "id": "BAyoRlNxvJpaxdqp18wL",
       "sales": 0.0,
       "views": 146,
       "eps": 2
@@ -607,6 +659,7 @@
     "kairew": {
       "exists": true,
       "title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+      "id": "6059",
       "sales": 0.0,
       "views": 733,
       "eps": 3
@@ -614,6 +667,7 @@
     "chaply": {
       "exists": true,
       "title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+      "id": "cmu5jqil320rv6kddszeia5iz",
       "sales": 0.0,
       "views": 265,
       "eps": 3,
@@ -626,7 +680,7 @@
       "Chaply"
     ],
     "total_sales": 0.0,
-    "total_views": 1105,
+    "total_views": 1144,
     "max_eps": 3
   },
   {
@@ -635,6 +689,7 @@
     "readrealm": {
       "exists": true,
       "title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+      "id": "ng5GbmNxBrg8x9AlMyk0",
       "sales": 1423.8,
       "views": 5777,
       "eps": 27
@@ -642,6 +697,7 @@
     "kairew": {
       "exists": true,
       "title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+      "id": "5356",
       "sales": 219.6,
       "views": 4573,
       "eps": 28
@@ -649,6 +705,7 @@
     "chaply": {
       "exists": true,
       "title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+      "id": "cmu5jxqqr20ss6kddg7es62wu",
       "sales": 0.0,
       "views": 654,
       "eps": 28,
@@ -660,8 +717,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 1634.3999999999999,
-    "total_views": 10983,
+    "total_sales": 1643.4,
+    "total_views": 11004,
     "max_eps": 28
   },
   {
@@ -670,6 +727,7 @@
     "readrealm": {
       "exists": true,
       "title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+      "id": "RbKaMELO7plPVglzP41q",
       "sales": 2484.0,
       "views": 10044,
       "eps": 31
@@ -677,6 +735,7 @@
     "kairew": {
       "exists": true,
       "title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+      "id": "5079",
       "sales": 493.2,
       "views": 5224,
       "eps": 31
@@ -684,6 +743,7 @@
     "chaply": {
       "exists": true,
       "title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+      "id": "cmu5kkh7v23fn6kdb2ccmv103",
       "sales": 0.0,
       "views": 1153,
       "eps": 31,
@@ -695,8 +755,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 2971.7999999999997,
-    "total_views": 16406,
+    "total_sales": 2977.2,
+    "total_views": 16421,
     "max_eps": 31
   },
   {
@@ -705,6 +765,7 @@
     "readrealm": {
       "exists": true,
       "title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+      "id": "kJy7ZdeYZRJJYX5PAwB6",
       "sales": 7264.8,
       "views": 20958,
       "eps": 32
@@ -712,6 +773,7 @@
     "kairew": {
       "exists": true,
       "title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+      "id": "5077",
       "sales": 1026.0,
       "views": 5143,
       "eps": 32
@@ -719,6 +781,7 @@
     "chaply": {
       "exists": true,
       "title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+      "id": "cmu5lkq6z1zi36kdeaw12cfwi",
       "sales": 0.0,
       "views": 1429,
       "eps": 32,
@@ -730,8 +793,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 8269.2,
-    "total_views": 27453,
+    "total_sales": 8290.8,
+    "total_views": 27530,
     "max_eps": 32
   },
   {
@@ -740,13 +803,15 @@
     "readrealm": {
       "exists": true,
       "title": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+      "id": "NG8Qg2kxDyqvOz7Kdeo9",
       "sales": 7680.6,
       "views": 20516,
-      "eps": 28
+      "eps": 29
     },
     "kairew": {
       "exists": true,
       "title": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+      "id": "5076",
       "sales": 1868.4,
       "views": 8807,
       "eps": 29
@@ -754,6 +819,7 @@
     "chaply": {
       "exists": true,
       "title": "มหาปรมาจารย์ระดับเทพแห่งนคร | City God Level Grandmaster",
+      "id": "cmu5lttk91ygj6kdgu18gt0i5",
       "sales": 0.0,
       "views": 1488,
       "eps": 29,
@@ -765,8 +831,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 9495.0,
-    "total_views": 30620,
+    "total_sales": 9549.0,
+    "total_views": 30811,
     "max_eps": 29
   },
   {
@@ -775,6 +841,7 @@
     "readrealm": {
       "exists": true,
       "title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
+      "id": "rKk19Eexy8ZpYWAyR3qL",
       "sales": 0.0,
       "views": 530,
       "eps": 4
@@ -782,6 +849,7 @@
     "kairew": {
       "exists": true,
       "title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
+      "id": "4675",
       "sales": 0.0,
       "views": 610,
       "eps": 4
@@ -789,6 +857,7 @@
     "chaply": {
       "exists": true,
       "title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ | I Became the Supreme Martial God Through Dream Reincarnation",
+      "id": "cmu5mmr5j1zvl6kdejn4p80l8",
       "sales": 0.0,
       "views": 120,
       "eps": 4,
@@ -810,6 +879,7 @@
     "readrealm": {
       "exists": true,
       "title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+      "id": "Z41KDdWY1989Yw7MA5Pk",
       "sales": 8472.6,
       "views": 33572,
       "eps": 26
@@ -817,6 +887,7 @@
     "kairew": {
       "exists": true,
       "title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+      "id": "4674",
       "sales": 1175.4,
       "views": 9857,
       "eps": 25
@@ -824,6 +895,7 @@
     "chaply": {
       "exists": true,
       "title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ | Cataclysm Hunter: I Have an XP System",
+      "id": "cmu5mrfj01zyt6kden87j1ch7",
       "sales": 0.0,
       "views": 1852,
       "eps": 25,
@@ -835,8 +907,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 9556.199999999999,
-    "total_views": 45123,
+    "total_sales": 9648.0,
+    "total_views": 45281,
     "max_eps": 26
   },
   {
@@ -845,6 +917,7 @@
     "readrealm": {
       "exists": true,
       "title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+      "id": "GmA4egMxWRADYB8PWbyp",
       "sales": 1800.0,
       "views": 13823,
       "eps": 25
@@ -852,6 +925,7 @@
     "kairew": {
       "exists": true,
       "title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+      "id": "4673",
       "sales": 180.0,
       "views": 4675,
       "eps": 24
@@ -859,6 +933,7 @@
     "chaply": {
       "exists": true,
       "title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+      "id": "cmu5ofcn422d36kdd9ox2ccvd",
       "sales": 0.0,
       "views": 472,
       "eps": 24,
@@ -870,8 +945,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 1953.0,
-    "total_views": 18928,
+    "total_sales": 1980.0,
+    "total_views": 18970,
     "max_eps": 25
   },
   {
@@ -880,6 +955,7 @@
     "readrealm": {
       "exists": true,
       "title": "กบฏแห่งตระกูลขุนนางทรราช | The Rebel of the Tyrant Noble House",
+      "id": "3MjZ0qWYgJ4XVJLAreG1",
       "sales": 1495.8,
       "views": 5046,
       "eps": 31
@@ -887,6 +963,7 @@
     "kairew": {
       "exists": true,
       "title": "เกิดใหม่เป็นกบฏแห่งตระกูลขุนนางทรราช| The Rebel of the Tyrant Noble Hous",
+      "id": "4388",
       "sales": 268.2,
       "views": 1609,
       "eps": 31
@@ -894,6 +971,7 @@
     "chaply": {
       "exists": true,
       "title": "กบฏแห่งตระกูลขุนนางทรราช | The Rebel of the Tyrant Noble House",
+      "id": "cmu5qaxb320d96kdh0230bmq2",
       "sales": 0.0,
       "views": 190,
       "eps": 32,
@@ -915,6 +993,7 @@
     "readrealm": {
       "exists": true,
       "title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+      "id": "Z41KDdWY19goYw7MA5Pk",
       "sales": 5909.4,
       "views": 21939,
       "eps": 32
@@ -922,6 +1001,7 @@
     "kairew": {
       "exists": true,
       "title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+      "id": "3569",
       "sales": 959.4,
       "views": 7242,
       "eps": 33
@@ -929,6 +1009,7 @@
     "chaply": {
       "exists": true,
       "title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+      "id": "cmu5rxd0p25jk6kdbt4wnhweh",
       "sales": 0.0,
       "views": 801,
       "eps": 33,
@@ -940,8 +1021,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 6867.0,
-    "total_views": 29960,
+    "total_sales": 6868.8,
+    "total_views": 29982,
     "max_eps": 33
   },
   {
@@ -950,6 +1031,7 @@
     "readrealm": {
       "exists": true,
       "title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+      "id": "zkJdZa0Y69dkVrv4KR5n",
       "sales": 3389.4,
       "views": 12740,
       "eps": 43
@@ -957,6 +1039,7 @@
     "kairew": {
       "exists": true,
       "title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+      "id": "3379",
       "sales": 241.2,
       "views": 3052,
       "eps": 44
@@ -964,6 +1047,7 @@
     "chaply": {
       "exists": true,
       "title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+      "id": "cmu6fncvn25g56kdcsltke4aa",
       "sales": 0.0,
       "views": 490,
       "eps": 44,
@@ -975,8 +1059,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 3618.0,
-    "total_views": 16195,
+    "total_sales": 3630.6,
+    "total_views": 16282,
     "max_eps": 44
   },
   {
@@ -985,6 +1069,7 @@
     "readrealm": {
       "exists": true,
       "title": "อุบัติการณ์อสูรกลืนกินโลก: ปฐมบทผู้หวนคืน | Demonification: Origin of the Returner",
+      "id": "vGkNElzYlM0vxq27mKdM",
       "sales": 82.8,
       "views": 1416,
       "eps": 26
@@ -992,6 +1077,7 @@
     "kairew": {
       "exists": true,
       "title": "อุบัติการณ์อสูรกลืนกินโลก: ปฐมบทผู้หวนคืน | Demonification: Origin of the Returner",
+      "id": "2679",
       "sales": 59.4,
       "views": 774,
       "eps": 27
@@ -999,6 +1085,7 @@
     "chaply": {
       "exists": true,
       "title": "อุบัติการณ์อสูรกลืนกินโลก: ปฐมบทผู้หวนคืน | Demonification: Origin of the Returner",
+      "id": "cmu7amzv72deg6kdb305cjl4w",
       "sales": 0.0,
       "views": 161,
       "eps": 27,
@@ -1020,6 +1107,7 @@
     "readrealm": {
       "exists": true,
       "title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+      "id": "m5MEjRdOnz8dOg6Ay8ZW",
       "sales": 6354.0,
       "views": 41536,
       "eps": 34
@@ -1027,6 +1115,7 @@
     "kairew": {
       "exists": true,
       "title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+      "id": "2607",
       "sales": 707.4,
       "views": 14332,
       "eps": 34
@@ -1034,6 +1123,7 @@
     "chaply": {
       "exists": true,
       "title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+      "id": "cmu9exmzu2nlr6kdbjz8f4p62",
       "sales": 0.0,
       "views": 358,
       "eps": 34,
@@ -1045,8 +1135,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 7012.799999999999,
-    "total_views": 56091,
+    "total_sales": 7061.4,
+    "total_views": 56226,
     "max_eps": 34
   },
   {
@@ -1055,6 +1145,7 @@
     "readrealm": {
       "exists": true,
       "title": "จุติใหม่ครั้งที่หนึ่งหมื่น: พลิกตำนานมหาเทพหมื่นชาติ | The Ten Thousandth Rebirth",
+      "id": "RbKaMELO7p0pVglzP41q",
       "sales": 0.0,
       "views": 3576,
       "eps": 5
@@ -1062,6 +1153,7 @@
     "kairew": {
       "exists": true,
       "title": "จุติใหม่ครั้งที่หนึ่งหมื่น: พลิกตำนานมหาเทพหมื่นชาติ | The Ten Thousandth Rebirth",
+      "id": "2062",
       "sales": 0.0,
       "views": 3062,
       "eps": 6
@@ -1069,6 +1161,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -1080,7 +1173,7 @@
       "Kairew"
     ],
     "total_sales": 0.0,
-    "total_views": 6637,
+    "total_views": 6638,
     "max_eps": 6
   },
   {
@@ -1089,6 +1182,7 @@
     "readrealm": {
       "exists": true,
       "title": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
+      "id": "vGkNElzYlMjDxq27mKdM",
       "sales": 2565.0,
       "views": 11876,
       "eps": 38
@@ -1096,6 +1190,7 @@
     "kairew": {
       "exists": true,
       "title": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
+      "id": "1104",
       "sales": 214.2,
       "views": 5857,
       "eps": 39
@@ -1103,6 +1198,7 @@
     "chaply": {
       "exists": true,
       "title": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
+      "id": "cmu9qqrcp2plk6kdbaaqa4i6y",
       "sales": 0.0,
       "views": 178,
       "eps": 39,
@@ -1115,7 +1211,7 @@
       "Chaply"
     ],
     "total_sales": 2779.2,
-    "total_views": 17910,
+    "total_views": 17911,
     "max_eps": 39
   },
   {
@@ -1124,6 +1220,7 @@
     "readrealm": {
       "exists": true,
       "title": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
+      "id": "qDAm32WxX12BOogPnaGe",
       "sales": 990.0,
       "views": 6530,
       "eps": 26
@@ -1131,6 +1228,7 @@
     "kairew": {
       "exists": true,
       "title": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
+      "id": "897",
       "sales": 286.2,
       "views": 4967,
       "eps": 28
@@ -1138,6 +1236,7 @@
     "chaply": {
       "exists": true,
       "title": "ดวงตาแห่งสรรพสิ่ง จอมบงการค่ายกลสังหาร | The Omniscient Trapmaster",
+      "id": "cmu9zzov52m2l6kdfmsxf6jnq",
       "sales": 0.0,
       "views": 634,
       "eps": 28,
@@ -1159,6 +1258,7 @@
     "readrealm": {
       "exists": true,
       "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+      "id": "peQDXZlx2laqV5n0JWoR",
       "sales": 8494.2,
       "views": 47994,
       "eps": 42
@@ -1166,6 +1266,7 @@
     "kairew": {
       "exists": true,
       "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+      "id": "784",
       "sales": 1161.0,
       "views": 17322,
       "eps": 42
@@ -1173,6 +1274,7 @@
     "chaply": {
       "exists": true,
       "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+      "id": "cmua459q82p666kdcoll0jcwa",
       "sales": 0.0,
       "views": 810,
       "eps": 43,
@@ -1184,8 +1286,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 9624.6,
-    "total_views": 65713,
+    "total_sales": 9655.2,
+    "total_views": 66126,
     "max_eps": 43
   },
   {
@@ -1194,6 +1296,7 @@
     "readrealm": {
       "exists": true,
       "title": "คารวะจอมมารแห่งยุทธภพ | Greetings, Sect Leader",
+      "id": "1E4dv9AV5M2rVogakpmQ",
       "sales": 1152.0,
       "views": 12162,
       "eps": 30
@@ -1201,6 +1304,7 @@
     "kairew": {
       "exists": true,
       "title": "คารวะจอมมารแห่งยุทธภพ | Greetings, Sect Leader",
+      "id": "783",
       "sales": 93.6,
       "views": 5412,
       "eps": 31
@@ -1208,6 +1312,7 @@
     "chaply": {
       "exists": true,
       "title": "คารวะจอมมารแห่งยุทธภพ | Greetings, Sect Leader",
+      "id": "cmua7lbrv2lx06kdayfm3rhlq",
       "sales": 0.0,
       "views": 175,
       "eps": 31,
@@ -1220,7 +1325,7 @@
       "Chaply"
     ],
     "total_sales": 1245.6,
-    "total_views": 17743,
+    "total_views": 17749,
     "max_eps": 31
   },
   {
@@ -1229,6 +1334,7 @@
     "readrealm": {
       "exists": true,
       "title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+      "id": "RbKaMELO7p6PVglzP41q",
       "sales": 25542.0,
       "views": 117859,
       "eps": 62
@@ -1236,6 +1342,7 @@
     "kairew": {
       "exists": true,
       "title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+      "id": "766",
       "sales": 6730.2,
       "views": 93158,
       "eps": 62
@@ -1243,6 +1350,7 @@
     "chaply": {
       "exists": true,
       "title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+      "id": "cmub9scyd2qzl6kdax0weqtow",
       "sales": 0.0,
       "views": 2850,
       "eps": 62,
@@ -1254,8 +1362,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 32252.4,
-    "total_views": 213740,
+    "total_sales": 32272.2,
+    "total_views": 213867,
     "max_eps": 62
   },
   {
@@ -1264,6 +1372,7 @@
     "readrealm": {
       "exists": true,
       "title": "การกลับมาของจักรพรรดิเขมือบล้างโลก | Return of the Devourer",
+      "id": "kJy7ZdeYZRaJYX5PAwB6",
       "sales": 7137.0,
       "views": 31629,
       "eps": 21
@@ -1271,6 +1380,7 @@
     "kairew": {
       "exists": true,
       "title": "การกลับมาของจักรพรรดิเขมือบล้างโลก | Return of the Devourer",
+      "id": "765",
       "sales": 3078.0,
       "views": 83027,
       "eps": 22
@@ -1278,6 +1388,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -1298,6 +1409,7 @@
     "readrealm": {
       "exists": true,
       "title": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์",
+      "id": "aDZ1qlAOelRbx5k7gmeM",
       "sales": 9424.8,
       "views": 32493,
       "eps": 43
@@ -1305,6 +1417,7 @@
     "kairew": {
       "exists": true,
       "title": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์ | Absolute Domination at Level 0 with My Analysis Skill",
+      "id": "730",
       "sales": 1492.2,
       "views": 24328,
       "eps": 44
@@ -1312,6 +1425,7 @@
     "chaply": {
       "exists": true,
       "title": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์ | Absolute Domination at Level 0 with My Analysis Skill",
+      "id": "cmub9wokr2r0a6kdap2d91i5q",
       "sales": 0.0,
       "views": 197,
       "eps": 44,
@@ -1324,7 +1438,7 @@
       "Chaply"
     ],
     "total_sales": 10917.0,
-    "total_views": 57010,
+    "total_views": 57018,
     "max_eps": 44
   },
   {
@@ -1333,6 +1447,7 @@
     "readrealm": {
       "exists": true,
       "title": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
+      "id": "m5MEjRdOnzKZOg6Ay8ZW",
       "sales": 2768.4,
       "views": 13487,
       "eps": 47
@@ -1340,6 +1455,7 @@
     "kairew": {
       "exists": true,
       "title": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
+      "id": "729",
       "sales": 871.2,
       "views": 13026,
       "eps": 50
@@ -1347,6 +1463,7 @@
     "chaply": {
       "exists": true,
       "title": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
+      "id": "cmublli8h2t4o6kda14eepw3r",
       "sales": 0.0,
       "views": 639,
       "eps": 50,
@@ -1358,7 +1475,7 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 3639.6000000000004,
+    "total_sales": 3639.6,
     "total_views": 27152,
     "max_eps": 50
   },
@@ -1368,6 +1485,7 @@
     "readrealm": {
       "exists": true,
       "title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+      "id": "NG8Qg2kxDy5KOz7Kdeo9",
       "sales": 28128.6,
       "views": 82872,
       "eps": 70
@@ -1375,6 +1493,7 @@
     "kairew": {
       "exists": true,
       "title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+      "id": "661",
       "sales": 3133.8,
       "views": 19723,
       "eps": 70
@@ -1382,6 +1501,7 @@
     "chaply": {
       "exists": true,
       "title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+      "id": "cmubpx26j2u1v6kdgil3fq5o8",
       "sales": 0.0,
       "views": 945,
       "eps": 70,
@@ -1393,8 +1513,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 31069.8,
-    "total_views": 102269,
+    "total_sales": 31262.4,
+    "total_views": 103540,
     "max_eps": 70
   },
   {
@@ -1403,6 +1523,7 @@
     "readrealm": {
       "exists": true,
       "title": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
+      "id": "n6r39MJVwDZvYNAB81yk",
       "sales": 275.4,
       "views": 3520,
       "eps": 7
@@ -1410,6 +1531,7 @@
     "kairew": {
       "exists": true,
       "title": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
+      "id": "659",
       "sales": 21.6,
       "views": 1449,
       "eps": 11
@@ -1417,6 +1539,7 @@
     "chaply": {
       "exists": true,
       "title": "ฟูลแอคเตอร์: จากไอ้ไร้ค่า…สู่ผู้กลืนสกิลล้างแค้นไร้เทียมทาน | The Skill-Devouring Nobody’s Rampage of Revenge",
+      "id": "cmucaq9nm30dq6kdcwwjkbygk",
       "sales": 0.0,
       "views": 208,
       "eps": 11,
@@ -1438,6 +1561,7 @@
     "readrealm": {
       "exists": true,
       "title": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
+      "id": "rKk19Eexy8DRYWAyR3qL",
       "sales": 4512.6,
       "views": 26670,
       "eps": 44
@@ -1445,6 +1569,7 @@
     "kairew": {
       "exists": true,
       "title": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
+      "id": "613",
       "sales": 826.2,
       "views": 8161,
       "eps": 46
@@ -1452,6 +1577,7 @@
     "chaply": {
       "exists": true,
       "title": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
+      "id": "cmucb79dt2wea6kdacrxzee3d",
       "sales": 0.0,
       "views": 174,
       "eps": 46,
@@ -1464,7 +1590,7 @@
       "Chaply"
     ],
     "total_sales": 5338.8,
-    "total_views": 34995,
+    "total_views": 35005,
     "max_eps": 46
   },
   {
@@ -1473,6 +1599,7 @@
     "readrealm": {
       "exists": true,
       "title": "ผู้รอดเพียงหนึ่ง—ไร้เทียมทานในเกมตายครั้งที่สอง | The Surviving Player: Unrivaled in the Second Death Game",
+      "id": "m5MEjRdOnzbrOg6Ay8ZW",
       "sales": 5560.2,
       "views": 21496,
       "eps": 46
@@ -1480,6 +1607,7 @@
     "kairew": {
       "exists": true,
       "title": "ผู้รอดเพียงหนึ่ง—ไร้เทียมทานในเกมตายครั้งที่สอง | The Surviving Player: Unrivaled in the Second Death Game",
+      "id": "609",
       "sales": 241.2,
       "views": 7036,
       "eps": 46
@@ -1487,6 +1615,7 @@
     "chaply": {
       "exists": true,
       "title": "ผู้รอดเพียงหนึ่ง—ไร้เทียมทานในเกมตายครั้งที่สอง | The Surviving Player: Unrivaled in the Second Death Game",
+      "id": "cmujpmchd0e91t5in51bn944s",
       "sales": 0.0,
       "views": 57,
       "eps": 46,
@@ -1499,7 +1628,7 @@
       "Chaply"
     ],
     "total_sales": 5801.4,
-    "total_views": 28584,
+    "total_views": 28589,
     "max_eps": 46
   },
   {
@@ -1508,6 +1637,7 @@
     "readrealm": {
       "exists": true,
       "title": "การหวนคืนของอัจฉริยะจอมดาบเวท | The Return of the Genius Magic Swordsman",
+      "id": "0AplLrbON0b5YZ15okX2",
       "sales": 709.2,
       "views": 5944,
       "eps": 20
@@ -1515,6 +1645,7 @@
     "kairew": {
       "exists": true,
       "title": "การหวนคืนของอัจฉริยะจอมดาบเวท |The Return of the Genius Magic Swordsman",
+      "id": "595",
       "sales": 144.0,
       "views": 3517,
       "eps": 20
@@ -1522,6 +1653,7 @@
     "chaply": {
       "exists": true,
       "title": "การหวนคืนของอัจฉริยะจอมดาบเวท | The Return of the Genius Magic Swordsman",
+      "id": "cmujqbsqt0elot5incscr253v",
       "sales": 0.0,
       "views": 63,
       "eps": 20,
@@ -1543,6 +1675,7 @@
     "readrealm": {
       "exists": true,
       "title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+      "id": "ng5GbmNxB4zEV9AlMyk0",
       "sales": 33372.0,
       "views": 165267,
       "eps": 102
@@ -1550,6 +1683,7 @@
     "kairew": {
       "exists": true,
       "title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+      "id": "578",
       "sales": 3418.2,
       "views": 51991,
       "eps": 102
@@ -1557,6 +1691,7 @@
     "chaply": {
       "exists": true,
       "title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด! | Rebirth of the Water Margin World: The Strongest Wu Dalang",
+      "id": "cmujt3jjs0ebkt5iohzuzr2fq",
       "sales": 0.0,
       "views": 1440,
       "eps": 102,
@@ -1568,8 +1703,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 36768.6,
-    "total_views": 218103,
+    "total_sales": 36790.2,
+    "total_views": 218698,
     "max_eps": 102
   },
   {
@@ -1578,6 +1713,7 @@
     "readrealm": {
       "exists": true,
       "title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign",
+      "id": "azlwDvqOA7BpYbkJoedB",
       "sales": 58890.6,
       "views": 260367,
       "eps": 122
@@ -1585,6 +1721,7 @@
     "kairew": {
       "exists": true,
       "title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ",
+      "id": "543",
       "sales": 30770.8,
       "views": 459715,
       "eps": 123
@@ -1592,6 +1729,7 @@
     "chaply": {
       "exists": true,
       "title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign",
+      "id": "cmujtou700ea2t5iqi3fhllox",
       "sales": 0.0,
       "views": 2078,
       "eps": 123,
@@ -1603,8 +1741,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 89657.8,
-    "total_views": 721922,
+    "total_sales": 89661.4,
+    "total_views": 722160,
     "max_eps": 123
   },
   {
@@ -1613,6 +1751,7 @@
     "readrealm": {
       "exists": true,
       "title": "ข้า…ชาวนา ผู้ปลูกวิญญาณแห่งความตาย | I, Farmer, Plant the Undead",
+      "id": "rKk19Eexy89DYWAyR3qL",
       "sales": 5153.4,
       "views": 29122,
       "eps": 21
@@ -1620,6 +1759,7 @@
     "kairew": {
       "exists": true,
       "title": "ข้า…ชาวนา ผู้ปลูกวิญญาณแห่งความตาย | I, Farmer, Plant the Undead",
+      "id": "542",
       "sales": 198.0,
       "views": 7442,
       "eps": 22
@@ -1627,6 +1767,7 @@
     "chaply": {
       "exists": true,
       "title": "ข้า…ชาวนา ผู้ปลูกวิญญาณแห่งความตาย | I, Farmer, Plant the Undead",
+      "id": "cmujz0bib0gjot5iv9qd8586r",
       "sales": 0.0,
       "views": 158,
       "eps": 22,
@@ -1639,7 +1780,7 @@
       "Chaply"
     ],
     "total_sales": 5351.4,
-    "total_views": 36708,
+    "total_views": 36722,
     "max_eps": 22
   },
   {
@@ -1648,6 +1789,7 @@
     "readrealm": {
       "exists": true,
       "title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+      "id": "GmA4egMxWR5KYB8PWbyp",
       "sales": 19414.8,
       "views": 76052,
       "eps": 59
@@ -1655,6 +1797,7 @@
     "kairew": {
       "exists": true,
       "title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+      "id": "486",
       "sales": 2055.6,
       "views": 29473,
       "eps": 59
@@ -1662,6 +1805,7 @@
     "chaply": {
       "exists": true,
       "title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+      "id": "cmuk2isn40ff1t5imkxirfqoc",
       "sales": 0.0,
       "views": 1362,
       "eps": 59,
@@ -1673,8 +1817,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 21425.399999999998,
-    "total_views": 106836,
+    "total_sales": 21470.4,
+    "total_views": 106887,
     "max_eps": 59
   },
   {
@@ -1683,6 +1827,7 @@
     "readrealm": {
       "exists": true,
       "title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+      "id": "ng5GbmNxB4r5V9AlMyk0",
       "sales": 102190.8,
       "views": 305091,
       "eps": 64
@@ -1690,6 +1835,7 @@
     "kairew": {
       "exists": true,
       "title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+      "id": "443",
       "sales": 20822.4,
       "views": 78241,
       "eps": 63
@@ -1697,6 +1843,7 @@
     "chaply": {
       "exists": true,
       "title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+      "id": "cmuk6ni1y0g4gt5imnxxmob4z",
       "sales": 0.0,
       "views": 1983,
       "eps": 63,
@@ -1708,8 +1855,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 122221.20000000001,
-    "total_views": 383455,
+    "total_sales": 123013.2,
+    "total_views": 385315,
     "max_eps": 64
   },
   {
@@ -1718,6 +1865,7 @@
     "readrealm": {
       "exists": true,
       "title": "แก่นเซียนข้าคือดาวฤกษ์ นี่เจ้ายังกล้าเรียกว่าฝึกเซียนอีก? | Golden Core Is a Star You Call This Cultivating Immortality",
+      "id": "a7qNk8mOK595YXyvogDn",
       "sales": 75.6,
       "views": 3647,
       "eps": 10
@@ -1725,6 +1873,7 @@
     "kairew": {
       "exists": true,
       "title": "แก่นเซียนข้าคือดาวฤกษ์ นี่เจ้ายังกล้าเรียกว่าฝึกเซียนอีก? | Golden Core Is a Star You Call This Cultivating Immortality",
+      "id": "435",
       "sales": 3.6,
       "views": 4506,
       "eps": 11
@@ -1732,6 +1881,7 @@
     "chaply": {
       "exists": true,
       "title": "แก่นเซียนข้าคือดาวฤกษ์ นี่เจ้ายังกล้าเรียกว่าฝึกเซียนอีก? | Golden Core Is a Star You Call This Cultivating Immortality",
+      "id": "cmuk5un2u0hubt5ivkc08trrj",
       "sales": 0.0,
       "views": 47,
       "eps": 11,
@@ -1743,16 +1893,17 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 79.19999999999999,
+    "total_sales": 79.2,
     "total_views": 8200,
     "max_eps": 11
   },
   {
     "key": "ผนึกสวรรค์สยบมารสะท้านเทพ",
-    "title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ",
+    "title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ I Shall Seal the Heavens",
     "readrealm": {
       "exists": true,
       "title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
+      "id": "EQwLk1zYR9RXV50y2Wed",
       "sales": 12769.2,
       "views": 44974,
       "eps": 52
@@ -1760,6 +1911,7 @@
     "kairew": {
       "exists": true,
       "title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ I Shall Seal the Heavens",
+      "id": "431",
       "sales": 1160.0,
       "views": 9186,
       "eps": 53
@@ -1767,6 +1919,7 @@
     "chaply": {
       "exists": true,
       "title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
+      "id": "cmuk7y4dr0gcpt5im40yny60d",
       "sales": 0.0,
       "views": 1668,
       "eps": 53,
@@ -1778,8 +1931,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 13923.8,
-    "total_views": 55807,
+    "total_sales": 13929.2,
+    "total_views": 55828,
     "max_eps": 53
   },
   {
@@ -1788,6 +1941,7 @@
     "readrealm": {
       "exists": true,
       "title": "ฝึกการเป็นเทพในโลกเสมือนจริง | The God’s Contract in the Virtual World",
+      "id": "aDZ1qlAOellLx5k7gmeM",
       "sales": 7.2,
       "views": 3401,
       "eps": 8
@@ -1795,6 +1949,7 @@
     "kairew": {
       "exists": true,
       "title": "ฝึกการเป็นเทพในโลกเสมือนจริง | The God’s Contract in the Virtual World",
+      "id": "414",
       "sales": 0.0,
       "views": 918,
       "eps": 9
@@ -1802,6 +1957,7 @@
     "chaply": {
       "exists": true,
       "title": "ฝึกการเป็นเทพในโลกเสมือนจริง | The God’s Contract in the Virtual World",
+      "id": "cmul5epaz0mipt5ivfqa3ncsk",
       "sales": 0.0,
       "views": 186,
       "eps": 9,
@@ -1823,6 +1979,7 @@
     "readrealm": {
       "exists": true,
       "title": "บุปผาธารา นองโลหิต | A Mountain of Corpses, A Sea of Blood",
+      "id": "JvApmMXVJ9DeOg1re8Pa",
       "sales": 669.6,
       "views": 8430,
       "eps": 13
@@ -1830,6 +1987,7 @@
     "kairew": {
       "exists": true,
       "title": "บุปผาธารา นองโลหิต",
+      "id": "342",
       "sales": 21.6,
       "views": 915,
       "eps": 14
@@ -1837,6 +1995,7 @@
     "chaply": {
       "exists": true,
       "title": "บุปผาธารา นองโลหิต | A Mountain of Corpses, A Sea of Blood",
+      "id": "cmulh7a6x0psht5ipr9jz255d",
       "sales": 0.0,
       "views": 77,
       "eps": 14,
@@ -1858,6 +2017,7 @@
     "readrealm": {
       "exists": true,
       "title": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
+      "id": "qDAm32WxXdXBxogPnaGe",
       "sales": 5454.0,
       "views": 35135,
       "eps": 48
@@ -1865,6 +2025,7 @@
     "kairew": {
       "exists": true,
       "title": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
+      "id": "367",
       "sales": 374.4,
       "views": 13483,
       "eps": 42
@@ -1872,6 +2033,7 @@
     "chaply": {
       "exists": true,
       "title": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
+      "id": "cmulhvthl0pkjt5ivukga1d8g",
       "sales": 0.0,
       "views": 184,
       "eps": 50,
@@ -1884,7 +2046,7 @@
       "Chaply"
     ],
     "total_sales": 5828.4,
-    "total_views": 48797,
+    "total_views": 48802,
     "max_eps": 50
   },
   {
@@ -1893,6 +2055,7 @@
     "readrealm": {
       "exists": true,
       "title": "คมดาบนิวเคลียร์: หนึ่งฟันผลาญอสูร | Nuclear Blade Technique — I Take Down One Per Slash",
+      "id": "n6r39MJVwy8JxNAB81yk",
       "sales": 421.2,
       "views": 4806,
       "eps": 14
@@ -1900,6 +2063,7 @@
     "kairew": {
       "exists": true,
       "title": "คมดาบนิวเคลียร์: หนึ่งฟันผลาญอสูร | Nuclear Blade Technique — I Take Down One Per Slash",
+      "id": "397",
       "sales": 25.2,
       "views": 1194,
       "eps": 15
@@ -1907,6 +2071,7 @@
     "chaply": {
       "exists": true,
       "title": "คมดาบนิวเคลียร์: หนึ่งฟันผลาญอสูร | Nuclear Blade Technique — I Take Down One Per Slash",
+      "id": "cmulk1lm70nygt5imr1z5d1u6",
       "sales": 0.0,
       "views": 64,
       "eps": 15,
@@ -1919,7 +2084,7 @@
       "Chaply"
     ],
     "total_sales": 446.4,
-    "total_views": 6062,
+    "total_views": 6064,
     "max_eps": 15
   },
   {
@@ -1928,6 +2093,7 @@
     "readrealm": {
       "exists": true,
       "title": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
+      "id": "a7qNk8mOK6EKxXyvogDn",
       "sales": 2046.6,
       "views": 10887,
       "eps": 22
@@ -1935,6 +2101,7 @@
     "kairew": {
       "exists": true,
       "title": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
+      "id": "589",
       "sales": 28.8,
       "views": 709,
       "eps": 22
@@ -1942,6 +2109,7 @@
     "chaply": {
       "exists": true,
       "title": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน | Axe God Path of Invincibility",
+      "id": "cmull5smm0qfdt5ipmerc8kjs",
       "sales": 0.0,
       "views": 218,
       "eps": 22,
@@ -1954,7 +2122,7 @@
       "Chaply"
     ],
     "total_sales": 2075.4,
-    "total_views": 11798,
+    "total_views": 11814,
     "max_eps": 22
   },
   {
@@ -1963,6 +2131,7 @@
     "readrealm": {
       "exists": true,
       "title": "ผู้นำพรรคมารคอยแอบเฝ้ามองข้าอยู่อย่างลับๆ | Secretly Cultivating by the Demon Cult Leader's Side",
+      "id": "9ZazJMeV9pXpO4wK6vRq",
       "sales": 493.2,
       "views": 7311,
       "eps": 23
@@ -1970,6 +2139,7 @@
     "kairew": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0
@@ -1977,6 +2147,7 @@
     "chaply": {
       "exists": true,
       "title": "ผู้นำพรรคมารคอยแอบเฝ้ามองข้าอยู่อย่างลับๆ | Secretly Cultivating by the Demon Cult Leader's Side",
+      "id": "cmulnck7v0pskt5ito6c44uqt",
       "sales": 0.0,
       "views": 267,
       "eps": 24,
@@ -1988,7 +2159,7 @@
       "Chaply"
     ],
     "total_sales": 493.2,
-    "total_views": 7573,
+    "total_views": 7578,
     "max_eps": 24
   },
   {
@@ -1997,6 +2168,7 @@
     "readrealm": {
       "exists": true,
       "title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+      "id": "zkJdZa0Y6gBoxrv4KR5n",
       "sales": 29926.8,
       "views": 140472,
       "eps": 55
@@ -2004,6 +2176,7 @@
     "kairew": {
       "exists": true,
       "title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+      "id": "343",
       "sales": 3295.8,
       "views": 39141,
       "eps": 55
@@ -2011,6 +2184,7 @@
     "chaply": {
       "exists": true,
       "title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่ | I’m a Rich Tycoon, So Being a Scumbag Makes Perfect Sense!",
+      "id": "cmumgpiis0tmst5itwxnwtwt7",
       "sales": 0.0,
       "views": 495,
       "eps": 55,
@@ -2022,8 +2196,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 33096.6,
-    "total_views": 179553,
+    "total_sales": 33222.6,
+    "total_views": 180108,
     "max_eps": 55
   },
   {
@@ -2032,6 +2206,7 @@
     "readrealm": {
       "exists": true,
       "title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+      "id": "le0bk9XVGdJ0Yj34oaQw",
       "sales": 82256.4,
       "views": 275769,
       "eps": 72
@@ -2039,6 +2214,7 @@
     "kairew": {
       "exists": true,
       "title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+      "id": "344",
       "sales": 14562.0,
       "views": 78340,
       "eps": 73
@@ -2046,6 +2222,7 @@
     "chaply": {
       "exists": true,
       "title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+      "id": "cmun1mjxm0yu7t5ioj5wa6031",
       "sales": 0.0,
       "views": 4458,
       "eps": 73,
@@ -2057,16 +2234,17 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 96534.0,
-    "total_views": 357159,
+    "total_sales": 96818.4,
+    "total_views": 358567,
     "max_eps": 73
   },
   {
     "key": "เพราะมีหนี้เป็นพันล้านก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
-    "title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+    "title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
     "readrealm": {
       "exists": true,
       "title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+      "id": "NG8Qg2kxDk7gYz7Kdeo9",
       "sales": 26922.6,
       "views": 85012,
       "eps": 69
@@ -2074,6 +2252,7 @@
     "kairew": {
       "exists": true,
       "title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+      "id": "345",
       "sales": 624.6,
       "views": 8074,
       "eps": 70
@@ -2081,6 +2260,7 @@
     "chaply": {
       "exists": true,
       "title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+      "id": "cmuu97eqw0d44t5hg6zfwvyf8",
       "sales": 0.0,
       "views": 598,
       "eps": 70,
@@ -2092,8 +2272,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 27543.6,
-    "total_views": 93613,
+    "total_sales": 27547.2,
+    "total_views": 93684,
     "max_eps": 70
   },
   {
@@ -2102,6 +2282,7 @@
     "readrealm": {
       "exists": true,
       "title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+      "id": "n6r39MJVwynpxNAB81yk",
       "sales": 121798.8,
       "views": 531144,
       "eps": 129
@@ -2109,6 +2290,7 @@
     "kairew": {
       "exists": true,
       "title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+      "id": "328",
       "sales": 9559.8,
       "views": 170910,
       "eps": 129
@@ -2116,6 +2298,7 @@
     "chaply": {
       "exists": true,
       "title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+      "id": "cmuua0knr0dggt5h971a8fsib",
       "sales": 0.0,
       "views": 1836,
       "eps": 129,
@@ -2127,8 +2310,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 131187.6,
-    "total_views": 703465,
+    "total_sales": 131358.6,
+    "total_views": 703890,
     "max_eps": 129
   },
   {
@@ -2137,6 +2320,7 @@
     "readrealm": {
       "exists": true,
       "title": "จากศัตรูคู่อาฆาตกลายมาเป็นศัตรูคู่บำเพ็ญรัก",
+      "id": "RbKaMELO79JaYglzP41q",
       "sales": 8179.2,
       "views": 65585,
       "eps": 40
@@ -2144,6 +2328,7 @@
     "kairew": {
       "exists": true,
       "title": "จากศัตรูคู่อาฆาตกลายมาเป็นศัตรูคู่บำเพ็ญรัก",
+      "id": "339",
       "sales": 264.6,
       "views": 10670,
       "eps": 41
@@ -2151,6 +2336,7 @@
     "chaply": {
       "exists": true,
       "title": "จากศัตรูคู่อาฆาตกลายมาเป็นศัตรูคู่บำเพ็ญรัก",
+      "id": "cmuvcqpx10k2it5hcsfff2up6",
       "sales": 0.0,
       "views": 390,
       "eps": 41,
@@ -2163,7 +2349,7 @@
       "Chaply"
     ],
     "total_sales": 8443.8,
-    "total_views": 76599,
+    "total_views": 76645,
     "max_eps": 41
   },
   {
@@ -2172,6 +2358,7 @@
     "readrealm": {
       "exists": true,
       "title": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี | Revenge of the Bloom Flower",
+      "id": "3E8jmDbO0ePeVZwR5qpa",
       "sales": 20991.6,
       "views": 69610,
       "eps": 66
@@ -2179,6 +2366,7 @@
     "kairew": {
       "exists": true,
       "title": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี | Revenge of the Bloom Flower",
+      "id": "333",
       "sales": 1276.2,
       "views": 10197,
       "eps": 67
@@ -2186,6 +2374,7 @@
     "chaply": {
       "exists": true,
       "title": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี | Revenge of the Bloom Flower",
+      "id": "cmuwogcnt0rx1t5hjln5y8r2f",
       "sales": 0.0,
       "views": 117,
       "eps": 16,
@@ -2198,7 +2387,7 @@
       "Chaply"
     ],
     "total_sales": 22267.8,
-    "total_views": 79868,
+    "total_views": 79924,
     "max_eps": 67
   },
   {
@@ -2207,6 +2396,7 @@
     "readrealm": {
       "exists": true,
       "title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely",
+      "id": "n6r39MJVwy58xNAB81yk",
       "sales": 26451.0,
       "views": 154852,
       "eps": 120
@@ -2214,6 +2404,7 @@
     "kairew": {
       "exists": true,
       "title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ",
+      "id": "346",
       "sales": 786.6,
       "views": 25271,
       "eps": 120
@@ -2221,6 +2412,7 @@
     "chaply": {
       "exists": true,
       "title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely",
+      "id": "cmuzqktr60f70t5kkpqz1btwu",
       "sales": 0.0,
       "views": 1300,
       "eps": 120,
@@ -2232,8 +2424,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 27235.8,
-    "total_views": 181332,
+    "total_sales": 27237.6,
+    "total_views": 181423,
     "max_eps": 120
   },
   {
@@ -2242,6 +2434,7 @@
     "readrealm": {
       "exists": true,
       "title": "เพราะฉันคือระดับ SSS ที่สมบูรณ์แบบ | The Chosen SSS-Rank",
+      "id": "MvyBR09xzjQlxbd1NrqE",
       "sales": 1155.6,
       "views": 10840,
       "eps": 0
@@ -2249,6 +2442,7 @@
     "kairew": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0
@@ -2256,6 +2450,7 @@
     "chaply": {
       "exists": true,
       "title": "เพราะฉันคือระดับ SSS ที่สมบูรณ์แบบ | The Chosen SSS-Rank",
+      "id": "cmv6so0dp107at5ewv8eopw5f",
       "sales": 0.0,
       "views": 472,
       "eps": 20,
@@ -2267,7 +2462,7 @@
       "Chaply"
     ],
     "total_sales": 1155.6,
-    "total_views": 11310,
+    "total_views": 11312,
     "max_eps": 20
   },
   {
@@ -2276,6 +2471,7 @@
     "readrealm": {
       "exists": true,
       "title": "อดีตตัวร้ายขอพาลูกเมียไปสู่หนทางเซียน",
+      "id": "jamDek8Yo9knO0Pz1JNw",
       "sales": 4778.4,
       "views": 37182,
       "eps": 44
@@ -2283,6 +2479,7 @@
     "kairew": {
       "exists": true,
       "title": "อดีตตัวร้ายขอพาลูกเมียไปสู่หนทางเซียน",
+      "id": "364",
       "sales": 3.0,
       "views": 804,
       "eps": 13
@@ -2290,6 +2487,7 @@
     "chaply": {
       "exists": true,
       "title": "อดีตตัวร้ายขอพาลูกเมียไปสู่หนทางเซียน",
+      "id": "cmv97ot181cyvt5f0egw3orr2",
       "sales": 0.0,
       "views": 131,
       "eps": 44,
@@ -2302,7 +2500,7 @@
       "Chaply"
     ],
     "total_sales": 4781.4,
-    "total_views": 38095,
+    "total_views": 38117,
     "max_eps": 44
   },
   {
@@ -2311,6 +2509,7 @@
     "readrealm": {
       "exists": true,
       "title": "อิสระทางทรัพย์ พันธะทางใจ",
+      "id": "ng5GbmNxBA34Y9AlMyk0",
       "sales": 59036.4,
       "views": 304459,
       "eps": 128
@@ -2318,6 +2517,7 @@
     "kairew": {
       "exists": true,
       "title": "อิสระทางทรัพย์ พันธะทางใจ",
+      "id": "348",
       "sales": 1126.8,
       "views": 40194,
       "eps": 129
@@ -2325,6 +2525,7 @@
     "chaply": {
       "exists": true,
       "title": "อิสระทางทรัพย์ พันธะทางใจ",
+      "id": "cmvezsehy25w0t5eupwauchpa",
       "sales": 0.0,
       "views": 111,
       "eps": 129,
@@ -2336,8 +2537,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 59958.0,
-    "total_views": 342832,
+    "total_sales": 60163.2,
+    "total_views": 344764,
     "max_eps": 129
   },
   {
@@ -2346,6 +2547,7 @@
     "readrealm": {
       "exists": true,
       "title": "เร้นกายมาแสนปี ศิษย์รุ่นหลานวอนให้ข้ากลับสู่ยุทธภพ | I Lived In Seclusion For 100,000 Years",
+      "id": "9ZazJMeV9pZwO4wK6vRq",
       "sales": 5259.6,
       "views": 19754,
       "eps": 168
@@ -2353,6 +2555,7 @@
     "kairew": {
       "exists": true,
       "title": "เร้นกายมาแสนปี ศิษย์รุ่นหลานวอนให้ข้ากลับสู่ยุทธภพ | I Lived In Seclusion For 100,000 Years",
+      "id": "332",
       "sales": 63.0,
       "views": 492,
       "eps": 34
@@ -2360,6 +2563,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2371,7 +2575,7 @@
       "Kairew"
     ],
     "total_sales": 5322.6,
-    "total_views": 20205,
+    "total_views": 20246,
     "max_eps": 168
   },
   {
@@ -2380,6 +2584,7 @@
     "readrealm": {
       "exists": true,
       "title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+      "id": "XrDoGdyOrN17O8pbqz1a",
       "sales": 154225.8,
       "views": 447017,
       "eps": 153
@@ -2387,6 +2592,7 @@
     "kairew": {
       "exists": true,
       "title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+      "id": "334",
       "sales": 3432.6,
       "views": 56933,
       "eps": 152
@@ -2394,6 +2600,7 @@
     "chaply": {
       "exists": true,
       "title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+      "id": "cmvscqbse140ot5i8vfzbibtm",
       "sales": 0.0,
       "views": 1,
       "eps": 0,
@@ -2405,8 +2612,8 @@
       "Kairew",
       "Chaply"
     ],
-    "total_sales": 157383.0,
-    "total_views": 503486,
+    "total_sales": 157658.4,
+    "total_views": 503951,
     "max_eps": 153
   },
   {
@@ -2415,6 +2622,7 @@
     "readrealm": {
       "exists": true,
       "title": "ฟ้าประทานแหวนทะลุมิติพิชิตต่างโลก",
+      "id": "wPZAJq7OkMwlYW8Dozkm",
       "sales": 102101.4,
       "views": 493235,
       "eps": 101
@@ -2422,6 +2630,7 @@
     "kairew": {
       "exists": true,
       "title": "ฟ้าประทานแหวนทะลุมิติพิชิตต่างโลก",
+      "id": "349",
       "sales": 912.6,
       "views": 56745,
       "eps": 101
@@ -2429,6 +2638,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2440,7 +2650,7 @@
       "Kairew"
     ],
     "total_sales": 103014.0,
-    "total_views": 549937,
+    "total_views": 549980,
     "max_eps": 101
   },
   {
@@ -2449,6 +2659,7 @@
     "readrealm": {
       "exists": true,
       "title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+      "id": "NG8Qg2kxDpNKxz7Kdeo9",
       "sales": 95229.0,
       "views": 374336,
       "eps": 113
@@ -2456,6 +2667,7 @@
     "kairew": {
       "exists": true,
       "title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+      "id": "421",
       "sales": 4282.2,
       "views": 75656,
       "eps": 113
@@ -2463,6 +2675,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2473,8 +2686,8 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 98654.4,
-    "total_views": 445713,
+    "total_sales": 99511.2,
+    "total_views": 449992,
     "max_eps": 113
   },
   {
@@ -2483,6 +2696,7 @@
     "readrealm": {
       "exists": true,
       "title": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
+      "id": "NG8Qg2kxDpAjxz7Kdeo9",
       "sales": 149171.6,
       "views": 516823,
       "eps": 130
@@ -2490,6 +2704,7 @@
     "kairew": {
       "exists": true,
       "title": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
+      "id": "365",
       "sales": 2113.2,
       "views": 65377,
       "eps": 130
@@ -2497,6 +2712,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2507,8 +2723,8 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 151284.80000000002,
-    "total_views": 581971,
+    "total_sales": 151284.8,
+    "total_views": 582200,
     "max_eps": 130
   },
   {
@@ -2517,6 +2733,7 @@
     "readrealm": {
       "exists": true,
       "title": "หมื่นเผ่าพันธุ์รุกราน ขอเริ่มต้นด้วยการฝึกอสูรระดับตำนาน",
+      "id": "enEj08zOqEjoO6W34lpa",
       "sales": 35937.0,
       "views": 142060,
       "eps": 81
@@ -2524,6 +2741,7 @@
     "kairew": {
       "exists": true,
       "title": "หมื่นเผ่าพันธุ์รุกราน ขอเริ่มต้นด้วยการฝึกอสูรระดับตำนาน",
+      "id": "366",
       "sales": 504.0,
       "views": 19624,
       "eps": 81
@@ -2531,6 +2749,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2541,8 +2760,8 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 36421.2,
-    "total_views": 161575,
+    "total_sales": 36441.0,
+    "total_views": 161684,
     "max_eps": 81
   },
   {
@@ -2551,6 +2770,7 @@
     "readrealm": {
       "exists": true,
       "title": "ผู้ฝึกกระบี่เต็มเวลา",
+      "id": "lkJy7ZdeYZvMYX5PAwB6",
       "sales": 130226.4,
       "views": 376777,
       "eps": 125
@@ -2558,6 +2778,7 @@
     "kairew": {
       "exists": true,
       "title": "ผู้ฝึกกระบี่เต็มเวลา | Full-Time Swordsman",
+      "id": "768",
       "sales": 946.8,
       "views": 14326,
       "eps": 126
@@ -2565,6 +2786,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2575,8 +2797,8 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 131162.4,
-    "total_views": 391037,
+    "total_sales": 131173.2,
+    "total_views": 391103,
     "max_eps": 126
   },
   {
@@ -2585,6 +2807,7 @@
     "readrealm": {
       "exists": true,
       "title": "เจ้าแห่งกงล้อโชคชะตา",
+      "id": "5qDAm32WxX9XOogPnaGe",
       "sales": 328588.4,
       "views": 1859726,
       "eps": 275
@@ -2592,6 +2815,7 @@
     "kairew": {
       "exists": true,
       "title": "เจ้าแห่งกงล้อหมุนฝืนโชคชะตา",
+      "id": "341",
       "sales": 6244.2,
       "views": 597977,
       "eps": 275
@@ -2599,6 +2823,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2609,8 +2834,8 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 334776.8,
-    "total_views": 2456313,
+    "total_sales": 334832.6,
+    "total_views": 2457703,
     "max_eps": 275
   },
   {
@@ -2619,6 +2844,7 @@
     "readrealm": {
       "exists": true,
       "title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+      "id": "qzkJdZa0Y6kgxrv4KR5n",
       "sales": 224174.8,
       "views": 957053,
       "eps": 143
@@ -2626,6 +2852,7 @@
     "kairew": {
       "exists": true,
       "title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+      "id": "391",
       "sales": 802.8,
       "views": 49003,
       "eps": 142
@@ -2633,6 +2860,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2643,9 +2871,47 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 224864.19999999998,
-    "total_views": 1005301,
+    "total_sales": 224977.6,
+    "total_views": 1006056,
     "max_eps": 143
+  },
+  {
+    "key": "จอมมารแสนดีเช่นข้าไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+    "title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+    "readrealm": {
+      "exists": true,
+      "title": "ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย",
+      "id": "GpeQDXZlx2jvx5n0JWoR",
+      "sales": 39000.0,
+      "views": 219313,
+      "eps": 158
+    },
+    "kairew": {
+      "exists": true,
+      "title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+      "id": "389",
+      "sales": 1468.8,
+      "views": 56840,
+      "eps": 149
+    },
+    "chaply": {
+      "exists": true,
+      "title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต | The Disciple Wants to Kill Me",
+      "id": "cmu8mjor52dc36kdg6vlj2zw2",
+      "sales": 0.0,
+      "views": 867,
+      "eps": 149,
+      "fav": 10
+    },
+    "platform_count": 3,
+    "platforms": [
+      "ReadRealm",
+      "Kairew",
+      "Chaply"
+    ],
+    "total_sales": 40468.8,
+    "total_views": 277020,
+    "max_eps": 158
   },
   {
     "key": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
@@ -2653,6 +2919,7 @@
     "readrealm": {
       "exists": true,
       "title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+      "id": "qzkJdZa0Y6bYrv4KR5nm",
       "sales": 127528.6,
       "views": 638588,
       "eps": 239
@@ -2660,6 +2927,7 @@
     "kairew": {
       "exists": true,
       "title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+      "id": "588",
       "sales": 439.2,
       "views": 17571,
       "eps": 239
@@ -2667,6 +2935,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2678,7 +2947,7 @@
       "Kairew"
     ],
     "total_sales": 127967.8,
-    "total_views": 655847,
+    "total_views": 656159,
     "max_eps": 239
   },
   {
@@ -2687,6 +2956,7 @@
     "readrealm": {
       "exists": true,
       "title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain",
+      "id": "EZ41KDdWY1Nxw7MA5PkN",
       "sales": 461291.7,
       "views": 1250577,
       "eps": 368
@@ -2694,6 +2964,7 @@
     "kairew": {
       "exists": true,
       "title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+      "id": "335",
       "sales": 2771.7,
       "views": 33241,
       "eps": 368
@@ -2701,6 +2972,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2711,8 +2983,8 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 463332.60000000003,
-    "total_views": 1282031,
+    "total_sales": 464063.4,
+    "total_views": 1283818,
     "max_eps": 368
   },
   {
@@ -2721,6 +2993,7 @@
     "readrealm": {
       "exists": true,
       "title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+      "id": "pRbKaMELO72xglzP41qW",
       "sales": 496885.4,
       "views": 1339056,
       "eps": 212
@@ -2728,6 +3001,7 @@
     "kairew": {
       "exists": true,
       "title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+      "id": "390",
       "sales": 516.6,
       "views": 15535,
       "eps": 212
@@ -2735,6 +3009,7 @@
     "chaply": {
       "exists": false,
       "title": "",
+      "id": "",
       "sales": 0.0,
       "views": 0,
       "eps": 0,
@@ -2745,42 +3020,8 @@
       "ReadRealm",
       "Kairew"
     ],
-    "total_sales": 496880.0,
-    "total_views": 1353581,
+    "total_sales": 497402.0,
+    "total_views": 1354591,
     "max_eps": 212
-  },
-  {
-    "key": "จอมมารแสนดีเช่นข้าไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
-    "title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
-    "readrealm": {
-      "exists": false,
-      "title": "",
-      "sales": 0.0,
-      "views": 0,
-      "eps": 0
-    },
-    "kairew": {
-      "exists": true,
-      "title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
-      "sales": 1468.8,
-      "views": 56840,
-      "eps": 149
-    },
-    "chaply": {
-      "exists": true,
-      "title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต | The Disciple Wants to Kill Me",
-      "sales": 0.0,
-      "views": 867,
-      "eps": 149,
-      "fav": 10
-    },
-    "platform_count": 2,
-    "platforms": [
-      "Kairew",
-      "Chaply"
-    ],
-    "total_sales": 1468.8,
-    "total_views": 57707,
-    "max_eps": 149
   }
 ]

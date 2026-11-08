@@ -107,7 +107,7 @@
       "subject": "เจ้าแห่งกงล้อโชคชะตา",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "chapters_count": 274,
+      "chapters_count": 275,
       "total_views": 1860629,
       "total_sales": 328624.4,
       "recorded_at": "2026-11-07T23:14:12.958553+00:00",
@@ -128,7 +128,9 @@
       },
       "sales_7_chapters": 828.0,
       "views_7_chapters": 601,
-      "platform": "readrealm"
+      "platform": "readrealm",
+      "canonical_title": "เจ้าแห่งกงล้อโชคชะตา",
+      "cross_platform_key": "เจ้าแห่งกงล้อโชคชะตา"
     },
     {
       "comic_id": "pRbKaMELO7kBOglzP41q",
@@ -884,7 +886,9 @@
       },
       "sales_7_chapters": 792.0,
       "views_7_chapters": 686,
-      "platform": "readrealm"
+      "platform": "readrealm",
+      "canonical_title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+      "cross_platform_key": "จอมมารแสนดี"
     },
     {
       "comic_id": "Z41KDdWY1Qy9Yw7MA5Pk",
@@ -4048,7 +4052,9 @@
       },
       "sales_7_chapters": 522.0,
       "views_7_chapters": 429,
-      "platform": "readrealm"
+      "platform": "readrealm",
+      "canonical_title": "กบฏแห่งตระกูลขุนนางทรราช",
+      "cross_platform_key": "กบฏแห่งตระกูลขุนนางทรราช"
     },
     {
       "comic_id": "ng5GbmNxBrg8x9AlMyk0",

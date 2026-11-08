@@ -91,3 +91,24 @@
   - เพิ่มฟังก์ชัน `fetch_public_readrealm_chapters(cid)` ดึงจำนวนตอนจริงจาก Public Reader API (`https://api.readrealm.co/reader/book/getListChaptersSectionPage`) โดยไม่ต้องล็อกอิน
   - ใน `tools/multi_platform_tracker.py` เพิ่มระบบ Cross-Platform Discrepancy Reconciliation ตรวจจับเปรียบเทียบชื่อเรื่องกับ Kairew และ Chaply แบบอัตโนมัติ หากพบผลต่างจะเรียก Public API มาแก้ไขทันที (ตรวจพบและแก้ไขมังงะ ReadRealm ที่มีปัญหา -1 ตอนไปทั้งหมด 51 เรื่องอย่างแม่นยำ)
   - ข้อมูลที่ถูกแก้ไขจะบันทึกกลับลงไฟล์ snapshot และส่งต่อไปยัง Frontend อัตโนมัติ
+
+---
+
+## 4. ปัญหาการจับคู่ข้ามแพลตฟอร์ม (Cross-Platform Matching) เรื่อง "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต" (เสร็จสมบูรณ์ 100%)
+
+- [x] **สืบค้นข้อมูลใน ReadRealm Data**:
+  - ชื่อเรื่องบน ReadRealm: `"ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย"`
+  - Comic ID: `GpeQDXZlx2jvx5n0JWoR`
+  - บัญชี: `แปลจนเมื่อย` (lionking account)
+  - จำนวนตอน: **158 ตอน** (ตรวจสอบ Public Reader API ยืนยัน 158 ตอน)
+  - ยอดวิวรวม: **219,361 วิว** | ยอดขายรวม: **฿39,000.00**
+- [x] **วิเคราะห์สาเหตุที่ระบบไม่ Match ข้ามแพลตฟอร์ม**:
+  - Kairew (389) และ Chaply (cmu8mjor52dc36kdg6vlj2zw2) ใช้ชื่อ "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต" แต่ ReadRealm ใช้ชื่อ "ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย" คำไม่ตรงกันทำให้ normalization หลุด
+- [x] **สร้างไฟล์ Mapping Registry และเชื่อมโยงข้อมูล**:
+  - เพิ่ม `tools/data/comic_cross_platform_mapping.json` (และ frontend data)
+  - ปรับปรุง `tools/multi_platform_tracker.py` ให้ใส่ canonical title และ key ให้กับทุกแพลตฟอร์ม
+  - ปรับปรุง `tools/group_matching_comics.py` เชื่อมโยงครบทั้ง 3 แพลตฟอร์ม (RR + KW + CH)
+  - ปรับปรุง `frontend/src/components/views/FinancialsView.tsx` รองรับ title aliases และแสดงผลทั้ง 3 แพลตฟอร์ม
+- [x] **ทดสอบและคอมมิต**:
+  - รัน `group_matching_comics.py` และ `multi_platform_tracker.py --consolidate-only` ผลลัพธ์สมบูรณ์ 100%
+  - รัน `npm run build` ผ่าน 100%
