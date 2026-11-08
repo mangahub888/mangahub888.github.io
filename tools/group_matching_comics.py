@@ -92,6 +92,8 @@ for c in rr1 + rr2:
     if not k:
         continue
     clean_display = get_canonical_display(t, k)
+    clean_display = get_canonical_display(t, k)
+    c_monthly = {m: round(float(v or 0), 2) for m, v in c.get('monthly_sales', {}).items()}
     if k not in groups:
         groups[k] = {
             'key': k,
@@ -102,7 +104,8 @@ for c in rr1 + rr2:
                 'id': c.get('comic_id', ''),
                 'sales': float(c.get('total_sales') or 0),
                 'views': int(c.get('total_views') or 0),
-                'eps': int(c.get('chapters_count') or 0)
+                'eps': int(c.get('chapters_count') or 0),
+                'monthly_sales': c_monthly
             },
             'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0},
             'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0}
@@ -113,7 +116,13 @@ for c in rr1 + rr2:
         groups[k]['readrealm']['eps'] = max(groups[k]['readrealm']['eps'], int(c.get('chapters_count') or 0))
         if not groups[k]['readrealm'].get('id'):
             groups[k]['readrealm']['id'] = c.get('comic_id', '')
-
+        if c_monthly:
+            if 'monthly_sales' not in groups[k]['readrealm']:
+                groups[k]['readrealm']['monthly_sales'] = {}
+            for m_k, m_v in c_monthly.items():
+                groups[k]['readrealm']['monthly_sales'][m_k] = round(
+                    groups[k]['readrealm']['monthly_sales'].get(m_k, 0.0) + m_v, 2
+                )
 # Kairew
 for c in kairew:
     t = c.get('name', '').strip()

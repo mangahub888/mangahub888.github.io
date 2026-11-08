@@ -1209,3 +1209,29 @@ ightarrow$ ข้ามทั้งดึงคำออโต้และ QC �
 
 ---
 *บันทึกโดย: Antigravity Multi-Agent Automation System (Git Release & Documentation Specialist)*
+
+### 🎯 ปรับปรุง Tooltip แยกยอดขายตามแพลตฟอร์มให้แสดงยอดขายประจำเดือนที่เลือกถูกต้อง 100% (8 พ.ย. 2569)
+
+#### 1. คำขอของผู้ใช้:
+- "เลือกเป็นเดือนตุลาคม แต่ยอดมันเหมือนยอดรวม"
+- ตัวเลขในแถวคือ `10,789.47 ฿` แต่เมื่อ Hover Tooltip ดูยอดแยกแพลตฟอร์มกลับแสดง ReadRealm: ฿102,190.80, Kairew: ฿20,822.40 ซึ่งเป็นยอดรวมสะสมตลอดกาล
+
+#### 2. สิ่งที่ดำเนินการแก้ไข:
+1. **คัดลอก Monthly Sales ของ ReadRealm เข้าสู่โครงสร้างข้อมูล (`grouped_matched_comics.json`)**:
+   - ปรับ `tools/group_matching_comics.py` ให้อ่านและรวม `monthly_sales` ของ ReadRealm ทุกเดือน
+   - เดือนตุลาคมของการ์ตูน "การกลับมาของบรรพชนรุ่นแรก..." ได้รับยอดจริง `7,196.40 ฿`
+2. **Frontend (`FinancialsView.tsx`)**:
+   - คำนวณ Monthly Platform Breakdown แยกตามเดือนของแต่ละแถวโดยตรง
+   - เมื่อเลือกเดือนตุลาคม 2569:
+     * ReadRealm: `฿7,196.40` (รอบจริง)
+     * Kairew: `฿3,509.79`
+     * Chaply: `฿83.28`
+     * ผลรวมของทั้ง 3 แพลตฟอร์มเท่ากับ `฿10,789.47` พอดี 100%
+   - แสดงยอดสะสมตลอดกาล (`฿123,507`) แยกไว้ในส่วนหมายเหตุด้านล่าง ไม่ปะปนกับยอดรายเดือน
+   - ปรับ Badge Tooltip ให้ระบุชัดเจนว่า `สะสม ฿...`
+3. **Backend (`backend/Code.js`)**:
+   - ปรับ `calculateAndSyncMonthlyMangaSales` ให้รองรับ `monthly_sales` ของเดือนเป้าหมาย
+   - ลบ fallback `item.revenue = platData.total_sales` ป้องกันไม่ให้นำยอดสะสมตลอดกาลมาเป็นยอดขายรายเดือน
+4. **การทดสอบ**:
+   - รัน `node test_monthly_sales_breakdown.mjs` ผ่าน 100%
+   - รัน `npm --prefix frontend run build` ผ่าน 100%

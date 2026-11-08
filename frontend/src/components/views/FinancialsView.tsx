@@ -47,7 +47,7 @@ import {
 
 import { SearchableSelect } from "@/components/ui/searchable-select";
 
-import { THAI_SHORT_MONTHS, getChapterCount, isUrgentManga, parseDateSafe, getInactivityRecency, resolveMangaName } from "@/lib/utils";
+import { THAI_SHORT_MONTHS, THAI_MONTHS, getChapterCount, isUrgentManga, parseDateSafe, getInactivityRecency, resolveMangaName } from "@/lib/utils";
 
 import initialGrowthData from "@/data/multi_platform_growth_latest.json";
 
@@ -1237,7 +1237,13 @@ export function FinancialsView({
 
   // Memoized platform breakdown index for MangaSales ledger Tooltip
   const platformBreakdownMap = React.useMemo(() => {
-    const map = new Map<string, { readrealm: number; kairew: number; chaply: number; total: number }>();
+    const map = new Map<string, {
+      readrealm: number;
+      kairew: number;
+      chaply: number;
+      total: number;
+      readrealm_monthly?: Record<string, number>;
+    }>();
     if (!groupedList || !Array.isArray(groupedList)) return map;
 
     for (const g of groupedList) {
@@ -1246,8 +1252,9 @@ export function FinancialsView({
       const kr = Number(g.kairew?.sales) || 0;
       const ch = Number(g.chaply?.sales) || 0;
       const total = Number(g.total_sales) || (rr + kr + ch);
+      const rrMonthly = (g.readrealm as any)?.monthly_sales || undefined;
 
-      const entry = { readrealm: rr, kairew: kr, chaply: ch, total };
+      const entry = { readrealm: rr, kairew: kr, chaply: ch, total, readrealm_monthly: rrMonthly };
       if (norm) map.set(norm, entry);
       if (g.key) map.set(g.key, entry);
     }
@@ -1257,7 +1264,7 @@ export function FinancialsView({
   // Comprehensive multi-platform dictionary combining grouped_matched_comics, comic_cross_platform_mapping, and trackerData
   const allMangaPlatformsMap = React.useMemo(() => {
     const map = new Map<string, {
-      readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
       kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string };
       chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string };
       other?: { name: string };
@@ -1265,7 +1272,7 @@ export function FinancialsView({
     }>();
 
     const addOrMerge = (key: string, data: {
-      readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string };
+      readrealm?: { exists: boolean; sales?: number; chapters?: number; account?: string; monthly_sales?: Record<string, number> };
       kairew?: { exists: boolean; sales?: number; chapters?: number; account?: string };
       chaply?: { exists: boolean; sales?: number; chapters?: number; account?: string };
       other?: { name: string };
@@ -1281,6 +1288,7 @@ export function FinancialsView({
           sales: Math.max(current.readrealm?.sales || 0, data.readrealm.sales || 0),
           chapters: Math.max(current.readrealm?.chapters || 0, data.readrealm.chapters || 0),
           account: data.readrealm.account || current.readrealm?.account,
+          monthly_sales: data.readrealm.monthly_sales || current.readrealm?.monthly_sales,
         };
       }
       if (data.kairew?.exists) {
@@ -1348,6 +1356,7 @@ export function FinancialsView({
             exists: true,
             sales: Number(g.readrealm.sales) || 0,
             chapters: Number(g.readrealm.eps) || 0,
+            monthly_sales: (g.readrealm as any)?.monthly_sales,
           } : undefined,
           kairew: g.kairew?.exists ? {
             exists: true,
@@ -4473,29 +4482,109 @@ export function FinancialsView({
                       const profit = rev - cost;
                       const isUrgent = isTitleUrgent(sale.seriesname, sale.mangaid);
 
-                      // Calculate Platform Breakdown for Tooltip & Columns
+                      // Calculate Monthly Platform Breakdown for Tooltip & Columns
                       const normSaleKey = normalizeMangaTitle(sale.seriesname);
                       const matchedPlatBreakdown = normSaleKey ? platformBreakdownMap.get(normSaleKey) : null;
+                      const platMatch = normSaleKey ? allMangaPlatformsMap.get(normSaleKey) : null;
                       const salePlatforms = getSalePlatforms(sale);
+
+                      // Determine row's month and Thai month name for monthly breakdown
+                      let rowMonth = "";
+                      if (sale.month && /^\d{4}-\d{2}$/.test(String(sale.month).trim())) {
+                        rowMonth = String(sale.month).trim();
+                      } else if (sale.date) {
+                        const mMatch = String(sale.date).match(/^(\d{4}-\d{2})/);
+                        if (mMatch) rowMonth = mMatch[1];
+                      }
+                      if (!rowMonth && selectedLedgerMonth && selectedLedgerMonth !== "all" && /^\d{4}-\d{2}$/.test(selectedLedgerMonth)) {
+                        rowMonth = selectedLedgerMonth;
+                      }
+
+                      let rowThaiMonth = "";
+                      let rowMonthLabel = "";
+                      if (rowMonth) {
+                        try {
+                          const [yP, mP] = rowMonth.split("-");
+                          const mIdx = parseInt(mP, 10) - 1;
+                          if (mIdx >= 0 && mIdx < 12) {
+                            rowThaiMonth = THAI_MONTHS[mIdx];
+                            rowMonthLabel = `${rowThaiMonth} ${parseInt(yP, 10) + 543}`;
+                          }
+                        } catch (e) {}
+                      }
+
+                      const rrExists = Boolean(salePlatforms.some((p) => p.id === "readrealm"));
+                      const kwExists = Boolean(salePlatforms.some((p) => p.id === "kairew"));
+                      const chExists = Boolean(salePlatforms.some((p) => p.id === "chaply"));
+                      const activePlatCount = (rrExists ? 1 : 0) + (kwExists ? 1 : 0) + (chExists ? 1 : 0);
+
+                      // Lifetime totals for reference
+                      const rrLifetime = matchedPlatBreakdown?.readrealm || platMatch?.readrealm?.sales || 0;
+                      const krLifetime = matchedPlatBreakdown?.kairew || platMatch?.kairew?.sales || 0;
+                      const chLifetime = matchedPlatBreakdown?.chaply || platMatch?.chaply?.sales || 0;
+                      const totalLifetime = (rrExists ? rrLifetime : 0) + (kwExists ? krLifetime : 0) + (chExists ? chLifetime : 0);
+
+                      // ReadRealm actual monthly sales if available
+                      const rrMonthlyMap = matchedPlatBreakdown?.readrealm_monthly || platMatch?.readrealm?.monthly_sales;
+                      const rrMonthSales = (rowThaiMonth && rrMonthlyMap && typeof rrMonthlyMap[rowThaiMonth] === "number")
+                        ? Number(rrMonthlyMap[rowThaiMonth])
+                        : 0;
+
                       let rrSaleAmt = 0;
                       let krSaleAmt = 0;
                       let chSaleAmt = 0;
-                      if (matchedPlatBreakdown && matchedPlatBreakdown.total > 0) {
-                        rrSaleAmt = matchedPlatBreakdown.readrealm;
-                        krSaleAmt = matchedPlatBreakdown.kairew;
-                        chSaleAmt = matchedPlatBreakdown.chaply;
+                      let isRrExact = false;
+
+                      if (rev <= 0) {
+                        rrSaleAmt = 0;
+                        krSaleAmt = 0;
+                        chSaleAmt = 0;
+                      } else if (activePlatCount <= 1) {
+                        if (kwExists) krSaleAmt = rev;
+                        else if (chExists) chSaleAmt = rev;
+                        else rrSaleAmt = rev;
                       } else {
-                        const platMatch = normSaleKey ? allMangaPlatformsMap.get(normSaleKey) : null;
-                        if (platMatch && (platMatch.readrealm?.sales || platMatch.kairew?.sales || platMatch.chaply?.sales)) {
-                          rrSaleAmt = platMatch.readrealm?.sales || 0;
-                          krSaleAmt = platMatch.kairew?.sales || 0;
-                          chSaleAmt = platMatch.chaply?.sales || 0;
+                        // Multi-platform title: sum of breakdown MUST equal rev
+                        if (rrExists && rrMonthSales > 0 && rev >= rrMonthSales) {
+                          rrSaleAmt = rrMonthSales;
+                          isRrExact = true;
+                          const remainder = Math.round((rev - rrSaleAmt) * 100) / 100;
+                          const otherLifetime = (kwExists ? krLifetime : 0) + (chExists ? chLifetime : 0);
+                          if (otherLifetime > 0) {
+                            if (kwExists && chExists) {
+                              krSaleAmt = Math.round((remainder * (krLifetime / otherLifetime)) * 100) / 100;
+                              chSaleAmt = Math.round((remainder - krSaleAmt) * 100) / 100;
+                            } else if (kwExists) {
+                              krSaleAmt = remainder;
+                            } else if (chExists) {
+                              chSaleAmt = remainder;
+                            }
+                          } else {
+                            const otherCount = (kwExists ? 1 : 0) + (chExists ? 1 : 0);
+                            if (otherCount > 0) {
+                              const share = Math.round((remainder / otherCount) * 100) / 100;
+                              if (kwExists) krSaleAmt = share;
+                              if (chExists) chSaleAmt = Math.round((remainder - krSaleAmt) * 100) / 100;
+                            }
+                          }
+                        } else if (totalLifetime > 0) {
+                          const shareRR = rrExists ? (rrLifetime / totalLifetime) : 0;
+                          const shareKW = kwExists ? (krLifetime / totalLifetime) : 0;
+                          rrSaleAmt = Math.round((rev * shareRR) * 100) / 100;
+                          krSaleAmt = Math.round((rev * shareKW) * 100) / 100;
+                          if (chExists) {
+                            chSaleAmt = Math.round((rev - rrSaleAmt - krSaleAmt) * 100) / 100;
+                          } else if (kwExists) {
+                            krSaleAmt = Math.round((rev - rrSaleAmt) * 100) / 100;
+                          } else {
+                            rrSaleAmt = rev;
+                          }
                         } else {
-                          const webStr = String(sale.website || "").toLowerCase();
-                          if (webStr.includes("readrealm")) rrSaleAmt = rev;
-                          else if (webStr.includes("kairew")) krSaleAmt = rev;
-                          else if (webStr.includes("chaply")) chSaleAmt = rev;
-                          else rrSaleAmt = rev;
+                          const share = Math.round((rev / activePlatCount) * 100) / 100;
+                          let alloc = 0;
+                          if (rrExists) { rrSaleAmt = share; alloc += share; }
+                          if (kwExists) { krSaleAmt = share; alloc += share; }
+                          if (chExists) { chSaleAmt = Math.round((rev - alloc) * 100) / 100; }
                         }
                       }
 
@@ -4540,7 +4629,7 @@ export function FinancialsView({
                                 if (p.chapters) details.push(`${p.chapters} ตอน`);
                                 if (p.sales != null && p.sales > 0) {
                                   details.push(
-                                    `฿${p.sales.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,
+                                    `สะสม ฿${p.sales.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
                                   );
                                 }
                                 if (details.length > 0) {
@@ -4601,44 +4690,65 @@ export function FinancialsView({
                                 } hidden group-hover:flex flex-col z-[60] w-64 p-2.5 bg-[#0f172a] border border-slate-700/80 rounded-lg shadow-2xl shadow-black/80 text-left pointer-events-none backdrop-blur-md`}
                               >
                                 <div className="text-[11px] font-bold text-slate-200 border-b border-slate-700/70 pb-1.5 mb-1.5 flex items-center justify-between">
-                                  <span className="truncate pr-2">📊 แยกยอดขายตามแพลตฟอร์ม</span>
-                                  <span className="text-indigo-300 shrink-0">฿{rev.toLocaleString()}</span>
+                                  <span className="truncate pr-2">📊 แยกยอดขายตามแพลตฟอร์ม {rowMonthLabel ? `(${rowMonthLabel})` : ""}</span>
+                                  <span className="text-indigo-300 shrink-0">฿{rev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 </div>
                                 <div className="space-y-1.5 text-[11px]">
-                                  <div className="flex items-center justify-between">
-                                    <span className="flex items-center gap-1.5 text-slate-300">
-                                      <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></span>
-                                      ReadRealm:
-                                    </span>
-                                    <span className="font-semibold text-emerald-300">
-                                      ฿{rrSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center justify-between">
-                                    <span className="flex items-center gap-1.5 text-slate-300">
-                                      <span className="w-2 h-2 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50"></span>
-                                      Kairew:
-                                    </span>
-                                    <span className="font-semibold text-blue-300">
-                                      ฿{krSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center justify-between">
-                                    <span className="flex items-center gap-1.5 text-slate-300">
-                                      <span className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
-                                      Chaply:
-                                    </span>
-                                    <span className="font-semibold text-amber-300">
-                                      ฿{chSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
-                                  </div>
+                                  {rrExists && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="flex items-center gap-1.5 text-slate-300">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></span>
+                                        ReadRealm:
+                                        {isRrExact && (
+                                          <span className="text-[9px] text-emerald-400/80 font-normal">
+                                            (รอบจริง)
+                                          </span>
+                                        )}
+                                      </span>
+                                      <span className="font-semibold text-emerald-300">
+                                        ฿{rrSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {kwExists && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="flex items-center gap-1.5 text-slate-300">
+                                        <span className="w-2 h-2 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50"></span>
+                                        Kairew:
+                                      </span>
+                                      <span className="font-semibold text-blue-300">
+                                        ฿{krSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {chExists && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="flex items-center gap-1.5 text-slate-300">
+                                        <span className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
+                                        Chaply:
+                                      </span>
+                                      <span className="font-semibold text-amber-300">
+                                        ฿{chSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
-                                <div className="mt-2 pt-1.5 border-t border-slate-800 text-[10px] text-slate-400 flex justify-between items-center">
-                                  <span>ช่องทางเผยแพร่:</span>
-                                  <span className="text-slate-300 font-medium truncate max-w-[130px] flex items-center gap-1">
-                                    {salePlatforms.map((p) => p.code).join(" • ")}
-                                    {salePlatforms.length > 1 ? ` (${salePlatforms.length}P)` : ""}
-                                  </span>
+                                <div className="mt-2 pt-1.5 border-t border-slate-800 text-[10px] text-slate-400 space-y-1">
+                                  {totalLifetime > 0 && (
+                                    <div className="flex justify-between items-center text-slate-400">
+                                      <span>ยอดสะสมตลอดกาล:</span>
+                                      <span className="text-slate-300 font-mono">
+                                        ฿{totalLifetime.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                      </span>
+                                    </div>
+                                  )}
+                                  <div className="flex justify-between items-center">
+                                    <span>ช่องทางเผยแพร่:</span>
+                                    <span className="text-slate-300 font-medium truncate max-w-[130px] flex items-center gap-1">
+                                      {salePlatforms.map((p) => p.code).join(" • ")}
+                                      {salePlatforms.length > 1 ? ` (${salePlatforms.length}P)` : ""}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>

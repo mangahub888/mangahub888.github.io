@@ -2861,6 +2861,11 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     const tMonth = parseInt(parts[1], 10);
     const lastDayOfMonth = new Date(tYear, tMonth, 0);
     const lastDayStr = Utilities.formatDate(lastDayOfMonth, "GMT+7", "yyyy-MM-dd");
+    const THAI_MONTH_NAMES_LIST = [
+      'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+    const targetThaiMonth = (tMonth >= 1 && tMonth <= 12) ? THAI_MONTH_NAMES_LIST[tMonth - 1] : '';
 
     // 2. ดึงข้อมูลพื้นฐานจากระบบ
     const mangaList = getMangaList();
@@ -2897,17 +2902,23 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
         }
         const sAmt = parseFloat(c.total_sales) || 0;
         const dAmt = parseFloat(c.growth_30d?.sales_delta || c.sales_delta30d) || 0;
+        let mAmt = 0;
+        if (c.monthly_sales && targetThaiMonth && c.monthly_sales[targetThaiMonth] !== undefined) {
+          mAmt = parseFloat(c.monthly_sales[targetThaiMonth]) || 0;
+        }
 
         // Raw exact title
         if (!platformSalesMap[title]) {
           platformSalesMap[title] = {
             title: title,
             total_sales: 0,
+            monthly_sales: 0,
             sales_delta30d: 0,
             platform: platName
           };
         }
         platformSalesMap[title].total_sales += sAmt;
+        platformSalesMap[title].monthly_sales += mAmt;
         platformSalesMap[title].sales_delta30d += dAmt;
 
         // Normalized key for robust cross-platform matching
@@ -2917,11 +2928,13 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
             platformSalesNormMap[normKey] = {
               title: title,
               total_sales: 0,
+              monthly_sales: 0,
               sales_delta30d: 0,
               platforms: []
             };
           }
           platformSalesNormMap[normKey].total_sales += sAmt;
+          platformSalesNormMap[normKey].monthly_sales += mAmt;
           platformSalesNormMap[normKey].sales_delta30d += dAmt;
           if (platformSalesNormMap[normKey].platforms.indexOf(platName) === -1) {
             platformSalesNormMap[normKey].platforms.push(platName);
@@ -3144,10 +3157,10 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
 
       if (existingMonthSalesMap[mName] && parseFloat(existingMonthSalesMap[mName].revenue) > 0) {
         item.revenue = parseFloat(existingMonthSalesMap[mName].revenue);
+      } else if (platData && platData.monthly_sales > 0) {
+        item.revenue = platData.monthly_sales;
       } else if (platData && platData.sales_delta30d > 0) {
         item.revenue = platData.sales_delta30d;
-      } else if (platData && platData.total_sales > 0) {
-        item.revenue = platData.total_sales;
       } else {
         item.revenue = 0;
       }
