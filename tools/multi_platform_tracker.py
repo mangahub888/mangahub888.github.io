@@ -32,6 +32,9 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 FRONTEND_SRC_DIR = os.path.join(BASE_DIR, "..", "frontend", "src", "data")
 FRONTEND_PUB_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "data")
 
+DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
+DEFAULT_PASSCODE = "10211032"
+
 READREALM_LATEST = os.path.join(DATA_DIR, "readrealm_growth_latest.json")
 KAIREW_LATEST = os.path.join(DATA_DIR, "kairew_growth_latest.json")
 CHAPLY_LATEST = os.path.join(DATA_DIR, "chaply_growth_latest.json")
@@ -286,31 +289,33 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
 def main():
     parser = argparse.ArgumentParser(description="Multi-Platform 6-Hour Growth Tracker")
     parser.add_argument("--platform", type=str, default="all", choices=["all", "readrealm", "kairew", "chaply"], help="Target platform to track")
+    parser.add_argument("--browser", action="store_true", default=True, help="Launch real visible Google Chrome browser")
+    parser.add_argument("--headless", action="store_true", help="Run browser in headless mode")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
-    parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or "", help="GAS Web App URL")
-    parser.add_argument("--passcode", type=str, default=os.environ.get("PASSCODE", "10211032"), help="GAS Web App Passcode")
+    parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
+    parser.add_argument("--passcode", type=str, default=os.environ.get("PASSCODE", DEFAULT_PASSCODE), help="GAS Web App Passcode")
     parser.add_argument("--consolidate-only", action="store_true", help="Consolidate existing latest JSON files without re-fetching")
     args = parser.parse_args()
 
     common_args = []
+    if args.browser and not args.headless:
+        common_args.append("--browser")
     if args.send_gas:
         common_args.append("--send-gas")
-        if args.gas_url:
-            common_args.extend(["--gas-url", args.gas_url])
-        if args.passcode:
-            common_args.extend(["--passcode", args.passcode])
+        common_args.extend(["--gas-url", args.gas_url or DEFAULT_GAS_URL])
+        common_args.extend(["--passcode", args.passcode or DEFAULT_PASSCODE])
 
     if not args.consolidate_only:
         # Run ReadRealm
         if args.platform in ("all", "readrealm"):
             # readrealm uses --sync-gas
             rr_args = []
+            if args.browser and not args.headless:
+                rr_args.append("--browser")
             if args.send_gas:
                 rr_args.append("--sync-gas")
-                if args.gas_url:
-                    rr_args.extend(["--gas-url", args.gas_url])
-                if args.passcode:
-                    rr_args.extend(["--passcode", args.passcode])
+                rr_args.extend(["--gas-url", args.gas_url or DEFAULT_GAS_URL])
+                rr_args.extend(["--passcode", args.passcode or DEFAULT_PASSCODE])
             run_script("readrealm_growth_tracker.py", rr_args)
 
         # Run Kairew

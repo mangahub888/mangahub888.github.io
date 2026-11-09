@@ -1,10 +1,10 @@
 {
   "platform": "kairew",
-  "pipeline_recorded_at": "2026-11-09T05:14:24.151601+00:00",
+  "pipeline_recorded_at": "2026-11-09T08:50:58.017248+00:00",
   "date_reference": "2026-11-09",
   "total_comics": 80,
-  "total_sales_portfolio": 145007.50000000003,
-  "total_views_portfolio": 2540072,
+  "total_sales_portfolio": 145077.70000000004,
+  "total_views_portfolio": 2540591,
   "top_sales_comic": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ",
   "total_inactive_30d": 31,
   "total_active_30d": 49,
@@ -18,9 +18,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 126,
-      "total_views": 461243,
+      "total_views": 461331,
       "total_sales": 30846.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-09 01:44:12",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -37,7 +37,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 237.6,
-      "views_7_chapters": 250
+      "views_7_chapters": 250,
+      "monthly_sales": {
+        "มกราคม": 878.4,
+        "กุมภาพันธ์": 4303.8,
+        "มีนาคม": 3175.2,
+        "เมษายน": 2732.4,
+        "พฤษภาคม": 959.4,
+        "มิถุนายน": 6406.2,
+        "กรกฎาคม": 7185.6,
+        "สิงหาคม": 3004.2,
+        "กันยายน": 972.0,
+        "ตุลาคม": 439.2,
+        "พฤศจิกายน": 77.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "443",
@@ -46,9 +60,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 64,
-      "total_views": 79124,
-      "total_sales": 21198.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "total_views": 79142,
+      "total_sales": 21216.6,
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 02:21:34",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -65,7 +79,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2586.6,
-      "views_7_chapters": 2479
+      "views_7_chapters": 2479,
+      "monthly_sales": {
+        "มกราคม": 304.2,
+        "กุมภาพันธ์": 181.8,
+        "มีนาคม": 815.4,
+        "เมษายน": 1337.4,
+        "พฤษภาคม": 1053.0,
+        "มิถุนายน": 576.0,
+        "กรกฎาคม": 4870.8,
+        "สิงหาคม": 3715.2,
+        "กันยายน": 5279.4,
+        "ตุลาคม": 2347.2,
+        "พฤศจิกายน": 630.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "344",
@@ -74,9 +102,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 74,
-      "total_views": 82629,
+      "total_views": 82686,
       "total_sales": 15112.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 22:43:41",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -93,7 +121,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 937.8,
-      "views_7_chapters": 1033
+      "views_7_chapters": 1033,
+      "monthly_sales": {
+        "มกราคม": 455.4,
+        "กุมภาพันธ์": 1353.6,
+        "มีนาคม": 2068.2,
+        "เมษายน": 1405.8,
+        "พฤษภาคม": 264.6,
+        "มิถุนายน": 882.0,
+        "กรกฎาคม": 1389.6,
+        "สิงหาคม": 2658.6,
+        "กันยายน": 1553.4,
+        "ตุลาคม": 1481.4,
+        "พฤศจิกายน": 939.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "328",
@@ -102,9 +144,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 130,
-      "total_views": 171221,
+      "total_views": 171229,
       "total_sales": 9577.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-05 12:42:55",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -121,7 +163,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 99.0,
-      "views_7_chapters": 126
+      "views_7_chapters": 126,
+      "monthly_sales": {
+        "มกราคม": 849.6,
+        "กุมภาพันธ์": 1089.0,
+        "มีนาคม": 1857.6,
+        "เมษายน": 1035.0,
+        "พฤษภาคม": 516.6,
+        "มิถุนายน": 502.2,
+        "กรกฎาคม": 973.8,
+        "สิงหาคม": 419.4,
+        "กันยายน": 322.2,
+        "ตุลาคม": 129.6,
+        "พฤศจิกายน": 30.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "766",
@@ -130,9 +186,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 62,
-      "total_views": 93456,
+      "total_views": 93459,
       "total_sales": 6760.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-20 15:04:09",
       "days_inactive": 19,
       "is_inactive_30d": false,
@@ -149,7 +205,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 361.8,
-      "views_7_chapters": 397
+      "views_7_chapters": 397,
+      "monthly_sales": {
+        "มกราคม": 1256.4,
+        "กุมภาพันธ์": 1227.6,
+        "มีนาคม": 1038.6,
+        "เมษายน": 595.8,
+        "พฤษภาคม": 446.4,
+        "มิถุนายน": 126.0,
+        "กรกฎาคม": 349.2,
+        "สิงหาคม": 423.0,
+        "กันยายน": 313.2,
+        "ตุลาคม": 925.2,
+        "พฤศจิกายน": 30.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "341",
@@ -158,9 +228,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 275,
-      "total_views": 603055,
-      "total_sales": 6291.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "total_views": 603134,
+      "total_sales": 6336.0,
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-26 01:41:11",
       "days_inactive": 14,
       "is_inactive_30d": false,
@@ -177,7 +247,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 192.6,
-      "views_7_chapters": 182
+      "views_7_chapters": 182,
+      "monthly_sales": {
+        "มกราคม": 248.4,
+        "กุมภาพันธ์": 867.6,
+        "มีนาคม": 1405.8,
+        "เมษายน": 599.4,
+        "พฤษภาคม": 390.6,
+        "มิถุนายน": 291.6,
+        "กรกฎาคม": 720.0,
+        "สิงหาคม": 982.8,
+        "กันยายน": 59.4,
+        "ตุลาคม": 619.2,
+        "พฤศจิกายน": 149.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "421",
@@ -186,9 +270,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 114,
-      "total_views": 77088,
+      "total_views": 77106,
       "total_sales": 4392.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 22:31:18",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -205,7 +289,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 316.8,
-      "views_7_chapters": 300
+      "views_7_chapters": 300,
+      "monthly_sales": {
+        "มกราคม": 75.6,
+        "กุมภาพันธ์": 142.2,
+        "มีนาคม": 768.6,
+        "เมษายน": 250.2,
+        "พฤษภาคม": 455.4,
+        "มิถุนายน": 297.0,
+        "กรกฎาคม": 331.2,
+        "สิงหาคม": 565.2,
+        "กันยายน": 439.2,
+        "ตุลาคม": 495.0,
+        "พฤศจิกายน": 160.2,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "334",
@@ -214,9 +312,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 154,
-      "total_views": 58021,
-      "total_sales": 3506.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "total_views": 58097,
+      "total_sales": 3511.8,
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 02:16:15",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -233,7 +331,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 253.8,
-      "views_7_chapters": 248
+      "views_7_chapters": 248,
+      "monthly_sales": {
+        "มกราคม": 253.8,
+        "กุมภาพันธ์": 262.8,
+        "มีนาคม": 246.6,
+        "เมษายน": 253.8,
+        "พฤษภาคม": 167.4,
+        "มิถุนายน": 147.6,
+        "กรกฎาคม": 266.4,
+        "สิงหาคม": 451.8,
+        "กันยายน": 630.0,
+        "ตุลาคม": 370.8,
+        "พฤศจิกายน": 201.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "578",
@@ -242,9 +354,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 102,
-      "total_views": 52403,
+      "total_views": 52407,
       "total_sales": 3439.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-28 01:23:00",
       "days_inactive": 12,
       "is_inactive_30d": false,
@@ -261,7 +373,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 133.2,
-      "views_7_chapters": 152
+      "views_7_chapters": 152,
+      "monthly_sales": {
+        "มกราคม": 135.0,
+        "กุมภาพันธ์": 558.0,
+        "มีนาคม": 714.6,
+        "เมษายน": 453.6,
+        "พฤษภาคม": 244.8,
+        "มิถุนายน": 239.4,
+        "กรกฎาคม": 225.0,
+        "สิงหาคม": 183.6,
+        "กันยายน": 270.0,
+        "ตุลาคม": 342.0,
+        "พฤศจิกายน": 48.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "343",
@@ -272,7 +398,7 @@
       "chapters_count": 56,
       "total_views": 39388,
       "total_sales": 3342.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-04 23:29:03",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -289,7 +415,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 216.0,
-      "views_7_chapters": 263
+      "views_7_chapters": 263,
+      "monthly_sales": {
+        "มกราคม": 361.8,
+        "กุมภาพันธ์": 250.2,
+        "มีนาคม": 718.2,
+        "เมษายน": 469.8,
+        "พฤษภาคม": 239.4,
+        "มิถุนายน": 210.6,
+        "กรกฎาคม": 388.8,
+        "สิงหาคม": 142.2,
+        "กันยายน": 81.0,
+        "ตุลาคม": 282.6,
+        "พฤศจิกายน": 59.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "661",
@@ -298,9 +438,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 71,
-      "total_views": 20177,
+      "total_views": 20179,
       "total_sales": 3186.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-04 23:43:13",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -317,7 +457,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 289.8,
-      "views_7_chapters": 294
+      "views_7_chapters": 294,
+      "monthly_sales": {
+        "มกราคม": 190.8,
+        "กุมภาพันธ์": 253.8,
+        "มีนาคม": 401.4,
+        "เมษายน": 97.2,
+        "พฤษภาคม": 311.4,
+        "มิถุนายน": 189.0,
+        "กรกฎาคม": 88.2,
+        "สิงหาคม": 367.2,
+        "กันยายน": 248.4,
+        "ตุลาคม": 162.0,
+        "พฤศจิกายน": 61.2,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "765",
@@ -326,9 +480,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 22,
-      "total_views": 83149,
+      "total_views": 83155,
       "total_sales": 3078.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-04-07 22:09:36",
       "days_inactive": 215,
       "is_inactive_30d": true,
@@ -345,7 +499,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1069.2,
-      "views_7_chapters": 1174
+      "views_7_chapters": 1174,
+      "monthly_sales": {
+        "มกราคม": 244.8,
+        "กุมภาพันธ์": 732.6,
+        "มีนาคม": 1632.6,
+        "เมษายน": 315.0,
+        "พฤษภาคม": 52.2,
+        "มิถุนายน": 64.8,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 9.0,
+        "กันยายน": 23.4,
+        "ตุลาคม": 3.6,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "335",
@@ -354,9 +522,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 368,
-      "total_views": 33546,
+      "total_views": 33554,
       "total_sales": 2814.9,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-04 00:56:19",
       "days_inactive": 5,
       "is_inactive_30d": false,
@@ -373,7 +541,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 406.8,
-      "views_7_chapters": 412
+      "views_7_chapters": 412,
+      "monthly_sales": {
+        "มกราคม": 142.2,
+        "กุมภาพันธ์": 97.2,
+        "มีนาคม": 142.2,
+        "เมษายน": 144.0,
+        "พฤษภาคม": 162.0,
+        "มิถุนายน": 397.8,
+        "กรกฎาคม": 354.6,
+        "สิงหาคม": 347.4,
+        "กันยายน": 417.3,
+        "ตุลาคม": 338.4,
+        "พฤศจิกายน": 120.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "365",
@@ -384,7 +566,7 @@
       "chapters_count": 130,
       "total_views": 65526,
       "total_sales": 2185.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-06-13 10:59:22",
       "days_inactive": 148,
       "is_inactive_30d": true,
@@ -401,7 +583,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 324.0,
-      "views_7_chapters": 451
+      "views_7_chapters": 451,
+      "monthly_sales": {
+        "มกราคม": 149.4,
+        "กุมภาพันธ์": 151.2,
+        "มีนาคม": 271.8,
+        "เมษายน": 423.0,
+        "พฤษภาคม": 559.8,
+        "มิถุนายน": 232.2,
+        "กรกฎาคม": 185.4,
+        "สิงหาคม": 7.2,
+        "กันยายน": 68.4,
+        "ตุลาคม": 14.4,
+        "พฤศจิกายน": 72.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "486",
@@ -410,9 +606,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 60,
-      "total_views": 29590,
-      "total_sales": 2071.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "total_views": 29593,
+      "total_sales": 2073.6,
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 02:22:26",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -429,7 +625,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 50.4,
-      "views_7_chapters": 54
+      "views_7_chapters": 54,
+      "monthly_sales": {
+        "มกราคม": 64.8,
+        "กุมภาพันธ์": 145.8,
+        "มีนาคม": 651.6,
+        "เมษายน": 306.0,
+        "พฤษภาคม": 151.2,
+        "มิถุนายน": 203.4,
+        "กรกฎาคม": 275.4,
+        "สิงหาคม": 70.2,
+        "กันยายน": 115.2,
+        "ตุลาคม": 41.4,
+        "พฤศจิกายน": 45.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "5076",
@@ -438,9 +648,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 29,
-      "total_views": 8995,
+      "total_views": 9003,
       "total_sales": 1893.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 21:34:52",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -457,7 +667,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 453.6,
-      "views_7_chapters": 468
+      "views_7_chapters": 468,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 21.6,
+        "กรกฎาคม": 217.8,
+        "สิงหาคม": 424.8,
+        "กันยายน": 829.8,
+        "ตุลาคม": 286.2,
+        "พฤศจิกายน": 113.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "730",
@@ -468,7 +692,7 @@
       "chapters_count": 44,
       "total_views": 24389,
       "total_sales": 1492.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-06-07 14:21:09",
       "days_inactive": 154,
       "is_inactive_30d": true,
@@ -485,7 +709,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 210.6,
-      "views_7_chapters": 206
+      "views_7_chapters": 206,
+      "monthly_sales": {
+        "มกราคม": 343.8,
+        "กุมภาพันธ์": 91.8,
+        "มีนาคม": 75.6,
+        "เมษายน": 183.6,
+        "พฤษภาคม": 140.4,
+        "มิถุนายน": 95.4,
+        "กรกฎาคม": 12.6,
+        "สิงหาคม": 37.8,
+        "กันยายน": 3.6,
+        "ตุลาคม": 14.4,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "389",
@@ -494,9 +732,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 150,
-      "total_views": 57008,
+      "total_views": 57011,
       "total_sales": 1470.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 22:41:17",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -513,7 +751,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 23.4,
-      "views_7_chapters": 25
+      "views_7_chapters": 25,
+      "monthly_sales": {
+        "มกราคม": 194.4,
+        "กุมภาพันธ์": 190.8,
+        "มีนาคม": 156.6,
+        "เมษายน": 187.2,
+        "พฤษภาคม": 316.8,
+        "มิถุนายน": 156.6,
+        "กรกฎาคม": 104.4,
+        "สิงหาคม": 45.0,
+        "กันยายน": 55.8,
+        "ตุลาคม": 41.4,
+        "พฤศจิกายน": 3.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "333",
@@ -522,9 +774,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 67,
-      "total_views": 10319,
+      "total_views": 10322,
       "total_sales": 1346.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-03-15 21:45:25",
       "days_inactive": 238,
       "is_inactive_30d": true,
@@ -541,7 +793,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 198.0,
-      "views_7_chapters": 198
+      "views_7_chapters": 198,
+      "monthly_sales": {
+        "มกราคม": 199.8,
+        "กุมภาพันธ์": 320.4,
+        "มีนาคม": 185.4,
+        "เมษายน": 66.6,
+        "พฤษภาคม": 158.4,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 46.8,
+        "สิงหาคม": 122.4,
+        "กันยายน": 1.8,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 144.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "348",
@@ -550,9 +816,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 130,
-      "total_views": 40513,
+      "total_views": 40524,
       "total_sales": 1238.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 23:46:46",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -569,7 +835,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 109.8,
-      "views_7_chapters": 118
+      "views_7_chapters": 118,
+      "monthly_sales": {
+        "มกราคม": 91.8,
+        "กุมภาพันธ์": 54.0,
+        "มีนาคม": 88.2,
+        "เมษายน": 176.4,
+        "พฤษภาคม": 55.8,
+        "มิถุนายน": 64.8,
+        "กรกฎาคม": 81.0,
+        "สิงหาคม": 52.2,
+        "กันยายน": 246.6,
+        "ตุลาคม": 90.0,
+        "พฤศจิกายน": 118.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "4674",
@@ -578,9 +858,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 27,
-      "total_views": 10116,
+      "total_views": 10121,
       "total_sales": 1227.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 02:31:18",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -597,7 +877,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 250.2,
-      "views_7_chapters": 254
+      "views_7_chapters": 254,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 327.6,
+        "กันยายน": 468.0,
+        "ตุลาคม": 360.0,
+        "พฤศจิกายน": 72.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "784",
@@ -606,9 +900,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 44,
-      "total_views": 17501,
+      "total_views": 17505,
       "total_sales": 1182.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 22:31:56",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -625,7 +919,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 52.2,
-      "views_7_chapters": 96
+      "views_7_chapters": 96,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 30.6,
+        "มีนาคม": 156.6,
+        "เมษายน": 142.2,
+        "พฤษภาคม": 196.2,
+        "มิถุนายน": 221.4,
+        "กรกฎาคม": 226.8,
+        "สิงหาคม": 57.6,
+        "กันยายน": 68.4,
+        "ตุลาคม": 61.2,
+        "พฤศจิกายน": 21.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "431",
@@ -636,7 +944,7 @@
       "chapters_count": 53,
       "total_views": 9235,
       "total_sales": 1160.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 17:01:52",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -653,7 +961,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 135.0,
-      "views_7_chapters": 127
+      "views_7_chapters": 127,
+      "monthly_sales": {
+        "มกราคม": 9.0,
+        "กุมภาพันธ์": 198.8,
+        "มีนาคม": 113.4,
+        "เมษายน": 102.6,
+        "พฤษภาคม": 5.4,
+        "มิถุนายน": 19.8,
+        "กรกฎาคม": 126.0,
+        "สิงหาคม": 124.2,
+        "กันยายน": 286.2,
+        "ตุลาคม": 120.6,
+        "พฤศจิกายน": 32.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "5077",
@@ -662,9 +984,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 32,
-      "total_views": 5183,
+      "total_views": 5184,
       "total_sales": 1026.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 21:36:12",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -681,7 +1003,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 237.6,
-      "views_7_chapters": 229
+      "views_7_chapters": 229,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 32.4,
+        "กรกฎาคม": 129.6,
+        "สิงหาคม": 55.8,
+        "กันยายน": 365.4,
+        "ตุลาคม": 385.2,
+        "พฤศจิกายน": 57.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "3569",
@@ -692,7 +1028,7 @@
       "chapters_count": 33,
       "total_views": 7273,
       "total_sales": 963.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-28 13:35:30",
       "days_inactive": 11,
       "is_inactive_30d": false,
@@ -709,7 +1045,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 90.0,
-      "views_7_chapters": 87
+      "views_7_chapters": 87,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 171.0,
+        "สิงหาคม": 417.6,
+        "กันยายน": 252.0,
+        "ตุลาคม": 118.8,
+        "พฤศจิกายน": 3.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "768",
@@ -718,9 +1068,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 126,
-      "total_views": 14363,
+      "total_views": 14364,
       "total_sales": 946.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-01 01:45:26",
       "days_inactive": 8,
       "is_inactive_30d": false,
@@ -737,7 +1087,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 55.8,
-      "views_7_chapters": 53
+      "views_7_chapters": 53,
+      "monthly_sales": {
+        "มกราคม": 37.8,
+        "กุมภาพันธ์": 36.0,
+        "มีนาคม": 381.6,
+        "เมษายน": 84.6,
+        "พฤษภาคม": 99.0,
+        "มิถุนายน": 59.4,
+        "กรกฎาคม": 43.2,
+        "สิงหาคม": 73.8,
+        "กันยายน": 37.8,
+        "ตุลาคม": 86.4,
+        "พฤศจิกายน": 7.2,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "349",
@@ -746,9 +1110,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 101,
-      "total_views": 56783,
+      "total_views": 56784,
       "total_sales": 912.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-02-12 12:48:56",
       "days_inactive": 269,
       "is_inactive_30d": true,
@@ -765,7 +1129,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 147.6,
-      "views_7_chapters": 177
+      "views_7_chapters": 177,
+      "monthly_sales": {
+        "มกราคม": 86.4,
+        "กุมภาพันธ์": 91.8,
+        "มีนาคม": 54.0,
+        "เมษายน": 165.6,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 18.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 19.8,
+        "กันยายน": 0.0,
+        "ตุลาคม": 37.8,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "729",
@@ -774,9 +1152,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 50,
-      "total_views": 13052,
+      "total_views": 13055,
       "total_sales": 871.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-04-10 18:43:08",
       "days_inactive": 212,
       "is_inactive_30d": true,
@@ -793,7 +1171,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 147.6,
-      "views_7_chapters": 178
+      "views_7_chapters": 178,
+      "monthly_sales": {
+        "มกราคม": 104.4,
+        "กุมภาพันธ์": 144.0,
+        "มีนาคม": 187.2,
+        "เมษายน": 124.2,
+        "พฤษภาคม": 28.8,
+        "มิถุนายน": 165.6,
+        "กรกฎาคม": 10.8,
+        "สิงหาคม": 16.2,
+        "กันยายน": 0.0,
+        "ตุลาคม": 45.0,
+        "พฤศจิกายน": 45.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "346",
@@ -802,9 +1194,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 120,
-      "total_views": 25479,
+      "total_views": 25480,
       "total_sales": 829.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-28 00:45:40",
       "days_inactive": 12,
       "is_inactive_30d": false,
@@ -821,7 +1213,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 21.6,
-      "views_7_chapters": 23
+      "views_7_chapters": 23,
+      "monthly_sales": {
+        "มกราคม": 115.2,
+        "กุมภาพันธ์": 153.0,
+        "มีนาคม": 109.8,
+        "เมษายน": 183.6,
+        "พฤษภาคม": 64.8,
+        "มิถุนายน": 28.8,
+        "กรกฎาคม": 21.6,
+        "สิงหาคม": 57.6,
+        "กันยายน": 10.8,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 52.2,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "613",
@@ -830,9 +1236,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 46,
-      "total_views": 8186,
+      "total_views": 8187,
       "total_sales": 826.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-05-07 21:56:21",
       "days_inactive": 185,
       "is_inactive_30d": true,
@@ -849,7 +1255,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 19.8,
-      "views_7_chapters": 24
+      "views_7_chapters": 24,
+      "monthly_sales": {
+        "มกราคม": 18.0,
+        "กุมภาพันธ์": 30.6,
+        "มีนาคม": 160.2,
+        "เมษายน": 379.8,
+        "พฤษภาคม": 190.8,
+        "มิถุนายน": 21.6,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 25.2,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "391",
@@ -858,9 +1278,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 143,
-      "total_views": 49422,
+      "total_views": 49427,
       "total_sales": 813.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 02:17:47",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -877,7 +1297,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 54.0,
-      "views_7_chapters": 51
+      "views_7_chapters": 51,
+      "monthly_sales": {
+        "มกราคม": 5.4,
+        "กุมภาพันธ์": 18.0,
+        "มีนาคม": 79.2,
+        "เมษายน": 153.0,
+        "พฤษภาคม": 102.6,
+        "มิถุนายน": 104.4,
+        "กรกฎาคม": 70.2,
+        "สิงหาคม": 82.8,
+        "กันยายน": 91.8,
+        "ตุลาคม": 93.6,
+        "พฤศจิกายน": 10.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "2607",
@@ -886,9 +1320,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 35,
-      "total_views": 14571,
+      "total_views": 14572,
       "total_sales": 716.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 02:23:34",
       "days_inactive": 3,
       "is_inactive_30d": false,
@@ -905,7 +1339,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 100.8,
-      "views_7_chapters": 116
+      "views_7_chapters": 116,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 1.8,
+        "พฤษภาคม": 34.2,
+        "มิถุนายน": 174.6,
+        "กรกฎาคม": 90.0,
+        "สิงหาคม": 237.6,
+        "กันยายน": 82.8,
+        "ตุลาคม": 86.4,
+        "พฤศจิกายน": 9.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "345",
@@ -914,9 +1362,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 70,
-      "total_views": 8154,
+      "total_views": 8155,
       "total_sales": 660.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 18:05:39",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -933,7 +1381,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 28.8,
-      "views_7_chapters": 30
+      "views_7_chapters": 30,
+      "monthly_sales": {
+        "มกราคม": 36.0,
+        "กุมภาพันธ์": 37.8,
+        "มีนาคม": 73.8,
+        "เมษายน": 158.4,
+        "พฤษภาคม": 102.6,
+        "มิถุนายน": 18.0,
+        "กรกฎาคม": 88.2,
+        "สิงหาคม": 30.6,
+        "กันยายน": 10.8,
+        "ตุลาคม": 21.6,
+        "พฤศจิกายน": 36.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "390",
@@ -942,9 +1404,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 213,
-      "total_views": 15773,
+      "total_views": 15784,
       "total_sales": 523.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-06 22:42:20",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -961,7 +1423,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 68.4,
-      "views_7_chapters": 69
+      "views_7_chapters": 69,
+      "monthly_sales": {
+        "มกราคม": 3.6,
+        "กุมภาพันธ์": 5.4,
+        "มีนาคม": 21.6,
+        "เมษายน": 43.2,
+        "พฤษภาคม": 32.4,
+        "มิถุนายน": 55.8,
+        "กรกฎาคม": 27.0,
+        "สิงหาคม": 82.8,
+        "กันยายน": 127.8,
+        "ตุลาคม": 75.6,
+        "พฤศจิกายน": 32.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "366",
@@ -972,7 +1448,7 @@
       "chapters_count": 81,
       "total_views": 19646,
       "total_sales": 504.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-05-21 23:05:26",
       "days_inactive": 171,
       "is_inactive_30d": true,
@@ -989,7 +1465,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 61.2,
-      "views_7_chapters": 58
+      "views_7_chapters": 58,
+      "monthly_sales": {
+        "มกราคม": 48.6,
+        "กุมภาพันธ์": 52.2,
+        "มีนาคม": 41.4,
+        "เมษายน": 171.0,
+        "พฤษภาคม": 61.2,
+        "มิถุนายน": 70.2,
+        "กรกฎาคม": 1.8,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 28.8,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "5079",
@@ -1000,7 +1490,7 @@
       "chapters_count": 31,
       "total_views": 5291,
       "total_sales": 493.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 16:38:23",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -1017,7 +1507,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 66.6,
-      "views_7_chapters": 73
+      "views_7_chapters": 73,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 66.6,
+        "สิงหาคม": 133.2,
+        "กันยายน": 228.6,
+        "ตุลาคม": 64.8,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6682",
@@ -1028,7 +1532,7 @@
       "chapters_count": 37,
       "total_views": 2515,
       "total_sales": 460.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 16:39:35",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -1045,7 +1549,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 32.4,
-      "views_7_chapters": 29
+      "views_7_chapters": 29,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 93.6,
+        "กันยายน": 140.4,
+        "ตุลาคม": 171.0,
+        "พฤศจิกายน": 55.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "588",
@@ -1054,9 +1572,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 240,
-      "total_views": 18069,
+      "total_views": 18070,
       "total_sales": 441.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 12:56:29",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -1073,7 +1591,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 63.0,
-      "views_7_chapters": 67
+      "views_7_chapters": 67,
+      "monthly_sales": {
+        "มกราคม": 37.8,
+        "กุมภาพันธ์": 37.8,
+        "มีนาคม": 39.6,
+        "เมษายน": 73.8,
+        "พฤษภาคม": 23.4,
+        "มิถุนายน": 36.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 43.2,
+        "กันยายน": 52.2,
+        "ตุลาคม": 95.4,
+        "พฤศจิกายน": 1.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "367",
@@ -1082,9 +1614,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 42,
-      "total_views": 13545,
+      "total_views": 13548,
       "total_sales": 405.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-03-04 23:25:19",
       "days_inactive": 249,
       "is_inactive_30d": true,
@@ -1101,7 +1633,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 88.2,
-      "views_7_chapters": 88
+      "views_7_chapters": 88,
+      "monthly_sales": {
+        "มกราคม": 46.8,
+        "กุมภาพันธ์": 18.0,
+        "มีนาคม": 84.6,
+        "เมษายน": 138.6,
+        "พฤษภาคม": 50.4,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 21.6,
+        "สิงหาคม": 1.8,
+        "กันยายน": 1.8,
+        "ตุลาคม": 1.8,
+        "พฤศจิกายน": 30.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "7300",
@@ -1112,7 +1658,7 @@
       "chapters_count": 26,
       "total_views": 1803,
       "total_sales": 405.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-28 13:11:48",
       "days_inactive": 11,
       "is_inactive_30d": false,
@@ -1129,7 +1675,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 23.4,
-      "views_7_chapters": 27
+      "views_7_chapters": 27,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 21.6,
+        "ตุลาคม": 383.4,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "7301",
@@ -1138,9 +1698,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 19,
-      "total_views": 6750,
+      "total_views": 6803,
       "total_sales": 327.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-09 00:57:33",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -1157,7 +1717,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 302.4,
-      "views_7_chapters": 1772
+      "views_7_chapters": 1772,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 1.8,
+        "ตุลาคม": 271.8,
+        "พฤศจิกายน": 54.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "897",
@@ -1168,7 +1742,7 @@
       "chapters_count": 28,
       "total_views": 4990,
       "total_sales": 300.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-03-13 01:47:02",
       "days_inactive": 241,
       "is_inactive_30d": true,
@@ -1185,7 +1759,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 106.2,
-      "views_7_chapters": 103
+      "views_7_chapters": 103,
+      "monthly_sales": {
+        "มกราคม": 19.8,
+        "กุมภาพันธ์": 16.2,
+        "มีนาคม": 151.2,
+        "เมษายน": 32.4,
+        "พฤษภาคม": 32.4,
+        "มิถุนายน": 32.4,
+        "กรกฎาคม": 1.8,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 14.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "388",
@@ -1194,9 +1782,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 182,
-      "total_views": 15515,
+      "total_views": 15516,
       "total_sales": 284.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-12-19 12:38:54",
       "days_inactive": 324,
       "is_inactive_30d": true,
@@ -1213,7 +1801,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 12.6,
-      "views_7_chapters": 2
+      "views_7_chapters": 2,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 32.4,
+        "มีนาคม": 19.8,
+        "เมษายน": 7.2,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 3.6,
+        "สิงหาคม": 10.8,
+        "กันยายน": 171.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6065",
@@ -1222,9 +1824,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 19,
-      "total_views": 12144,
+      "total_views": 12148,
       "total_sales": 282.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 22:24:30",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -1241,7 +1843,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 199.8,
-      "views_7_chapters": 194
+      "views_7_chapters": 194,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 111.6,
+        "ตุลาคม": 140.4,
+        "พฤศจิกายน": 30.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6062",
@@ -1250,9 +1866,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 20,
-      "total_views": 4008,
+      "total_views": 4010,
       "total_sales": 277.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 20:17:08",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -1269,7 +1885,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 153.0,
-      "views_7_chapters": 169
+      "views_7_chapters": 169,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 21.6,
+        "ตุลาคม": 235.8,
+        "พฤศจิกายน": 19.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "4388",
@@ -1280,7 +1910,7 @@
       "chapters_count": 31,
       "total_views": 1619,
       "total_sales": 268.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-07-31 21:38:55",
       "days_inactive": 100,
       "is_inactive_30d": true,
@@ -1297,7 +1927,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 93.6,
-      "views_7_chapters": 118
+      "views_7_chapters": 118,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 12.6,
+        "มิถุนายน": 189.0,
+        "กรกฎาคม": 28.8,
+        "สิงหาคม": 18.0,
+        "กันยายน": 19.8,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "339",
@@ -1306,9 +1950,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 41,
-      "total_views": 10693,
+      "total_views": 10694,
       "total_sales": 264.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-03-31 11:13:02",
       "days_inactive": 222,
       "is_inactive_30d": true,
@@ -1325,7 +1969,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 61.2,
-      "views_7_chapters": 71
+      "views_7_chapters": 71,
+      "monthly_sales": {
+        "มกราคม": 10.8,
+        "กุมภาพันธ์": 16.2,
+        "มีนาคม": 64.8,
+        "เมษายน": 10.8,
+        "พฤษภาคม": 1.8,
+        "มิถุนายน": 93.6,
+        "กรกฎาคม": 39.6,
+        "สิงหาคม": 3.6,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "3379",
@@ -1334,9 +1992,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 44,
-      "total_views": 3098,
+      "total_views": 3100,
       "total_sales": 255.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 16:58:46",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -1353,7 +2011,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 52.2,
-      "views_7_chapters": 55
+      "views_7_chapters": 55,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 23.4,
+        "กรกฎาคม": 63.0,
+        "สิงหาคม": 19.8,
+        "กันยายน": 5.4,
+        "ตุลาคม": 97.2,
+        "พฤศจิกายน": 46.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "5356",
@@ -1362,9 +2034,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 28,
-      "total_views": 4613,
+      "total_views": 4614,
       "total_sales": 244.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-02 23:35:05",
       "days_inactive": 6,
       "is_inactive_30d": false,
@@ -1381,7 +2053,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 48.6,
-      "views_7_chapters": 44
+      "views_7_chapters": 44,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 14.4,
+        "สิงหาคม": 48.6,
+        "กันยายน": 113.4,
+        "ตุลาคม": 27.0,
+        "พฤศจิกายน": 41.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "609",
@@ -1392,7 +2078,7 @@
       "chapters_count": 46,
       "total_views": 7065,
       "total_sales": 241.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-06-12 17:04:08",
       "days_inactive": 149,
       "is_inactive_30d": true,
@@ -1409,7 +2095,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 14.4,
-      "views_7_chapters": 36
+      "views_7_chapters": 36,
+      "monthly_sales": {
+        "มกราคม": 41.4,
+        "กุมภาพันธ์": 14.4,
+        "มีนาคม": 70.2,
+        "เมษายน": 59.4,
+        "พฤษภาคม": 21.6,
+        "มิถุนายน": 10.8,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "1104",
@@ -1418,9 +2118,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 39,
-      "total_views": 5889,
+      "total_views": 5890,
       "total_sales": 214.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-09-04 11:20:27",
       "days_inactive": 65,
       "is_inactive_30d": true,
@@ -1437,7 +2137,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 18.0,
-      "views_7_chapters": 44
+      "views_7_chapters": 44,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 27.0,
+        "พฤษภาคม": 64.8,
+        "มิถุนายน": 32.4,
+        "กรกฎาคม": 36.0,
+        "สิงหาคม": 5.4,
+        "กันยายน": 46.8,
+        "ตุลาคม": 1.8,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "542",
@@ -1448,7 +2162,7 @@
       "chapters_count": 22,
       "total_views": 7468,
       "total_sales": 198.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-04-07 15:07:30",
       "days_inactive": 215,
       "is_inactive_30d": true,
@@ -1465,7 +2179,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 36.0,
-      "views_7_chapters": 256
+      "views_7_chapters": 256,
+      "monthly_sales": {
+        "มกราคม": 50.4,
+        "กุมภาพันธ์": 7.2,
+        "มีนาคม": 30.6,
+        "เมษายน": 9.0,
+        "พฤษภาคม": 16.2,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 84.6,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "4673",
@@ -1474,9 +2202,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 26,
-      "total_views": 4713,
+      "total_views": 4716,
       "total_sales": 196.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 22:26:47",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -1493,7 +2221,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 52.2,
-      "views_7_chapters": 63
+      "views_7_chapters": 63,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 64.8,
+        "กันยายน": 59.4,
+        "ตุลาคม": 55.8,
+        "พฤศจิกายน": 16.2,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "595",
@@ -1502,9 +2244,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 20,
-      "total_views": 3542,
+      "total_views": 3544,
       "total_sales": 149.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-12-10 21:58:07",
       "days_inactive": 333,
       "is_inactive_30d": true,
@@ -1521,7 +2263,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 99.0,
-      "views_7_chapters": 104
+      "views_7_chapters": 104,
+      "monthly_sales": {
+        "มกราคม": 18.0,
+        "กุมภาพันธ์": 18.0,
+        "มีนาคม": 36.0,
+        "เมษายน": 18.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 14.4,
+        "สิงหาคม": 39.6,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 5.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6063",
@@ -1530,9 +2286,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 13,
-      "total_views": 1908,
+      "total_views": 1909,
       "total_sales": 149.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-20 14:26:51",
       "days_inactive": 19,
       "is_inactive_30d": false,
@@ -1549,7 +2305,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 147.6,
-      "views_7_chapters": 426
+      "views_7_chapters": 426,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 7.2,
+        "ตุลาคม": 140.4,
+        "พฤศจิกายน": 1.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "8126",
@@ -1558,9 +2328,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 23,
-      "total_views": 1351,
+      "total_views": 1359,
       "total_sales": 129.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 23:36:12",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -1577,7 +2347,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 93.6,
-      "views_7_chapters": 92
+      "views_7_chapters": 92,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 129.6,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "7303",
@@ -1588,7 +2372,7 @@
       "chapters_count": 25,
       "total_views": 1468,
       "total_sales": 95.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-02 22:14:32",
       "days_inactive": 6,
       "is_inactive_30d": false,
@@ -1605,7 +2389,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 23.4,
-      "views_7_chapters": 25
+      "views_7_chapters": 25,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 34.2,
+        "ตุลาคม": 18.0,
+        "พฤศจิกายน": 43.2,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "783",
@@ -1616,7 +2414,7 @@
       "chapters_count": 31,
       "total_views": 5422,
       "total_sales": 93.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-08-28 09:50:16",
       "days_inactive": 72,
       "is_inactive_30d": true,
@@ -1633,7 +2431,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 9.0,
-      "views_7_chapters": 16
+      "views_7_chapters": 16,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 30.6,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 45.0,
+        "กรกฎาคม": 10.8,
+        "สิงหาคม": 7.2,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "8124",
@@ -1644,7 +2456,7 @@
       "chapters_count": 12,
       "total_views": 2325,
       "total_sales": 93.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-28 13:32:56",
       "days_inactive": 11,
       "is_inactive_30d": false,
@@ -1661,7 +2473,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 86.4,
-      "views_7_chapters": 721
+      "views_7_chapters": 721,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 61.2,
+        "พฤศจิกายน": 32.4,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "332",
@@ -1672,7 +2498,7 @@
       "chapters_count": 34,
       "total_views": 499,
       "total_sales": 63.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-10-20 22:48:36",
       "days_inactive": 384,
       "is_inactive_30d": true,
@@ -1689,7 +2515,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 14.4,
-      "views_7_chapters": 13
+      "views_7_chapters": 13,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 1.8,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 61.2,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "2679",
@@ -1700,7 +2540,7 @@
       "chapters_count": 27,
       "total_views": 791,
       "total_sales": 59.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-04-30 12:22:25",
       "days_inactive": 192,
       "is_inactive_30d": true,
@@ -1717,7 +2557,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 59.4,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "7302",
@@ -1728,7 +2582,7 @@
       "chapters_count": 12,
       "total_views": 6947,
       "total_sales": 55.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-19 16:22:27",
       "days_inactive": 20,
       "is_inactive_30d": false,
@@ -1745,7 +2599,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 52.2,
-      "views_7_chapters": 2270
+      "views_7_chapters": 2270,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 36.0,
+        "พฤศจิกายน": 19.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "397",
@@ -1756,7 +2624,7 @@
       "chapters_count": 15,
       "total_views": 1256,
       "total_sales": 34.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-11-27 21:47:09",
       "days_inactive": 346,
       "is_inactive_30d": true,
@@ -1773,7 +2641,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 21.6,
-      "views_7_chapters": 54
+      "views_7_chapters": 54,
+      "monthly_sales": {
+        "มกราคม": 10.8,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 3.6,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 9.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "7304",
@@ -1784,7 +2666,7 @@
       "chapters_count": 17,
       "total_views": 1251,
       "total_sales": 30.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-28 13:23:11",
       "days_inactive": 11,
       "is_inactive_30d": false,
@@ -1801,7 +2683,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 30.6,
-      "views_7_chapters": 25
+      "views_7_chapters": 25,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 19.8,
+        "ตุลาคม": 10.8,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "589",
@@ -1812,7 +2708,7 @@
       "chapters_count": 22,
       "total_views": 711,
       "total_sales": 28.8,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-12-27 21:40:45",
       "days_inactive": 316,
       "is_inactive_30d": true,
@@ -1829,7 +2725,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 28.8,
-      "views_7_chapters": 27
+      "views_7_chapters": 27,
+      "monthly_sales": {
+        "มกราคม": 1.8,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 3.6,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "659",
@@ -1838,9 +2748,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 11,
-      "total_views": 1463,
+      "total_views": 1464,
       "total_sales": 25.2,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-12-11 12:01:59",
       "days_inactive": 332,
       "is_inactive_30d": true,
@@ -1857,7 +2767,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 25.2,
-      "views_7_chapters": 243
+      "views_7_chapters": 243,
+      "monthly_sales": {
+        "มกราคม": 3.6,
+        "กุมภาพันธ์": 3.6,
+        "มีนาคม": 3.6,
+        "เมษายน": 3.6,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 3.6,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 3.6,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 3.6,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "342",
@@ -1868,7 +2792,7 @@
       "chapters_count": 14,
       "total_views": 924,
       "total_sales": 21.6,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-11-22 19:10:30",
       "days_inactive": 351,
       "is_inactive_30d": true,
@@ -1885,7 +2809,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 21.6,
-      "views_7_chapters": 24
+      "views_7_chapters": 24,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 12.6,
+        "เมษายน": 1.8,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "435",
@@ -1896,7 +2834,7 @@
       "chapters_count": 11,
       "total_views": 4526,
       "total_sales": 5.4,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-11-23 20:14:13",
       "days_inactive": 350,
       "is_inactive_30d": true,
@@ -1913,7 +2851,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 5.4,
-      "views_7_chapters": 661
+      "views_7_chapters": 661,
+      "monthly_sales": {
+        "มกราคม": 1.8,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 1.8,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 1.8,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "364",
@@ -1924,7 +2876,7 @@
       "chapters_count": 13,
       "total_views": 810,
       "total_sales": 3.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-09-28 20:53:20",
       "days_inactive": 406,
       "is_inactive_30d": true,
@@ -1941,7 +2893,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 3.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "414",
@@ -1952,7 +2918,7 @@
       "chapters_count": 9,
       "total_views": 922,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2025-11-17 22:48:59",
       "days_inactive": 356,
       "is_inactive_30d": true,
@@ -1969,7 +2935,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 115
+      "views_7_chapters": 115,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "2062",
@@ -1980,7 +2960,7 @@
       "chapters_count": 6,
       "total_views": 3075,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-03-25 21:58:32",
       "days_inactive": 228,
       "is_inactive_30d": true,
@@ -1997,7 +2977,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1090
+      "views_7_chapters": 1090,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "4675",
@@ -2008,7 +3002,7 @@
       "chapters_count": 4,
       "total_views": 620,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-06-06 15:42:08",
       "days_inactive": 155,
       "is_inactive_30d": true,
@@ -2025,7 +3019,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 122
+      "views_7_chapters": 122,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6059",
@@ -2034,9 +3042,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 3,
-      "total_views": 789,
+      "total_views": 790,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 17:30:53",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -2053,7 +3061,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 133
+      "views_7_chapters": 133,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6060",
@@ -2064,7 +3086,7 @@
       "chapters_count": 0,
       "total_views": 193,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 999,
       "is_inactive_30d": true,
@@ -2081,7 +3103,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6061",
@@ -2090,9 +3126,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 9,
-      "total_views": 1588,
+      "total_views": 1589,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-09 01:48:03",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -2109,7 +3145,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 549
+      "views_7_chapters": 549,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "6064",
@@ -2120,7 +3170,7 @@
       "chapters_count": 7,
       "total_views": 482,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-23 17:57:49",
       "days_inactive": 16,
       "is_inactive_30d": false,
@@ -2137,7 +3187,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 254
+      "views_7_chapters": 254,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "8123",
@@ -2148,7 +3212,7 @@
       "chapters_count": 4,
       "total_views": 434,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-10-20 14:16:19",
       "days_inactive": 19,
       "is_inactive_30d": false,
@@ -2165,7 +3229,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 255
+      "views_7_chapters": 255,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "8127",
@@ -2174,9 +3252,9 @@
       "account": "แปลจนเมื่อย (Kairew)",
       "account_id": "kairew_adieu",
       "chapters_count": 7,
-      "total_views": 1100,
+      "total_views": 1103,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-04 01:29:33",
       "days_inactive": 5,
       "is_inactive_30d": false,
@@ -2193,7 +3271,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 831
+      "views_7_chapters": 831,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "8128",
@@ -2204,7 +3296,7 @@
       "chapters_count": 7,
       "total_views": 299,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "2026-11-07 22:42:58",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -2221,7 +3313,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 198
+      "views_7_chapters": 198,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     },
     {
       "comic_id": "9282",
@@ -2232,7 +3338,7 @@
       "chapters_count": 0,
       "total_views": 11,
       "total_sales": 0.0,
-      "recorded_at": "2026-11-09T05:14:24.151601+00:00",
+      "recorded_at": "2026-11-09T08:50:58.017248+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 999,
       "is_inactive_30d": true,
@@ -2249,7 +3355,21 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 0
+      "views_7_chapters": 0,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0,
+        "ธันวาคม": 0.0
+      }
     }
   ]
 }

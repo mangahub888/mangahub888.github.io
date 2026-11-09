@@ -24,8 +24,15 @@ if os.path.exists(rr2_path):
 
 # 2. Kairew
 kairew = []
+kairew_growth_path = os.path.join(DATA_DIR, 'kairew_growth_latest.json')
 kairew_path = os.path.join(DATA_DIR, 'kairew_manage_book_props.json')
-if os.path.exists(kairew_path):
+if os.path.exists(kairew_growth_path):
+    try:
+        with open(kairew_growth_path, 'r', encoding='utf-8') as f:
+            kairew = json.load(f).get('comics', [])
+    except Exception:
+        kairew = []
+if not kairew and os.path.exists(kairew_path):
     with open(kairew_path, 'r', encoding='utf-8') as f:
         kairew = json.load(f).get('props', {}).get('cartoon_list', [])
 
@@ -134,19 +141,19 @@ def init_empty_monthly_sales():
 
 # Kairew
 for c in kairew:
-    t = c.get('name', '').strip()
+    t = (c.get('name') or c.get('subject') or '').strip()
     k = normalize_title(t)
     if not k:
         continue
     clean_display = get_canonical_display(t, k)
-    kw_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else init_empty_monthly_sales()
+    kw_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else {}
     kw_obj = {
         'exists': True,
         'title': t,
-        'id': str(c.get('id', '')),
-        'sales': float(c.get('sales') or 0),
-        'views': int(c.get('view_count') or 0),
-        'eps': int(c.get('episode_count') or 0),
+        'id': str(c.get('comic_id') or c.get('id', '')),
+        'sales': float(c.get('total_sales') or c.get('sales') or 0),
+        'views': int(c.get('total_views') or c.get('view_count') or 0),
+        'eps': int(c.get('chapters_count') or c.get('episode_count') or 0),
         'monthly_sales': kw_monthly
     }
     if k not in groups:
@@ -155,7 +162,7 @@ for c in kairew:
             'title': clean_display,
             'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
             'kairew': kw_obj,
-            'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0, 'monthly_sales': init_empty_monthly_sales()}
+            'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0, 'monthly_sales': {}}
         }
     else:
         groups[k]['title'] = clean_display
@@ -173,7 +180,7 @@ for c in chaply:
     c_views = int(c.get('total_views') or c.get('totalView') or 0)
     c_eps = int(c.get('chapters_count') or c.get('totalEpisode') or 0)
     c_fav = int(c.get('totalFavorite') or 0)
-    ch_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else init_empty_monthly_sales()
+    ch_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else {}
 
     chaply_obj = {
         'exists': True,
@@ -191,7 +198,7 @@ for c in chaply:
             'key': k,
             'title': clean_display,
             'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
-            'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
+            'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': {}},
             'chaply': chaply_obj
         }
     else:

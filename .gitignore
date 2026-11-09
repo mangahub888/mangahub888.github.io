@@ -32,11 +32,33 @@ tools/tencent_app_session.json
 storageState.json
 tools/storageState.json
 
-# ReadRealm session caches
+# Session caches & scratch probe scripts
 tools/.chrome_*
 tools/*.png
 tools/readrealm_auth*.json
 tools/readrealm_bearer*.json
+tools/readrealm_apis_dump.json
 tools/patch_backend.py
+tools/explore_*
+tools/inspect_*
+tools/scan_*
+tools/check_*
+tools/debug_*
+tools/trace_*
+tools/print_*
+tools/probe_*
+tools/patch_*
+tools/summarize_*
+tools/fetch_*
+tools/get_*
+tools/test_*
+!tools/test_all_pipelines_dry.py
+tools/chaply_stealth_login.py
+tools/login_chaply_gui.py
+tools/login_lionking*.py
+tools/readrealm_login_*
+tools/readrealm_stealth_*
+tools/readrealm_comic_explorer.py
+/data/
 
 test.py

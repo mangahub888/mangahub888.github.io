@@ -114,7 +114,7 @@ def main():
 
         # Navigate to creator/writer if available
         print("Testing creator URL: https://www.chaply.net/creator ...", flush=True)
-        page.goto("https://www.chaply.net/creator", wait_until="domcontentloaded")
+        page.goto("https://www.chaply.net/writer/dashboard", wait_until="domcontentloaded")
         time.sleep(4)
         print("Creator URL:", page.url, "Title:", page.title(), flush=True)
         page.screenshot(path="tools/data/chaply_creator.png")

@@ -1,3 +1,4 @@
+DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -30,6 +31,7 @@ import urllib.parse
 from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, List, Optional
 import requests
+from concurrent.futures import ThreadPoolExecutor
 from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -150,6 +152,60 @@ def fetch_kairew_data_via_browser() -> Dict[str, Any]:
         context.close()
         return props_data or {}
 
+
+THAI_MONTHS_LIST = [
+    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+]
+
+def fetch_all_kairew_monthly_stats(cartoon_list: List[Dict[str, Any]], year: int = None) -> Dict[str, Dict[str, float]]:
+    """Fetch exact monthly sales for each Kairew comic via manage-book/stat/{id}?filter_type=year endpoint."""
+    if not year:
+        year = datetime.now().year
+    print(f"\n📊 กำลังดึงสถิติยอดขายรายเดือน (รอบจริง) ของ Kairew ประจำปี {year} สำหรับการ์ตูนทั้ง {len(cartoon_list)} เรื่อง...", flush=True)
+    
+    if not os.path.exists(AUTH_FILE):
+        return {}
+    try:
+        with open(AUTH_FILE, 'r', encoding='utf-8') as f:
+            auth = json.load(f)
+        cookies = {c['name']: c['value'] for c in auth.get('cookies', [])}
+    except Exception:
+        return {}
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+    }
+    monthly_map = {}
+
+    def fetch_one(c):
+        cid = str(c.get('id'))
+        url = f'https://kairew.com/writer/manage-book/stat/{cid}?filter_type=year&year={year}'
+        try:
+            r = requests.get(url, cookies=cookies, headers=headers, timeout=15)
+            if r.status_code == 200 and 'data-page=' in r.text:
+                m = re.search(r'data-page="([^"]+)"', r.text)
+                if m:
+                    p = json.loads(html.unescape(m.group(1))).get('props', {})
+                    graph = p.get('graph', {})
+                    data_arr = graph.get('data', [])
+                    res_dict = {}
+                    for i, m_name in enumerate(THAI_MONTHS_LIST):
+                        val = round(float(data_arr[i] or 0.0), 2) if i < len(data_arr) else 0.0
+                        res_dict[m_name] = val
+                    return cid, res_dict
+        except Exception:
+            pass
+        return cid, {}
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        for cid, res_dict in executor.map(fetch_one, cartoon_list):
+            if res_dict:
+                monthly_map[cid] = res_dict
+
+    print(f"✓ ดึงสถิติยอดขายรายเดือน Kairew สำเร็จ: {len(monthly_map)} เรื่อง", flush=True)
+    return monthly_map
+
 def calculate_growth_rate(current_val: float, past_val: float):
     delta = current_val - past_val
     if past_val > 0:
@@ -188,7 +244,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         print(f"❌ ส่งข้อมูลไปยัง GAS ไม่สำเร็จ: {e}", flush=True)
         return False
 
-def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032"):
+def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = False):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -202,7 +258,7 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     page_data = {}
     print("🔄 กำลังตรวจสอบการดึงข้อมูลจาก Kairew...")
     # Try direct fast HTTP requests first
-    page_data = fetch_kairew_data_via_requests() or {}
+    page_data = fetch_kairew_data_via_browser() if use_browser else fetch_kairew_data_via_requests() or {}
 
     # If direct fetch didn't return data, check cached props file (< 30 mins)
     if not page_data or not page_data.get("props"):
@@ -235,7 +291,19 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     print(f"💰 ข้อมูลบัญชี: ยอดขายสะสม {lifetime_sales:,.2f} บาท | ยอดวิวรวม {total_views_overall:,} วิว | จำนวนผลงาน {len(cartoon_list)} เรื่อง")
 
-    # 2. Build current snapshot dict
+    # 2. Fetch exact monthly sales per comic
+    monthly_sales_map = fetch_all_kairew_monthly_stats(cartoon_list, year=now.year)
+    for c in cartoon_list:
+        cid = str(c.get('id'))
+        if cid in monthly_sales_map:
+            c['monthly_sales'] = monthly_sales_map[cid]
+    try:
+        with open(os.path.join(DATA_DIR, 'kairew_manage_book_props.json'), 'w', encoding='utf-8') as f:
+            json.dump({'props': props}, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+    # 3. Build current snapshot dict
     current_snap_dict = {}
 
     for c in cartoon_list:
@@ -269,7 +337,8 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "chapters_count": eps,
             "last_chapter_updated_at": last_ep_str,
             "days_inactive": days_inactive,
-            "is_inactive_30d": is_inactive_30d
+            "is_inactive_30d": is_inactive_30d,
+            "monthly_sales": monthly_sales_map.get(cid, {})
         }
 
     # 3. Load past history
@@ -391,7 +460,8 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                 "sales_growth_pct": sales_pct_30d
             },
             "sales_7_chapters": round(float(prev_kw_7ch.get(str(cid), {}).get("sales_7_chapters") or 0.0), 2),
-            "views_7_chapters": int(prev_kw_7ch.get(str(cid), {}).get("views_7_chapters") or 0)
+            "views_7_chapters": int(prev_kw_7ch.get(str(cid), {}).get("views_7_chapters") or 0),
+            "monthly_sales": cur.get("monthly_sales", {})
         }
         enriched_comics.append(row)
 
@@ -449,9 +519,10 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Kairew Growth Tracker")
+    parser.add_argument("--browser", action="store_true", default=False, help="Launch real visible Google Chrome browser")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
-    parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_WEBAPP_URL", ""), help="GAS Web App URL")
+    parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     args = parser.parse_args()
 
-    run_kairew_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode)
+    run_kairew_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=args.browser)

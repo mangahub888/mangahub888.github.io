@@ -128,14 +128,15 @@ def authenticate_via_direct_http(acc: Dict[str, Any]) -> str:
 
     return ""
 
-def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
+def refresh_account_token(acc: Dict[str, Any], headless: bool = True, force_browser: bool = False) -> str:
     """Obtain fresh Bearer token using Direct NextAuth HTTP strategy (Primary) or Playwright browser (Fallback)."""
     bearer_file = acc["bearer_file"]
     profile_dir = acc["profile_dir"]
 
-    # Strategy 1 (Primary): Direct HTTP Authentication (Fast, zero Turnstile blocking, works on headless CI)
-    print(f"🔄 [{acc['name']}] กำลังขอรับ Token ใหม่ผ่าน Direct NextAuth API...", flush=True)
-    token = authenticate_via_direct_http(acc)
+    token = None
+    if not force_browser:
+        print(f"🔄 [{acc['name']}] กำลังขอรับ Token ใหม่ผ่าน Direct NextAuth API...", flush=True)
+        token = authenticate_via_direct_http(acc)
     if token:
         try:
             with open(bearer_file, "w", encoding="utf-8") as f:
@@ -146,13 +147,14 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True) -> str:
             print(f"⚠️ Error writing bearer file: {e}", flush=True)
             return token
 
-    # Strategy 2 (Fallback): Headless / Persistent Browser Session via Playwright
-    print(f"🔄 [{acc['name']}] สลับไปใช้ Playwright Browser เพื่อดึง Token...", flush=True)
+    # Strategy 2: Persistent Browser Session via Playwright Chrome
+    print(f"🌐 [{acc['name']}] กำลังเปิด Google Chrome จริง (Headless={headless}) เพื่อดึง Token...", flush=True)
     exec_path = get_browser_executable_path()
     try:
         with sync_playwright() as p:
             launch_kwargs = {
                 "headless": headless,
+                "channel": "chrome",
                 "viewport": {"width": 1280, "height": 800},
                 "ignore_default_args": ["--enable-automation"],
                 "args": [
@@ -711,7 +713,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         print(f"❌ ส่งข้อมูลไปยัง GAS ไม่สำเร็จ: {e}", flush=True)
         return False
 
-def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032"):
+def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = False):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -724,6 +726,9 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # 1. Fetch current data across both accounts with individual account fallback
     all_current_comics = []
     for acc in ACCOUNTS:
+        if use_browser:
+            print(f"🌐 [Chrome Mode] กำลังเปิด Google Chrome จริงสำหรับบัญชี [{acc['name']}]...", flush=True)
+            refresh_account_token(acc, headless=False, force_browser=True)
         acc_comics = []
         try:
             acc_comics = fetch_all_comics_for_account(acc)
@@ -1045,6 +1050,7 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ReadRealm 6-Hour Growth Pipeline Tracker")
+    parser.add_argument("--browser", action="store_true", default=False, help="Launch real visible Google Chrome browser")
     parser.add_argument("--sync-gas", action="store_true", help="Send data to GAS Web App")
     parser.add_argument("--gas-url", type=str, default="", help="GAS Web App exec URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="GAS Passcode")
@@ -1053,5 +1059,6 @@ if __name__ == "__main__":
     run_growth_pipeline(
         send_to_gas=args.sync_gas or bool(os.environ.get("GAS_URL")),
         gas_url=args.gas_url or os.environ.get("GAS_URL", ""),
-        passcode=args.passcode or os.environ.get("PASSCODE", "10211032")
+        passcode=args.passcode or os.environ.get("PASSCODE", "10211032"),
+        use_browser=args.browser
     )

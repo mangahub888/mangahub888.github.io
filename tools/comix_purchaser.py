@@ -36,8 +36,8 @@ PASSCODE = os.environ.get("PASSCODE", "10211032")
 TARGET_TOTAL_PAGES = 20
 DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
-COMIX_SIG_PREFIX = "c38"
-ZJ_HEX = "fa856d9ed6e5a03a37f888c4dcd0cd0f1c8be6a6a072ac6bbd3ce5cbabef3f12fa94a0655d5e2ee4741c295e6727b7cff376650807a7c93168c2b6cc3dc4c83fc47474c907b8b741cfd2873070da62abba357d008183f28a1a42a4ec0ad663aad99653107642f6681404f8def22efb312dd6f6fb3eaa0e4403c721b23e6b0135306b08a089c4d5703950bb623d6cb99c42154aa4935e52851dd0d6f97cc5f1eade76172e28e3a8977812ece851790f93b9a9ea464c0368281205dcf2b17a86dc1d7f36d45b4cd6f96dfa881cf84a50c3ba204a52b34c2e506da83a407eed53b7c1327d16a98c6aa9f6cc6b4cc2e72db63450aed07996385e822366245f0eef2382cd572c5f84087d5d8376224de365dff8608515b968a8770d2df49a204a7db29c36ca3b8dee7f14871b2a9100c9681225179e04664d1c84541bec669b0e572eba27eb0bc992e99baf8a104aabdabad5416946f3325ab5e6539460f95202b37b861fc79f7acaf3eeef1c406565422add146eed7e60fc39065e0c70e311974de1445665a8f5462e3f0abe8d995c3cd08e8a90e69f48c30c4b87562513d8f57959e1a9ab68dfdabd037d09b1bcf4bcfabbf53132ba5c900bffc197e6338558da39a21158275b392a12c804f70ba789ee531e6439915ad0b109ccaf2754de5aa9a383992221c0e4be7dbb052e9d5f175a22c8ab712a740b18b93d41040f84335f50358477ebe561e98023004cc2d650dad1015a7cedb00d1aa03f55efb42d7bb18972110e9120890e35674fd98d07bb024d0b0c0bdff4528d4e6ec9f96a23fc4579b535c26fbc58974f0dd839ee880e429abca3601421cb442d31787a6d3e8e4d2f8fe897f929b22d54056f8b1cea842a4d73f3b3e509099a4383b1088d793ab3b3a39f7b1e18e639848e3101cc609e4a9cc7642f0bfae458a6a386b4162e5db1f6f57430a0c62e50a7d2a9755eaa2dbe3421800ab78a2f5ef15e4a4048a4cd22e7102125e87d5cfe61bb8a20c446622494012fc77fbfcb7e7f23a5cb6fed56eb5f06f53986abe8babbf717f988d457499dc359cfe34b81ff33365259b413a516ef6ba7f1fa2a8f9ded6c02e2d43ab43f1e76654964795b2d6366744859a9ccdecd9ca092d4007fb951bd87ec130ba7415d08d91ad99f97575aa34871d918782591ecfbee947d900e2154bd3e3972870b20ff8ba94c5cdeb9ee6f6a152911f541c59a9eddfad7cbfe076b84978eb24c0b13a071f2b3b52f7c5d2b0d2b95b8ebcc3cd3ef4259d935ac02f5c9bac992a0c797e320979459a21de0e802d8b25234cd15c3af3d9d4449bd34f72fee946debdff284ce6c86930fdc07584c9d2b0dc1e36d767ab72938d6636a413f2248c35d55154bfb73d1ff3af94ff90b2038ef31c00298a09961ac3f43ff107eaf7963a9f7fcfa2007fe13e773ce1eda12bcc8fa1fd5f83259e03a315f9925c7dd23e8620ff2c38584ed8f7efa1474710e018f4a5069280ed1b1fff53296d6a9cfe843467fa0b47f50791203744be3f0faa26218a898"
+COMIX_SIG_PREFIX = "27e"
+ZJ_HEX = "8e7100ce9b1ee4bf7a26896e927e96a40c90dd2d3ea96c37ba06c01567ef0151929b05adde0e7ddc9867386f4938db60e961a1e5e7d7faf23ddceac0006db85517fe42dbe62d46d4fe9c18d62ba24d023f74d392eaa53fceca95e3f198f3e1138250d5c32ada5b1bd0bea9f59f04d623e71f19c2089ddf0a7f7605344a1d60c9a577ca1ff84cd25c19f009df61fed2e846a891ec46c660e53c729eda5ad7df9f929b5fa11523b3199f3763eab5b88a94ee61d176837e009127a84640d628ca82054ddcc29f909c30523e9561d7c085745b5798c2101f85202ca3015f975ccb6041880c42bcaff87f8c90999422eef02c28035113a40ed3b4a2f9e375f1bc00d40fb26ef6c1fd6b2819d34ffaed89d4480fd88782d5e3d3d1510c9d812304e9cbd663f1fc5fae597efa35f10de824f81de1cab4601e56c03c39c8d2d6caedeb5259095e7077a72e00dd9f20bcf31826eccc03b978947b6c6cfc6b2287b9b3672e4d17a15e7e300b12829f1723f1d1f23600f65f85adad2262ecac026c1eff9385e40080a4e6054251f8f8c211b959632912bc0b3118f348da9b9c94b8979685b36b0086fabf29aab82c990c51d93ea2d027f656a92474dee87265a1d84315b84a2637882666855978628ee6f7bd7ffdb7bb3ae563bfcff53009d7164e654a1af09856f87996869250742adeaecda1d74158be8914297ed3e6e1881a4d3100c46af1801eaf88e108fc914e2adc40e4193852ca2336969ac49189677993a1074a5315c430a75de60ef88b5af6a1ad5320af7f6f53c331fe7a73c4cb8d3a2263bae5a8376aa76e3b2aebe7390b9c632de142d1054da3a14c0d948d2f8af53e2a2be13eedbb10bbcb5291642d9e97095ed54ff028e79b65d1671fbb018298bd1fac4cd71ef9162d8d58605187128f752c1af340bf207b7541a2a08460d114d2f138b71af14ec62a2f4f391ca6b63bba2024498913610fa5d47b327eb348b1671bb0cb1b6fc638f7022534d1cba54db7ca29f8cabdb1e69675fd5ce4cf9c48f3d41aab2b2047d6359159f2517fb1093ffa7622b7f8e2511d6c0531fcf5c0455274e6f927acbc18de8930d8ab2e7208632a507509bdf8a23e83e6a26113b388a84e6e30a14ae1016e69d3b2064738d7f9fc8773af0c9eb83e04ad58fd87ff4a214529244a2f0fe80ad3c2acb4d75f307c4e072df187e0171e82140924c0e4cedd91dde6426dbb210998ccb03a852e88ddf5c11b5fd3540638b29d08618db16dc1c56c5418afa271348a89da7244f8ab0004462d77e39eebf48f76ce799f0ff038af335c1ae45730449e3bc2f9b6b466fa394f967f267657c2a6541241644bc753e69db534f1bf7576fcfcdb910ae6002484291612553cb2a0f3e0fabe6bba4a034bfb6c9a8292122d506c5ce972c18a914fb78afb99a10db38d89950c518be6d67333779c7921abefd4a454c8e32a8ed04cc43b9f60da1f004ba29c2aeaf1f96a21accbbda90ac9c1df47ea0cb0d343e7f1838ba41783eeadaa45547eb9a2b27a1c9dce"
 ZJ = bytes.fromhex(ZJ_HEX)
 
 SHA256_K = [
@@ -204,47 +204,136 @@ def fetch_comix_title_metadata(url):
     }
 
 
+def fetch_comix_chapters_via_dom(title_url_or_hid, scan_group="", headless: bool = False):
+    """ดึงรายการตอนและลิงก์จากหน้าเรื่อง Comix.to ผ่าน Google Chrome จริง (ไม่พึ่งพา API Token Key)"""
+    from playwright.sync_api import sync_playwright
+    import time
+    
+    if not str(title_url_or_hid).startswith("http"):
+        title_url = f"https://comix.to/title/{title_url_or_hid}"
+    else:
+        title_url = title_url_or_hid
+
+    chapters = []
+    meta = {"title": "", "slug": "", "groups": []}
+    print(f"🌐 [DOM Crawler] กำลังดึงรายการตอนจากเบราว์เซอร์: {title_url}")
+    try:
+        with sync_playwright() as p:
+            try:
+                browser = p.chromium.launch(channel="chrome", headless=headless)
+            except Exception:
+                browser = p.chromium.launch(headless=headless)
+                
+            page = browser.new_page(user_agent=DEFAULT_USER_AGENT)
+            page.goto(title_url, wait_until="networkidle", timeout=40000)
+            
+            meta["title"] = page.evaluate("() => document.querySelector('h1')?.innerText || document.title")
+            
+            rows = page.evaluate("""() => {
+                const links = Array.from(document.querySelectorAll('a[href*="/title/"]'))
+                    .filter(a => a.href.includes('-chapter-'));
+                return links.map(a => {
+                    const parent = a.closest('tr, li, div[class*="chapter"], div.flex') || a.parentElement;
+                    return {
+                        href: a.href,
+                        text: a.innerText.trim(),
+                        parentText: parent ? parent.innerText.trim() : ''
+                    };
+                });
+            }""")
+            browser.close()
+
+        for r in rows:
+            href = r.get("href", "")
+            m = re.search(r'/(\d+)-chapter-([0-9.]+)', href)
+            if not m:
+                continue
+            cid = int(m.group(1))
+            num = float(m.group(2))
+            
+            p_text = r.get("parentText", "")
+            lines = [l.strip() for l in p_text.split("\n") if l.strip()]
+            grp = "Unknown"
+            for l in lines:
+                if not l.startswith("Ch.") and not re.search(r'\d+[dwm]\s+ago', l, re.I) and l not in ["·", ""]:
+                    grp = l
+                    break
+                    
+            if scan_group:
+                if scan_group.strip().lower() not in grp.lower():
+                    continue
+                    
+            chapters.append({
+                "chapter_id": cid,
+                "number": num,
+                "chapter_url": href,
+                "group_name": grp,
+                "name": f"Chapter {num}"
+            })
+    except Exception as ex:
+        print(f"⚠️ ข้อผิดพลาดในการดึง DOM chapters: {ex}")
+        
+    return {
+        "meta": meta,
+        "matchedGroupName": scan_group,
+        "chapters": chapters
+    }
+
 def fetch_comix_group_chapters(hid, scan_group="", page_limit=3):
     """
     ดึงรายการตอนของเรื่องตามค่ายแปลที่ระบุ (เช่น CrowScans)
+    รองรับทั้ง Direct API และ Playwright Chrome DOM อัตโนมัติเมื่อ Token Key หมดอายุ
     """
-    meta = fetch_comix_title_metadata(f"https://comix.to/title/{hid}")
-    groups = meta.get("groups", []) if meta.get("success") else []
-    group_id = ""
-    matched_group_name = ""
-
-    if scan_group:
-        target = scan_group.strip().lower()
-        for g in groups:
-            gname = str(g.get("name", "")).strip()
-            if gname.lower() == target or target in gname.lower() or str(g.get("id")) == target:
-                group_id = str(g.get("id"))
-                matched_group_name = gname
-                break
-
     chapters = []
-    for p in range(1, page_limit + 1):
-        params = {"page": p, "limit": 100}
-        if group_id:
-            params["group_id"] = group_id
-        res = call_comix_api(f"/manga/{hid}/chapters", params)
-        items = res.get("items", []) if isinstance(res, dict) else []
-        if not items:
-            break
-        for ch in items:
-            ch_group = (ch.get("scanlation_group") or {}).get("name") or matched_group_name or "Unknown"
-            if scan_group and not group_id:
-                if scan_group.strip().lower() not in ch_group.lower():
-                    continue
-            chapters.append({
-                "chapter_id": ch.get("chapter_id") or ch.get("id"),
-                "number": float(ch.get("number", 0)),
-                "name": ch.get("name") or "",
-                "group_name": ch_group,
-                "group_id": ch.get("scanlation_group_id") or group_id,
-            })
-        if len(items) < 100:
-            break
+    meta = {}
+    matched_group_name = ""
+    group_id = ""
+    
+    try:
+        meta = fetch_comix_title_metadata(f"https://comix.to/title/{hid}")
+        groups = meta.get("groups", []) if meta.get("success") else []
+
+        if scan_group:
+            target = scan_group.strip().lower()
+            for g in groups:
+                gname = str(g.get("name", "")).strip()
+                if gname.lower() == target or target in gname.lower() or str(g.get("id")) == target:
+                    group_id = str(g.get("id"))
+                    matched_group_name = gname
+                    break
+
+        for p in range(1, page_limit + 1):
+            params = {"page": p, "limit": 100}
+            if group_id:
+                params["group_id"] = group_id
+            res = call_comix_api(f"/manga/{hid}/chapters", params)
+            items = res.get("items", []) if isinstance(res, dict) else []
+            if not items:
+                break
+            for ch in items:
+                ch_group = (ch.get("scanlation_group") or {}).get("name") or matched_group_name or "Unknown"
+                if scan_group and not group_id:
+                    if scan_group.strip().lower() not in ch_group.lower():
+                        continue
+                chapters.append({
+                    "chapter_id": ch.get("chapter_id") or ch.get("id"),
+                    "number": float(ch.get("number", 0)),
+                    "name": ch.get("name") or "",
+                    "group_name": ch_group,
+                    "group_id": ch.get("scanlation_group_id") or group_id,
+                })
+            if len(items) < 100:
+                break
+    except Exception as ex:
+        print(f"⚠️ Direct Comix API failed ({ex}) -> Fallback to Chrome DOM...")
+        dom_res = fetch_comix_chapters_via_dom(hid, scan_group=scan_group)
+        if dom_res.get("chapters"):
+            return dom_res
+
+    if not chapters:
+        dom_res = fetch_comix_chapters_via_dom(hid, scan_group=scan_group)
+        if dom_res.get("chapters"):
+            return dom_res
 
     return {
         "meta": meta,
@@ -254,7 +343,7 @@ def fetch_comix_group_chapters(hid, scan_group="", page_limit=3):
     }
 
 
-def extract_comix_images_via_dom(chapter_url):
+def extract_comix_images_via_dom(chapter_url, headless: bool = False):
     """
     ดึงลิงก์รูปภาพจาก HTML Element (<div class="reader-area"> -> <img class="rpage-page__img">)
     โดยเปิดเบราว์เซอร์ Chrome Headless และตั้งค่า localStorage preload='all' ให้แสดงผลครบทุกหน้าทันที
@@ -263,9 +352,9 @@ def extract_comix_images_via_dom(chapter_url):
 
     with sync_playwright() as p:
         try:
-            browser = p.chromium.launch(channel="chrome", headless=True)
+            browser = p.chromium.launch(channel="chrome", headless=headless)
         except Exception:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=headless)
 
         context = browser.new_context(
             user_agent=DEFAULT_USER_AGENT,
@@ -283,6 +372,11 @@ def extract_comix_images_via_dom(chapter_url):
         page.goto(chapter_url, wait_until="domcontentloaded", timeout=45000)
         page.wait_for_selector("img.rpage-page__img", state="attached", timeout=20000)
         page.wait_for_timeout(1500)
+        
+        # Continuous reader scroll to load all virtual pages
+        for _ in range(6):
+            page.evaluate("window.scrollBy(0, 3500)")
+            time.sleep(0.3)
 
         title = page.title()
         img_urls = page.eval_on_selector_all(
@@ -684,30 +778,31 @@ def get_pending_comix_tasks():
     return pending_tasks
 
 
-if __name__ == "__main__":
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    group_arg = ""
-    chap_arg = None
-    use_dom_flag = "--dom" in sys.argv
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Comix.to Automated Chapter Purchaser & Downloader (RawTracker)")
+    parser.add_argument("url", nargs="?", default="", help="Direct chapter or title URL to process")
+    parser.add_argument("--all-pending", action="store_true", help="Download all pending Comix.to chapters from RawTracker (Default mode)")
+    parser.add_argument("--dry-run", action="store_true", help="List pending tasks without downloading")
+    parser.add_argument("--scan", action="store_true", help="Alias for --dry-run")
+    parser.add_argument("--cooldown", type=int, default=15, help="Cooldown in seconds between chapters (default: 15)")
+    parser.add_argument("--chapter", type=float, default=None, help="Target specific chapter number")
+    parser.add_argument("--chapters", type=str, default="", help="Target chapter range (e.g. '150-152' or '151,152')")
+    parser.add_argument("--group", type=str, default="", help="Specific scanlation group")
+    parser.add_argument("--manga-name", type=str, default="", help="Filter by manga title")
+    parser.add_argument("--manga-id", type=str, default="", help="Filter by manga ID")
+    parser.add_argument("--dom", action="store_true", default=True, help="Force DOM reader area extraction (default: True)")
+    parser.add_argument("--info-only", action="store_true", help="Inspect chapter metadata and images count without downloading")
+    args = parser.parse_args()
 
-    for idx, a in enumerate(sys.argv[1:]):
-        if a.startswith("--group="):
-            group_arg = a.split("=", 1)[1]
-        elif a == "--group" and idx + 2 < len(sys.argv):
-            group_arg = sys.argv[idx + 2]
-        elif a.startswith("--chapter="):
-            chap_arg = float(a.split("=", 1)[1])
+    # If no URL or specific chapter is requested, default to --all-pending mode
+    if not args.url and args.chapter is None and not args.chapters and not args.info_only:
+        args.all_pending = True
 
-    if "--scan" in sys.argv:
-        tasks = get_pending_comix_tasks()
-        print(f"\n✨ พบตอน Comix.to ที่รอประมวลผลทั้งหมด: {len(tasks)} ตอน")
-        sys.exit(0)
-
-    target_url = args[0] if args else "https://comix.to/title/z0l20-god-level-assassin-im-the-shadow"
-
-    if "--info-only" in sys.argv:
-        print(f"🚀 กำลังตรวจสอบข้อมูลเรื่อง/ตอนจาก Comix.to: {target_url} (Group: {group_arg}, DOM={use_dom_flag})")
-        res = fetch_comix_chapter_info(target_url, scan_group=group_arg, chapter_num=chap_arg, use_dom=use_dom_flag)
+    if args.info_only:
+        target_url = args.url or "https://comix.to/title/z0l20-god-level-assassin-im-the-shadow"
+        print(f"🚀 กำลังตรวจสอบข้อมูลเรื่อง/ตอนจาก Comix.to: {target_url} (Group: {args.group}, DOM={args.dom})")
+        res = fetch_comix_chapter_info(target_url, scan_group=args.group, chapter_num=args.chapter, use_dom=args.dom)
         print("\n--- ผลลัพธ์ ---")
         print(f"Success: {res.get('success')}")
         print(f"MangaName: {res.get('mangaName')}")
@@ -719,7 +814,66 @@ if __name__ == "__main__":
             print(f"Sample Image 1: {res['images'][0]}")
         sys.exit(0)
 
-    info = fetch_comix_chapter_info(target_url, scan_group=group_arg, chapter_num=chap_arg, use_dom=use_dom_flag)
+    if args.dry_run or args.scan:
+        print("🔍 [DRY RUN] ตรวจสอบรายการ Comix.to ที่รอประมวลผล...")
+        tasks = get_pending_comix_tasks()
+        if args.manga_name:
+            tasks = [t for t in tasks if args.manga_name.lower() in t.get("mangaName", "").lower()]
+        if args.manga_id:
+            tasks = [t for t in tasks if str(t.get("mangaId")) == str(args.manga_id)]
+        print("=" * 70)
+        print(f"✨ [DRY RUN] พบตอน Comix.to ที่รอประมวลผลทั้งหมด: {len(tasks)} ตอน")
+        print("=" * 70)
+        for idx, t in enumerate(tasks, 1):
+            print(f"#{idx} | {t.get('mangaName')} | {t.get('chapterTitle')} | ค่าย: {t.get('scanGroup')} | {t.get('chapterUrl')}")
+        sys.exit(0)
+
+    if args.all_pending:
+        print("=" * 70)
+        print("🚀 [1-Click Mode] เริ่มต้นตรวจสอบและดาวน์โหลดตอนที่ค้างทั้งหมดจาก RawTracker...")
+        print("=" * 70)
+        tasks = get_pending_comix_tasks()
+        if args.manga_name:
+            tasks = [t for t in tasks if args.manga_name.lower() in t.get("mangaName", "").lower()]
+        if args.manga_id:
+            tasks = [t for t in tasks if str(t.get("mangaId")) == str(args.manga_id)]
+
+        if not tasks:
+            print("\n🎉 ทุกเรื่องในระบบ Comix.to เป็นตอนล่าสุดแล้ว! ไม่มีตอนค้างใน RawTracker")
+            sys.exit(0)
+
+        print(f"\n📦 กำลังจะเริ่มดาวน์โหลดทั้งหมด {len(tasks)} ตอน...")
+        success_count = 0
+        fail_count = 0
+
+        for idx, task in enumerate(tasks, 1):
+            print("\n" + "=" * 70)
+            print(f"▶ [{idx}/{len(tasks)}] กำลังประมวลผล: {task.get('mangaName')} {task.get('chapterTitle')} (ค่าย: {task.get('scanGroup')})")
+            print("=" * 70)
+            task["useDom"] = args.dom
+            ok = process_single_comix_chapter(task)
+            if ok:
+                success_count += 1
+            else:
+                fail_count += 1
+
+            if idx < len(tasks) and args.cooldown > 0:
+                print(f"\n⏳ พักรอบระหว่างตอน {args.cooldown} วินาที...")
+                for sec in range(args.cooldown, 0, -1):
+                    print(f"\r   นับถอยหลัง: {sec:2d} วินาที... ", end="", flush=True)
+                    time.sleep(1)
+                print("\r" + " " * 35 + "\r", end="", flush=True)
+
+        print("\n" + "=" * 70)
+        print(f"🏁 สรุปผลการประมวลผล Comix.to ทั้งหมด:")
+        print(f"   ✓ สำเร็จ: {success_count} ตอน")
+        print(f"   ❌ ล้มเหลว: {fail_count} ตอน")
+        print("=" * 70)
+        sys.exit(0 if fail_count == 0 else 1)
+
+    # Single URL or single chapter mode
+    target_url = args.url or "https://comix.to/title/z0l20-god-level-assassin-im-the-shadow"
+    info = fetch_comix_chapter_info(target_url, scan_group=args.group, chapter_num=args.chapter, use_dom=args.dom)
     if not info.get("success"):
         print(f"❌ ดึงข้อมูลไม่สำเร็จ: {info.get('error')}")
         sys.exit(1)
@@ -745,8 +899,13 @@ if __name__ == "__main__":
         "chapterNum": info.get("chapterNumber"),
         "chapterUrl": info.get("chapterUrl"),
         "scanGroup": info.get("scanGroup"),
-        "useDom": use_dom_flag,
+        "useDom": args.dom,
         "connector": "comix",
     }
     ok = process_single_comix_chapter(task)
     print(f"\n🏁 ประมวลผลเสร็จสิ้น: {'สำเร็จ' if ok else 'ล้มเหลว'}")
+    sys.exit(0 if ok else 1)
+
+
+if __name__ == "__main__":
+    main()

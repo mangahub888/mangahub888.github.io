@@ -25,6 +25,7 @@ Features:
 """
 
 import os
+import subprocess
 import sys
 import time
 import json
@@ -230,6 +231,8 @@ def fetch_manga_detail_and_translate(item: Dict[str, Any], session: requests.Ses
 
 
 DEFAULT_SEED_KEYWORDS = [
+    "The Return of the Scorned Genius",
+    "Scorned Genius",
     "Cyberpunk Chivalry",
     "Cyberpunk",
     "How A Cyberpunk Fixer Lives",
@@ -314,8 +317,82 @@ def parse_mgeko_novel_element(it, max_chapters: int) -> Optional[Dict[str, Any]]
     }
 
 
+
+def load_historical_mgeko_candidates(max_chapters: int) -> Dict[str, Dict[str, Any]]:
+    """Load existing Mgeko items from disk or git backup f6ceead to preserve 30-chapter gems."""
+    candidates_by_url: Dict[str, Dict[str, Any]] = {}
+    
+    # 1. From OUTPUT_FILE on disk
+    if os.path.exists(OUTPUT_FILE):
+        try:
+            with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+                d = json.load(f)
+                items = d.get("sources", {}).get("mgeko", {}).get("items", []) or d.get("items", [])
+                for it in items:
+                    u = it.get("url")
+                    ch = it.get("chapter_count", 0)
+                    if u and 1 <= ch <= max_chapters:
+                        candidates_by_url[u] = it
+        except Exception as e:
+            print(f"⚠️ Error loading local existing Mgeko items: {e}")
+
+    # 2. Always backfill / merge from git baseline (commit f6ceead) to preserve all 30-chapter gems
+    try:
+        repo_root = os.path.dirname(BASE_DIR)
+        cmd = ["git", "-C", repo_root, "show", "f6ceead:tools/data/project_ideas_latest.json"]
+        out = subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
+        d = json.loads(out)
+        items = d.get("sources", {}).get("mgeko", {}).get("items", []) or d.get("items", [])
+        for it in items:
+            u = it.get("url")
+            ch = it.get("chapter_count", 0)
+            if u and 1 <= ch <= max_chapters and u not in candidates_by_url:
+                candidates_by_url[u] = it
+    except Exception as e:
+        print(f"⚠️ Notice: git baseline lookup: {e}")
+
+    return candidates_by_url
+
+
+def load_historical_comix_candidates(max_chapters: int) -> Dict[str, Dict[str, Any]]:
+    """Load existing Comix items from disk or git backup f6ceead to preserve 30-chapter gems."""
+    candidates_by_hid: Dict[str, Dict[str, Any]] = {}
+
+    # 1. From disk
+    for path in [COMIX_OUTPUT_FILE, OUTPUT_FILE]:
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    d = json.load(f)
+                    items = d.get("items", []) if "comix" in path else (d.get("sources", {}).get("comix", {}).get("items", []))
+                    for it in items:
+                        hid = it.get("id")
+                        ch = it.get("chapter_count", 0)
+                        if hid and 1 <= ch <= max_chapters:
+                            candidates_by_hid[hid] = it
+            except Exception:
+                pass
+
+    # 2. Always backfill / merge from git baseline (commit f6ceead) to preserve all 389 Comix gems
+    try:
+        repo_root = os.path.dirname(BASE_DIR)
+        cmd = ["git", "-C", repo_root, "show", "f6ceead:tools/data/comix_project_ideas_latest.json"]
+        out = subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
+        d = json.loads(out)
+        items = d.get("items", [])
+        for it in items:
+            hid = it.get("id")
+            ch = it.get("chapter_count", 0)
+            if hid and 1 <= ch <= max_chapters and hid not in candidates_by_hid:
+                candidates_by_hid[hid] = it
+    except Exception as e:
+        print(f"⚠️ Notice: git baseline lookup: {e}")
+
+    return candidates_by_hid
+
+
 def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100, seed_keywords: Optional[List[str]] = None) -> Dict[str, Any]:
-    """Crawl Mgeko recently updated manga and search seed keywords, filtering for <= max_chapters."""
+    """Crawl Mgeko recently updated manga and search seed keywords, merging with historical portfolio."""
     now = datetime.now()
     crawled_at = now.isoformat()
     session = requests.Session()
@@ -329,8 +406,12 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100, seed_
     print(f"   กฎคัดกรอง: เฉพาะเรื่องที่มีไม่เกิน {max_chapters} ตอน (<= {max_chapters} ตอน)")
     print("=" * 80)
 
-    all_raw_candidates = []
-    seen_urls = set()
+    # 1. Load historical portfolio to ensure existing <= max_chapters gems (including 30-chapter comics) are never lost
+    existing_by_url = load_historical_mgeko_candidates(max_chapters)
+    print(f"📦 โหลดประวัติมังงะเดิมของ Mgeko: {len(existing_by_url)} เรื่อง เพื่อรักษาเรื่อง 30 ตอนไม่ให้หลุดหาย")
+
+    new_candidates_to_enrich = []
+    seen_urls = set(existing_by_url.keys())
     total_scanned_count = 0
 
     for page in range(1, max_pages + 1):
@@ -356,13 +437,21 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100, seed_
                 if not candidate:
                     continue
                 clean_base_url = candidate["url"]
+                if clean_base_url in existing_by_url:
+                    # Update latest chapter / time if newer
+                    existing_by_url[clean_base_url]["chapter_count"] = candidate["chapter_count"]
+                    existing_by_url[clean_base_url]["latest_chapter_text"] = candidate["latest_chapter_text"]
+                    if candidate.get("time_updated"):
+                        existing_by_url[clean_base_url]["time_updated"] = candidate["time_updated"]
+                    continue
+
                 if clean_base_url in seen_urls:
                     continue
                 seen_urls.add(clean_base_url)
-                all_raw_candidates.append(candidate)
+                new_candidates_to_enrich.append(candidate)
                 page_qualified += 1
 
-            print(f"  ✓ [Mgeko หน้า {page}] คัดกรอง <= {max_chapters} ตอนได้ {page_qualified} เรื่อง")
+            print(f"  ✓ [Mgeko หน้า {page}] คัดกรองมังงะใหม่ได้ {page_qualified} เรื่อง")
 
         except Exception as e:
             print(f"❌ Error crawling Mgeko page {page}: {e}")
@@ -383,29 +472,41 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100, seed_
                     if not candidate:
                         continue
                     clean_base_url = candidate["url"]
+                    if clean_base_url in existing_by_url:
+                        existing_by_url[clean_base_url]["chapter_count"] = candidate["chapter_count"]
+                        existing_by_url[clean_base_url]["latest_chapter_text"] = candidate["latest_chapter_text"]
+                        continue
                     if clean_base_url in seen_urls:
                         continue
                     seen_urls.add(clean_base_url)
-                    all_raw_candidates.append(candidate)
+                    new_candidates_to_enrich.append(candidate)
                     added_kw += 1
-                print(f"  ✓ [Mgeko - ค้นหา '{kw}'] เพิ่มใหม่ {added_kw} เรื่อง (รวมสะสม {len(all_raw_candidates)} เรื่อง)")
+                print(f"  ✓ [Mgeko - ค้นหา '{kw}'] เพิ่มใหม่ {added_kw} เรื่อง")
         except Exception as e:
             print(f"❌ Error searching Mgeko for '{kw}': {e}")
 
-    print(f"⚡ [Mgeko] กำลังดึงยอดวิว + แปลเรื่องย่อ {len(all_raw_candidates)} เรื่อง...")
-    enriched_candidates = []
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        futures = {executor.submit(fetch_manga_detail_and_translate, item, session): item for item in all_raw_candidates}
-        for f in as_completed(futures):
-            enriched_candidates.append(f.result())
+    if new_candidates_to_enrich:
+        print(f"⚡ [Mgeko] กำลังดึงยอดวิว + แปลเรื่องย่อสำหรับมังงะใหม่ {len(new_candidates_to_enrich)} เรื่อง...")
+        enriched_new = []
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            futures = {executor.submit(fetch_manga_detail_and_translate, item, session): item for item in new_candidates_to_enrich}
+            for f in as_completed(futures):
+                enriched_new.append(f.result())
+        for it in enriched_new:
+            existing_by_url[it["url"]] = it
 
-    enriched_candidates.sort(key=lambda x: x.get("views_count", 0), reverse=True)
+    # Filter strictly for chapter_count <= max_chapters (retires series that passed max_chapters)
+    final_candidates = [
+        item for item in existing_by_url.values()
+        if 1 <= float(item.get("chapter_count") or 0) <= max_chapters
+    ]
+    final_candidates.sort(key=lambda x: x.get("views_count", 0), reverse=True)
 
     genre_counts: Dict[str, int] = {}
     origin_counts: Dict[str, int] = {}
     total_views_portfolio = 0
 
-    for c in enriched_candidates:
+    for c in final_candidates:
         orig = c.get("origin") or "Unknown"
         origin_counts[orig] = origin_counts.get(orig, 0) + 1
         total_views_portfolio += c.get("views_count", 0)
@@ -424,11 +525,11 @@ def crawl_mgeko_project_ideas(max_pages: int = 5, max_chapters: int = 100, seed_
         "sort_order": "views_count_desc",
         "max_chapters_threshold": max_chapters,
         "total_scanned": total_scanned_count,
-        "total_candidates": len(enriched_candidates),
+        "total_candidates": len(final_candidates),
         "total_views_sum": total_views_portfolio,
         "origin_distribution": origin_counts,
         "top_genres": sorted_genres,
-        "items": enriched_candidates
+        "items": final_candidates
     }
 
 
@@ -535,18 +636,127 @@ def parse_comix_raw_item(raw: Dict[str, Any], max_chapters: int) -> Optional[Dic
     }
 
 
+def crawl_comix_via_chrome(max_chapters: int = 100, seed_keywords: Optional[List[str]] = None, headless: bool = False) -> Dict[str, Dict[str, Any]]:
+    """Crawl Comix.to using Playwright real Chrome DOM (Immune to API token rotation and Cloudflare 403)."""
+    from playwright.sync_api import sync_playwright
+    import time
+    
+    candidates = {}
+    if seed_keywords is None:
+        seed_keywords = DEFAULT_SEED_KEYWORDS
+        
+    print("\n🌐 [Chrome DOM Crawler] กำลังดึงข้อมูลจาก Comix.to ผ่าน Google Chrome จริง...")
+    try:
+        with sync_playwright() as p:
+            try:
+                browser = p.chromium.launch(channel="chrome", headless=headless)
+            except Exception:
+                browser = p.chromium.launch(headless=headless)
+                
+            page = browser.new_page(user_agent=DEFAULT_HEADERS.get("User-Agent"))
+            page.goto("https://comix.to/", wait_until="networkidle", timeout=45000)
+            
+            items = page.evaluate("""() => {
+                const links = Array.from(document.querySelectorAll('a[href*="/title/"]'));
+                return links.map(a => {
+                    return {
+                        href: a.href,
+                        text: a.innerText.trim(),
+                        img: a.querySelector('img')?.src || ''
+                    };
+                }).filter(x => x.text && !x.href.includes('-chapter-'));
+            }""")
+            
+            def _parse_dom_item(it_dict):
+                raw_text = it_dict.get("text", "")
+                href = it_dict.get("href", "")
+                img = it_dict.get("img", "")
+                
+                ch_m = re.search(r'Ch\.([0-9.]+)', raw_text)
+                if not ch_m:
+                    return None
+                ch = float(ch_m.group(1))
+                if ch <= 0 or ch > max_chapters:
+                    return None
+                    
+                lines = [line.strip() for line in raw_text.split("\n") if line.strip()]
+                title = ""
+                for line in lines:
+                    if not line.startswith("Ch.") and not re.search(r'\d+[dwm]\s+ago', line, re.I) and line not in ["MANHWA", "MANGA", "OTHER", "·"]:
+                        title = line
+                        break
+                if not title and lines:
+                    title = lines[-1] if not lines[-1].startswith("Ch.") else lines[0]
+                    
+                hid_m = re.search(r'/title/([a-z0-9]+)', href)
+                hid = hid_m.group(1) if hid_m else href.rstrip("/").split("/")[-1]
+                
+                origin = "KR (Manhwa)" if "MANHWA" in raw_text.upper() else ("CN (Manhua)" if "MANHUA" in raw_text.upper() else ("JP (Manga)" if "MANGA" in raw_text.upper() else "Manga"))
+                score_m = re.search(r'\b(\d\.\d)\b', raw_text)
+                score = score_m.group(1) if score_m else ""
+                
+                ch_val = int(ch) if ch.is_integer() else ch
+                return {
+                    "id": hid,
+                    "source": "comix",
+                    "title": title or hid,
+                    "alt_titles": [],
+                    "url": href,
+                    "cover": img,
+                    "chapter_count": ch_val,
+                    "latest_chapter_text": f"Chapter {ch_val}",
+                    "score": score,
+                    "status": "Ongoing",
+                    "origin": origin,
+                    "time_updated": "อัปเดตล่าสุด",
+                    "views_count": 0,
+                    "views_text": "-",
+                    "bookmarks_text": "-",
+                    "genres": [origin.split()[0]],
+                    "summary": "",
+                    "summary_th": ""
+                }
+
+            for it in items:
+                parsed = _parse_dom_item(it)
+                if parsed and parsed["id"] not in candidates:
+                    candidates[parsed["id"]] = parsed
+            print(f"✓ ดึงการ์ตูนหน้าแรก Comix สำเร็จ: {len(candidates)} เรื่อง")
+
+            for kw in seed_keywords:
+                inp = page.locator("input[placeholder*='Search']").first
+                if inp.count():
+                    inp.fill("")
+                    inp.fill(kw)
+                    time.sleep(1.5)
+                    kw_items = page.evaluate("""() => {
+                        const links = Array.from(document.querySelectorAll('a[href*="/title/"]'));
+                        return links.map(a => ({
+                            href: a.href,
+                            text: a.innerText.trim(),
+                            img: a.querySelector('img')?.src || ''
+                        })).filter(x => x.text && !x.href.includes('-chapter-'));
+                    }""")
+                    added_kw = 0
+                    for kit in kw_items:
+                        parsed = _parse_dom_item(kit)
+                        if parsed and parsed["id"] not in candidates:
+                            candidates[parsed["id"]] = parsed
+                            added_kw += 1
+                    print(f"  ✓ ค้นหาคำว่า '{kw}' พบใหม่: {added_kw} เรื่อง")
+
+            browser.close()
+    except Exception as ex:
+        print(f"⚠️ ข้อผิดพลาดใน Chrome DOM crawler: {ex}")
+        
+    return candidates
+
+
 def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 100, seed_keywords: Optional[List[str]] = None) -> Dict[str, Any]:
     """
-    Crawl Comix.to (https://comix.to/) via encrypted API `/api/v1/manga`
-    filtering strictly for `1 <= latestChapter <= max_chapters`.
-    Combines:
-    - Trending 7 days (`order[views_7d]=desc`)
-    - Trending 30 days (`order[views_30d]=desc`)
-    - Most Followed (`order[follows_total]=desc`)
-    - Recently Updated (`order[chapter_updated_at]=desc`)
-    - Newly Created (`order[created_at]=desc`)
-    - Seed Keywords Search (e.g. Cyberpunk Chivalry)
-    so the dataset has rich representation across all chapter ranges (1-5, 6-10 ... 96-100).
+    Crawl Comix.to via encrypted API `/api/v1/manga`
+    filtering strictly for `1 <= latestChapter <= max_chapters`,
+    preserving and incrementally merging with historical candidates.
     """
     now = datetime.now()
     crawled_at = now.isoformat()
@@ -560,6 +770,14 @@ def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 1
     print(f"   กฎคัดกรอง: เฉพาะเรื่องที่มีไม่เกิน {max_chapters} ตอน (1 - {max_chapters} ตอน)")
     print("=" * 80)
 
+    # 1. Load historical candidates so no 30-chapter gems are wiped out
+    existing_by_hid = load_historical_comix_candidates(max_chapters)
+    print(f"📦 โหลดประวัติมังงะเดิมของ Comix.to: {len(existing_by_hid)} เรื่อง เพื่อรักษาฐานข้อมูลไม่ให้หาย")
+
+    raw_items_by_hid: Dict[str, Dict[str, Any]] = dict(existing_by_hid)
+    new_hids_to_translate = set()
+    total_scanned = 0
+
     feed_configs = [
         ("Trending 7d", {"order[views_7d]": "desc"}, max_pages_per_feed),
         ("Trending 30d", {"order[views_30d]": "desc"}, max_pages_per_feed),
@@ -567,9 +785,6 @@ def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 1
         ("Recently Updated", {"order[chapter_updated_at]": "desc"}, max_pages_per_feed + 2),
         ("Newly Created", {"order[created_at]": "desc"}, 2),
     ]
-
-    raw_items_by_hid: Dict[str, Dict[str, Any]] = {}
-    total_scanned = 0
 
     for feed_label, extra_params, pages in feed_configs:
         for page in range(1, pages + 1):
@@ -588,16 +803,40 @@ def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 1
                 added = 0
                 for raw in batch:
                     hid = raw.get("hid") or str(raw.get("id") or "")
-                    if not hid or hid in raw_items_by_hid:
+                    if not hid:
                         continue
                     item_dict = parse_comix_raw_item(raw, max_chapters)
                     if not item_dict:
                         continue
-                    raw_items_by_hid[hid] = item_dict
-                    added += 1
+                    if hid in raw_items_by_hid:
+                        # Update dynamic fields
+                        raw_items_by_hid[hid]["chapter_count"] = item_dict["chapter_count"]
+                        raw_items_by_hid[hid]["latest_chapter_text"] = item_dict["latest_chapter_text"]
+                        raw_items_by_hid[hid]["views_count"] = item_dict["views_count"]
+                        raw_items_by_hid[hid]["views_text"] = item_dict["views_text"]
+                        raw_items_by_hid[hid]["bookmarks_text"] = item_dict["bookmarks_text"]
+                        raw_items_by_hid[hid]["status"] = item_dict["status"]
+                        raw_items_by_hid[hid]["time_updated"] = item_dict["time_updated"]
+                    else:
+                        raw_items_by_hid[hid] = item_dict
+                        new_hids_to_translate.add(hid)
+                        added += 1
                 print(f"  ✓ [Comix.to - {feed_label} หน้า {page}] เพิ่มใหม่ {added} เรื่อง (รวมสะสม {len(raw_items_by_hid)} เรื่อง)")
             except Exception as e:
                 print(f"❌ Error fetching Comix.to ({feed_label} page {page}): {e}")
+
+        # If API yielded 0 items (e.g. key_retired or Cloudflare 403), trigger Chrome DOM crawler fallback
+    if total_scanned == 0:
+        print("⚠️ Comix API ตอบกลับ 0 รายการ (Token Key หมดอายุหรือถูกปฏิเสธ) -> เปิดระบบดึงข้อมูลอัตโนมัติผ่าน Google Chrome จริง...")
+        chrome_items = crawl_comix_via_chrome(max_chapters=max_chapters, seed_keywords=seed_keywords)
+        for hid, item in chrome_items.items():
+            if hid in raw_items_by_hid:
+                raw_items_by_hid[hid]["chapter_count"] = item["chapter_count"]
+                raw_items_by_hid[hid]["latest_chapter_text"] = item["latest_chapter_text"]
+            else:
+                raw_items_by_hid[hid] = item
+                new_hids_to_translate.add(hid)
+        print(f"✓ รวมข้อมูลจาก Chrome DOM สำเร็จ: สะสมทั้งหมด {len(raw_items_by_hid)} เรื่อง")
 
     # Seed Keywords Search (guarantees targeted titles like Cyberpunk Chivalry are discovered)
     for kw in seed_keywords:
@@ -614,32 +853,48 @@ def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 1
             added_kw = 0
             for raw in batch:
                 hid = raw.get("hid") or str(raw.get("id") or "")
-                if not hid or hid in raw_items_by_hid:
+                if not hid:
                     continue
                 item_dict = parse_comix_raw_item(raw, max_chapters)
                 if not item_dict:
                     continue
-                raw_items_by_hid[hid] = item_dict
-                added_kw += 1
+                if hid in raw_items_by_hid:
+                    raw_items_by_hid[hid]["chapter_count"] = item_dict["chapter_count"]
+                    raw_items_by_hid[hid]["latest_chapter_text"] = item_dict["latest_chapter_text"]
+                else:
+                    raw_items_by_hid[hid] = item_dict
+                    new_hids_to_translate.add(hid)
+                    added_kw += 1
             print(f"  ✓ [Comix.to - ค้นหา '{kw}'] เพิ่มใหม่ {added_kw} เรื่อง (รวมสะสม {len(raw_items_by_hid)} เรื่อง)")
         except Exception as e:
             print(f"❌ Error searching Comix for '{kw}': {e}")
 
-    candidates = list(raw_items_by_hid.values())
-    print(f"⚡ [Comix.to] กำลังแปลเรื่องย่อภาษาไทยสำหรับ {len(candidates)} เรื่อง...")
-    enriched_comix = []
-    with ThreadPoolExecutor(max_workers=6) as executor:
-        futures = {executor.submit(enrich_comix_item_translation, item): item for item in candidates}
-        for f in as_completed(futures):
-            enriched_comix.append(f.result())
+    candidates = [
+        it for it in raw_items_by_hid.values()
+        if 1 <= float(it.get("chapter_count") or 0) <= max_chapters
+    ]
+    
+    # Translate synopses only for items missing translation or freshly discovered
+    items_to_translate = [c for c in candidates if not c.get("summary_th") or c.get("id") in new_hids_to_translate]
+    if items_to_translate:
+        print(f"⚡ [Comix.to] กำลังแปลเรื่องย่อภาษาไทยสำหรับมังงะใหม่ {len(items_to_translate)} เรื่อง...")
+        with ThreadPoolExecutor(max_workers=6) as executor:
+            futures = {executor.submit(enrich_comix_item_translation, item): item for item in items_to_translate}
+            for f in as_completed(futures):
+                res = f.result()
+                raw_items_by_hid[res["id"]] = res
 
-    enriched_comix.sort(key=lambda x: x.get("views_count", 0), reverse=True)
+    final_comix = [
+        it for it in raw_items_by_hid.values()
+        if 1 <= float(it.get("chapter_count") or 0) <= max_chapters
+    ]
+    final_comix.sort(key=lambda x: x.get("views_count", 0), reverse=True)
 
     genre_counts: Dict[str, int] = {}
     origin_counts: Dict[str, int] = {}
     total_views_sum = 0
 
-    for c in enriched_comix:
+    for c in final_comix:
         orig = c.get("origin") or "Unknown"
         origin_counts[orig] = origin_counts.get(orig, 0) + 1
         total_views_sum += c.get("views_count", 0)
@@ -658,11 +913,11 @@ def crawl_comix_project_ideas(max_pages_per_feed: int = 3, max_chapters: int = 1
         "sort_order": "follows_total_desc",
         "max_chapters_threshold": max_chapters,
         "total_scanned": total_scanned,
-        "total_candidates": len(enriched_comix),
+        "total_candidates": len(final_comix),
         "total_views_sum": total_views_sum,
         "origin_distribution": origin_counts,
         "top_genres": sorted_genres,
-        "items": enriched_comix
+        "items": final_comix
     }
 
 

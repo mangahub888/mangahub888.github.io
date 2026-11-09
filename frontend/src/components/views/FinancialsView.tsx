@@ -4778,7 +4778,7 @@ export function FinancialsView({
                           <TableCell className="text-right font-semibold">
                             <div className="relative group inline-block hover:z-50">
                               <span className="text-indigo-400 hover:text-indigo-300 underline decoration-dotted decoration-indigo-400/50 cursor-pointer transition-colors">
-                                {((rev > 0 ? rev : (rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿
+                                {((Math.max(rev, rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿
                               </span>
                               {/* Tooltip Hover Card: แยกยอดขายตามแพลตฟอร์ม (Smart Positioning: idx < 3 พุ่งลงล่าง idx >= 3 พุ่งขึ้นบน ไม่ชนหัวตาราง) */}
                               <div
@@ -4788,7 +4788,7 @@ export function FinancialsView({
                               >
                                 <div className="text-[11px] font-bold text-slate-200 border-b border-slate-700/70 pb-1.5 mb-1.5 flex items-center justify-between">
                                   <span className="truncate pr-2">📊 แยกยอดขายตามแพลตฟอร์ม {rowMonthLabel ? `(${rowMonthLabel})` : ""}</span>
-                                  <span className="text-indigo-300 shrink-0">฿{((rev > 0 ? rev : (rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                  <span className="text-indigo-300 shrink-0">฿{((Math.max(rev, rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 </div>
                                 <div className="space-y-1.5 text-[11px]">
                                   {rrExists && (
@@ -4812,9 +4812,13 @@ export function FinancialsView({
                                       <span className="flex items-center gap-1.5 text-slate-300">
                                         <span className="w-2 h-2 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50"></span>
                                         Kairew:
-                                        {isKrExact && (
+                                        {isKrExact ? (
                                           <span className="text-[9px] text-blue-400/80 font-normal">
                                             (รอบจริง)
+                                          </span>
+                                        ) : (
+                                          <span className="text-[9px] text-slate-400 font-normal">
+                                            (ไม่มีรอบเดือน)
                                           </span>
                                         )}
                                       </span>
@@ -4828,14 +4832,20 @@ export function FinancialsView({
                                       <span className="flex items-center gap-1.5 text-slate-300">
                                         <span className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
                                         Chaply:
-                                        {isChExact && (
+                                        {isChExact ? (
                                           <span className="text-[9px] text-amber-400/80 font-normal">
                                             (รอบจริง)
+                                          </span>
+                                        ) : (
+                                          <span className="text-[9px] text-slate-400 font-normal">
+                                            (เว็บไม่มีแยกเดือน)
                                           </span>
                                         )}
                                       </span>
                                       <span className="font-semibold text-amber-300">
-                                        ฿{chSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        {chSaleAmt > 0
+                                          ? `฿${chSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                          : (chLifetime > 0 ? `สะสม ฿${chLifetime.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : "฿0.00")}
                                       </span>
                                     </div>
                                   )}

@@ -1,3 +1,4 @@
+DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -180,7 +181,48 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         print(f"❌ ส่งข้อมูลไปยัง GAS ไม่สำเร็จ: {e}", flush=True)
         return False
 
-def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032"):
+def launch_chaply_browser_session() -> str:
+    """Launch visible real Google Chrome to display creator dashboard and capture fresh token."""
+    from playwright.sync_api import sync_playwright
+    profile_dir = os.path.join(BASE_DIR, ".chrome_chaply")
+    captured = {}
+    print("🌐 [Chrome Mode] กำลังเปิด Google Chrome จริงเพื่อเข้าสู่หน้า Chaply Creator Dashboard...", flush=True)
+    try:
+        with sync_playwright() as p:
+            launch_kwargs = {
+                "headless": False,
+                "channel": "chrome",
+                "no_viewport": True,
+                "ignore_default_args": ["--enable-automation"],
+                "args": ["--disable-blink-features=AutomationControlled", "--no-sandbox"]
+            }
+            context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+            page = context.pages[0] if context.pages else context.new_page()
+            
+            def on_req(req):
+                auth = req.headers.get("authorization")
+                if auth and "Bearer" in auth:
+                    token = auth.split(" ")[1]
+                    captured["token"] = token
+            page.on("request", on_req)
+            
+            print("🌐 [Chrome Mode] กำลังเปิด Google Chrome เข้าสู่หน้า https://www.chaply.net/writer/dashboard ...", flush=True)
+            page.goto("https://www.chaply.net/writer/dashboard", wait_until="domcontentloaded")
+            time.sleep(3)
+            context.storage_state(path=AUTH_FILE)
+            context.close()
+            
+            if captured.get("token"):
+                with open(BEARER_FILE, "w", encoding="utf-8") as bf:
+                    json.dump({"token": captured["token"]}, bf, indent=2)
+                return captured["token"]
+    except Exception as e:
+        print(f"⚠️ Chaply browser session notice: {e}")
+    return get_auth_token()
+
+
+
+def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = False):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -190,7 +232,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     print(f"🚀 Chaply 6-Hour Growth Pipeline: กำลังบันทึกข้อมูลสถิติรอบ {recorded_at}")
     print("=" * 70)
 
-    token = get_auth_token()
+    token = launch_chaply_browser_session() if use_browser else get_auth_token()
     if not token:
         print("❌ ไม่พบ Chaply Auth Token! กรุณารัน tools/login_chaply_persistent.py ก่อน")
         return
@@ -471,9 +513,11 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Chaply Growth Tracker")
+    parser.add_argument("--browser", action="store_true", default=False, help="Launch real visible Google Chrome browser")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
-    parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_WEBAPP_URL", ""), help="GAS Web App URL")
+    parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     args = parser.parse_args()
 
-    run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode)
+    
+    run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=args.browser)
