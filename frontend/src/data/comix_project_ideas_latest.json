@@ -1,7 +1,7 @@
 {
   "source_id": "comix",
   "source_name": "Comix (comix.to)",
-  "crawled_at": "2026-11-08T23:11:38.938168",
+  "crawled_at": "2026-11-09T02:38:36.346709",
   "source_url": "https://comix.to/",
   "filter_rule": "chapter_count <= 100",
   "sort_order": "follows_total_desc",
