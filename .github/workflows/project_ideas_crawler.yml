@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       pages:
-        description: 'Number of pages to scan (1-10)'
+        description: 'Number of pages to scan sequentially (1-30)'
         required: false
-        default: '5'
+        default: '30'
       max_chapters:
         description: 'Maximum chapter count threshold'
         required: false
@@ -22,7 +22,7 @@ permissions:
 jobs:
   crawl-ideas:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     steps:
       - name: Checkout Code
@@ -40,18 +40,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests lxml pillow
 
-      - name: Run Project Ideas Crawler (Mgeko + Comix.to)
+      - name: Run Project Ideas Crawler (Mgeko + Comix.to Fresh Crawl)
         run: |
-          python tools/mgeko_project_ideas_crawler.py --pages "${{ github.event.inputs.pages || '5' }}" --max-chapters "${{ github.event.inputs.max_chapters || '100' }}"
+          python tools/mgeko_project_ideas_crawler.py --pages "${{ github.event.inputs.pages || '30' }}" --max-chapters "${{ github.event.inputs.max_chapters || '100' }}" --send-gas
+        env:
+          GAS_URL: ${{ secrets.GAS_URL }}
+          PASSCODE: ${{ secrets.PASSCODE }}
 
       - name: Commit & Push New Project Ideas
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/data/project_ideas_latest.json tools/data/comix_project_ideas_latest.json frontend/public/data/project_ideas_latest.json frontend/public/data/comix_project_ideas_latest.json frontend/src/data/project_ideas_latest.json frontend/src/data/comix_project_ideas_latest.json
+          git add tools/data/project_ideas_latest.json tools/data/comix_project_ideas_latest.json tools/data/translation_cache.json frontend/public/data/project_ideas_latest.json frontend/public/data/comix_project_ideas_latest.json frontend/src/data/project_ideas_latest.json frontend/src/data/comix_project_ideas_latest.json
           if git diff --staged --quiet; then
             echo "No new project ideas changes to commit."
           else
-            git commit -m "chore(ideas): update Mgeko & Comix.to <= 100 chapters project ideas [skip ci]"
+            git commit -m "chore(ideas): fresh crawl Mgeko & Comix.to <= 100 chapters and overwrite sheet [skip ci]"
             git push origin main
           fi

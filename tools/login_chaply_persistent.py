@@ -6,10 +6,24 @@ from playwright.sync_api import sync_playwright
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-exec_path = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-profile_dir = r"D:\new backend\mangahub888.github.io\tools\.chrome_chaply"
-AUTH_FILE = r"D:\new backend\mangahub888.github.io\tools\data\chaply_auth.json"
-BEARER_FILE = r"D:\new backend\mangahub888.github.io\tools\data\chaply_bearer.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+profile_dir = os.path.join(BASE_DIR, ".chrome_chaply")
+AUTH_FILE = os.path.join(DATA_DIR, "chaply_auth.json")
+BEARER_FILE = os.path.join(DATA_DIR, "chaply_bearer.json")
+
+try:
+    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+except ImportError:
+    try:
+        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+    except ImportError:
+        def get_browser_executable_path():
+            return None
+        def set_browser_window_bottom_most(t=""):
+            pass
+
+exec_path = get_browser_executable_path()
 
 USER = "kuroko11.p.g@gmail.com"
 PASS = "@Poom112345ad"
@@ -36,23 +50,34 @@ def main():
     os.makedirs(profile_dir, exist_ok=True)
 
     with sync_playwright() as p:
-        context = p.chromium.launch_persistent_context(
-            user_data_dir=profile_dir,
-            executable_path=exec_path,
-            headless=False,
-            no_viewport=True,
-            ignore_default_args=["--enable-automation"],
-            args=[
+        launch_kwargs = {
+            "user_data_dir": profile_dir,
+            "headless": False,
+            "channel": "chrome",
+            "no_viewport": True,
+            "ignore_default_args": ["--enable-automation"],
+            "args": [
                 "--disable-blink-features=AutomationControlled",
                 "--no-sandbox",
                 "--disable-infobars"
             ]
-        )
+        }
+        if exec_path:
+            launch_kwargs["executable_path"] = exec_path
+
+        try:
+            context = p.chromium.launch_persistent_context(**launch_kwargs)
+        except Exception:
+            launch_kwargs.pop("channel", None)
+            context = p.chromium.launch_persistent_context(**launch_kwargs)
+
+        set_browser_window_bottom_most("chaply")
         page = context.pages[0] if context.pages else context.new_page()
         page.on("request", on_request)
 
         print("Navigating to https://www.chaply.net ...", flush=True)
         page.goto("https://www.chaply.net", wait_until="domcontentloaded")
+        set_browser_window_bottom_most("chaply")
         time.sleep(3)
 
         # Check if already logged in

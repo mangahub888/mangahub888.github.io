@@ -66,18 +66,46 @@ THAI_MONTHS = [
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
 ]
 
-def get_browser_executable_path() -> Optional[str]:
-    if sys.platform == "win32":
-        candidates = [
-            r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-            r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-            r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-            r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-        ]
-        for p in candidates:
-            if os.path.exists(p):
-                return p
-    return None
+try:
+    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+except ImportError:
+    try:
+        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+    except ImportError:
+        def get_browser_executable_path() -> Optional[str]:
+            if sys.platform == "win32":
+                candidates = [
+                    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+                    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                    r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+                ]
+                for p in candidates:
+                    if os.path.exists(p):
+                        return p
+            return None
+
+        def set_browser_window_bottom_most(title_filter: str = ""):
+            pass
+
+def is_token_valid(token: str) -> bool:
+    """Check if JWT Bearer token is non-empty and unexpired (with 5-minute buffer)."""
+    if not token or not token.startswith("Bearer "):
+        return False
+    parts = token.split(" ")
+    if len(parts) != 2:
+        return False
+    jwt_parts = parts[1].split(".")
+    if len(jwt_parts) != 3:
+        return False
+    try:
+        import base64
+        padded = jwt_parts[1] + "=" * ((4 - len(jwt_parts[1]) % 4) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(padded.encode("ascii")).decode("utf-8"))
+        exp = payload.get("exp", 0)
+        return exp > (time.time() + 300)
+    except Exception:
+        return False
 
 def authenticate_via_direct_http(acc_key: str = "adieu") -> str:
     """Fast & resilient direct HTTP session login via NextAuth endpoints."""
@@ -136,7 +164,7 @@ def authenticate_via_direct_http(acc_key: str = "adieu") -> str:
 
     return ""
 
-def refresh_bearer_token(headless: bool = True) -> str:
+def refresh_bearer_token(headless: bool = False) -> str:
     """Obtain fresh Bearer JWT token from NextAuth using Direct HTTP (Primary) or Playwright (Fallback)."""
     global CURRENT_ACCOUNT
     acc_name = ACCOUNT_CONFIGS.get(CURRENT_ACCOUNT, {}).get("name", CURRENT_ACCOUNT)
@@ -154,21 +182,34 @@ def refresh_bearer_token(headless: bool = True) -> str:
             return token
 
     exec_path = get_browser_executable_path()
-    print(f"🔄 [{acc_name}] สลับไปใช้ Playwright Browser เพื่อดึง Bearer Token...", flush=True)
+    mode_str = "Headless" if headless else "Google Chrome จริง (หน้าต่างเปิดอยู่ด้านหลังสุด / HWND_BOTTOM ไม่แย่งโฟกัส)"
+    print(f"🌐 [{acc_name}] เปิด {mode_str} เพื่อดึง Bearer Token...", flush=True)
 
     with sync_playwright() as p:
-        context = p.chromium.launch_persistent_context(
-            user_data_dir=PROFILE_DIR,
-            executable_path=exec_path,
-            headless=headless,
-            viewport={"width": 1280, "height": 800},
-            ignore_default_args=["--enable-automation"],
-            args=[
+        launch_kwargs = {
+            "user_data_dir": PROFILE_DIR,
+            "headless": headless,
+            "viewport": {"width": 1280, "height": 800},
+            "ignore_default_args": ["--enable-automation"],
+            "args": [
                 "--disable-blink-features=AutomationControlled",
                 "--no-sandbox",
                 "--disable-infobars"
             ]
-        )
+        }
+        if exec_path:
+            launch_kwargs["executable_path"] = exec_path
+
+        try:
+            context = p.chromium.launch_persistent_context(**launch_kwargs)
+        except Exception as e_launch:
+            print(f"⚠️ [{acc_name}] ไม่สามารถเปิดด้วย chrome path ({e_launch}) กำลังลองใช้ Chromium ปกติ...")
+            launch_kwargs.pop("executable_path", None)
+            context = p.chromium.launch_persistent_context(**launch_kwargs)
+
+        if not headless:
+            set_browser_window_bottom_most("readrealm")
+
         page = context.pages[0] if context.pages else context.new_page()
 
         tokens = []
@@ -178,7 +219,56 @@ def refresh_bearer_token(headless: bool = True) -> str:
         page.on("request", on_req)
 
         page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
+        if not headless:
+            set_browser_window_bottom_most("readrealm")
         page.wait_for_timeout(3500)
+
+        # If redirected to login, perform smart NextAuth in-browser login
+        if "/login" in page.url:
+            print(f"🔑 [{acc_name}] ตรวจพบหน้าเข้าสู่ระบบ -> ทำการล็อกอินผ่าน NextAuth in-browser...", flush=True)
+            cfg = ACCOUNT_CONFIGS.get(CURRENT_ACCOUNT, ACCOUNT_CONFIGS["adieu"])
+            try:
+                auth_result = page.evaluate("""async (creds) => {
+                    try {
+                        const csrfRes = await fetch('/api/auth/csrf');
+                        const { csrfToken } = await csrfRes.json();
+                        if (!csrfToken) return { ok: false, error: 'No CSRF' };
+
+                        const params = new URLSearchParams();
+                        params.append('csrfToken', csrfToken);
+                        params.append('username_or_email', creds.username);
+                        params.append('password', creds.password);
+                        params.append('callbackUrl', 'https://readrealm.co');
+                        params.append('json', 'true');
+
+                        const cbRes = await fetch('/api/auth/callback/credentials', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Auth-Return-Redirect': '1'
+                            },
+                            body: params.toString()
+                        });
+
+                        const sessRes = await fetch('/api/auth/session');
+                        const sessData = await sessRes.json();
+                        const rawToken = sessData?.accessToken || sessData?.token || sessData?.user?.accessToken || sessData?.user?.token;
+                        return { ok: !!rawToken, token: rawToken };
+                    } catch (e) {
+                        return { ok: false, error: e.toString() };
+                    }
+                }""", {"username": cfg["username"], "password": cfg["password"]})
+
+                if auth_result and auth_result.get("ok"):
+                    raw_t = auth_result.get("token")
+                    token = f"Bearer {raw_t}" if not str(raw_t).startswith("Bearer ") else str(raw_t)
+                    print(f"✓ [{acc_name}] ล็อกอินในเบราว์เซอร์ผ่าน NextAuth สำเร็จ ({len(token)} chars)", flush=True)
+            except Exception as e_eval:
+                print(f"⚠️ [{acc_name}] In-page NextAuth evaluation notice: {e_eval}")
+
+            tokens.clear()
+            page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
+            page.wait_for_timeout(3500)
 
         token = tokens[0] if tokens else ""
         if not token:
@@ -187,10 +277,17 @@ def refresh_bearer_token(headless: bool = True) -> str:
                     const r = await fetch('/api/auth/session');
                     return await r.json();
                 }""")
-                if session_data and session_data.get("accessToken"):
-                    token = f"Bearer {session_data['accessToken']}"
+                if session_data:
+                    raw_t = session_data.get("accessToken") or session_data.get("token") or (session_data.get("user") or {}).get("accessToken") or (session_data.get("user") or {}).get("token")
+                    if raw_t:
+                        token = f"Bearer {raw_t}" if not str(raw_t).startswith("Bearer ") else str(raw_t)
             except Exception as e:
                 print(f"⚠️ Session eval error: {e}")
+
+        # Emergency direct HTTP fallback
+        if not token:
+            print(f"🔄 [{acc_name}] เบราว์เซอร์ไม่คืนค่า Token -> สลับใช้ Direct HTTP สำรองทันที...", flush=True)
+            token = authenticate_via_direct_http(CURRENT_ACCOUNT)
 
         if token:
             with open(BEARER_FILE, "w", encoding="utf-8") as f:
@@ -201,13 +298,13 @@ def refresh_bearer_token(headless: bool = True) -> str:
         return token
 
 def get_valid_token(force_refresh: bool = False) -> str:
-    """Retrieve existing cached token or refresh if missing."""
+    """Retrieve existing cached token or refresh if missing / expired."""
     if not force_refresh and os.path.exists(BEARER_FILE):
         try:
             with open(BEARER_FILE, "r", encoding="utf-8") as f:
                 d = json.load(f)
                 token = d.get("bearer", "")
-                if token and token.startswith("Bearer "):
+                if token and token.startswith("Bearer ") and is_token_valid(token):
                     return token
         except:
             pass

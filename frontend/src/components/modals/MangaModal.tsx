@@ -148,17 +148,25 @@ export function MangaModal({
 
     // 5. Generate slug if empty
     if (!watch("slug")) {
-      const match = item.url.match(/comix\.to\/title\/[a-z0-9]+-(.+)/i)
-      const cleanSlug = match
-        ? match[1].toLowerCase().replace(/[^a-z0-9-]+/g, "-")
-        : item.title.toLowerCase().replace(/[^a-z0-9-]+/g, "-")
+      let cleanSlug = ""
+      const comixMatch = item.url.match(/comix\.to\/title\/[a-z0-9]+-(.+)/i)
+      const mgekoMatch = item.url.match(/mgeko\.cc\/manga\/(?:[a-z0-9]+-)?([^/]+)/i)
+      if (comixMatch && comixMatch[1]) {
+        cleanSlug = comixMatch[1].toLowerCase().replace(/[^a-z0-9-]+/g, "-")
+      } else if (mgekoMatch && mgekoMatch[1]) {
+        cleanSlug = mgekoMatch[1].toLowerCase().replace(/[^a-z0-9-]+/g, "-")
+      } else {
+        cleanSlug = item.title.toLowerCase().replace(/[^a-z0-9-]+/g, "-")
+      }
       if (cleanSlug) {
         setValue("slug", cleanSlug, { shouldDirty: true })
       }
     }
 
-    // 6. Automatically trigger scan group fetching from the selected Comix URL
-    fetchGroupsFromUrl(item.url)
+    // 6. Automatically trigger scan group fetching if Comix URL
+    if (item.url.includes("comix.to")) {
+      fetchGroupsFromUrl(item.url)
+    }
 
     toast.success(`เลือก "${item.title}" เรียบร้อยแล้ว (ใส่ URL ต้นฉบับสำเร็จ)`)
   }
@@ -337,7 +345,7 @@ export function MangaModal({
                   className="shrink-0 h-10 px-3 border-violet-500/40 bg-violet-950/30 text-violet-300 hover:bg-violet-900/50 hover:text-white cursor-pointer font-medium"
                 >
                   <Search className="h-4 w-4 sm:mr-1.5 text-violet-400" />
-                  <span className="hidden sm:inline">ค้นหา Comix</span>
+                  <span className="hidden sm:inline">ค้นหาต้นฉบับ</span>
                 </Button>
               </div>
             </div>

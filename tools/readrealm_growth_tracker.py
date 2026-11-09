@@ -54,18 +54,46 @@ ACCOUNTS = [
     }
 ]
 
-def get_browser_executable_path() -> Optional[str]:
-    if sys.platform == "win32":
-        candidates = [
-            r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-            r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-            r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-            r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-        ]
-        for p in candidates:
-            if os.path.exists(p):
-                return p
-    return None
+try:
+    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+except ImportError:
+    try:
+        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+    except ImportError:
+        def get_browser_executable_path() -> Optional[str]:
+            if sys.platform == "win32":
+                candidates = [
+                    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+                    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                    r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+                ]
+                for p in candidates:
+                    if os.path.exists(p):
+                        return p
+            return None
+
+        def set_browser_window_bottom_most(title_filter: str = ""):
+            pass
+
+def is_token_valid(token: str) -> bool:
+    """Check if JWT Bearer token is non-empty and unexpired (with 5-minute buffer)."""
+    if not token or not token.startswith("Bearer "):
+        return False
+    parts = token.split(" ")
+    if len(parts) != 2:
+        return False
+    jwt_parts = parts[1].split(".")
+    if len(jwt_parts) != 3:
+        return False
+    try:
+        import base64
+        padded = jwt_parts[1] + "=" * ((4 - len(jwt_parts[1]) % 4) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(padded.encode("ascii")).decode("utf-8"))
+        exp = payload.get("exp", 0)
+        return exp > (time.time() + 300)
+    except Exception:
+        return False
 
 def authenticate_via_direct_http(acc: Dict[str, Any]) -> str:
     """Fast & resilient direct HTTP session login via NextAuth endpoints (immune to Cloudflare Turnstile)."""
@@ -128,7 +156,7 @@ def authenticate_via_direct_http(acc: Dict[str, Any]) -> str:
 
     return ""
 
-def refresh_account_token(acc: Dict[str, Any], headless: bool = True, force_browser: bool = False) -> str:
+def refresh_account_token(acc: Dict[str, Any], headless: bool = False, force_browser: bool = False) -> str:
     """Obtain fresh Bearer token using Direct NextAuth HTTP strategy (Primary) or Playwright browser (Fallback)."""
     bearer_file = acc["bearer_file"]
     profile_dir = acc["profile_dir"]
@@ -148,7 +176,8 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True, force_brow
             return token
 
     # Strategy 2: Persistent Browser Session via Playwright Chrome
-    print(f"🌐 [{acc['name']}] กำลังเปิด Google Chrome จริง (Headless={headless}) เพื่อดึง Token...", flush=True)
+    mode_str = "Headless" if headless else "Google Chrome จริง (หน้าต่างเปิดอยู่ด้านหลังสุด / HWND_BOTTOM ไม่แย่งโฟกัส)"
+    print(f"🌐 [{acc['name']}] กำลังเปิด {mode_str} เพื่อดึง Token...", flush=True)
     exec_path = get_browser_executable_path()
     try:
         with sync_playwright() as p:
@@ -167,11 +196,24 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True, force_brow
             if exec_path:
                 launch_kwargs["executable_path"] = exec_path
 
-            context = p.chromium.launch_persistent_context(
-                user_data_dir=profile_dir,
-                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-                **launch_kwargs
-            )
+            try:
+                context = p.chromium.launch_persistent_context(
+                    user_data_dir=profile_dir,
+                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                    **launch_kwargs
+                )
+            except Exception as e_launch:
+                print(f"⚠️ [{acc['name']}] ไม่สามารถเปิดด้วย channel='chrome' ({e_launch}) กำลังลองใช้ Chromium ปกติ...")
+                launch_kwargs.pop("channel", None)
+                context = p.chromium.launch_persistent_context(
+                    user_data_dir=profile_dir,
+                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                    **launch_kwargs
+                )
+
+            if not headless:
+                set_browser_window_bottom_most("readrealm")
+
             # Inject stealth helper
             context.add_init_script("""
                 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
@@ -192,53 +234,98 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True, force_brow
             page.on("request", on_req)
 
             page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
+            if not headless:
+                set_browser_window_bottom_most("readrealm")
             page.wait_for_timeout(3500)
 
-            # If redirected to login, perform auto login
+            # If redirected to login, perform smart NextAuth in-browser login
             if "/login" in page.url:
                 print(f"🔑 [{acc['name']}] ตรวจพบหน้าเข้าสู่ระบบ -> ทำการล็อกอิน...", flush=True)
                 tokens.clear()
 
-                user_input = page.locator("input[name='username_or_email']").first
-                pass_input = page.locator("input[name='password']").first
-                if user_input.count() and pass_input.count():
-                    user_input.fill(acc["username"])
-                    pass_input.fill(acc["password"])
-                    try:
-                        pass_input.dispatch_event("input")
-                        pass_input.dispatch_event("change")
-                    except Exception:
-                        pass
-                page.wait_for_timeout(1000)
+                # Strategy 2A: Direct in-browser NextAuth API execution via page.evaluate
+                # This seamlessly sets cookies in Chrome's session and bypasses Cloudflare Turnstile
+                try:
+                    auth_result = page.evaluate("""async (creds) => {
+                        try {
+                            const csrfRes = await fetch('/api/auth/csrf');
+                            const { csrfToken } = await csrfRes.json();
+                            if (!csrfToken) return { ok: false, error: 'No CSRF' };
 
-                btn = page.locator("button[type='submit']").first
-                for sec in range(25):
+                            const params = new URLSearchParams();
+                            params.append('csrfToken', csrfToken);
+                            params.append('username_or_email', creds.username);
+                            params.append('password', creds.password);
+                            params.append('callbackUrl', 'https://readrealm.co');
+                            params.append('json', 'true');
+
+                            const cbRes = await fetch('/api/auth/callback/credentials', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                    'X-Auth-Return-Redirect': '1'
+                                },
+                                body: params.toString()
+                            });
+
+                            const sessRes = await fetch('/api/auth/session');
+                            const sessData = await sessRes.json();
+                            const rawToken = sessData?.accessToken || sessData?.token || sessData?.user?.accessToken || sessData?.user?.token;
+                            return { ok: !!rawToken, token: rawToken };
+                        } catch (e) {
+                            return { ok: false, error: e.toString() };
+                        }
+                    }""", {"username": acc["username"], "password": acc["password"]})
+
+                    if auth_result and auth_result.get("ok"):
+                        raw_t = auth_result.get("token")
+                        token = f"Bearer {raw_t}" if not str(raw_t).startswith("Bearer ") else str(raw_t)
+                        print(f"✓ [{acc['name']}] ล็อกอินในเบราว์เซอร์ผ่าน NextAuth สำเร็จ ({len(token)} chars)", flush=True)
+                except Exception as e_eval:
+                    print(f"⚠️ [{acc['name']}] In-page NextAuth evaluation notice: {e_eval}")
+
+                # Strategy 2B: Fallback to DOM input fill if in-page eval did not yield token
+                if not token:
+                    user_input = page.locator("input[name='username_or_email']").first
+                    pass_input = page.locator("input[name='password']").first
+                    if user_input.count() and pass_input.count():
+                        user_input.fill(acc["username"])
+                        pass_input.fill(acc["password"])
+                        try:
+                            pass_input.dispatch_event("input")
+                            pass_input.dispatch_event("change")
+                        except Exception:
+                            pass
                     page.wait_for_timeout(1000)
-                    if "/login" not in page.url:
-                        print(f"✓ [{acc['name']}] นำทางออกจากหน้าล็อกอินแล้ว")
-                        break
 
-                    # พยายามคลิก Cloudflare Turnstile checkbox หากมี iframe อยู่
-                    try:
-                        cf_frame = page.frame_locator("#cf-turnstile iframe, iframe[src*='challenges.cloudflare.com']").first
-                        cb = cf_frame.locator("input[type='checkbox'], .cb-i, #challenge-stage, .ctp-checkbox-label").first
-                        if cb.count() and cb.is_visible():
-                            cb.click(timeout=1500)
-                    except Exception:
-                        pass
-
-                    try:
-                        if btn.count() and not btn.is_disabled():
-                            print(f"🔘 [{acc['name']}] ปุ่มพร้อมใช้งาน -> ส่งข้อมูลเข้าสู่ระบบ...")
-                            btn.click()
-                            page.wait_for_timeout(4000)
+                    btn = page.locator("button[type='submit']").first
+                    for sec in range(15):
+                        page.wait_for_timeout(1000)
+                        if "/login" not in page.url:
+                            print(f"✓ [{acc['name']}] นำทางออกจากหน้าล็อกอินแล้ว")
                             break
-                    except Exception:
-                        pass
+
+                        # Cloudflare Turnstile checkbox handling
+                        try:
+                            cf_frame = page.frame_locator("#cf-turnstile iframe, iframe[src*='challenges.cloudflare.com']").first
+                            cb = cf_frame.locator("input[type='checkbox'], .cb-i, #challenge-stage, .ctp-checkbox-label").first
+                            if cb.count() and cb.is_visible():
+                                cb.click(timeout=1500)
+                        except Exception:
+                            pass
+
+                        try:
+                            if btn.count() and not btn.is_disabled():
+                                print(f"🔘 [{acc['name']}] ปุ่มพร้อมใช้งาน -> ส่งข้อมูลเข้าสู่ระบบ...")
+                                btn.click()
+                                page.wait_for_timeout(3000)
+                                break
+                        except Exception:
+                            pass
 
                 tokens.clear()
                 page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
-                page.wait_for_timeout(4000)
+                page.wait_for_timeout(3500)
 
             token = tokens[-1] if tokens else ""
 
@@ -283,6 +370,11 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True, force_brow
                 except Exception:
                     pass
 
+            # Final safety net: Direct HTTP fallback if browser session yielded nothing
+            if not token:
+                print(f"🔄 [{acc['name']}] เบราว์เซอร์ไม่คืนค่า Token -> สลับใช้ Direct HTTP สำรองทันที...", flush=True)
+                token = authenticate_via_direct_http(acc)
+
             if token:
                 try:
                     with open(bearer_file, "w", encoding="utf-8") as f:
@@ -307,17 +399,17 @@ def refresh_account_token(acc: Dict[str, Any], headless: bool = True, force_brow
         return ""
 
 def get_valid_token(acc: Dict[str, Any], force_refresh: bool = False) -> str:
-    """Retrieve existing cached token or refresh if needed."""
+    """Retrieve existing cached token or refresh if missing / expired."""
     bearer_file = acc["bearer_file"]
     if not force_refresh and os.path.exists(bearer_file):
         try:
             with open(bearer_file, "r", encoding="utf-8") as f:
                 d = json.load(f)
                 token = d.get("bearer") or d.get("full") or ""
-                if token and token.startswith("Bearer "):
+                if token and token.startswith("Bearer ") and is_token_valid(token):
                     return token
                 token_only = d.get("token") or ""
-                if token_only:
+                if token_only and is_token_valid(f"Bearer {token_only}"):
                     return f"Bearer {token_only}"
         except Exception:
             pass
@@ -713,7 +805,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         print(f"❌ ส่งข้อมูลไปยัง GAS ไม่สำเร็จ: {e}", flush=True)
         return False
 
-def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = False):
+def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, force_refresh: bool = False):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -726,9 +818,12 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # 1. Fetch current data across both accounts with individual account fallback
     all_current_comics = []
     for acc in ACCOUNTS:
-        if use_browser:
-            print(f"🌐 [Chrome Mode] กำลังเปิด Google Chrome จริงสำหรับบัญชี [{acc['name']}]...", flush=True)
-            refresh_account_token(acc, headless=False, force_browser=True)
+        # Step 1: Ensure valid active token (refresh only if missing, expired, or force_refresh requested)
+        token = get_valid_token(acc, force_refresh=force_refresh)
+        if not token:
+            print(f"🌐 [{acc['name']}] Token หมดอายุหรือไม่พบ -> กำลังขอรับ Token ใหม่ (use_browser={use_browser})...", flush=True)
+            token = refresh_account_token(acc, headless=not use_browser, force_browser=use_browser)
+        acc["_cached_token"] = token
         acc_comics = []
         try:
             acc_comics = fetch_all_comics_for_account(acc)
@@ -1050,15 +1145,20 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ReadRealm 6-Hour Growth Pipeline Tracker")
-    parser.add_argument("--browser", action="store_true", default=False, help="Launch real visible Google Chrome browser")
+    parser.add_argument("--browser", action="store_true", default=True, help="Launch real visible Google Chrome browser (default: True)")
+    parser.add_argument("--headless", action="store_true", default=False, help="Run browser in headless mode (default: False)")
+    parser.add_argument("--force-refresh", action="store_true", default=False, help="Force refresh tokens even if cached tokens are still unexpired")
     parser.add_argument("--sync-gas", action="store_true", help="Send data to GAS Web App")
     parser.add_argument("--gas-url", type=str, default="", help="GAS Web App exec URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="GAS Passcode")
     args = parser.parse_args()
 
+    use_browser = False if args.headless else args.browser
+
     run_growth_pipeline(
         send_to_gas=args.sync_gas or bool(os.environ.get("GAS_URL")),
         gas_url=args.gas_url or os.environ.get("GAS_URL", ""),
         passcode=args.passcode or os.environ.get("PASSCODE", "10211032"),
-        use_browser=args.browser
+        use_browser=use_browser,
+        force_refresh=args.force_refresh
     )

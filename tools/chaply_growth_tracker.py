@@ -30,6 +30,17 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 import requests
 
+try:
+    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+except ImportError:
+    try:
+        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+    except ImportError:
+        def get_browser_executable_path() -> Optional[str]:
+            return None
+        def set_browser_window_bottom_most(title_filter: str = ""):
+            pass
+
 sys.stdout.reconfigure(encoding='utf-8')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -181,22 +192,36 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         print(f"❌ ส่งข้อมูลไปยัง GAS ไม่สำเร็จ: {e}", flush=True)
         return False
 
-def launch_chaply_browser_session() -> str:
+def launch_chaply_browser_session(headless: bool = False) -> str:
     """Launch visible real Google Chrome to display creator dashboard and capture fresh token."""
     from playwright.sync_api import sync_playwright
     profile_dir = os.path.join(BASE_DIR, ".chrome_chaply")
     captured = {}
-    print("🌐 [Chrome Mode] กำลังเปิด Google Chrome จริงเพื่อเข้าสู่หน้า Chaply Creator Dashboard...", flush=True)
+    mode_str = "Headless" if headless else "Google Chrome จริง (หน้าต่างเปิดอยู่ด้านหลังสุด / HWND_BOTTOM ไม่แย่งโฟกัส)"
+    print(f"🌐 [Chaply] กำลังเปิด {mode_str} เพื่อเข้าสู่หน้า Chaply Creator Dashboard...", flush=True)
     try:
         with sync_playwright() as p:
             launch_kwargs = {
-                "headless": False,
+                "headless": headless,
                 "channel": "chrome",
                 "no_viewport": True,
                 "ignore_default_args": ["--enable-automation"],
                 "args": ["--disable-blink-features=AutomationControlled", "--no-sandbox"]
             }
-            context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+            exec_path = get_browser_executable_path()
+            if exec_path:
+                launch_kwargs["executable_path"] = exec_path
+
+            try:
+                context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+            except Exception as e_launch:
+                print(f"⚠️ [Chaply] ไม่สามารถเปิดด้วย channel='chrome' ({e_launch}) กำลังลองใช้ Chromium ปกติ...")
+                launch_kwargs.pop("channel", None)
+                context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+
+            if not headless:
+                set_browser_window_bottom_most("chaply")
+
             page = context.pages[0] if context.pages else context.new_page()
             
             def on_req(req):
@@ -206,8 +231,10 @@ def launch_chaply_browser_session() -> str:
                     captured["token"] = token
             page.on("request", on_req)
             
-            print("🌐 [Chrome Mode] กำลังเปิด Google Chrome เข้าสู่หน้า https://www.chaply.net/writer/dashboard ...", flush=True)
+            print("🌐 [Chaply] นำทางเข้าสู่ https://www.chaply.net/writer/dashboard ...", flush=True)
             page.goto("https://www.chaply.net/writer/dashboard", wait_until="domcontentloaded")
+            if not headless:
+                set_browser_window_bottom_most("chaply")
             time.sleep(3)
             context.storage_state(path=AUTH_FILE)
             context.close()
@@ -222,7 +249,7 @@ def launch_chaply_browser_session() -> str:
 
 
 
-def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = False):
+def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -232,7 +259,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     print(f"🚀 Chaply 6-Hour Growth Pipeline: กำลังบันทึกข้อมูลสถิติรอบ {recorded_at}")
     print("=" * 70)
 
-    token = launch_chaply_browser_session() if use_browser else get_auth_token()
+    token = launch_chaply_browser_session(headless=headless) if use_browser else get_auth_token()
     if not token:
         print("❌ ไม่พบ Chaply Auth Token! กรุณารัน tools/login_chaply_persistent.py ก่อน")
         return
@@ -513,11 +540,12 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Chaply Growth Tracker")
-    parser.add_argument("--browser", action="store_true", default=False, help="Launch real visible Google Chrome browser")
+    parser.add_argument("--browser", action="store_true", default=True, help="Launch real visible Google Chrome browser (default: True)")
+    parser.add_argument("--headless", action="store_true", default=False, help="Run browser in headless mode (default: False)")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
     parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     args = parser.parse_args()
 
-    
-    run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=args.browser)
+    use_browser = False if args.headless else args.browser
+    run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=use_browser, headless=args.headless)

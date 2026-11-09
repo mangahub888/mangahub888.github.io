@@ -177,13 +177,27 @@ def process_single_tencent_chapter(task):
             storage_state_path = "storageState.json"
 
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            try:
+                from browser_utils import set_browser_window_bottom_most
+            except Exception:
+                try:
+                    from tools.browser_utils import set_browser_window_bottom_most
+                except Exception:
+                    def set_browser_window_bottom_most(t=""): pass
+
+            try:
+                browser = p.chromium.launch(channel="chrome", headless=False)
+            except Exception:
+                browser = p.chromium.launch(headless=False)
+            set_browser_window_bottom_most("tencent")
+
             ctx_kwargs = {}
             if os.path.exists(storage_state_path):
                 ctx_kwargs['storage_state'] = storage_state_path
             context = browser.new_context(**ctx_kwargs)
             page = context.new_page()
             page.goto(view_url, timeout=30000)
+            set_browser_window_bottom_most("tencent")
             page.wait_for_timeout(3000)
 
             # ตรวจสอบปุ่มจ่ายเงิน / 立即支付

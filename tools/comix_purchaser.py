@@ -29,6 +29,15 @@ import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image
 
+try:
+    from browser_utils import set_browser_window_bottom_most
+except ImportError:
+    try:
+        from tools.browser_utils import set_browser_window_bottom_most
+    except ImportError:
+        def set_browser_window_bottom_most(t=""):
+            pass
+
 sys.stdout.reconfigure(encoding='utf-8')
 
 GAS_URL = os.environ.get("GAS_URL", "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec")
@@ -223,9 +232,14 @@ def fetch_comix_chapters_via_dom(title_url_or_hid, scan_group="", headless: bool
                 browser = p.chromium.launch(channel="chrome", headless=headless)
             except Exception:
                 browser = p.chromium.launch(headless=headless)
-                
+
+            if not headless:
+                set_browser_window_bottom_most("comix")
+
             page = browser.new_page(user_agent=DEFAULT_USER_AGENT)
             page.goto(title_url, wait_until="networkidle", timeout=40000)
+            if not headless:
+                set_browser_window_bottom_most("comix")
             
             meta["title"] = page.evaluate("() => document.querySelector('h1')?.innerText || document.title")
             
@@ -356,6 +370,9 @@ def extract_comix_images_via_dom(chapter_url, headless: bool = False):
         except Exception:
             browser = p.chromium.launch(headless=headless)
 
+        if not headless:
+            set_browser_window_bottom_most("comix")
+
         context = browser.new_context(
             user_agent=DEFAULT_USER_AGENT,
             viewport={"width": 1280, "height": 900}
@@ -370,6 +387,8 @@ def extract_comix_images_via_dom(chapter_url, headless: bool = False):
         page = context.new_page()
 
         page.goto(chapter_url, wait_until="domcontentloaded", timeout=45000)
+        if not headless:
+            set_browser_window_bottom_most("comix")
         page.wait_for_selector("img.rpage-page__img", state="attached", timeout=20000)
         page.wait_for_timeout(1500)
         

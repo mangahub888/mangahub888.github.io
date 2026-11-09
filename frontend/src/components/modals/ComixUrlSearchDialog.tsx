@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import comixRawData from "@/data/comix_project_ideas_latest.json"
+import mgekoRawData from "@/data/project_ideas_latest.json"
 import { searchComixLive, LiveComixItem } from "@/api/comixSearchService"
 import {
   Search,
@@ -27,6 +28,7 @@ import {
 
 export interface ComixSearchItem {
   id: string
+  source?: "comix" | "mgeko"
   title: string
   alt_titles?: string[]
   url: string
@@ -64,6 +66,7 @@ export function ComixUrlSearchDialog({
   onSelect,
 }: ComixUrlSearchDialogProps) {
   const [query, setQuery] = React.useState("")
+  const [sourceFilter, setSourceFilter] = React.useState<"all" | "comix" | "mgeko">("all")
   const [originFilter, setOriginFilter] = React.useState<string>("all")
   const [manualUrl, setManualUrl] = React.useState("")
   const [isSearchingOnline, setIsSearchingOnline] = React.useState(false)
@@ -72,9 +75,40 @@ export function ComixUrlSearchDialog({
   const searchInputRef = React.useRef<HTMLInputElement>(null)
   const liveSearchTimerRef = React.useRef<any>(null)
 
-  // Load items from local comix dataset
+  // Load items from both comix and mgeko datasets
   const allItems: ComixSearchItem[] = React.useMemo(() => {
-    return ((comixRawData as any)?.items || []) as ComixSearchItem[]
+    const comixItems = (((comixRawData as any)?.items || []) as any[]).map((it) => ({
+      ...it,
+      source: "comix" as const,
+    }))
+    const mgekoItems = (((mgekoRawData as any)?.items || []) as any[]).map((it) => ({
+      id: it.id,
+      source: "mgeko" as const,
+      title: it.title,
+      alt_titles: it.alt_titles || [],
+      url: it.url,
+      cover: it.cover,
+      chapter_count: it.chapter_count,
+      latest_chapter_text: it.latest_chapter_text,
+      status: it.status,
+      origin: it.origin,
+      score: it.score ? parseFloat(it.score) : undefined,
+      genres: it.genres || [],
+      views_count: it.views_count,
+      views_text: it.views_text,
+      isLive: false,
+    }))
+
+    const seen = new Set<string>()
+    const merged: ComixSearchItem[] = []
+    for (const item of [...mgekoItems, ...comixItems]) {
+      const key = (item.url || item.id || item.title).toLowerCase()
+      if (!seen.has(key)) {
+        seen.add(key)
+        merged.push(item)
+      }
+    }
+    return merged
   }, [])
 
   // Sync initial query when opened
@@ -82,6 +116,7 @@ export function ComixUrlSearchDialog({
     if (open) {
       const q = initialQuery.trim()
       setQuery(q)
+      setSourceFilter("all")
       setOriginFilter("all")
       setManualUrl("")
       setOnlineResults([])
@@ -98,13 +133,22 @@ export function ComixUrlSearchDialog({
   // Detect direct URL in search query
   const isDirectUrl = React.useMemo(() => {
     const q = query.trim().toLowerCase()
-    return q.startsWith("http") && (q.includes("comix.to") || q.includes("/title/"))
+    return (
+      q.startsWith("http") &&
+      (q.includes("comix.to") || q.includes("mgeko.cc") || q.includes("/title/") || q.includes("/manga/"))
+    )
   }, [query])
 
   // Local Filtered items
   const localFilteredItems = React.useMemo(() => {
     const q = query.trim().toLowerCase()
     let list = allItems
+
+    if (sourceFilter === "comix") {
+      list = list.filter((item) => item.source === "comix" || item.url.includes("comix.to"))
+    } else if (sourceFilter === "mgeko") {
+      list = list.filter((item) => item.source === "mgeko" || item.url.includes("mgeko.cc"))
+    }
 
     if (originFilter !== "all") {
       list = list.filter((item) =>
@@ -234,7 +278,7 @@ export function ComixUrlSearchDialog({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <DialogTitle className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                    ค้นหา URL จาก Comix.to
+                    ค้นหา URL ต้นฉบับ (Comix.to & Mgeko.cc)
                   </DialogTitle>
                   <Badge className="bg-emerald-500/10 text-emerald-300 border-emerald-500/30 text-[10px] px-1.5 py-0 font-normal flex items-center gap-1">
                     <Radio className="h-2.5 w-2.5 animate-pulse text-emerald-400" />
@@ -245,7 +289,7 @@ export function ComixUrlSearchDialog({
                   </Badge>
                 </div>
                 <DialogDescription className="text-xs text-slate-400">
-                  ค้นหาได้ทุกเรื่องแบบ Real-Time จาก Comix.to API พร้อมนำ URL ไปสร้างโปรเจกต์ทันที
+                  ค้นหามังงะต้นฉบับได้จากทั้ง Comix.to และ Mgeko.cc พร้อมนำ URL ไปสร้างโปรเจกต์ทันที
                 </DialogDescription>
               </div>
             </div>
@@ -265,7 +309,7 @@ export function ComixUrlSearchDialog({
                     handlePerformLiveSearch(query)
                   }
                 }}
-                placeholder="พิมพ์ชื่อเรื่อง (ไทย / อังกฤษ / ชื่อเดิม) หรือวางลิงก์ Comix..."
+                placeholder="พิมพ์ชื่อเรื่อง (เช่น The Return of the Scorned Genius) หรือวางลิงก์..."
                 className="pl-9 pr-24 h-10 bg-[#090d16] border-violet-500/40 focus:border-violet-400 text-sm placeholder:text-slate-500 text-slate-100"
               />
 
@@ -293,9 +337,33 @@ export function ComixUrlSearchDialog({
               </div>
             </div>
 
-            {/* Origin Quick Filters & Status Bar */}
+            {/* Source & Origin Quick Filters & Status Bar */}
             <div className="flex items-center justify-between gap-2 flex-wrap pt-0.5">
               <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] text-slate-400 mr-1">เว็บ:</span>
+                {[
+                  { id: "all", label: "ทั้งหมด" },
+                  { id: "mgeko", label: "Mgeko.cc" },
+                  { id: "comix", label: "Comix.to" },
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setSourceFilter(s.id as any)}
+                    className={`px-2 py-0.5 rounded text-xs transition-colors cursor-pointer ${
+                      sourceFilter === s.id
+                        ? s.id === "mgeko"
+                          ? "bg-amber-600 text-white font-medium"
+                          : s.id === "comix"
+                          ? "bg-violet-600 text-white font-medium"
+                          : "bg-blue-600 text-white font-medium"
+                        : "bg-slate-800/80 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+                <span className="text-[11px] text-slate-500 mx-1">|</span>
                 <span className="text-[11px] text-slate-400 mr-1">ประเภท:</span>
                 {[
                   { id: "all", label: "ทั้งหมด" },
@@ -483,6 +551,16 @@ export function ComixUrlSearchDialog({
                     <div>
                       {/* Top Badges */}
                       <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                        {item.url?.includes("mgeko.cc") ? (
+                          <Badge className="bg-amber-500/10 text-amber-300 border-amber-500/30 text-[9px] px-1.5 py-0 font-medium">
+                            Mgeko.cc
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-violet-500/10 text-violet-300 border-violet-500/30 text-[9px] px-1.5 py-0 font-medium">
+                            Comix.to
+                          </Badge>
+                        )}
+
                         <Badge
                           className={`text-[9px] px-1.5 py-0 border font-medium ${
                             isKr

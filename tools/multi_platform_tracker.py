@@ -298,7 +298,9 @@ def main():
     args = parser.parse_args()
 
     common_args = []
-    if args.browser and not args.headless:
+    if args.headless:
+        common_args.append("--headless")
+    elif args.browser:
         common_args.append("--browser")
     if args.send_gas:
         common_args.append("--send-gas")
@@ -310,7 +312,9 @@ def main():
         if args.platform in ("all", "readrealm"):
             # readrealm uses --sync-gas
             rr_args = []
-            if args.browser and not args.headless:
+            if args.headless:
+                rr_args.append("--headless")
+            elif args.browser:
                 rr_args.append("--browser")
             if args.send_gas:
                 rr_args.append("--sync-gas")

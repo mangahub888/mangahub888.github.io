@@ -94,22 +94,30 @@ def parse_cookie_string(cookie_str: str) -> List[Dict[str, str]]:
     return cookies
 
 
-def get_browser_executable_path() -> Optional[str]:
-    """Check for local browser executable on Windows if not running in standard Linux container."""
-    if sys.platform == "win32":
-        candidates = [
-            r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-            r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
-            r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-            r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-        ]
-        for p in candidates:
-            if os.path.exists(p):
-                return p
-    return None
+try:
+    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+except ImportError:
+    try:
+        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+    except ImportError:
+        def get_browser_executable_path() -> Optional[str]:
+            if sys.platform == "win32":
+                candidates = [
+                    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+                    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                    r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+                ]
+                for p in candidates:
+                    if os.path.exists(p):
+                        return p
+            return None
+
+        def set_browser_window_bottom_most(title_filter: str = ""):
+            pass
 
 
-def purchase_chapter_playwright(comic_id: str, topic_id: str = "", headless: bool = True, timeout_ms: int = 40000) -> Dict[str, Any]:
+def purchase_chapter_playwright(comic_id: str, topic_id: str = "", headless: bool = False, timeout_ms: int = 40000) -> Dict[str, Any]:
     """
     Execute KuaiKan Chapter Auto-Purchase using Playwright Headless.
     Returns:
@@ -174,6 +182,9 @@ def purchase_chapter_playwright(comic_id: str, topic_id: str = "", headless: boo
             launch_args["executable_path"] = executable_path
 
         browser = p.chromium.launch(**launch_args)
+        if not headless:
+            set_browser_window_bottom_most("kuaikan")
+
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 900}
@@ -236,8 +247,11 @@ def purchase_chapter_playwright(comic_id: str, topic_id: str = "", headless: boo
         page.on("response", handle_response)
 
         try:
-            print(f"1. Loading chapter page in Headless browser...")
+            mode_desc = "Headless browser" if headless else "Google Chrome จริง (HWND_BOTTOM)"
+            print(f"1. Loading chapter page in {mode_desc}...")
             page.goto(target_url, wait_until="networkidle", timeout=timeout_ms)
+            if not headless:
+                set_browser_window_bottom_most("kuaikan")
             result["title"] = page.title()
             print(f"✓ Page Title: {result['title']}")
 

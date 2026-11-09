@@ -43,6 +43,7 @@ const ACCESS_PASSCODE = getSecretProperty('ACCESS_PASSCODE', '');
 const FINANCIAL_PASSCODE = getSecretProperty('FINANCIAL_PASSCODE', '');
 const RAW_TRACKER_SHEET_NAME = 'RawTracker';
 const PAYOUT_CLAIMS_SHEET_NAME = 'PayoutClaims';
+const PROJECT_IDEAS_SHEET_NAME = 'ProjectIdeas';
 const READREALM_GROWTH_SHEET_NAME = 'ReadRealmGrowth';
 const READREALM_TIMELINE_SHEET_NAME = 'ReadRealm_Timeline_Summary';
 const READREALM_WORKFLOW_FILE = 'readrealm_tracker.yml';
@@ -489,6 +490,12 @@ function doPost(e) {
         break;
       case 'GET_PROJECT_IDEAS_TRIGGER_STATUS':
         result = getProjectIdeasTriggerStatus();
+        break;
+      case 'SAVE_PROJECT_IDEAS_DATA':
+        result = saveProjectIdeasData(payload);
+        break;
+      case 'GET_PROJECT_IDEAS_DATA':
+        result = getProjectIdeasData();
         break;
 
       // --- MANGA OCR (6-HOUR AUTOMATION + AUTO .MTP) ---
@@ -968,6 +975,15 @@ function getSheet(name = SHEET_NAME) {
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#3b82f6').setFontColor('#ffffff');
+    } else if (name === PROJECT_IDEAS_SHEET_NAME) {
+      const headers = [
+        'Source', 'Title', 'ChapterCount', 'LatestChapter', 'ViewsOrFollows',
+        'ViewsCount', 'Score', 'Status', 'Origin', 'Genres',
+        'Url', 'CoverUrl', 'SummaryTH', 'SummaryEN', 'TimeUpdated', 'CrawledAt'
+      ];
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#f59e0b').setFontColor('#ffffff');
+      sheet.setFrozenRows(1);
     } else if (name === KAIREW_GROWTH_SHEET_NAME) {
       const headers = [
         'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
@@ -9423,6 +9439,123 @@ function deleteProjectIdeasTrigger() {
     }
   });
   return '✓ ลบ Trigger เก่าเรียบร้อยแล้ว (' + deleted + ' รายการ)';
+}
+
+/**
+ * บันทึกข้อมูลไอเดียมังงะใหม่สด (Project Ideas) ทับลง Google Sheet 'ProjectIdeas'
+ * กฎ: ล้างข้อมูลเก่าออกหมด (clearContents) แล้วเขียนเฉพาะรายการที่ดึงสดใหม่ของรอบล่าสุด
+ */
+function saveProjectIdeasData(payload) {
+  if (!payload) return { error: 'No payload provided' };
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    let allItems = [];
+    if (Array.isArray(payload.items) && payload.items.length > 0) {
+      allItems = payload.items;
+    } else if (payload.sources) {
+      const mItems = (payload.sources.mgeko && payload.sources.mgeko.items) || [];
+      const cItems = (payload.sources.comix && payload.sources.comix.items) || [];
+      allItems = mItems.concat(cItems);
+    }
+
+    const crawledAt = payload.crawled_at || new Date().toISOString();
+    const sheet = getSheet(PROJECT_IDEAS_SHEET_NAME);
+
+    // ล้างข้อมูลเก่าออกหมดเพื่อไม่ให้มีประวัติเก่าสะสม (Strict fresh overwrite)
+    sheet.clearContents();
+
+    const headers = [
+      'Source', 'Title', 'ChapterCount', 'LatestChapter', 'ViewsOrFollows',
+      'ViewsCount', 'Score', 'Status', 'Origin', 'Genres',
+      'Url', 'CoverUrl', 'SummaryTH', 'SummaryEN', 'TimeUpdated', 'CrawledAt'
+    ];
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length)
+      .setFontWeight('bold')
+      .setBackground('#f59e0b')
+      .setFontColor('#ffffff');
+    sheet.setFrozenRows(1);
+
+    if (allItems.length > 0) {
+      allItems.sort(function(a, b) {
+        return (Number(b.views_count) || 0) - (Number(a.views_count) || 0);
+      });
+
+      const rows = allItems.map(function(item) {
+        const src = (item.source || (item.url && item.url.indexOf('comix.to') !== -1 ? 'Comix' : 'Mgeko')).toUpperCase();
+        const genresStr = Array.isArray(item.genres) ? item.genres.join(', ') : (item.genres || '');
+        return [
+          src,
+          String(item.title || ''),
+          Number(item.chapter_count) || 0,
+          String(item.latest_chapter_text || ''),
+          String(item.views_text || item.bookmarks_text || '-'),
+          Number(item.views_count) || 0,
+          String(item.score || ''),
+          String(item.status || ''),
+          String(item.origin || ''),
+          genresStr,
+          String(item.url || ''),
+          String(item.cover || ''),
+          String(item.summary_th || ''),
+          String(item.summary || ''),
+          String(item.time_updated || ''),
+          String(item.crawled_at || crawledAt)
+        ];
+      });
+
+      if (rows.length > 0) {
+        sheet.getRange(2, 1, rows.length, headers.length).setValues(rows);
+      }
+    }
+
+    const summary = {
+      crawled_at: crawledAt,
+      total_items: allItems.length,
+      mgeko_count: allItems.filter(function(i) {
+        return (i.source || '').toLowerCase() === 'mgeko' || (i.url || '').indexOf('mgeko') !== -1;
+      }).length,
+      comix_count: allItems.filter(function(i) {
+        return (i.source || '').toLowerCase() === 'comix' || (i.url || '').indexOf('comix.to') !== -1;
+      }).length,
+      updated_at: new Date().toISOString()
+    };
+    PropertiesService.getScriptProperties().setProperty('PROJECT_IDEAS_LATEST_SUMMARY', JSON.stringify(summary));
+
+    return {
+      success: true,
+      count: allItems.length,
+      summary: summary,
+      message: 'เขียนข้อมูลทับลงชีท ' + PROJECT_IDEAS_SHEET_NAME + ' สำเร็จแล้ว (' + allItems.length + ' เรื่อง)'
+    };
+  } catch (err) {
+    console.error('saveProjectIdeasData error:', err);
+    return { error: err.toString() };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
+  }
+}
+
+function getProjectIdeasData() {
+  const sheet = getSheet(PROJECT_IDEAS_SHEET_NAME);
+  const lastRow = sheet.getLastRow();
+  const lastCol = sheet.getLastColumn();
+  if (lastRow <= 1 || lastCol < 1) {
+    return { items: [], total: 0 };
+  }
+  const data = sheet.getRange(1, 1, lastRow, lastCol).getValues();
+  const headers = data[0].map(function(h) { return String(h).trim().toLowerCase(); });
+  const items = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const obj = {};
+    headers.forEach(function(h, idx) {
+      obj[h] = row[idx];
+    });
+    items.push(obj);
+  }
+  return { items: items, total: items.length };
 }
 
 function getProjectIdeasTriggerStatus() {

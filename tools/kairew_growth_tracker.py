@@ -54,17 +54,26 @@ ACCOUNT_INFO = {
     "writer_id": 269
 }
 
-def get_browser_executable_path() -> Optional[str]:
-    candidates = [
-        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-    ]
-    for p in candidates:
-        if os.path.exists(p):
-            return p
-    return None
+try:
+    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+except ImportError:
+    try:
+        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+    except ImportError:
+        def get_browser_executable_path() -> Optional[str]:
+            candidates = [
+                r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+                r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+            ]
+            for p in candidates:
+                if os.path.exists(p):
+                    return p
+            return None
+
+        def set_browser_window_bottom_most(title_filter: str = ""):
+            pass
 
 def fetch_kairew_data_via_requests() -> Optional[Dict[str, Any]]:
     """Try fetching directly via HTTP requests using stored session cookies (Zero-overhead, 1.5s)."""
@@ -89,12 +98,16 @@ def fetch_kairew_data_via_requests() -> Optional[Dict[str, Any]]:
         print(f"⚠️ Direct HTTP fetch notice: {e}")
     return None
 
-def fetch_kairew_data_via_browser() -> Dict[str, Any]:
-    """Launch persistent context to extract manage-book props from Kairew."""
+def fetch_kairew_data_via_browser(headless: bool = False) -> Dict[str, Any]:
+    """Launch persistent context to extract manage-book props from Kairew in visible non-headless mode."""
     exec_path = get_browser_executable_path()
+    mode_str = "Headless" if headless else "Google Chrome จริง (หน้าต่างเปิดอยู่ด้านหลังสุด / HWND_BOTTOM ไม่แย่งโฟกัส)"
+    print(f"🌐 [Kairew] กำลังเปิด {mode_str} เพื่อดึงข้อมูล...", flush=True)
+
     with sync_playwright() as p:
         launch_kwargs = {
-            "headless": False,
+            "headless": headless,
+            "channel": "chrome",
             "no_viewport": True,
             "ignore_default_args": ["--enable-automation"],
             "args": [
@@ -106,11 +119,22 @@ def fetch_kairew_data_via_browser() -> Dict[str, Any]:
         if exec_path:
             launch_kwargs["executable_path"] = exec_path
 
-        context = p.chromium.launch_persistent_context(user_data_dir=PROFILE_DIR, **launch_kwargs)
+        try:
+            context = p.chromium.launch_persistent_context(user_data_dir=PROFILE_DIR, **launch_kwargs)
+        except Exception as e_launch:
+            print(f"⚠️ [Kairew] ไม่สามารถเปิดด้วย channel='chrome' ({e_launch}) กำลังลองใช้ Chromium ปกติ...")
+            launch_kwargs.pop("channel", None)
+            context = p.chromium.launch_persistent_context(user_data_dir=PROFILE_DIR, **launch_kwargs)
+
+        if not headless:
+            set_browser_window_bottom_most("kairew")
+
         page = context.pages[0] if context.pages else context.new_page()
 
         print("Navigating to https://kairew.com/writer/manage-book ...", flush=True)
         page.goto("https://kairew.com/writer/manage-book", wait_until="domcontentloaded")
+        if not headless:
+            set_browser_window_bottom_most("kairew")
         time.sleep(4)
 
         # Check if redirected to login
@@ -244,7 +268,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         print(f"❌ ส่งข้อมูลไปยัง GAS ไม่สำเร็จ: {e}", flush=True)
         return False
 
-def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = False):
+def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -257,8 +281,8 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # 1. Fetch current data
     page_data = {}
     print("🔄 กำลังตรวจสอบการดึงข้อมูลจาก Kairew...")
-    # Try direct fast HTTP requests first
-    page_data = fetch_kairew_data_via_browser() if use_browser else fetch_kairew_data_via_requests() or {}
+    # Try browser or direct fast HTTP requests
+    page_data = fetch_kairew_data_via_browser(headless=headless) if use_browser else fetch_kairew_data_via_requests() or {}
 
     # If direct fetch didn't return data, check cached props file (< 30 mins)
     if not page_data or not page_data.get("props"):
@@ -274,7 +298,7 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # Fallback to Playwright browser automation if needed
     if not page_data or not page_data.get("props"):
         print("🔄 เริ่มต้นเบราว์เซอร์เพื่อดึงข้อมูลสดจาก Kairew...")
-        page_data = fetch_kairew_data_via_browser()
+        page_data = fetch_kairew_data_via_browser(headless=headless)
 
     props = page_data.get("props", {})
     cartoon_list = props.get("cartoon_list", [])
@@ -519,10 +543,12 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Kairew Growth Tracker")
-    parser.add_argument("--browser", action="store_true", default=False, help="Launch real visible Google Chrome browser")
+    parser.add_argument("--browser", action="store_true", default=True, help="Launch real visible Google Chrome browser (default: True)")
+    parser.add_argument("--headless", action="store_true", default=False, help="Run browser in headless mode (default: False)")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
     parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     args = parser.parse_args()
 
-    run_kairew_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=args.browser)
+    use_browser = False if args.headless else args.browser
+    run_kairew_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=use_browser, headless=args.headless)
