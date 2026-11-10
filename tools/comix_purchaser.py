@@ -214,18 +214,25 @@ def fetch_comix_title_metadata(url):
 
 
 def fetch_comix_chapters_via_dom(title_url_or_hid, scan_group="", headless: bool = False):
-    """ดึงรายการตอนและลิงก์จากหน้าเรื่อง Comix.to ผ่าน Google Chrome จริง (ไม่พึ่งพา API Token Key)"""
+    """ดึงรายการตอนและลิงก์จากหน้าเรื่อง Comix.to ผ่าน Google Chrome จริง (NO API NO HEADLESS)"""
     from playwright.sync_api import sync_playwright
     import time
+    import json
     
     if not str(title_url_or_hid).startswith("http"):
         title_url = f"https://comix.to/title/{title_url_or_hid}"
     else:
         title_url = title_url_or_hid
 
+    target_group_str = str(scan_group or "").strip()
+    if not target_group_str and "group_id=" in title_url:
+        qm = re.search(r"[?&]group_id=(\d+)", title_url)
+        if qm:
+            target_group_str = qm.group(1)
+
     chapters = []
     meta = {"title": "", "slug": "", "groups": []}
-    print(f"🌐 [DOM Crawler] กำลังดึงรายการตอนจากเบราว์เซอร์: {title_url}")
+    print(f"🌐 [DOM Crawler] กำลังดึงรายการตอนจาก Google Chrome จริง (NO HEADLESS NO API): {title_url}")
     try:
         with sync_playwright() as p:
             try:
@@ -293,68 +300,11 @@ def fetch_comix_chapters_via_dom(title_url_or_hid, scan_group="", headless: bool
         "chapters": chapters
     }
 
-def fetch_comix_group_chapters(hid, scan_group="", page_limit=3):
+def fetch_comix_group_chapters(hid, scan_group="", page_limit=3, headless: bool = False):
     """
-    ดึงรายการตอนของเรื่องตามค่ายแปลที่ระบุ (เช่น CrowScans)
-    รองรับทั้ง Direct API และ Playwright Chrome DOM อัตโนมัติเมื่อ Token Key หมดอายุ
+    ดึงรายการตอนของเรื่องตามค่ายแปลที่ระบุ (NO API NO HEADLESS: ใช้ Google Chrome DOM จริง 100%)
     """
-    chapters = []
-    meta = {}
-    matched_group_name = ""
-    group_id = ""
-    
-    try:
-        meta = fetch_comix_title_metadata(f"https://comix.to/title/{hid}")
-        groups = meta.get("groups", []) if meta.get("success") else []
-
-        if scan_group:
-            target = scan_group.strip().lower()
-            for g in groups:
-                gname = str(g.get("name", "")).strip()
-                if gname.lower() == target or target in gname.lower() or str(g.get("id")) == target:
-                    group_id = str(g.get("id"))
-                    matched_group_name = gname
-                    break
-
-        for p in range(1, page_limit + 1):
-            params = {"page": p, "limit": 100}
-            if group_id:
-                params["group_id"] = group_id
-            res = call_comix_api(f"/manga/{hid}/chapters", params)
-            items = res.get("items", []) if isinstance(res, dict) else []
-            if not items:
-                break
-            for ch in items:
-                ch_group = (ch.get("scanlation_group") or {}).get("name") or matched_group_name or "Unknown"
-                if scan_group and not group_id:
-                    if scan_group.strip().lower() not in ch_group.lower():
-                        continue
-                chapters.append({
-                    "chapter_id": ch.get("chapter_id") or ch.get("id"),
-                    "number": float(ch.get("number", 0)),
-                    "name": ch.get("name") or "",
-                    "group_name": ch_group,
-                    "group_id": ch.get("scanlation_group_id") or group_id,
-                })
-            if len(items) < 100:
-                break
-    except Exception as ex:
-        print(f"⚠️ Direct Comix API failed ({ex}) -> Fallback to Chrome DOM...")
-        dom_res = fetch_comix_chapters_via_dom(hid, scan_group=scan_group)
-        if dom_res.get("chapters"):
-            return dom_res
-
-    if not chapters:
-        dom_res = fetch_comix_chapters_via_dom(hid, scan_group=scan_group)
-        if dom_res.get("chapters"):
-            return dom_res
-
-    return {
-        "meta": meta,
-        "matchedGroupName": matched_group_name or scan_group,
-        "groupId": group_id,
-        "chapters": chapters,
-    }
+    return fetch_comix_chapters_via_dom(hid, scan_group=scan_group, headless=headless)
 
 
 def extract_comix_images_via_dom(chapter_url, headless: bool = False):
@@ -765,7 +715,8 @@ def get_pending_comix_tasks():
         slug = hid_m.group(2) or ""
 
         try:
-            grp_data = fetch_comix_group_chapters(hid, scan_group=scan_group, page_limit=2)
+            # NO API NO HEADLESS: ดึงรายการตอนผ่าน Google Chrome จริงตาม URL เต็ม (รวม ?group_id=...)
+            grp_data = fetch_comix_chapters_via_dom(url, scan_group=scan_group, headless=False)
             ch_list = grp_data.get("chapters", [])
             slug = grp_data.get("meta", {}).get("slug") or slug
         except Exception as ex:

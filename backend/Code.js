@@ -7590,7 +7590,11 @@ function scrapeComixTitleUrl(url, scanGroup) {
 
     const groups = info.groups || [];
 
-    const targetGroupStr = String(scanGroup || '').trim();
+    let targetGroupStr = String(scanGroup || '').trim();
+    if (!targetGroupStr && url && url.indexOf('group_id=') !== -1) {
+      const qm = url.match(/[?&]group_id=(\d+)/);
+      if (qm) targetGroupStr = qm[1];
+    }
 
 
 
@@ -7608,38 +7612,58 @@ function scrapeComixTitleUrl(url, scanGroup) {
 
       if (matchedGroup) {
 
-        const chapsRes = callComixApiFromGas('/manga/' + hid + '/chapters', {
+        try {
 
-          page: 1,
+          const chapsRes = callComixApiFromGas('/manga/' + hid + '/chapters', {
 
-          limit: 5,
+            page: 1,
 
-          group_id: matchedGroup.id
+            limit: 5,
 
-        });
+            group_id: matchedGroup.id
 
-        const items = (chapsRes && Array.isArray(chapsRes.items)) ? chapsRes.items : [];
+          });
 
-        if (items.length > 0) {
+          const items = (chapsRes && Array.isArray(chapsRes.items)) ? chapsRes.items : [];
 
-          const latestNum = parseFloat(items[0].number) || 0;
+          if (items.length > 0) {
 
+            const latestNum = parseFloat(items[0].number) || 0;
+
+            return {
+
+              success: true,
+
+              rawText: 'Chapter ' + latestNum + ' (' + matchedGroup.name + ')',
+
+              chapterCount: latestNum,
+
+              url: url,
+
+              scanGroup: matchedGroup.name,
+
+              timestamp: new Date().toISOString()
+
+            };
+
+          }
+
+        } catch (apiErr) {
+
+          console.warn('Comix API request notice (using initial-data fallback): ' + apiErr);
+
+        }
+
+        const fallbackNum = parseFloat(info.latestChapter) || 0;
+        if (fallbackNum > 0) {
           return {
-
             success: true,
-
-            rawText: 'Chapter ' + latestNum + ' (' + matchedGroup.name + ')',
-
-            chapterCount: latestNum,
-
+            rawText: 'Chapter ' + fallbackNum + ' (' + matchedGroup.name + ')',
+            chapterCount: fallbackNum,
             url: url,
-
             scanGroup: matchedGroup.name,
-
             timestamp: new Date().toISOString()
-
           };
-
         }
 
       }

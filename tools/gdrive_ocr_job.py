@@ -804,7 +804,7 @@ def main():
     parser.add_argument("--folder-id", default="19P4c1nLybE1KshF-7HSbhfQPX2H60A54", help="Google Drive folder ID or URL")
     parser.add_argument("--manga-name", default="", help="Manga title")
     parser.add_argument("--chapter-num", default="", help="Chapter number")
-    parser.add_argument("--mtp-filename", default="tempt.mtp", help="Custom filename for the .mtp project file")
+    parser.add_argument("--mtp-filename", default="", help="Custom filename for the .mtp project file (default: (ชั่วคราว) <manga_name> ตอนที่ <chapter_num>.mtp)")
     parser.add_argument("--txt-filename", default="", help="Custom filename for the OCR text file")
     parser.add_argument("--queue-id", default="", help="WorkQueue item ID to update status in Google Sheet")
     parser.add_argument("--gas-url", default=None, help="GAS Web App exec URL")
@@ -834,16 +834,33 @@ def main():
     # Resolve manga title & chapter name for file naming
     manga_title = args.manga_name.strip()
     chapter_num = args.chapter_num.strip()
-    if not manga_title and folder_real_name:
-        raw_name = folder_real_name
-    elif manga_title and chapter_num:
-        raw_name = f"{manga_title}_ตอนที่_{chapter_num}"
+    c_str = chapter_num
+    if c_str.endswith(".0"):
+        c_str = c_str[:-2]
+    if c_str.startswith("ตอนที่"):
+        chap_display = c_str
+    elif c_str.startswith("ตอน"):
+        chap_display = f"ตอนที่ {c_str[3:].strip()}"
+    elif c_str:
+        chap_display = f"ตอนที่ {c_str}"
+    else:
+        chap_display = ""
+
+    if manga_title and chap_display:
+        raw_name = f"{manga_title}_{chap_display.replace(' ', '_')}"
+        mtp_raw_name = f"(ชั่วคราว) {manga_title} {chap_display}"
     elif manga_title:
         raw_name = manga_title
+        mtp_raw_name = f"(ชั่วคราว) {manga_title}"
+    elif folder_real_name:
+        raw_name = folder_real_name
+        mtp_raw_name = f"(ชั่วคราว) {folder_real_name}"
     else:
-        raw_name = folder_real_name or f"chapter_{clean_folder_id[:8]}"
+        raw_name = f"chapter_{clean_folder_id[:8]}"
+        mtp_raw_name = f"(ชั่วคราว) chapter_{clean_folder_id[:8]}"
 
     base_filename = sanitize_filename(raw_name)
+    default_mtp_filename = f"{sanitize_filename(mtp_raw_name)}.mtp"
 
     # Resolve model path
     model_path = args.model_path
@@ -938,7 +955,13 @@ def main():
     print(f"📄 AI Translation Prompt File: {prompt_path}")
 
     # 4. Build MangaToolPlus .mtp project file
-    mtp_filename = args.mtp_filename.strip() if getattr(args, "mtp_filename", "") and args.mtp_filename.strip() else "tempt.mtp"
+    # Default: (ชั่วคราว) <ชื่อเรื่อง> ตอนที่ <เลขตอน>.mtp
+    passed_mtp = (getattr(args, "mtp_filename", "") or "").strip()
+    if passed_mtp and passed_mtp.lower() != "tempt.mtp":
+        mtp_filename = passed_mtp
+    else:
+        mtp_filename = default_mtp_filename
+
     if not mtp_filename.lower().endswith(".mtp"):
         mtp_filename += ".mtp"
     mtp_path = out_dir / mtp_filename
@@ -947,7 +970,7 @@ def main():
     # ASCII-safe copies for cross-platform safety
     import shutil
     ascii_mtp = out_dir / "chapter.mtp"
-    if mtp_path.resolve() != ascii_mtp.resolve() and mtp_path.name != "tempt.mtp":
+    if mtp_path.resolve() != ascii_mtp.resolve():
         shutil.copy2(mtp_path, ascii_mtp)
     ascii_txt = out_dir / "chapter_ocr.txt"
     if ocr_txt_path.resolve() != ascii_txt.resolve():

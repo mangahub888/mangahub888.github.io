@@ -48,41 +48,17 @@ if BASE_DIR not in sys.path:
 
 # Comix & Mgeko crawler uses real Google Chrome DOM & SSR without token-based API
 # Chrome window runs at HWND_BOTTOM (หน้าหลังสุด / ตรงกันข้ามกับ topmost) to avoid stealing focus
-
-def set_browser_window_bottom_most(title_filter: str = ""):
-    """
-    Sets the Chrome browser window to HWND_BOTTOM (behind all active windows).
-    Opposite of topmost (หน้าหลังสุด / ตรงกันข้ามกับ topmost) so that it remains
-    visible on screen in the background without stealing user focus or interrupting work.
-    """
-    if sys.platform != "win32":
-        return
+# STRICT EDGE PROTECTION: Microsoft Edge is never moved to background
+try:
+    from browser_utils import set_browser_window_bottom_most, get_browser_executable_path
+except ImportError:
     try:
-        user32 = ctypes.windll.user32
-        HWND_BOTTOM = 1
-        SWP_NOSIZE = 0x0001
-        SWP_NOMOVE = 0x0002
-        SWP_NOACTIVATE = 0x0010
-
-        WNDENUMPROC = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_void_p, ctypes.c_void_p)
-        found_hwnds = []
-
-        def enum_windows_callback(hwnd, lparam):
-            if user32.IsWindowVisible(hwnd):
-                length = user32.GetWindowTextLengthW(hwnd)
-                if length > 0:
-                    buf = ctypes.create_unicode_buffer(length + 1)
-                    user32.GetWindowTextW(hwnd, buf, length + 1)
-                    txt = buf.value.lower()
-                    if "chrome" in txt or "manga" in txt or "comix" in txt or "mgeko" in txt or (title_filter and title_filter.lower() in txt):
-                        found_hwnds.append(hwnd)
-            return True
-
-        user32.EnumWindows(WNDENUMPROC(enum_windows_callback), 0)
-        for hwnd in found_hwnds:
-            user32.SetWindowPos(hwnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE)
-    except Exception:
-        pass
+        from tools.browser_utils import set_browser_window_bottom_most, get_browser_executable_path
+    except ImportError:
+        def set_browser_window_bottom_most(title_filter: str = ""):
+            pass
+        def get_browser_executable_path():
+            return None
 
 
 def get_or_create_chrome_page(headless: bool = False):
@@ -126,12 +102,112 @@ def get_or_create_chrome_page(headless: bool = False):
         no_viewport=True,
         user_agent=DEFAULT_HEADERS.get("User-Agent")
     )
+
     page = context.new_page()
-    
+    page.on("dialog", lambda dialog: dialog.dismiss())
+
+    # Auto-close ad popups / new tabs opened by scripts (do NOT close main crawling page)
+    def _close_popup(popup_page):
+        try:
+            if popup_page != page:
+                popup_page.close()
+        except Exception:
+            pass
+    context.on("page", _close_popup)
+
+    # Route-level Ad & Tracker blocker
+    AD_HOST_KEYWORDS = [
+        "doubleclick", "googlesyndication", "googleadservices", "adnxs",
+        "adsterra", "monetag", "propellerads", "popads", "popcash",
+        "clickadu", "exoclick", "trafficjunky", "hilltopads", "admaven",
+        "ad-maven", "histats", "onclick", "tsyndicate", "juicyads",
+        "adbuff", "adservice", "alwingulla", "coinhive", "vignette"
+    ]
+    def _route_filter(route):
+        url = route.request.url.lower()
+        if any(kw in url for kw in AD_HOST_KEYWORDS):
+            try:
+                route.abort()
+                return
+            except Exception:
+                pass
+        try:
+            route.continue_()
+        except Exception:
+            pass
+
+    try:
+        context.route("**/*", _route_filter)
+    except Exception:
+        pass
+
     if not headless:
         set_browser_window_bottom_most()
         
     return p, browser, page
+
+
+def dismiss_mgeko_ads(page: Any, target_url: Optional[str] = None) -> bool:
+    """Detect and remove ad overlays, popups, Google vignettes, and recover from rogue redirects."""
+    if not page:
+        return False
+    try:
+        current_url = page.url
+        # If redirected away to an ad URL or about:blank, navigate back
+        if target_url and "mgeko.cc" not in current_url:
+            print(f"  🛡️ [Ad Guard] ตรวจพบการ Redirect ออกนอกเว็บ ({current_url[:60]}...) -> นำทางกลับสู่เป้าหมายทันที")
+            page.goto(target_url, wait_until="commit", timeout=25000)
+
+        # Inject DOM cleaner to remove overlays, vignettes, iframes, and modals
+        removed = page.evaluate("""() => {
+            let count = 0;
+            const selectors = [
+                '#google_vignette',
+                'ins.adsbygoogle',
+                '[class*="vignette"]',
+                '[id*="vignette"]',
+                '[class*="overlay"]:not(.comic-card):not(.novel-item)',
+                '[id*="modal-ad"]',
+                '[class*="popup-ad"]',
+                '[id*="pop-up"]',
+                'div[style*="z-index: 2147483647"]',
+                'div[style*="z-index: 999999"]',
+                'div[style*="z-index: 99999"]',
+                'iframe[src*="ad"]',
+                'iframe[src*="track"]',
+                'iframe[id*="google_ads"]'
+            ];
+            for (const sel of selectors) {
+                document.querySelectorAll(sel).forEach(el => {
+                    try {
+                        el.remove();
+                        count++;
+                    } catch (e) {}
+                });
+            }
+            // Click common close / dismiss buttons
+            const closeBtns = document.querySelectorAll(
+                'button.close, .ad-close, .modal-close, [aria-label="Close"], #dismiss-button, .dismiss, .btn-close'
+            );
+            closeBtns.forEach(b => {
+                try {
+                    b.click();
+                    count++;
+                } catch(e) {}
+            });
+            // Restore document scrolling
+            document.body.style.overflow = 'auto';
+            if (document.documentElement) {
+                document.documentElement.style.overflow = 'auto';
+            }
+            return count;
+        }""")
+        if removed and removed > 0:
+            print(f"  🛡️ [Ad Guard] ปลดบล็อกและล้างโฆษณาบังหน้าจอ ({removed} จุด)")
+            return True
+    except Exception:
+        pass
+    return False
 
 DATA_DIR = os.path.join(BASE_DIR, "data")
 FRONTEND_SRC_DIR = os.path.join(BASE_DIR, "..", "frontend", "src", "data")
@@ -613,18 +689,40 @@ def crawl_mgeko_project_ideas(max_pages: int = 30, max_chapters: int = 100, seed
         page_url = f'https://www.mgeko.cc/browse-comics/?page={page_idx}&max_chapters={max_chapters}'
 
         print(f"▶ [1/2 Mgeko] กำลังเปิดและอ่านหน้า {page_idx}/{max_pages}: {page_url} ...")
+        items = []
+        html_text = ""
         try:
             if page:
-                page.goto(page_url, wait_until="commit", timeout=25000)
-                try:
-                    page.wait_for_selector(".comic-card, .novel-item", timeout=12000)
-                except Exception:
-                    page.wait_for_timeout(1500)
-                set_browser_window_bottom_most()
-                page.wait_for_timeout(400)
-                html_text = page.content()
-            else:
-                # Direct requests fallback using Mgeko browse-comics data API
+                for attempt in range(2):
+                    try:
+                        page.goto(page_url, wait_until="commit", timeout=25000)
+                    except Exception as e_nav:
+                        print(f"  ⚠️ [Mgeko หน้า {page_idx}] การโหลดเบราว์เซอร์แจ้งเตือน: {e_nav}")
+
+                    dismiss_mgeko_ads(page, target_url=page_url)
+                    try:
+                        page.wait_for_selector(".comic-card, .novel-item", timeout=8000)
+                    except Exception:
+                        page.wait_for_timeout(1000)
+
+                    dismiss_mgeko_ads(page, target_url=page_url)
+                    set_browser_window_bottom_most()
+                    page.wait_for_timeout(400)
+                    html_text = page.content()
+
+                    doc = lxml.html.fromstring(html_text)
+                    items = doc.xpath('//article[contains(@class, "comic-card")] | //div[contains(@class, "comic-card") and not(contains(@class, "comic-card__"))] | //li[contains(@class, "novel-item") and not(contains(@class, "swiper-slide"))]')
+                    if items:
+                        break
+                    else:
+                        print(f"  ⚠️ [Mgeko หน้า {page_idx}] รอบ {attempt+1} ไม่พบการ์ตูน (อาจมีโฆษณาบังหรือยังโหลดไม่เสร็จ) กำลังปลดบล็อกซ้ำ...")
+                        dismiss_mgeko_ads(page, target_url=page_url)
+                        page.wait_for_timeout(1500)
+
+            # Direct requests fallback if browser returned no items or no browser (100% immune to ad overlays)
+            if not items:
+                if page:
+                    print(f"  🔄 [Mgeko หน้า {page_idx}] สลับใช้ Direct HTTP Request สำรองเพื่อดึงข้อมูล (ข้ามโฆษณาบัง 100%)...")
                 api_url = f'https://www.mgeko.cc/browse-comics/data/?page={page_idx}&max_chapters={max_chapters}'
                 ajax_headers = {
                     **DEFAULT_HEADERS,
@@ -632,22 +730,24 @@ def crawl_mgeko_project_ideas(max_pages: int = 30, max_chapters: int = 100, seed
                     'X-Requested-With': 'XMLHttpRequest',
                     'Referer': page_url
                 }
-                r = session.get(api_url, headers=ajax_headers, timeout=20)
-                if r.status_code == 200:
-                    try:
-                        data = r.json()
-                        html_text = f"<div>{data.get('results_html', '')}</div>"
-                    except Exception:
-                        html_text = r.text
-                else:
-                    r = session.get(page_url, headers=DEFAULT_HEADERS, timeout=20)
-                    if r.status_code != 200:
-                        print(f"⚠️ หน้า {page_idx} ตอบกลับด้วย HTTP Status {r.status_code}")
-                        continue
-                    html_text = r.text
+                try:
+                    r = session.get(api_url, headers=ajax_headers, timeout=20)
+                    if r.status_code == 200:
+                        try:
+                            data = r.json()
+                            html_text = f"<div>{data.get('results_html', '')}</div>"
+                        except Exception:
+                            html_text = r.text
+                    else:
+                        r = session.get(page_url, headers=DEFAULT_HEADERS, timeout=20)
+                        if r.status_code == 200:
+                            html_text = r.text
+                    if html_text:
+                        doc = lxml.html.fromstring(html_text)
+                        items = doc.xpath('//article[contains(@class, "comic-card")] | //div[contains(@class, "comic-card") and not(contains(@class, "comic-card__"))] | //li[contains(@class, "novel-item") and not(contains(@class, "swiper-slide"))]')
+                except Exception as e_req:
+                    print(f"  ⚠️ Direct HTTP fallback notice: {e_req}")
 
-            doc = lxml.html.fromstring(html_text)
-            items = doc.xpath('//article[contains(@class, "comic-card")] | //div[contains(@class, "comic-card") and not(contains(@class, "comic-card__"))] | //li[contains(@class, "novel-item") and not(contains(@class, "swiper-slide"))]')
             if not items:
                 print(f"  ℹ️ [Mgeko] หน้า {page_idx} ไม่พบรายการการ์ตูน -> สิ้นสุดการแบ่งหน้า")
                 break
@@ -712,7 +812,9 @@ def crawl_mgeko_project_ideas(max_pages: int = 30, max_chapters: int = 100, seed
                 print(f"▶ [1/2 Mgeko - ค้นหาคำค้นเฉพาะ] '{kw}': {search_url} ...")
                 if page:
                     page.goto(search_url, wait_until="commit", timeout=20000)
+                    dismiss_mgeko_ads(page, target_url=search_url)
                     page.wait_for_timeout(800)
+                    dismiss_mgeko_ads(page, target_url=search_url)
                     set_browser_window_bottom_most()
                     page.wait_for_timeout(400)
                     html_text = page.content()

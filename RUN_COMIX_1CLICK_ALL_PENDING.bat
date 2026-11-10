@@ -3,9 +3,8 @@ chcp 65001 >nul
 set PYTHONUTF8=1
 set PYTHONIOENCODING=utf-8
 title Comix.to 1-Click All Pending Downloader
-setlocal enabledelayedexpansion
 
-cd /d "%~dp0"
+cd /d "%~dp0."
 
 echo =====================================================================
 echo    Comix.to 1-Click All Pending Auto-Downloader (RawTracker)
@@ -23,7 +22,7 @@ python tools\comix_purchaser.py --all-pending
 set EXIT_CODE=%ERRORLEVEL%
 echo.
 if %EXIT_CODE% EQU 0 (
-    echo [SUCCESS] All pending Comix.to tasks finished successfully!
+    echo [SUCCESS] All pending Comix.to tasks finished successfully.
 ) else (
     echo [NOTICE] Finished with status code: %EXIT_CODE%
 )

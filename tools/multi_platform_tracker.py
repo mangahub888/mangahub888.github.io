@@ -291,6 +291,8 @@ def main():
     parser.add_argument("--platform", type=str, default="all", choices=["all", "readrealm", "kairew", "chaply"], help="Target platform to track")
     parser.add_argument("--browser", action="store_true", default=True, help="Launch real visible Google Chrome browser")
     parser.add_argument("--headless", action="store_true", help="Run browser in headless mode")
+    parser.add_argument("--no-api", action="store_true", default=False, help="Disable direct HTTP/API login, force real visible Google Chrome browser only")
+    parser.add_argument("--force-refresh", action="store_true", default=False, help="Force refresh tokens through real browser session")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
     parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default=os.environ.get("PASSCODE", DEFAULT_PASSCODE), help="GAS Web App Passcode")
@@ -300,7 +302,7 @@ def main():
     common_args = []
     if args.headless:
         common_args.append("--headless")
-    elif args.browser:
+    elif args.browser or args.no_api:
         common_args.append("--browser")
     if args.send_gas:
         common_args.append("--send-gas")
@@ -314,8 +316,12 @@ def main():
             rr_args = []
             if args.headless:
                 rr_args.append("--headless")
-            elif args.browser:
+            elif args.browser or args.no_api:
                 rr_args.append("--browser")
+            if args.no_api:
+                rr_args.append("--no-api")
+            if args.force_refresh or args.no_api:
+                rr_args.append("--force-refresh")
             if args.send_gas:
                 rr_args.append("--sync-gas")
                 rr_args.extend(["--gas-url", args.gas_url or DEFAULT_GAS_URL])
