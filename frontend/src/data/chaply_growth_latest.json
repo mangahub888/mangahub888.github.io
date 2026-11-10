@@ -1,14 +1,14 @@
 {
   "platform": "chaply",
-  "pipeline_recorded_at": "2026-11-09T23:14:28.153267+00:00",
-  "date_reference": "2026-11-09",
+  "pipeline_recorded_at": "2026-11-10T01:16:28.881037+00:00",
+  "date_reference": "2026-11-10",
   "total_comics": 71,
-  "total_sales_portfolio": 9855.27,
-  "total_views_portfolio": 104640,
+  "total_sales_portfolio": 9866.61,
+  "total_views_portfolio": 104746,
   "top_sales_comic": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
   "total_inactive_30d": 22,
   "total_active_30d": 49,
-  "has_7d_baseline": false,
+  "has_7d_baseline": true,
   "has_30d_baseline": false,
   "comics": [
     {
@@ -19,19 +19,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 19,
-      "total_views": 10718,
-      "total_sales": 591.3,
-      "sales_7_chapters": 301.32,
-      "views_7_chapters": 289,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "total_views": 10736,
+      "total_sales": 601.02,
+      "sales_7_chapters": 311.04,
+      "views_7_chapters": 296,
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-08 17:21:59",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 376,
+        "views_growth_pct": 3.63,
+        "sales_delta": 601.02,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -48,19 +48,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 26,
-      "total_views": 10242,
-      "total_sales": 1274.94,
-      "sales_7_chapters": 280.26,
-      "views_7_chapters": 242,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "total_views": 10243,
+      "total_sales": 1276.56,
+      "sales_7_chapters": 281.88,
+      "views_7_chapters": 243,
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-28 06:04:53",
       "days_inactive": 12,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 128,
+        "views_growth_pct": 1.27,
+        "sales_delta": 1276.56,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -77,19 +77,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 12,
-      "total_views": 9016,
+      "total_views": 9023,
       "total_sales": 162.0,
       "sales_7_chapters": 162.0,
-      "views_7_chapters": 2363,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "views_7_chapters": 2367,
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-28 06:14:30",
       "days_inactive": 12,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 336,
+        "views_growth_pct": 3.87,
+        "sales_delta": 162.0,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -106,19 +106,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 13,
-      "total_views": 7804,
+      "total_views": 7805,
       "total_sales": 194.4,
       "sales_7_chapters": 194.4,
       "views_7_chapters": 2079,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-20 07:26:32",
       "days_inactive": 20,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 71,
+        "views_growth_pct": 0.92,
+        "sales_delta": 194.4,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -135,19 +135,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 23,
-      "total_views": 7051,
+      "total_views": 7052,
       "total_sales": 549.18,
       "sales_7_chapters": 217.08,
       "views_7_chapters": 191,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-07 16:31:35",
       "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 1001,
+        "views_growth_pct": 16.54,
+        "sales_delta": 549.18,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -164,17 +164,17 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 7,
-      "total_views": 5595,
+      "total_views": 5606,
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 3496,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "views_7_chapters": 3507,
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-03 18:24:10",
       "days_inactive": 6,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
+        "views_delta": 4763,
+        "views_growth_pct": 565.01,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -193,19 +193,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 74,
-      "total_views": 5519,
+      "total_views": 5520,
       "total_sales": 878.04,
       "sales_7_chapters": 225.18,
       "views_7_chapters": 202,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-06 15:46:36",
       "days_inactive": 3,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 1055,
+        "views_growth_pct": 23.63,
+        "sales_delta": 878.04,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -226,15 +226,15 @@
       "total_sales": 56.7,
       "sales_7_chapters": 56.7,
       "views_7_chapters": 1153,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-19 09:21:34",
       "days_inactive": 21,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 16,
+        "views_growth_pct": 0.46,
+        "sales_delta": 56.7,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -255,15 +255,15 @@
       "total_sales": 424.98,
       "sales_7_chapters": 111.6,
       "views_7_chapters": 92,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-20 07:46:06",
       "days_inactive": 20,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 143,
+        "views_growth_pct": 5.01,
+        "sales_delta": 424.98,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -280,19 +280,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 126,
-      "total_views": 2532,
+      "total_views": 2551,
       "total_sales": 184.68,
       "sales_7_chapters": 21.06,
       "views_7_chapters": 14,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-08 17:58:48",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 473,
+        "views_growth_pct": 22.76,
+        "sales_delta": 184.68,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -313,15 +313,15 @@
       "total_sales": 497.34,
       "sales_7_chapters": 275.4,
       "views_7_chapters": 269,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-05 19:16:41",
       "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 113,
+        "views_growth_pct": 5.69,
+        "sales_delta": 497.34,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -342,15 +342,15 @@
       "total_sales": 372.06,
       "sales_7_chapters": 113.4,
       "views_7_chapters": 131,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-05 19:27:34",
       "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 62,
+        "views_growth_pct": 3.35,
+        "sales_delta": 372.06,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -371,15 +371,15 @@
       "total_sales": 137.7,
       "sales_7_chapters": 56.7,
       "views_7_chapters": 59,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-05 05:44:17",
       "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 72,
+        "views_growth_pct": 3.92,
+        "sales_delta": 137.7,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -400,15 +400,15 @@
       "total_sales": 278.64,
       "sales_7_chapters": 108.54,
       "views_7_chapters": 100,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 10:01:48",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 278.64,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -429,15 +429,15 @@
       "total_sales": 308.88,
       "sales_7_chapters": 137.34,
       "views_7_chapters": 139,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 14:31:42",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 66,
+        "views_growth_pct": 4.44,
+        "sales_delta": 308.88,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -458,15 +458,44 @@
       "total_sales": 1.62,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-27 18:23:36",
       "days_inactive": 13,
       "is_inactive_30d": false,
       "growth_7d": {
+        "views_delta": 97,
+        "views_growth_pct": 6.73,
+        "sales_delta": 1.62,
+        "sales_growth_pct": 100.0
+      },
+      "growth_30d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
+      }
+    },
+    {
+      "comic_id": "cmvezsehy25w0t5eupwauchpa",
+      "subject": "อิสระทางทรัพย์ พันธะทางใจ",
+      "slug": "อิสระทางทรัพย์-พันธะทางใจ",
+      "platform": "chaply",
+      "account": "แปลจนเมื่อย (Chaply)",
+      "account_id": "chaply_adieu",
+      "chapters_count": 130,
+      "total_views": 1510,
+      "total_sales": 50.22,
+      "sales_7_chapters": 30.78,
+      "views_7_chapters": 37,
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
+      "last_chapter_updated_at": "2026-11-07 16:46:16",
+      "days_inactive": 2,
+      "is_inactive_30d": false,
+      "growth_7d": {
+        "views_delta": 1399,
+        "views_growth_pct": 1260.36,
+        "sales_delta": 50.22,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -487,44 +516,15 @@
       "total_sales": 333.72,
       "sales_7_chapters": 98.82,
       "views_7_chapters": 84,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-05 19:18:29",
       "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      },
-      "growth_30d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
-      }
-    },
-    {
-      "comic_id": "cmvezsehy25w0t5eupwauchpa",
-      "subject": "อิสระทางทรัพย์ พันธะทางใจ",
-      "slug": "อิสระทางทรัพย์-พันธะทางใจ",
-      "platform": "chaply",
-      "account": "แปลจนเมื่อย (Chaply)",
-      "account_id": "chaply_adieu",
-      "chapters_count": 130,
-      "total_views": 1470,
-      "total_sales": 50.22,
-      "sales_7_chapters": 30.78,
-      "views_7_chapters": 37,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
-      "last_chapter_updated_at": "2026-11-07 16:46:16",
-      "days_inactive": 2,
-      "is_inactive_30d": false,
-      "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 142,
+        "views_growth_pct": 10.43,
+        "sales_delta": 333.72,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -545,15 +545,15 @@
       "total_sales": 171.72,
       "sales_7_chapters": 40.5,
       "views_7_chapters": 33,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-27 17:48:26",
       "days_inactive": 13,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 165,
+        "views_growth_pct": 12.69,
+        "sales_delta": 171.72,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -574,15 +574,15 @@
       "total_sales": 348.93,
       "sales_7_chapters": 255.42,
       "views_7_chapters": 234,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-07 15:25:42",
       "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 97,
+        "views_growth_pct": 7.21,
+        "sales_delta": 348.93,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -603,15 +603,15 @@
       "total_sales": 462.06,
       "sales_7_chapters": 175.77,
       "views_7_chapters": 173,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 14:36:17",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 8,
+        "views_growth_pct": 0.56,
+        "sales_delta": 462.06,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -632,7 +632,7 @@
       "total_sales": 189.54,
       "sales_7_chapters": 66.42,
       "views_7_chapters": 54,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-07 15:32:50",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -661,15 +661,15 @@
       "total_sales": 221.22,
       "sales_7_chapters": 139.32,
       "views_7_chapters": 121,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 11:28:41",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 10,
+        "views_growth_pct": 0.84,
+        "sales_delta": 221.22,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -690,15 +690,15 @@
       "total_sales": 16.2,
       "sales_7_chapters": 1.62,
       "views_7_chapters": 6,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-06 15:40:55",
       "days_inactive": 3,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 305,
+        "views_growth_pct": 35.18,
+        "sales_delta": 16.2,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -719,15 +719,15 @@
       "total_sales": 333.81,
       "sales_7_chapters": 109.26,
       "views_7_chapters": 98,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 09:25:05",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 15,
+        "views_growth_pct": 1.3,
+        "sales_delta": 333.81,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -744,19 +744,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 44,
-      "total_views": 1088,
+      "total_views": 1090,
       "total_sales": 66.69,
       "sales_7_chapters": 21.06,
       "views_7_chapters": 18,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-07 15:37:52",
       "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 278,
+        "views_growth_pct": 34.24,
+        "sales_delta": 66.69,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -773,19 +773,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 71,
-      "total_views": 1087,
+      "total_views": 1088,
       "total_sales": 209.79,
       "sales_7_chapters": 101.52,
       "views_7_chapters": 97,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-04 16:48:30",
       "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 143,
+        "views_growth_pct": 15.13,
+        "sales_delta": 209.79,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -806,15 +806,15 @@
       "total_sales": 8.1,
       "sales_7_chapters": 8.1,
       "views_7_chapters": 348,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-08 18:48:50",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 129,
+        "views_growth_pct": 13.75,
+        "sales_delta": 8.1,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -835,13 +835,13 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 501,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-20 07:14:41",
       "days_inactive": 20,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
+        "views_delta": 21,
+        "views_growth_pct": 2.51,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -864,15 +864,15 @@
       "total_sales": 202.68,
       "sales_7_chapters": 62.64,
       "views_7_chapters": 76,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-28 06:32:30",
       "days_inactive": 12,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 20,
+        "views_growth_pct": 2.5,
+        "sales_delta": 202.68,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -893,13 +893,13 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 452,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 10:57:58",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
+        "views_delta": 22,
+        "views_growth_pct": 2.87,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -922,13 +922,13 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 430,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-07 15:47:54",
       "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
+        "views_delta": 21,
+        "views_growth_pct": 2.88,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -951,15 +951,15 @@
       "total_sales": 216.45,
       "sales_7_chapters": 43.47,
       "views_7_chapters": 44,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-02 15:24:59",
       "days_inactive": 7,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 1,
+        "views_growth_pct": 0.15,
+        "sales_delta": 216.45,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -980,15 +980,15 @@
       "total_sales": 62.73,
       "sales_7_chapters": 44.37,
       "views_7_chapters": 30,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-21 19:13:01",
       "days_inactive": 49,
       "is_inactive_30d": true,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 3,
+        "views_growth_pct": 0.47,
+        "sales_delta": 62.73,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1009,15 +1009,15 @@
       "total_sales": 33.66,
       "sales_7_chapters": 29.07,
       "views_7_chapters": 24,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-20 17:24:07",
       "days_inactive": 50,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 33.66,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1038,15 +1038,15 @@
       "total_sales": 74.52,
       "sales_7_chapters": 45.36,
       "views_7_chapters": 51,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 11:18:18",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 2,
+        "views_growth_pct": 0.33,
+        "sales_delta": 74.52,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1063,19 +1063,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 26,
-      "total_views": 596,
+      "total_views": 597,
       "total_sales": 156.96,
       "sales_7_chapters": 56.7,
       "views_7_chapters": 49,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-07 15:26:42",
       "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 124,
+        "views_growth_pct": 26.22,
+        "sales_delta": 156.96,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1096,15 +1096,15 @@
       "total_sales": 100.44,
       "sales_7_chapters": 66.42,
       "views_7_chapters": 75,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-04 17:10:28",
       "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 97,
+        "views_growth_pct": 19.6,
+        "sales_delta": 100.44,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1125,15 +1125,15 @@
       "total_sales": 117.36,
       "sales_7_chapters": 36.54,
       "views_7_chapters": 30,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 09:58:29",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 6,
+        "views_growth_pct": 1.22,
+        "sales_delta": 117.36,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1154,15 +1154,15 @@
       "total_sales": 45.36,
       "sales_7_chapters": 11.34,
       "views_7_chapters": 12,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-02 15:14:01",
       "days_inactive": 7,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 31,
+        "views_growth_pct": 6.78,
+        "sales_delta": 45.36,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1183,15 +1183,15 @@
       "total_sales": 19.44,
       "sales_7_chapters": 19.44,
       "views_7_chapters": 47,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-13 14:57:35",
       "days_inactive": 27,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 19.44,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1212,15 +1212,15 @@
       "total_sales": 101.79,
       "sales_7_chapters": 14.58,
       "views_7_chapters": 11,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 09:29:31",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 101.79,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1241,15 +1241,15 @@
       "total_sales": 35.64,
       "sales_7_chapters": 22.68,
       "views_7_chapters": 14,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-05 18:49:09",
       "days_inactive": 35,
       "is_inactive_30d": true,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 1,
+        "views_growth_pct": 0.26,
+        "sales_delta": 35.64,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1270,15 +1270,15 @@
       "total_sales": 83.61,
       "sales_7_chapters": 34.02,
       "views_7_chapters": 33,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-05 19:19:29",
       "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 20,
+        "views_growth_pct": 5.59,
+        "sales_delta": 83.61,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1295,17 +1295,17 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 3,
-      "total_views": 333,
+      "total_views": 337,
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 149,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "views_7_chapters": 152,
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-23 10:29:44",
       "days_inactive": 17,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
+        "views_delta": 69,
+        "views_growth_pct": 25.75,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -1328,15 +1328,15 @@
       "total_sales": 16.2,
       "sales_7_chapters": 16.2,
       "views_7_chapters": 23,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-28 06:30:54",
       "days_inactive": 12,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 11,
+        "views_growth_pct": 3.87,
+        "sales_delta": 16.2,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1357,15 +1357,15 @@
       "total_sales": 58.32,
       "sales_7_chapters": 45.36,
       "views_7_chapters": 33,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-28 20:05:51",
       "days_inactive": 42,
       "is_inactive_30d": true,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 18,
+        "views_growth_pct": 6.74,
+        "sales_delta": 58.32,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1386,15 +1386,15 @@
       "total_sales": 24.3,
       "sales_7_chapters": 24.3,
       "views_7_chapters": 36,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-28 19:28:04",
       "days_inactive": 42,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 24.3,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1415,15 +1415,15 @@
       "total_sales": 1.62,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 1,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-22 20:10:42",
       "days_inactive": 48,
       "is_inactive_30d": true,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 37,
+        "views_growth_pct": 21.26,
+        "sales_delta": 1.62,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1444,15 +1444,15 @@
       "total_sales": 17.01,
       "sales_7_chapters": 17.01,
       "views_7_chapters": 79,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-22 06:35:52",
       "days_inactive": 48,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 17.01,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1469,19 +1469,19 @@
       "account": "แปลจนเมื่อย (Chaply)",
       "account_id": "chaply_adieu",
       "chapters_count": 154,
-      "total_views": 202,
+      "total_views": 203,
       "total_sales": 6.48,
       "sales_7_chapters": 6.48,
       "views_7_chapters": 6,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-05 19:12:54",
       "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 202,
+        "views_growth_pct": 20200.0,
+        "sales_delta": 6.48,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1502,15 +1502,15 @@
       "total_sales": 35.28,
       "sales_7_chapters": 30.69,
       "views_7_chapters": 26,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-21 17:57:44",
       "days_inactive": 49,
       "is_inactive_30d": true,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 1,
+        "views_growth_pct": 0.51,
+        "sales_delta": 35.28,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1531,15 +1531,15 @@
       "total_sales": 38.25,
       "sales_7_chapters": 22.95,
       "views_7_chapters": 29,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-17 16:28:19",
       "days_inactive": 53,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 38.25,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1560,7 +1560,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 58,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-28 12:32:16",
       "days_inactive": 42,
       "is_inactive_30d": true,
@@ -1589,7 +1589,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-28 17:41:42",
       "days_inactive": 42,
       "is_inactive_30d": true,
@@ -1618,15 +1618,15 @@
       "total_sales": 24.48,
       "sales_7_chapters": 12.24,
       "views_7_chapters": 9,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-20 13:31:46",
       "days_inactive": 50,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 24.48,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1647,15 +1647,15 @@
       "total_sales": 19.35,
       "sales_7_chapters": 12.87,
       "views_7_chapters": 13,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-20 20:03:47",
       "days_inactive": 50,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 19.35,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1676,7 +1676,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 1,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-19 14:32:54",
       "days_inactive": 51,
       "is_inactive_30d": true,
@@ -1705,15 +1705,15 @@
       "total_sales": 30.78,
       "sales_7_chapters": 30.78,
       "views_7_chapters": 28,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-27 16:26:03",
       "days_inactive": 43,
       "is_inactive_30d": true,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "views_delta": 1,
+        "views_growth_pct": 0.63,
+        "sales_delta": 30.78,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1734,7 +1734,7 @@
       "total_sales": 4.86,
       "sales_7_chapters": 4.86,
       "views_7_chapters": 3,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-07 05:06:21",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -1763,15 +1763,15 @@
       "total_sales": 1.62,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-16 20:10:41",
       "days_inactive": 24,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 1.62,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1792,7 +1792,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 66,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-17 14:32:41",
       "days_inactive": 53,
       "is_inactive_30d": true,
@@ -1821,7 +1821,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 36,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-06 18:27:09",
       "days_inactive": 34,
       "is_inactive_30d": true,
@@ -1850,13 +1850,13 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 8,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-28 16:59:03",
       "days_inactive": 42,
       "is_inactive_30d": true,
       "growth_7d": {
-        "views_delta": 0,
-        "views_growth_pct": 0.0,
+        "views_delta": 1,
+        "views_growth_pct": 1.3,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -1879,7 +1879,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 9,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-28 18:28:25",
       "days_inactive": 42,
       "is_inactive_30d": true,
@@ -1908,7 +1908,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 5,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-27 11:55:15",
       "days_inactive": 43,
       "is_inactive_30d": true,
@@ -1937,7 +1937,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-27 11:09:49",
       "days_inactive": 43,
       "is_inactive_30d": true,
@@ -1966,15 +1966,15 @@
       "total_sales": 1.62,
       "sales_7_chapters": 1.62,
       "views_7_chapters": 20,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-09-27 18:46:57",
       "days_inactive": 43,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
-        "sales_delta": 0.0,
-        "sales_growth_pct": 0.0
+        "sales_delta": 1.62,
+        "sales_growth_pct": 100.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1995,7 +1995,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-10-14 03:50:00",
       "days_inactive": 26,
       "is_inactive_30d": false,
@@ -2024,9 +2024,9 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-08 00:35:00",
-      "days_inactive": 1,
+      "days_inactive": 2,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 0,
@@ -2053,7 +2053,7 @@
       "total_sales": 0.0,
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
-      "recorded_at": "2026-11-09T23:14:28.153267+00:00",
+      "recorded_at": "2026-11-10T01:16:28.881037+00:00",
       "last_chapter_updated_at": "2026-11-08 16:28:19",
       "days_inactive": 1,
       "is_inactive_30d": false,
