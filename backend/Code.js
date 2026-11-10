@@ -8529,6 +8529,23 @@ function triggerMangaOcrWorkflow(params) {
   }
 }
 
+function resolveOcrLanguage(item, manga) {
+  const tsType = String((item && (item.typesettype || item.typesetratetype)) || '').toLowerCase();
+  const scGroup = String((manga && manga.scangroup) || '').toLowerCase();
+  const mName = String((manga && (manga.manganame || manga.originalname)) || '').toLowerCase();
+
+  if (tsType.includes('อังกฤษ') || tsType.includes('en') || tsType.includes('eng') || scGroup.includes('kero')) {
+    return 'en';
+  }
+  if (tsType.includes('ญี่ปุ่น') || tsType.includes('jp') || tsType.includes('japan')) {
+    return 'japan';
+  }
+  if (tsType.includes('เกาหลี') || tsType.includes('kr') || tsType.includes('korean')) {
+    return 'korean';
+  }
+  return 'ch';
+}
+
 function scheduledMangaOcr6HourJob() {
   console.log('--- Executing scheduledMangaOcr6HourJob (GAS Scheduled Step 2 Trigger -> GitHub Actions) ---');
   try {
@@ -8606,7 +8623,7 @@ function scheduledMangaOcr6HourJob() {
         folderId: folderId,
         mangaName: mangaTitle,
         chapterNum: cleanChapter,
-        lang: 'ch'
+        lang: resolveOcrLanguage(item, manga)
       });
 
       if (res && res.success) {
@@ -9968,7 +9985,7 @@ function triggerNextPendingMangaOcr() {
       folderId: folderId,
       mangaName: mangaTitle,
       chapterNum: cleanChapter,
-      lang: 'ch'
+      lang: resolveOcrLanguage(nextItem, manga)
     });
 
     return {
