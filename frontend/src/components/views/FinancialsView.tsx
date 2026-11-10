@@ -1390,11 +1390,13 @@ export function FinancialsView({
             exists: true,
             sales: Number(g.kairew.sales) || 0,
             chapters: Number(g.kairew.eps) || 0,
+            monthly_sales: (g.kairew as any)?.monthly_sales,
           } : undefined,
           chaply: g.chaply?.exists ? {
             exists: true,
             sales: Number(g.chaply.sales) || 0,
             chapters: Number(g.chaply.eps) || 0,
+            monthly_sales: (g.chaply as any)?.monthly_sales,
           } : undefined,
         };
 

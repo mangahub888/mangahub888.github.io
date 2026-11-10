@@ -27,6 +27,18 @@ on:
         description: 'OCR Language (ch / japan / korean / en)'
         required: true
         default: 'ch'
+      source_url:
+        description: 'Source or Original Platform URL (e.g. comix.to)'
+        required: false
+        default: ''
+      manga_id:
+        description: 'MangaHub ID'
+        required: false
+        default: ''
+      reading_direction:
+        description: 'Reading Direction (auto / ltr / rtl)'
+        required: false
+        default: 'auto'
       google_access_token:
         description: 'Google OAuth Access Token (passed from GAS)'
         required: false
@@ -73,6 +85,9 @@ jobs:
             --queue-id "${{ github.event.inputs.queue_id }}" \
             --doc-url "${{ github.event.inputs.doc_url }}" \
             --lang "${{ github.event.inputs.lang }}" \
+            --source-url "${{ github.event.inputs.source_url }}" \
+            --manga-id "${{ github.event.inputs.manga_id }}" \
+            --reading-direction "${{ github.event.inputs.reading_direction || 'auto' }}" \
             --google-access-token "${{ github.event.inputs.google_access_token }}" \
             --output-dir "./ocr_output" \
             --upload-to-source

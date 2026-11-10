@@ -10,17 +10,49 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 FRONTEND_SRC_DIR = os.path.join(BASE_DIR, "..", "frontend", "src", "data")
 FRONTEND_PUB_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "data")
 
-# 1. ReadRealm (combine lionking and adieu)
+# Standard Thai Month List for Multi-Platform Monthly Sales
+THAI_MONTHS = [
+    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+]
+
+def sanitize_monthly_sales(raw_m):
+    if not isinstance(raw_m, dict) or not raw_m:
+        return {}
+    res = {}
+    items = list(raw_m.items())
+    has_mojibake = any('�' in str(k) or str(k) not in THAI_MONTHS for k in raw_m.keys())
+    if has_mojibake and len(items) in (11, 12):
+        for idx, (_, v) in enumerate(items):
+            if idx < len(THAI_MONTHS):
+                res[THAI_MONTHS[idx]] = round(float(v or 0.0), 2)
+        return res
+    for k, v in raw_m.items():
+        if k in THAI_MONTHS:
+            res[k] = round(float(v or 0.0), 2)
+    return res
+
+# 1. ReadRealm (use readrealm_growth_latest.json first if available, else stats files)
+rr_growth_path = os.path.join(DATA_DIR, 'readrealm_growth_latest.json')
 rr1_path = os.path.join(DATA_DIR, 'readrealm_stats_lionking.json')
 rr2_path = os.path.join(DATA_DIR, 'readrealm_stats.json')
-rr1 = []
-rr2 = []
-if os.path.exists(rr1_path):
-    with open(rr1_path, 'r', encoding='utf-8') as f:
-        rr1 = json.load(f).get('comics', [])
-if os.path.exists(rr2_path):
-    with open(rr2_path, 'r', encoding='utf-8') as f:
-        rr2 = json.load(f).get('comics', [])
+rr_list = []
+if os.path.exists(rr_growth_path):
+    try:
+        with open(rr_growth_path, 'r', encoding='utf-8') as f:
+            rr_list = json.load(f).get('comics', [])
+    except Exception:
+        rr_list = []
+if not rr_list:
+    rr1 = []
+    rr2 = []
+    if os.path.exists(rr1_path):
+        with open(rr1_path, 'r', encoding='utf-8') as f:
+            rr1 = json.load(f).get('comics', [])
+    if os.path.exists(rr2_path):
+        with open(rr2_path, 'r', encoding='utf-8') as f:
+            rr2 = json.load(f).get('comics', [])
+    rr_list = rr1 + rr2
 
 # 2. Kairew
 kairew = []
@@ -93,14 +125,14 @@ def get_canonical_display(t: str, key: str) -> str:
 groups = {}
 
 # ReadRealm
-for c in rr1 + rr2:
+for c in rr_list:
     t = c.get('subject', '').strip()
     k = normalize_title(t)
     if not k:
         continue
     clean_display = get_canonical_display(t, k)
     clean_display = get_canonical_display(t, k)
-    c_monthly = {m: round(float(v or 0), 2) for m, v in c.get('monthly_sales', {}).items()}
+    c_monthly = sanitize_monthly_sales(c.get('monthly_sales', {}))
     if k not in groups:
         groups[k] = {
             'key': k,
@@ -146,7 +178,7 @@ for c in kairew:
     if not k:
         continue
     clean_display = get_canonical_display(t, k)
-    kw_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else {}
+    kw_monthly = sanitize_monthly_sales(c.get('monthly_sales', {}))
     kw_obj = {
         'exists': True,
         'title': t,
@@ -160,7 +192,7 @@ for c in kairew:
         groups[k] = {
             'key': k,
             'title': clean_display,
-            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
+            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': {}},
             'kairew': kw_obj,
             'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0, 'monthly_sales': {}}
         }
@@ -180,7 +212,7 @@ for c in chaply:
     c_views = int(c.get('total_views') or c.get('totalView') or 0)
     c_eps = int(c.get('chapters_count') or c.get('totalEpisode') or 0)
     c_fav = int(c.get('totalFavorite') or 0)
-    ch_monthly = c.get('monthly_sales') if isinstance(c.get('monthly_sales'), dict) else {}
+    ch_monthly = sanitize_monthly_sales(c.get('monthly_sales', {}))
 
     chaply_obj = {
         'exists': True,
@@ -197,7 +229,7 @@ for c in chaply:
         groups[k] = {
             'key': k,
             'title': clean_display,
-            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': init_empty_monthly_sales()},
+            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': {}},
             'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': {}},
             'chaply': chaply_obj
         }

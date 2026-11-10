@@ -243,7 +243,121 @@ def extract_text_from_paddle(res, lang="ch"):
         return " ".join(texts)
 
 
-def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
+def sort_boxes_and_lines_by_direction(items: list, direction: str = "ltr", y_tolerance: int = 120) -> list:
+    """
+    Sorts detected text regions/lines according to reading direction:
+    - 'rtl' (Japanese Manga / Comix.to): Top-to-Bottom, then Right-to-Left (highest X2 first) for boxes in the same horizontal band.
+    - 'ltr' (Webtoon / Longstrip): Top-to-Bottom, then Left-to-Right (lowest X1 first) for boxes in the same horizontal band.
+    """
+    if not items:
+        return []
+
+    def get_coords(item):
+        if isinstance(item, (list, tuple)) and len(item) >= 4:
+            return float(item[0]), float(item[1]), float(item[2]), float(item[3])
+        elif isinstance(item, dict):
+            if "rect" in item and len(item["rect"]) >= 4:
+                r = item["rect"]
+                return float(r[0]), float(r[1]), float(r[2]), float(r[3])
+            elif "box" in item and len(item["box"]) >= 4:
+                pts = item["box"]
+                xs = [p[0] for p in pts]
+                ys = [p[1] for p in pts]
+                return float(min(xs)), float(min(ys)), float(max(xs)), float(max(ys))
+        return 0.0, 0.0, 0.0, 0.0
+
+    sorted_by_y = sorted(items, key=lambda it: get_coords(it)[1])
+
+    bands = []
+    current_band = [sorted_by_y[0]]
+
+    for it in sorted_by_y[1:]:
+        x1, y1, x2, y2 = get_coords(it)
+        ref_x1, ref_y1, ref_x2, ref_y2 = get_coords(current_band[-1])
+
+        h = max(y2 - y1, ref_y2 - ref_y1, 1.0)
+        v_overlap = max(0.0, min(y2, ref_y2) - max(y1, ref_y1))
+
+        if v_overlap > (h * 0.35) or abs(y1 - ref_y1) < y_tolerance:
+            current_band.append(it)
+        else:
+            bands.append(current_band)
+            current_band = [it]
+    if current_band:
+        bands.append(current_band)
+
+    ordered = []
+    for band in bands:
+        if direction == "rtl":
+            # Right-to-Left: Highest X2 (rightmost) comes first
+            band_sorted = sorted(band, key=lambda it: get_coords(it)[2], reverse=True)
+        else:
+            # Left-to-Right: Lowest X1 (leftmost) comes first
+            band_sorted = sorted(band, key=lambda it: get_coords(it)[0])
+        ordered.extend(band_sorted)
+
+    return ordered
+
+
+def resolve_reading_direction(
+    cli_direction: str = "auto",
+    manga_id: str = "",
+    manga_name: str = "",
+    source_url: str = "",
+    doc_url: str = "",
+    gas_manga_matched: dict = None
+) -> str:
+    """
+    Determines reading direction:
+    - 'rtl' (Right-to-Left): Japanese Manga (e.g. from comix.to)
+    - 'ltr' (Left-to-Right): Webtoon / Manhwa / Manhua
+    """
+    if cli_direction and cli_direction.lower() in ["ltr", "rtl"]:
+        return cli_direction.lower()
+
+    combined_check = f"{source_url} {manga_id} {manga_name} {doc_url}".lower()
+    if gas_manga_matched:
+        for k in ["rawurl", "sourceurl", "url", "originalurl", "link", "platform", "notes"]:
+            val = str(gas_manga_matched.get(k) or "").lower()
+            combined_check += f" {val}"
+
+    if "comix.to" in combined_check or "comix" in combined_check:
+        return "rtl"
+
+    return "ltr"
+
+
+def fetch_manga_metadata_from_gas(manga_name="", manga_id="", gas_url=None, passcode="10211032"):
+    """Fetches matched manga entry from GAS MangaList to inspect sourceurl / rawurl."""
+    if not manga_name and not manga_id:
+        return None
+    gas_api_url = gas_url or "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
+    payload = {"action": "GET_MANGA_LIST", "passcode": passcode, "payload": {}}
+    try:
+        import urllib.request
+        import json
+        req = urllib.request.Request(
+            gas_api_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            manga_list = data.get("data", [])
+            for m in manga_list:
+                if manga_id and str(m.get("mangaid", "")) == str(manga_id):
+                    return m
+                if manga_name:
+                    m_clean = re.sub(r"[^\w฀-๿]+", "", str(manga_name).lower())
+                    m_item_clean = re.sub(r"[^\w฀-๿]+", "", str(m.get("manganame", "")).lower())
+                    if m.get("manganame") == manga_name or (m_clean and m_clean == m_item_clean):
+                        return m
+    except Exception as e:
+        print(f"⚠️ Notice: Could not query GAS MangaList for reading direction: {e}")
+    return None
+
+
+def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None, direction="ltr"):
     """
     Runs text detection (best.pt) + text recognition (PaddleOCR) on all images.
     """
@@ -275,6 +389,7 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
 
         try:
             boxes, img_w, img_h, img_np = detect_text_boxes_yolo(str(p), model_path)
+            boxes = sort_boxes_and_lines_by_direction(boxes, direction=direction)
             lines = []
 
             for b_idx, box in enumerate(boxes):
@@ -340,8 +455,9 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
                         "rect": [cx1, cy1, cx2, cy2]
                     })
 
+            lines = sort_boxes_and_lines_by_direction(lines, direction=direction)
             elapsed = time.time() - t0
-            print(f"  ✓ {p.name}: Found {len(boxes)} text regions -> {len(lines)} OCR lines ({elapsed:.2f}s)")
+            print(f"  ✓ {p.name}: Found {len(boxes)} text regions -> {len(lines)} OCR lines ({elapsed:.2f}s) [{direction.upper()}]")
             for l_idx, l_obj in enumerate(lines[:3]):
                 print(f"     [{l_idx+1}] {l_obj['text']}")
             if len(lines) > 3:
@@ -366,7 +482,7 @@ def run_ocr_on_chapter(image_files, model_path, lang="ch", ocr_server_url=None):
     return results
 
 
-def build_mtp_package(image_files, ocr_results, output_mtp_path):
+def build_mtp_package(image_files, ocr_results, output_mtp_path, direction="ltr"):
     """Constructs a valid MangaToolPlus (.mtp) project package."""
     print(f"\n📦 Packaging into MangaToolPlus format: {Path(output_mtp_path).name}...")
     project_data = {
@@ -375,7 +491,7 @@ def build_mtp_package(image_files, ocr_results, output_mtp_path):
         "currentMode": "ocr",  # Open directly in OCR mode to display bounding boxes and text immediately
         "currentFileIndex": 0,
         "appSettings": {
-            "readingDirection": "ttb",
+            "readingDirection": "rtl" if direction == "rtl" else "ttb",
         },
         "fontRegistry": {},
         "fontRealNameMap": {},
@@ -397,8 +513,8 @@ def build_mtp_package(image_files, ocr_results, output_mtp_path):
         fname = f"{idx+1:03d}.jpg"
         orig_key = p.name
         res = ocr_results.get(orig_key, {})
-        lines = res.get("lines", [])
-        boxes = res.get("boxes", [])
+        lines = sort_boxes_and_lines_by_direction(res.get("lines", []), direction=direction)
+        boxes = sort_boxes_and_lines_by_direction(res.get("boxes", []), direction=direction)
 
         # 1. Image metadata & Base64 (Standard JPEG)
         data_url, width, height = image_to_data_url(p)
@@ -586,7 +702,7 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
         return None
 
 
-def format_ocr_text_blocks(image_files, ocr_results):
+def format_ocr_text_blocks(image_files, ocr_results, direction="ltr"):
     """
     Formats recognized OCR lines across all chapter pages into sequential numbered blocks.
 
@@ -604,7 +720,7 @@ def format_ocr_text_blocks(image_files, ocr_results):
     for img_path_str in image_files:
         fname = Path(img_path_str).name
         data = ocr_results.get(fname, {})
-        lines = data.get("lines", [])
+        lines = sort_boxes_and_lines_by_direction(data.get("lines", []), direction=direction)
 
         for line_obj in lines:
             raw_text = line_obj.get("text", "")
@@ -637,7 +753,7 @@ def sanitize_filename(name: str) -> str:
     return cleaned or 'chapter'
 
 
-def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", ocr_text="", queue_id="", doc_url="", gas_url=None, passcode="10211032", manga_list=None, queue_items=None):
+def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", ocr_text="", queue_id="", doc_url="", gas_url=None, passcode="10211032", manga_list=None, queue_items=None, reading_direction="ltr"):
     """
     Constructs the PROMPT2 TEMPT content according to MangaHub AI Translation spec:
     1. ลิงก์ Google Docs ของเอกสารอ้างอิง (แท็บแรกเป็น Glossary)
@@ -756,14 +872,14 @@ def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", o
         "3. เลขตอนที่กำลังจะแปล",
         ch_display,
         "",
-        "4. เนื้อหาต้นฉบับที่ต้องแปล (วางข้อความได้เลย) :",
+        f"4. เนื้อหาต้นฉบับที่ต้องแปล (วางข้อความได้เลย) :{' (มังงะญี่ปุ่น: ลำดับข้อความเรียงจากขวาไปซ้ายตามช่องคำพูด)' if reading_direction == 'rtl' else ''}",
         (ocr_text or "").strip()
     ]
 
     return "\n".join(content_lines) + "\n"
 
 
-def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", txt_file_id="", prompt_file_id="", gas_url=None, passcode="10211032"):
+def notify_gas_ocr_completed(folder_id, queue_id="", chapter="", manga_name="", mtp_file_id="", txt_file_id="", prompt_file_id="", gas_url=None, passcode="10211032", reading_direction="ltr", **kwargs):
     """
     Notifies Google Apps Script to mark OCR as 'เสร็จแล้ว' in WorkQueue (without attaching links to worklink).
     """
@@ -817,6 +933,9 @@ def main():
     parser.add_argument("--service-account", default=None, help="Path or raw JSON of Google Service Account")
     parser.add_argument("--prompt-filename", default="PROMPT2 TEMPT", help="Custom filename for the AI translation prompt template")
     parser.add_argument("--doc-url", default="", help="Google Docs reference URL from manga settings")
+    parser.add_argument("--source-url", default="", help="Original manga / source platform URL (e.g. https://comix.to/...)")
+    parser.add_argument("--manga-id", default="", help="MangaHub ID for the manga")
+    parser.add_argument("--reading-direction", default="auto", choices=["auto", "ltr", "rtl"], help="Reading direction: auto (comix.to -> rtl, else ltr), ltr, or rtl")
     parser.add_argument("--upload-to-source", action="store_true", default=True, help="Upload .mtp directly into source folder")
     parser.add_argument("--cleanup", action="store_true", default=False, help="Clean up local images and files after upload")
     args = parser.parse_args()
@@ -830,6 +949,28 @@ def main():
         service_account_json=args.service_account
     )
     folder_real_name = get_source_folder_name(drive_service, clean_folder_id) if drive_service else ""
+
+    # Resolve reading direction (comix.to -> rtl, webtoon -> ltr)
+    gas_matched = None
+    if getattr(args, "reading_direction", "auto") and args.reading_direction.lower() in ["ltr", "rtl"]:
+        reading_dir = args.reading_direction.lower()
+    else:
+        cli_check = f"{getattr(args, 'source_url', '')} {getattr(args, 'manga_id', '')} {args.manga_name} {args.doc_url}".lower()
+        if "comix.to" in cli_check or "comix" in cli_check:
+            reading_dir = "rtl"
+        else:
+            gas_matched = fetch_manga_metadata_from_gas(args.manga_name, getattr(args, "manga_id", ""), args.gas_url, args.gas_passcode)
+            reading_dir = resolve_reading_direction(
+                cli_direction=getattr(args, "reading_direction", "auto"),
+                manga_id=getattr(args, "manga_id", ""),
+                manga_name=args.manga_name,
+                source_url=getattr(args, "source_url", ""),
+                doc_url=args.doc_url,
+                gas_manga_matched=gas_matched
+            )
+
+    dir_label = "มังงะญี่ปุ่น ขวาไปซ้าย (RTL)" if reading_dir == "rtl" else "เว็บตูน/มังฮวา บนลงล่าง ซ้ายไปขวา (TTB/LTR)"
+    print(f"🧭 Reading Direction Mode: {reading_dir.upper()} ({dir_label})")
 
     # Resolve manga title & chapter name for file naming
     manga_title = args.manga_name.strip()
@@ -898,7 +1039,8 @@ def main():
         image_files=image_files,
         model_path=model_path,
         lang=args.lang,
-        ocr_server_url=args.ocr_server_url
+        ocr_server_url=args.ocr_server_url,
+        direction=reading_dir
     )
     total_time = time.time() - t_start
 
@@ -911,7 +1053,7 @@ def main():
         json.dump(ocr_results, fp, ensure_ascii=False, indent=2)
 
     # Export formatted OCR .txt file ([#1] line 1 \n\n [#2] line 2 ...)
-    ocr_txt_content = format_ocr_text_blocks(image_files, ocr_results)
+    ocr_txt_content = format_ocr_text_blocks(image_files, ocr_results, direction=reading_dir)
     txt_filename = args.txt_filename.strip() if args.txt_filename else f"{base_filename}_ocr.txt"
     ocr_txt_path = out_dir / txt_filename
     with open(ocr_txt_path, "w", encoding="utf-8") as fp:
@@ -941,7 +1083,8 @@ def main():
         queue_id=args.queue_id,
         doc_url=args.doc_url,
         gas_url=args.gas_url,
-        passcode=args.gas_passcode
+        passcode=args.gas_passcode,
+        reading_direction=reading_dir
     )
     prompt_path = out_dir / prompt_filename
     with open(prompt_path, "w", encoding="utf-8") as fp:
@@ -965,7 +1108,7 @@ def main():
     if not mtp_filename.lower().endswith(".mtp"):
         mtp_filename += ".mtp"
     mtp_path = out_dir / mtp_filename
-    build_mtp_package(image_files, ocr_results, mtp_path)
+    build_mtp_package(image_files, ocr_results, mtp_path, direction=reading_dir)
 
     # ASCII-safe copies for cross-platform safety
     import shutil
@@ -1009,7 +1152,8 @@ def main():
         txt_file_id=uploaded_txt_id or "",
         prompt_file_id=uploaded_prompt_id or "",
         gas_url=args.gas_url,
-        passcode=args.gas_passcode
+        passcode=args.gas_passcode,
+        reading_direction=reading_dir
     )
 
     # 6. Cleanup local files if requested
