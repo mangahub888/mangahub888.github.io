@@ -54,7 +54,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          pip install paddlepaddle -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
+          pip install paddlepaddle
           pip install paddleocr ultralytics gdown pillow opencv-python-headless requests google-api-python-client google-auth
 
       - name: Run Manga OCR & Upload .MTP + .TXT to Source Drive Folder
