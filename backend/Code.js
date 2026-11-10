@@ -2880,9 +2880,11 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     // 1. จัดการ Format ของเดือนเป้าหมาย (เช่น "2026-10", "2026-11")
     let customMonthlySalesMap = null;
     let customReadRealmComics = null;
+    let customKairewComics = null;
     if (typeof targetMonth === 'object' && targetMonth !== null) {
       if (targetMonth.monthlySalesMap) customMonthlySalesMap = targetMonth.monthlySalesMap;
       if (Array.isArray(targetMonth.readRealmComics)) customReadRealmComics = targetMonth.readRealmComics;
+      if (Array.isArray(targetMonth.kairewComics)) customKairewComics = targetMonth.kairewComics;
       targetMonth = targetMonth.targetMonth || targetMonth.month;
     }
     if (!targetMonth || typeof targetMonth !== 'string') {
@@ -2918,12 +2920,14 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     // ดึง Growth Data (สำหรับช่วยแมตช์รายได้)
     let readRealmComics = customReadRealmComics || [];
     let chaplyComics = [];
-    let kairewComics = [];
+    let kairewComics = customKairewComics || [];
     if (!readRealmComics || readRealmComics.length === 0) {
       try { readRealmComics = (getReadRealmGrowthData().comics || []); } catch(e) {}
     }
     try { chaplyComics = (getChaplyGrowthData().comics || []); } catch(e) {}
-    try { kairewComics = (getKairewGrowthData().comics || []); } catch(e) {}
+    if (!kairewComics || kairewComics.length === 0) {
+      try { kairewComics = (getKairewGrowthData().comics || []); } catch(e) {}
+    }
 
     const platformSalesMap = {};
     const platformSalesNormMap = {};
@@ -8810,7 +8814,8 @@ function saveReadRealmGrowthData(payload) {
         'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
         'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
         'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
-        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d',
+        'MonthlySales'
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#3b82f6').setFontColor('#ffffff');
@@ -9031,7 +9036,8 @@ function saveKairewGrowthData(payload) {
         'RecordedAt', 'Date', 'ComicID', 'Subject', 'Account',
         'TotalSales', 'TotalViews', 'ChaptersCount', 'LastChapterUpdate', 'DaysInactive',
         'SalesDelta7d', 'SalesGrowthPct7d', 'ViewsDelta7d', 'ViewsGrowthPct7d',
-        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d'
+        'SalesDelta30d', 'SalesGrowthPct30d', 'ViewsDelta30d', 'ViewsGrowthPct30d',
+        'MonthlySales'
       ];
       sheet.appendRow(headers);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#059669').setFontColor('#ffffff');
@@ -9054,7 +9060,8 @@ function saveKairewGrowthData(payload) {
         (c.growth_30d && c.growth_30d.sales_delta) || 0,
         (c.growth_30d && c.growth_30d.sales_growth_pct) || 0,
         (c.growth_30d && c.growth_30d.views_delta) || 0,
-        (c.growth_30d && c.growth_30d.views_growth_pct) || 0
+        (c.growth_30d && c.growth_30d.views_growth_pct) || 0,
+        JSON.stringify(c.monthly_sales || {})
       ]);
 
       if (rows.length > 0) {
@@ -9159,7 +9166,10 @@ function getKairewGrowthData() {
           sales_growth_pct: row[headers.indexOf('salesgrowthpct30d')],
           views_delta: row[headers.indexOf('viewsdelta30d')],
           views_growth_pct: row[headers.indexOf('viewsgrowthpct30d')]
-        }
+        },
+        monthly_sales: (headers.indexOf('monthlysales') !== -1 && row[headers.indexOf('monthlysales')]) ? (function() {
+          try { return JSON.parse(row[headers.indexOf('monthlysales')]); } catch(e) { return {}; }
+        })() : {}
       });
     }
 

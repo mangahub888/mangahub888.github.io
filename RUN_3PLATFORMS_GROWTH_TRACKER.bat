@@ -18,7 +18,7 @@ echo.
 echo [INFO] Window and Auth Mode:
 echo        - NO HEADLESS: Real Google Chrome window opens immediately
 echo        - HWND_BOTTOM: Positioned at background, doesn't steal focus
-echo        - NO API: Direct real browser authentication and session extraction
+echo        - HYBRID BROWSER SESSION: Authenticates via real Chrome, then extracts session tokens/cookies for high-speed direct requests (Zero 3rd-party API key needed)
 echo.
 echo [INFO] Pipeline tasks:
 echo        - PnL Portfolio Summary and Sales Metrics

@@ -10,7 +10,7 @@ const dialogPath = path.resolve('src/components/modals/ComixUrlSearchDialog.tsx'
 assert.ok(fs.existsSync(dialogPath), 'ComixUrlSearchDialog.tsx must exist');
 const dialogCode = fs.readFileSync(dialogPath, 'utf8');
 assert.ok(dialogCode.includes('export function ComixUrlSearchDialog'), 'Must export ComixUrlSearchDialog');
-assert.ok(dialogCode.includes('ค้นหา URL จาก Comix.to'), 'Must contain dialog header');
+assert.ok(dialogCode.includes('ค้นหา URL ต้นฉบับ (Comix.to & Mgeko.cc)') || dialogCode.includes('ค้นหา URL จาก Comix.to'), 'Must contain dialog header');
 console.log('✓ Test 1 Passed: ComixUrlSearchDialog.tsx correctly implemented and exported');
 
 // Test 2: Check MangaModal.tsx integration
