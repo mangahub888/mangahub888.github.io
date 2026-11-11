@@ -1143,7 +1143,7 @@ export function FinancialsView({
   const [salesSortBy, setSalesSortBy] = React.useState<"profit" | "date" | "revenue" | "cost" | "chapters" | "name">("profit");
   const [salesSortOrder, setSalesSortOrder] = React.useState<"desc" | "asc">("desc");
   const [salesSearchText, setSalesSearchText] = React.useState<string>("");
-  const [salesPlatformFilter, setSalesPlatformFilter] = React.useState<"all" | "multi" | "rr" | "kw">("all");
+  const [salesPlatformFilter, setSalesPlatformFilter] = React.useState<"all" | "multi" | "rr" | "kw" | "ch">("all");
   const [syncModalOpen, setSyncModalOpen] = React.useState<boolean>(false);
   const [syncTargetMonth, setSyncTargetMonth] = React.useState<string>(() => {
     const d = new Date();
@@ -1465,7 +1465,7 @@ export function FinancialsView({
   // Resolver for all platforms of any manga sale item
   const getSalePlatforms = React.useCallback(
     (sale: any): Array<{
-      id: "readrealm" | "kairew" | "other";
+      id: "readrealm" | "kairew" | "chaply" | "other";
       code: string;
       name: string;
       badgeClass: string;
@@ -1487,7 +1487,7 @@ export function FinancialsView({
       const platBreakdown = normKey ? platformBreakdownMap.get(normKey) : null;
 
       const platforms: Array<{
-        id: "readrealm" | "kairew" | "other";
+        id: "readrealm" | "kairew" | "chaply" | "other";
         code: string;
         name: string;
         badgeClass: string;
@@ -1548,7 +1548,19 @@ export function FinancialsView({
         });
       }
 
-      // Requirement: ตัด chaply ออกจากหน้า สมุดบันทึกกำไรขาดทุน เพราะไม่มีข้อมูลให้ดึงในส่วนนี้
+      if (chExists) {
+        platforms.push({
+          id: "chaply",
+          code: "CH",
+          name: "Chaply",
+          badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/40 hover:bg-amber-500/25",
+          dotClass: "bg-amber-400 shadow-xs shadow-amber-400/50",
+          exists: true,
+          sales: platBreakdown?.chaply || match?.chaply?.sales,
+          chapters: match?.chaply?.chapters,
+          account: match?.chaply?.account,
+        });
+      }
 
       // If rawWeb contains a custom/distinct site not covered by the big 3
       const isKnown =
@@ -1637,6 +1649,7 @@ export function FinancialsView({
         if (salesPlatformFilter === "multi") return plats.length > 1;
         if (salesPlatformFilter === "rr") return plats.some((p) => p.id === "readrealm");
         if (salesPlatformFilter === "kw") return plats.some((p) => p.id === "kairew");
+        if (salesPlatformFilter === "ch") return plats.some((p) => p.id === "chaply");
         return true;
       });
     }
@@ -4364,7 +4377,7 @@ export function FinancialsView({
                 </CardTitle>
 
                 <p className="text-xs text-slate-400 mt-0.5">
-                  ตารางบันทึกกำไรขาดทุน แยกตามรายเรื่อง พร้อมตรวจจับช่องทางเผยแพร่ (ReadRealm / Kairew)
+                  ตารางบันทึกกำไรขาดทุน แยกตามรายเรื่อง พร้อมตรวจจับช่องทางเผยแพร่ทุกแพลตฟอร์ม (RR / KW / CH)
                 </p>
               </div>
 
@@ -4435,6 +4448,18 @@ export function FinancialsView({
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />
                     KW
+                  </button>
+                  <button
+                    onClick={() => setSalesPlatformFilter("ch")}
+                    className={`px-2 py-1 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
+                      salesPlatformFilter === "ch"
+                        ? "bg-amber-600 text-white font-bold"
+                        : "text-amber-400/80 hover:text-amber-300"
+                    }`}
+                    title="Chaply"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+                    CH
                   </button>
 
                 </div>
@@ -4583,12 +4608,14 @@ export function FinancialsView({
 
                       const rrExists = Boolean(salePlatforms.some((p) => p.id === "readrealm"));
                       const kwExists = Boolean(salePlatforms.some((p) => p.id === "kairew"));
-                      const activePlatCount = (rrExists ? 1 : 0) + (kwExists ? 1 : 0);
+                      const chExists = Boolean(salePlatforms.some((p) => p.id === "chaply"));
+                      const activePlatCount = (rrExists ? 1 : 0) + (kwExists ? 1 : 0) + (chExists ? 1 : 0);
 
                       // Lifetime totals for reference (ReadRealm & Kairew only)
                       const rrLifetime = matchedPlatBreakdown?.readrealm || platMatch?.readrealm?.sales || 0;
                       const krLifetime = matchedPlatBreakdown?.kairew || platMatch?.kairew?.sales || 0;
-                      const totalLifetime = (rrExists ? rrLifetime : 0) + (kwExists ? krLifetime : 0);
+                      const chLifetime = matchedPlatBreakdown?.chaply || platMatch?.chaply?.sales || 0;
+                      const totalLifetime = (rrExists ? rrLifetime : 0) + (kwExists ? krLifetime : 0) + (chExists ? chLifetime : 0);
 
                       // Ground-truth actual monthly sales per platform
                       const rrMonthlyMap = matchedPlatBreakdown?.readrealm_monthly || platMatch?.readrealm?.monthly_sales;
@@ -4599,15 +4626,21 @@ export function FinancialsView({
                       const isKrExact = Boolean(rowThaiMonth && krMonthlyMap && typeof krMonthlyMap[rowThaiMonth] === "number");
                       const krMonthSales = isKrExact ? Number(krMonthlyMap![rowThaiMonth]) : 0;
 
+                      const chMonthlyMap = matchedPlatBreakdown?.chaply_monthly || (platMatch?.chaply as any)?.monthly_sales;
+                      const isChExact = Boolean(rowThaiMonth && chMonthlyMap && typeof chMonthlyMap[rowThaiMonth] === "number" && chMonthlyMap[rowThaiMonth] > 0);
+                      const chMonthSales = isChExact ? Number(chMonthlyMap![rowThaiMonth]) : 0;
+
                       let rrSaleAmt = 0;
                       let krSaleAmt = 0;
+                      let chSaleAmt = 0;
 
-                      if (isRrExact || isKrExact) {
+                      if (isRrExact || isKrExact || isChExact) {
                         // Priority 1: Use verified round sales directly.
                         rrSaleAmt = rrExists ? rrMonthSales : 0;
                         krSaleAmt = kwExists ? krMonthSales : 0;
+                        chSaleAmt = chExists ? chMonthSales : 0;
 
-                        const knownSum = Math.round((rrSaleAmt + krSaleAmt) * 100) / 100;
+                        const knownSum = Math.round((rrSaleAmt + krSaleAmt + chSaleAmt) * 100) / 100;
                         // Handle manual cell revenue overrides
                         if (rev > knownSum) {
                           const remainder = Math.round((rev - knownSum) * 100) / 100;
@@ -4627,18 +4660,22 @@ export function FinancialsView({
                         krSaleAmt = 0;
                       } else if (activePlatCount <= 1) {
                         if (kwExists) krSaleAmt = rev;
+                        else if (chExists) chSaleAmt = rev;
                         else rrSaleAmt = rev;
                       } else {
                         // Multi-platform title without monthly records
                         if (totalLifetime > 0) {
                           const shareRR = rrExists ? (rrLifetime / totalLifetime) : 0;
                           const shareKW = kwExists ? (krLifetime / totalLifetime) : 0;
+                          const shareCH = chExists ? (chLifetime / totalLifetime) : 0;
                           rrSaleAmt = Math.round((rev * shareRR) * 100) / 100;
                           krSaleAmt = Math.round((rev * shareKW) * 100) / 100;
+                          chSaleAmt = Math.round((rev * shareCH) * 100) / 100;
                         } else {
                           const share = Math.round((rev / activePlatCount) * 100) / 100;
                           if (rrExists) rrSaleAmt = share;
                           if (kwExists) krSaleAmt = share;
+                          if (chExists) chSaleAmt = share;
                         }
                       }
 
@@ -4735,7 +4772,7 @@ export function FinancialsView({
                           <TableCell className="text-right font-semibold">
                             <div className="relative group inline-block hover:z-50">
                               <span className="text-indigo-400 hover:text-indigo-300 underline decoration-dotted decoration-indigo-400/50 cursor-pointer transition-colors">
-                                {((Math.max(rev, rrSaleAmt + krSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿
+                                {((Math.max(rev, rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿
                               </span>
                               {/* Tooltip Hover Card: แยกยอดขายตามแพลตฟอร์ม (Smart Positioning: idx < 3 พุ่งลงล่าง idx >= 3 พุ่งขึ้นบน ไม่ชนหัวตาราง) */}
                               <div
@@ -4745,7 +4782,7 @@ export function FinancialsView({
                               >
                                 <div className="text-[11px] font-bold text-slate-200 border-b border-slate-700/70 pb-1.5 mb-1.5 flex items-center justify-between">
                                   <span className="truncate pr-2">📊 แยกยอดขายตามแพลตฟอร์ม {rowMonthLabel ? `(${rowMonthLabel})` : ""}</span>
-                                  <span className="text-indigo-300 shrink-0">฿{((Math.max(rev, rrSaleAmt + krSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                  <span className="text-indigo-300 shrink-0">฿{((Math.max(rev, rrSaleAmt + krSaleAmt + chSaleAmt)) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 </div>
                                 <div className="space-y-1.5 text-[11px]">
                                   {rrExists && (
@@ -4781,6 +4818,28 @@ export function FinancialsView({
                                       </span>
                                       <span className="font-semibold text-blue-300">
                                         ฿{krSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {chExists && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="flex items-center gap-1.5 text-slate-300">
+                                        <span className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
+                                        Chaply:
+                                        {isChExact ? (
+                                          <span className="text-[9px] text-amber-400/80 font-normal">
+                                            (ตามตอนที่เผยแพร่)
+                                          </span>
+                                        ) : (
+                                          <span className="text-[9px] text-slate-400 font-normal">
+                                            (สะสมรวม)
+                                          </span>
+                                        )}
+                                      </span>
+                                      <span className="font-semibold text-amber-300">
+                                        {chSaleAmt > 0
+                                          ? `฿${chSaleAmt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                          : (chLifetime > 0 ? `สะสม ฿${chLifetime.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : "฿0.00")}
                                       </span>
                                     </div>
                                   )}

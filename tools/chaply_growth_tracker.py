@@ -48,10 +48,129 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 HISTORY_FILE = os.path.join(DATA_DIR, "chaply_history.json")
 LATEST_GROWTH_FILE = os.path.join(DATA_DIR, "chaply_growth_latest.json")
 ALL_COMICS_FILE = os.path.join(DATA_DIR, "chaply_all_comics.json")
+EPISODES_HISTORY_FILE = os.path.join(DATA_DIR, "chaply_episodes_history.json")
+WORKQUEUE_CACHE_FILE = os.path.join(DATA_DIR, "workqueue_cache.json")
+MANGA_CACHE_FILE = os.path.join(DATA_DIR, "manga_list_cache.json")
 BEARER_FILE = os.path.join(DATA_DIR, "chaply_bearer.json")
 AUTH_FILE = os.path.join(DATA_DIR, "chaply_auth.json")
 
 os.makedirs(DATA_DIR, exist_ok=True)
+
+import re
+
+THAI_MONTHS = [
+    "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+    "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+]
+
+def month_to_thai(dt: datetime) -> str:
+    m = dt.month
+    return THAI_MONTHS[m - 1] if 1 <= m <= 12 else ""
+
+def ym_to_thai(ym_str: str) -> str:
+    try:
+        parts = ym_str.split("-")
+        m = int(parts[1])
+        return THAI_MONTHS[m - 1] if 1 <= m <= 12 else ""
+    except Exception:
+        return ""
+
+def normalize_title(t: str) -> str:
+    if not t:
+        return ""
+    if "|" in t:
+        t = t.split("|")[0]
+    t = re.sub(r'[\s\-_:;,\(\)\[\]\.\'\"!?]+', '', t.lower())
+    return t
+
+def fetch_workqueue_and_manga(gas_url: str = DEFAULT_GAS_URL, passcode: str = "10211032"):
+    queue = []
+    manga_list = []
+    try:
+        payload = {"action": "GET_WORK_QUEUE", "passcode": passcode, "payload": {"month": "all", "year": "all"}}
+        req = urllib.request.Request(gas_url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=30) as res:
+            d = json.loads(res.read().decode("utf-8"))
+            queue = d.get("data") or d.get("queue") or []
+            if queue:
+                with open(WORKQUEUE_CACHE_FILE, "w", encoding="utf-8") as f:
+                    json.dump(queue, f, ensure_ascii=False)
+
+        payload_m = {"action": "GET_MANGA_LIST", "passcode": passcode}
+        req_m = urllib.request.Request(gas_url, data=json.dumps(payload_m).encode("utf-8"), headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req_m, timeout=30) as res:
+            d_m = json.loads(res.read().decode("utf-8"))
+            manga_list = d_m.get("data") or d_m.get("manga") or []
+            if manga_list:
+                with open(MANGA_CACHE_FILE, "w", encoding="utf-8") as f:
+                    json.dump(manga_list, f, ensure_ascii=False)
+    except Exception as e:
+        print(f"⚠️ ไม่สามารถดึง WorkQueue จาก GAS ได้โดยตรง ({e}) กำลังใช้แคชในเครื่อง...")
+        if os.path.exists(WORKQUEUE_CACHE_FILE):
+            try:
+                with open(WORKQUEUE_CACHE_FILE, "r", encoding="utf-8") as f:
+                    queue = json.load(f)
+            except Exception:
+                pass
+        if os.path.exists(MANGA_CACHE_FILE):
+            try:
+                with open(MANGA_CACHE_FILE, "r", encoding="utf-8") as f:
+                    manga_list = json.load(f)
+            except Exception:
+                pass
+    return queue, manga_list
+
+def build_workqueue_publish_index(queue: List[Dict[str, Any]], manga_list: List[Dict[str, Any]]) -> Dict[str, Dict[int, str]]:
+    id_to_name = {}
+    for m in manga_list:
+        mid = str(m.get("mangaid") or "")
+        name = m.get("manganame") or ""
+        if mid and name:
+            id_to_name[mid] = name
+
+    index = {}
+    for item in queue:
+        mid = str(item.get("mangaid") or "")
+        m_name = item.get("manganame") or id_to_name.get(mid) or ""
+        if not m_name:
+            continue
+        norm_title = normalize_title(m_name)
+        if not norm_title:
+            continue
+
+        pub_raw = item.get("publishtime") or item.get("typesettime") or item.get("uploadtime") or item.get("createdat") or ""
+        if not pub_raw:
+            continue
+
+        try:
+            dt = datetime.fromisoformat(str(pub_raw).replace("Z", "+00:00"))
+            thai_m = month_to_thai(dt)
+        except Exception:
+            match = re.search(r'(\d{4})-(\d{2})', str(pub_raw))
+            if match:
+                thai_m = ym_to_thai(f"{match.group(1)}-{match.group(2)}")
+            else:
+                continue
+
+        if not thai_m:
+            continue
+
+        raw_ch = str(item.get("chapter") or "").strip()
+        m_range = re.search(r'(\d+)\s*[-~ถึง]\s*(\d+)', raw_ch)
+        if m_range:
+            start_ch = int(m_range.group(1))
+            end_ch = int(m_range.group(2))
+            ch_list = list(range(min(start_ch, end_ch), max(start_ch, end_ch) + 1))
+        else:
+            m_single = re.search(r'(\d+)', raw_ch)
+            ch_list = [int(m_single.group(1))] if m_single else []
+
+        if norm_title not in index:
+            index[norm_title] = {}
+        for ch in ch_list:
+            index[norm_title][ch] = thai_m
+
+    return index
 
 ACCOUNT_INFO = {
     "id": "chaply_adieu",
@@ -286,7 +405,22 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     current_snap_dict = {}
     now_ts = now.timestamp()
 
-    for c in raw_comics:
+    # Fetch WorkQueue and MangaList for matching chapter publish date/time
+    print("⏳ กำลังโหลดและจับคู่ข้อมูลคิวงาน (WorkQueue) เพื่อแยกสถิติรายเดือน...")
+    wq_list, manga_list = fetch_workqueue_and_manga(gas_url, passcode)
+    wq_index = build_workqueue_publish_index(wq_list, manga_list)
+    print(f"✓ ดัชนีวันที่เผยแพร่พร้อมใช้งาน: ครอบคลุม {len(wq_index)} เรื่องในระบบ")
+
+    # Load existing episodes history for granular continuous tracking
+    episodes_history = {}
+    if os.path.exists(EPISODES_HISTORY_FILE):
+        try:
+            with open(EPISODES_HISTORY_FILE, "r", encoding="utf-8") as f:
+                episodes_history = json.load(f)
+        except Exception:
+            episodes_history = {}
+
+    for idx, c in enumerate(raw_comics, 1):
         cid = c.get("id")
         title = c.get("title", "")
         slug = c.get("slug", "")
@@ -358,6 +492,49 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         except Exception as e:
             pass
 
+        # Calculate monthly sales based on WorkQueue publish date & Chaply episode createdAt
+        monthly_sales = {m: 0.0 for m in THAI_MONTHS}
+        norm_comic_title = normalize_title(title)
+        comic_wq_map = wq_index.get(norm_comic_title, {})
+
+        if cid not in episodes_history:
+            episodes_history[cid] = {}
+
+        for ep in all_ep_items:
+            try:
+                ep_idx = int(ep.get("index") or 0)
+            except Exception:
+                continue
+            try:
+                ep_rev = float(ep.get("total_revenue") or 0.0)
+            except Exception:
+                ep_rev = 0.0
+
+            # Match month: 1. From WorkQueue, 2. Fallback to Chaply episode createdAt
+            thai_m = comic_wq_map.get(ep_idx)
+            if not thai_m and ep.get("createdAt"):
+                try:
+                    c_dt = datetime.fromisoformat(str(ep["createdAt"]).replace("Z", "+00:00"))
+                    thai_m = month_to_thai(c_dt)
+                except Exception:
+                    pass
+
+            if thai_m and thai_m in monthly_sales:
+                monthly_sales[thai_m] = round(monthly_sales[thai_m] + ep_rev, 2)
+
+            # Record continuous episode snapshot
+            episodes_history[cid][str(ep_idx)] = {
+                "revenue": ep_rev,
+                "purchases": int(ep.get("total_purchases") or 0),
+                "views": int(ep.get("total_views") or ep.get("totalView") or 0),
+                "recorded_at": recorded_at,
+                "publish_month": thai_m or ""
+            }
+
+        # Terminal progress log formatted like ReadRealm and Kairew
+        monthly_summary_str = ", ".join([f"{m_idx+1}/2026: ฿{monthly_sales[m]:,.2f}" for m_idx, m in enumerate(THAI_MONTHS[:11]) if monthly_sales[m] > 0]) or "0.00 ฿"
+        print(f"  [Chaply] [{idx}/{len(raw_comics)}] {title[:40]}... -> รวม: {tot_sales:,.2f} ฿ | ประวัติ 2026: [{monthly_summary_str}] | 7 ตอน: {s7:,.2f} ฿ | {eps} ตอน", flush=True)
+
         current_snap_dict[cid] = {
             "subject": title,
             "slug": slug,
@@ -365,6 +542,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "account_id": ACCOUNT_INFO["id"],
             "total_views": views,
             "total_sales": tot_sales,
+            "monthly_sales": monthly_sales,
             "sales_7_chapters": s7,
             "views_7_chapters": v7,
             "chapters_count": eps,
@@ -465,6 +643,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "chapters_count": cur["chapters_count"],
             "total_views": cur_views,
             "total_sales": cur_sales,
+            "monthly_sales": cur.get("monthly_sales", {}),
             "sales_7_chapters": cur.get("sales_7_chapters", 0.0),
             "views_7_chapters": cur.get("views_7_chapters", 0),
             "recorded_at": recorded_at,
@@ -509,6 +688,13 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         json.dump(history, f, ensure_ascii=False, indent=2)
     print(f"✓ บันทึกไทม์ไลน์ประวัติ Git ลงใน {HISTORY_FILE}")
 
+    try:
+        with open(EPISODES_HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(episodes_history, f, ensure_ascii=False, indent=2)
+        print(f"✓ บันทึกประวัติสถิติเหรียญรายตอน (Continuous Episode Snapshots) ลงใน {EPISODES_HISTORY_FILE}")
+    except Exception as e:
+        print(f"⚠️ ไม่สามารถบันทึก {EPISODES_HISTORY_FILE}: {e}")
+
     with open(LATEST_GROWTH_FILE, "w", encoding="utf-8") as f:
         json.dump(report_output, f, ensure_ascii=False, indent=2)
     print(f"✓ บันทึกภาพรวมสถิติล่าสุดลงใน {LATEST_GROWTH_FILE}")
@@ -543,9 +729,11 @@ if __name__ == "__main__":
     parser.add_argument("--browser", action="store_true", default=True, help="Launch real visible Google Chrome browser (default: True)")
     parser.add_argument("--headless", action="store_true", default=False, help="Run browser in headless mode (default: False)")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
+    parser.add_argument("--no-api", action="store_true", default=False, help="Launch real visible Google Chrome browser")
+    parser.add_argument("--force-refresh", action="store_true", default=False, help="Force refresh tokens through real browser session")
     parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     args = parser.parse_args()
 
-    use_browser = False if args.headless else args.browser
+    use_browser = False if args.headless else (args.browser or args.no_api)
     run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=use_browser, headless=args.headless)
