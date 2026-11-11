@@ -221,31 +221,44 @@
 
     window.updateBudgetStats = function (data) {
         let income = 0, expenses = 0;
+        let recordedTax3 = 0, recordedTax10 = 0;
 
         data.forEach(t => {
+            const amount = parseFloat(t.amount) || 0;
+            const cat = String(t.category || "").toLowerCase();
+            const note = String(t.note || "").toLowerCase();
+            const ref = String(t.reference || "").toLowerCase();
+
+            const is10 = cat.includes("10%") || cat.includes("กองกลาง") || ref.includes("กองกลาง") || ref.includes("10%") || note.includes("10%") || note.includes("กองกลาง");
+            const is3 = !is10 && (cat.includes("3%") || cat.includes("ภาษี") || cat.includes("tax") || cat.includes("หัก ณ ที่จ่าย") || ref.includes("3%") || ref.includes("ภาษี") || ref.includes("ภ.ง.ด") || ref.includes("tax") || note.includes("3%") || note.includes("ภาษี") || note.includes("หัก ณ ที่จ่าย"));
+
             if (t.type === 'Income') {
-                income += parseFloat(t.amount) || 0;
+                income += amount;
             } else {
-                expenses += parseFloat(t.amount) || 0;
+                if (is10) {
+                    recordedTax10 += amount;
+                } else if (is3) {
+                    recordedTax3 += amount;
+                } else {
+                    expenses += amount;
+                }
             }
         });
 
-        // 3. ภาษีหัก ณ ที่จ่าย 3% จากยอดรายจ่าย (จ่ายราคาเต็ม แต่หักส่วนต่างจากรายรับเพื่อนำส่ง)
-        const tax3 = expenses * 0.03;
-
-        // 4-5. เงินคงเหลือหลังหักรายจ่าย (ราคาเต็ม) และภาษี 3%
-        const remainingBeforeFund = income - expenses - tax3;
-
-        // 6. เงินคงเหลือ - 10% (หักเข้ากองกลาง/ระดมทุน)
-        const centralFund = remainingBeforeFund > 0 ? remainingBeforeFund * 0.10 : 0;
-
-        // 7. กำไรสุทธิ
-        const netProfit = remainingBeforeFund - centralFund;
+        // กำไรจากการดำเนินงาน = รายได้รวม - รายจ่ายดำเนินงานจริง
+        const operatingProfit = income - expenses;
+        // ภาษีหัก ณ ที่จ่าย 3% แนะนำ (คำนวณ 3% จากรายจ่ายดำเนินงานจริง)
+        const suggestedTax3 = expenses * 0.03;
+        // ภาษี 10% กองกลาง แนะนำ (คำนวณ 10% จากกำไรดำเนินงาน)
+        const suggestedTax10 = operatingProfit > 0 ? operatingProfit * 0.10 : 0;
+        const allocatedTax10 = recordedTax10 > 0 ? recordedTax10 : suggestedTax10;
+        // กำไรสุทธิ = รายได้รวม - รายจ่ายดำเนินงานจริง - กองกลาง 10%
+        const netProfit = operatingProfit - allocatedTax10;
 
         setTextIfExist('budgetStatIncome', income.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿');
         setTextIfExist('budgetStatExpense', expenses.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿');
         setTextIfExist('budgetStatProfit', netProfit.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿');
-        setTextIfExist('budgetStatTax', tax3.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿');
+        setTextIfExist('budgetStatTax', (recordedTax3 > 0 ? recordedTax3 : suggestedTax3).toLocaleString(undefined, { minimumFractionDigits: 2 }) + ' ฿');
     };
 
     window.openTransactionModal = function () {

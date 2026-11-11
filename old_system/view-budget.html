@@ -3,7 +3,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
         <div>
             <h2>งบประมาณและบัญชี</h2>
-            <p style="color: #64748b;">ต้นทุน: รายรับ - รายจ่าย(เต็ม) - ภาษี(3% ของจ่าย) และหักเข้ากองกลาง 10%</p>
+            <p style="color: #64748b;">โครงสร้างบัญชี: รายได้รวม - รายจ่ายดำเนินงานจริง = กำไรก่อนหักกองกลาง | หักกองกลาง 10% = กำไรสุทธิ (ภาษี 3% แยกติดตาม ไม่บวกทับถมในรายจ่าย)</p>
         </div>
         <div style="display: flex; gap: 0.75rem;">
             <button class="btn btn-primary" onclick="openPayeeModal()">จัดการรายชื่อผู้รับเงิน</button>
@@ -23,14 +23,14 @@
         </div>
         <div class="stat-card">
             <div class="stat-info">
-                <h3>รายจ่ายรวม (เต็ม)</h3>
+                <h3>รายจ่ายรวม (ดำเนินงาน)</h3>
                 <p id="budgetStatExpense">0.00 ฿</p>
             </div>
             <div class="stat-icon" style="background: #fee2e2; color: #991b1b;">📉</div>
         </div>
         <div class="stat-card">
             <div class="stat-info">
-                <h3>กำไรสุทธิ (หัก 10%)</h3>
+                <h3>กำไรสุทธิ</h3>
                 <p id="budgetStatProfit">0.00 ฿</p>
             </div>
             <div class="stat-icon" style="background: #e0e7ff; color: #3730a3;">💰</div>
