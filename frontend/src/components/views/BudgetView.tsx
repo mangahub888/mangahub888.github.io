@@ -56,6 +56,40 @@ function getLastDayOfMonth(year: number, month: number): string {
   return `${yStr}-${mStr}-${dStr}`
 }
 
+export function isCentralFund10Transaction(t: any): boolean {
+  const cat = String(t.category || "").toLowerCase()
+  const note = String(t.note || "").toLowerCase()
+  const ref = String(t.reference || "").toLowerCase()
+  return (
+    cat.includes("10%") ||
+    cat.includes("กองกลาง") ||
+    ref.includes("กองกลาง") ||
+    ref.includes("10%") ||
+    note.includes("10%") ||
+    note.includes("กองกลาง")
+  )
+}
+
+export function isWithholdingTax3Transaction(t: any): boolean {
+  if (isCentralFund10Transaction(t)) return false
+  const cat = String(t.category || "").toLowerCase()
+  const note = String(t.note || "").toLowerCase()
+  const ref = String(t.reference || "").toLowerCase()
+  return (
+    cat.includes("3%") ||
+    cat.includes("ภาษี") ||
+    cat.includes("tax") ||
+    cat.includes("หัก ณ ที่จ่าย") ||
+    ref.includes("3%") ||
+    ref.includes("ภาษี") ||
+    ref.includes("ภ.ง.ด") ||
+    ref.includes("tax") ||
+    note.includes("3%") ||
+    note.includes("ภาษี") ||
+    note.includes("หัก ณ ที่จ่าย")
+  )
+}
+
 interface BudgetViewProps {
   payeeList: any[]
   transactionList: any[]
@@ -161,7 +195,21 @@ export function BudgetView({
   const filteredTransactions = React.useMemo(() => {
     let list = [...periodTransactions]
     if (typeFilter !== "all") {
-      list = list.filter((t) => t.type === typeFilter)
+      if (typeFilter === "Income") {
+        list = list.filter((t) => t.type === "Income")
+      } else if (typeFilter === "Expense") {
+        list = list.filter(
+          (t) =>
+            t.type === "Expense" &&
+            !isWithholdingTax3Transaction(t) &&
+            !isCentralFund10Transaction(t)
+        )
+      } else if (typeFilter === "Tax") {
+        list = list.filter(
+          (t) =>
+            isWithholdingTax3Transaction(t) || isCentralFund10Transaction(t)
+        )
+      }
     }
     list.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -169,44 +217,52 @@ export function BudgetView({
     return list
   }, [periodTransactions, typeFilter])
 
-  // Stats: 2. ไม่ต้องออโต้ภาษี 3% 10% คำนวณจากยอดรายจ่ายและรายรับจริงในระบบ
+  // Stats: แยกภาษีหัก ณ ที่จ่าย 3% และกองกลาง 10% ออกจากรายจ่ายดำเนินงานจริง ไม่นำมาบวกทับถมกัน
   const stats = React.useMemo(() => {
     let income = 0
-    let expenses = 0
-    let recordedTax3 = 0
-    let recordedTax10 = 0
+    let expenses = 0 // เฉพาะค่าใช้จ่ายดำเนินงานจริง (เช่น ค่าตอบแทนทีมงาน, ค่าลิขสิทธิ์)
+    let recordedTax3 = 0 // ยอดภาษีหัก ณ ที่จ่าย 3% ที่บันทึกไว้ (อยู่ในยอดค่าจ้างแล้ว ไม่บวกซ้ำในรายจ่าย)
+    let recordedTax10 = 0 // ยอดหักเข้ากองกลาง 10% ที่บันทึกไว้ (จัดสรรจากกำไร ไม่ใช่รายจ่าย)
 
     periodTransactions.forEach((t) => {
       const amount = parseFloat(t.amount) || 0
       if (t.type === "Income") {
         income += amount
       } else {
-        expenses += amount
-        const cat = String(t.category || "").toLowerCase()
-        const note = String(t.note || "").toLowerCase()
-        const ref = String(t.reference || "").toLowerCase()
-
-        if (cat.includes("10%") || note.includes("10%") || cat.includes("กองกลาง") || ref.includes("10%")) {
+        if (isCentralFund10Transaction(t)) {
+          // รายการหักเข้ากองกลาง 10% (จัดสรรกำไร)
           recordedTax10 += amount
-        } else if (cat.includes("ภาษี") || cat.includes("tax") || cat.includes("3%") || note.includes("ภาษี")) {
+        } else if (isWithholdingTax3Transaction(t)) {
+          // รายการภาษีหัก ณ ที่จ่าย 3% (อยู่ในยอด Gross ของค่าจ้างแล้ว)
           recordedTax3 += amount
+        } else {
+          // รายจ่ายดำเนินงานจริง
+          expenses += amount
         }
       }
     })
 
-    // กำไรสุทธิ = รายได้รวม - รายจ่ายรวมจริงทั้งหมด (ไม่คำนวณหัก 3% หรือ 10% ออโต้ซ้ำซ้อน)
-    const netProfit = income - expenses
+    // กำไรจากการดำเนินงาน = รายได้รวม - รายจ่ายดำเนินงานจริง
+    const operatingProfit = income - expenses
+    // ภาษีหัก ณ ที่จ่าย 3% แนะนำ (คำนวณ 3% จากรายจ่ายดำเนินงานจริง)
     const suggestedTax3 = Number((expenses * 0.03).toFixed(2))
-    const suggestedTax10 = Number((Math.max(0, netProfit) * 0.1).toFixed(2))
+    // ภาษีหักเข้ากองกลาง 10% แนะนำ (คำนวณ 10% จากกำไรดำเนินงาน)
+    const suggestedTax10 = Number((Math.max(0, operatingProfit) * 0.1).toFixed(2))
+    // ยอดหักเข้ากองกลาง: ใช้ยอดที่บันทึกจริง ถ้ายังไม่ได้บันทึกใช้ยอดประมาณการ 10% (เมื่อมีกำไร)
+    const allocatedTax10 = recordedTax10 > 0 ? recordedTax10 : (operatingProfit > 0 ? suggestedTax10 : 0)
+    // กำไรสุทธิ = รายได้รวม - รายจ่ายดำเนินงานจริง - กองกลาง 10%
+    const netProfit = operatingProfit - allocatedTax10
 
     return {
       income,
       expenses,
+      operatingProfit,
       recordedTax3,
       recordedTax10,
-      netProfit,
       suggestedTax3,
       suggestedTax10,
+      allocatedTax10,
+      netProfit,
     }
   }, [periodTransactions])
 
@@ -273,12 +329,12 @@ export function BudgetView({
     if (mode === "tax3") {
       const calculated = (stats.expenses * 0.03).toFixed(2)
       setTaxAmount(calculated)
-      setTaxNote(`ภาษีหัก ณ ที่จ่าย 3% คำนวณจากยอดรายจ่ายรวม ฿${stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+      setTaxNote(`ภาษีหัก ณ ที่จ่าย 3% คำนวณจากยอดรายจ่ายดำเนินงาน ฿${stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
     } else {
-      const profit = Math.max(0, stats.netProfit)
+      const profit = Math.max(0, stats.operatingProfit)
       const calculated = (profit * 0.1).toFixed(2)
       setTaxAmount(calculated)
-      setTaxNote(`ภาษี 10% (หักเข้ากองกลาง) คำนวณจากกำไรคงเหลือ ฿${profit.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+      setTaxNote(`ภาษี 10% (หักเข้ากองกลาง) คำนวณจากกำไรดำเนินงาน ฿${profit.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
     }
     setTaxModalOpen(true)
   }
@@ -289,12 +345,12 @@ export function BudgetView({
     if (mode === "tax3") {
       const calculated = (stats.expenses * 0.03).toFixed(2)
       setTaxAmount(calculated)
-      setTaxNote(`ภาษีหัก ณ ที่จ่าย 3% คำนวณจากยอดรายจ่ายรวม ฿${stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+      setTaxNote(`ภาษีหัก ณ ที่จ่าย 3% คำนวณจากยอดรายจ่ายดำเนินงาน ฿${stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
     } else {
-      const profit = Math.max(0, stats.netProfit)
+      const profit = Math.max(0, stats.operatingProfit)
       const calculated = (profit * 0.1).toFixed(2)
       setTaxAmount(calculated)
-      setTaxNote(`ภาษี 10% (หักเข้ากองกลาง) คำนวณจากกำไรคงเหลือ ฿${profit.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
+      setTaxNote(`ภาษี 10% (หักเข้ากองกลาง) คำนวณจากกำไรดำเนินงาน ฿${profit.toLocaleString(undefined, { minimumFractionDigits: 2 })} (รอบเดือน ${monthLabel})`)
     }
   }
 
@@ -499,8 +555,7 @@ export function BudgetView({
         <div>
           <h2 className="text-2xl font-bold text-white">งบประมาณและบัญชี</h2>
           <p className="text-sm text-slate-400">
-            ต้นทุน: รายรับ - รายจ่าย(เต็ม) - ภาษี(3% ของจ่าย) และหักเข้ากองกลาง
-            10%
+            โครงสร้างบัญชี: รายได้รวม - รายจ่ายดำเนินงานจริง = กำไรก่อนหักกองกลาง | หักกองกลาง 10% = กำไรสุทธิ (ภาษี 3% แยกติดตาม ไม่บวกทับถมในรายจ่าย)
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -566,118 +621,163 @@ export function BudgetView({
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
         {/* Card 1: รายได้รวม */}
-        <Card className="p-4 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400">รายได้รวม</p>
-            <p className="text-xl font-bold text-emerald-400 mt-1">
-              {stats.income.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
-            </p>
+        <Card className="p-4 flex flex-col justify-between">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs text-slate-400">รายได้รวม</p>
+              <p className="text-xl font-bold text-emerald-400 mt-1 font-mono">
+                {stats.income.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                ฿
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 shrink-0">
+              <TrendingUp className="h-5 w-5" />
+            </div>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
-            <TrendingUp className="h-5 w-5" />
-          </div>
+          <p className="text-[11px] text-slate-500 mt-2">ผลรวมรายรับทุกช่องทาง</p>
         </Card>
 
-        {/* Card 2: รายจ่ายรวม (เต็ม) */}
-        <Card className="p-4 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400">รายจ่ายรวม (เต็ม)</p>
-            <p className="text-xl font-bold text-red-400 mt-1">
-              {stats.expenses.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
-            </p>
+        {/* Card 2: รายจ่ายรวม (ดำเนินงาน) */}
+        <Card className="p-4 flex flex-col justify-between">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs text-slate-400">รายจ่ายรวม (ดำเนินงาน)</p>
+              <p className="text-xl font-bold text-rose-400 mt-1 font-mono">
+                {stats.expenses.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                ฿
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/20 text-rose-400 shrink-0">
+              <TrendingDown className="h-5 w-5" />
+            </div>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/20 text-red-400">
-            <TrendingDown className="h-5 w-5" />
-          </div>
+          <p className="text-[11px] text-slate-500 mt-2">ค่าใช้จ่ายจริง (ไม่บวก 3% ซ้ำ / ไม่รวมกองกลาง)</p>
         </Card>
 
         {/* Card 3: กำไรสุทธิ */}
-        <Card className="p-4 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-slate-400">กำไรสุทธิ</p>
-            <p className={`text-xl font-bold mt-1 ${stats.netProfit >= 0 ? "text-indigo-400" : "text-rose-400"}`}>
-              {stats.netProfit.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
-            </p>
+        <Card className="p-4 flex flex-col justify-between border-cyan-500/30 bg-cyan-950/20">
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-1.5">
+                <p className="text-xs text-cyan-300 font-semibold">กำไรสุทธิ</p>
+                <Badge variant="outline" className="text-[9px] px-1 py-0 border-cyan-500/40 text-cyan-300">
+                  หลังหักกองกลาง
+                </Badge>
+              </div>
+              <p className={`text-xl font-bold mt-1 font-mono ${stats.netProfit >= 0 ? "text-cyan-300" : "text-rose-400"}`}>
+                {stats.netProfit.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                ฿
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/20 text-cyan-400 shrink-0">
+              <Wallet className="h-5 w-5" />
+            </div>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400">
-            <Wallet className="h-5 w-5" />
+          <div className="text-[11px] text-slate-400 mt-2 flex flex-col gap-0.5">
+            <span>กำไรดำเนินงาน: <strong className="text-slate-200 font-mono">฿{stats.operatingProfit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong></span>
+            <span className="text-[10px] text-slate-400">
+              {stats.recordedTax10 > 0 ? (
+                <>หักกองกลางแล้ว: <strong className="text-indigo-300 font-mono">-฿{stats.recordedTax10.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong></>
+              ) : stats.operatingProfit > 0 ? (
+                <>หักประมาณการกองกลาง 10%: <strong className="text-indigo-300 font-mono">-฿{stats.suggestedTax10.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong></>
+              ) : null}
+            </span>
           </div>
         </Card>
 
-        {/* Card 4: ภาษีนำส่ง (3%) */}
-        <Card className="p-4 flex items-center justify-between border-amber-500/40 bg-amber-500/10">
+        {/* Card 4: ภาษีหัก ณ ที่จ่าย (3%) */}
+        <Card className="p-4 flex flex-col justify-between border-amber-500/40 bg-amber-500/10">
           <div>
-            <div className="flex items-center gap-1">
-              <p className="text-xs text-amber-300 font-semibold">
-                ภาษี (3%)
-              </p>
-              {stats.expenses > 0 && stats.recordedTax3 === 0 && (
-                <span className="text-[9px] text-amber-400/90 bg-amber-500/20 px-1 py-0.2 rounded font-mono">
-                  แนะ: ฿{stats.suggestedTax3.toLocaleString()}
-                </span>
-              )}
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs text-amber-300 font-semibold">
+                  ภาษีหัก ณ ที่จ่าย (3%)
+                </p>
+                <p className="text-xl font-bold text-amber-300 mt-1 font-mono">
+                  {stats.recordedTax3.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}{" "}
+                  ฿
+                </p>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300 shrink-0">
+                <Receipt className="h-5 w-5" />
+              </div>
             </div>
-            <p className="text-xl font-bold text-amber-300 mt-1">
-              {stats.recordedTax3.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
+            <p className="text-[10.5px] text-amber-400/80 mt-1">
+              อยู่ในยอดค่าจ้าง (นำส่งสรรพากร)
             </p>
+          </div>
+          <div className="mt-2.5 pt-2 border-t border-amber-500/20 flex items-center justify-between gap-1">
+            {stats.recordedTax3 > 0 ? (
+              <Badge className="bg-amber-500/25 text-amber-200 border-amber-500/40 text-[10px]">
+                บันทึกนำส่งแล้ว
+              </Badge>
+            ) : (
+              <span className="text-[10px] text-amber-300/80 font-mono">
+                แนะนำ 3%: ฿{stats.suggestedTax3.toLocaleString()}
+              </span>
+            )}
             <Button
               type="button"
               size="sm"
               variant="outline"
               onClick={() => handleOpenTaxModal("tax3")}
-              className="h-6 px-2 text-[11px] border-amber-500/60 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 mt-1.5 gap-1 font-semibold cursor-pointer"
+              className="h-6 px-2 text-[11px] border-amber-500/60 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 gap-1 font-semibold cursor-pointer shrink-0"
             >
               <Plus className="h-3 w-3" /> แอดภาษี 3%
             </Button>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300 shrink-0">
-            <Receipt className="h-5 w-5" />
-          </div>
         </Card>
 
         {/* Card 5: ภาษี 10% (กองกลาง) */}
-        <Card className="p-4 flex items-center justify-between border-indigo-500/40 bg-indigo-500/10">
+        <Card className="p-4 flex flex-col justify-between border-indigo-500/40 bg-indigo-500/10">
           <div>
-            <div className="flex items-center gap-1">
-              <p className="text-xs text-indigo-300 font-semibold">
-                ภาษี 10% (กองกลาง)
-              </p>
-              {stats.netProfit > 0 && stats.recordedTax10 === 0 && (
-                <span className="text-[9px] text-indigo-300/90 bg-indigo-500/20 px-1 py-0.2 rounded font-mono">
-                  แนะ: ฿{stats.suggestedTax10.toLocaleString()}
-                </span>
-              )}
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs text-indigo-300 font-semibold">
+                  ภาษี 10% (กองกลาง)
+                </p>
+                <p className="text-xl font-bold text-indigo-300 mt-1 font-mono">
+                  {(stats.recordedTax10 > 0 ? stats.recordedTax10 : stats.suggestedTax10).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}{" "}
+                  ฿
+                </p>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-300 shrink-0">
+                <Landmark className="h-5 w-5" />
+              </div>
             </div>
-            <p className="text-xl font-bold text-indigo-300 mt-1">
-              {stats.recordedTax10.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}{" "}
-              ฿
+            <p className="text-[10.5px] text-indigo-300/80 mt-1">
+              จัดสรรจากกำไรดำเนินงาน 10%
             </p>
+          </div>
+          <div className="mt-2.5 pt-2 border-t border-indigo-500/20 flex items-center justify-between gap-1">
+            {stats.recordedTax10 > 0 ? (
+              <Badge className="bg-indigo-500/25 text-indigo-200 border-indigo-500/40 text-[10px]">
+                บันทึกจัดสรรแล้ว
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="border-indigo-400/40 text-indigo-300 text-[10px]">
+                ประมาณการ 10%
+              </Badge>
+            )}
             <Button
               type="button"
               size="sm"
               variant="outline"
               onClick={() => handleOpenTaxModal("central10")}
-              className="h-6 px-2 text-[11px] border-indigo-500/60 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 mt-1.5 gap-1 font-semibold cursor-pointer"
+              className="h-6 px-2 text-[11px] border-indigo-500/60 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 gap-1 font-semibold cursor-pointer shrink-0"
             >
               <Plus className="h-3 w-3" /> แอดภาษี 10%
             </Button>
-          </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-300 shrink-0">
-            <Landmark className="h-5 w-5" />
           </div>
         </Card>
       </div>
@@ -720,7 +820,8 @@ export function BudgetView({
         >
           <option value="all">ประเภท: ทั้งหมด</option>
           <option value="Income">รายรับ (Income)</option>
-          <option value="Expense">รายจ่าย (Expense)</option>
+          <option value="Expense">รายจ่ายดำเนินงาน (Expense)</option>
+          <option value="Tax">ภาษี 3% / กองกลาง 10%</option>
         </select>
       </Card>
 
@@ -751,44 +852,91 @@ export function BudgetView({
             ) : (
               filteredTransactions.map((t) => {
                 const isIncome = t.type === "Income"
+                const isTax3 = isWithholdingTax3Transaction(t)
+                const isTax10 = isCentralFund10Transaction(t)
+                const amount = parseFloat(t.amount) || 0
+
                 return (
-                  <TableRow key={t.transactionid}>
-                    <TableCell className="text-xs text-slate-300">
+                  <TableRow
+                    key={t.transactionid}
+                    className={
+                      isTax3
+                        ? "bg-amber-500/[0.04] hover:bg-amber-500/[0.08]"
+                        : isTax10
+                        ? "bg-indigo-500/[0.04] hover:bg-indigo-500/[0.08]"
+                        : undefined
+                    }
+                  >
+                    <TableCell className="text-xs text-slate-300 whitespace-nowrap">
                       {t.date
                         ? new Date(t.date).toLocaleDateString("th-TH")
                         : "-"}
                     </TableCell>
                     <TableCell>
-                      {String(t.category || "").includes("3%") || (String(t.category || "").includes("ภาษี") && !String(t.category || "").includes("10%")) ? (
-                        <Badge className="border-amber-500/40 bg-amber-500/20 text-amber-300 text-[11px]">
-                          ภาษี (3%)
-                        </Badge>
-                      ) : String(t.category || "").includes("10%") || String(t.category || "").includes("กองกลาง") ? (
-                        <Badge className="border-indigo-500/40 bg-indigo-500/20 text-indigo-300 text-[11px]">
-                          ภาษี 10% (กองกลาง)
-                        </Badge>
+                      {isTax3 ? (
+                        <div className="space-y-0.5">
+                          <Badge className="border-amber-500/50 bg-amber-500/20 text-amber-300 text-[11px] font-medium whitespace-nowrap">
+                            🏷️ ภาษีหัก ณ ที่จ่าย 3%
+                          </Badge>
+                          <div className="text-[10px] text-amber-400/80 font-normal">
+                            (อยู่ในยอดค่าตอบแทน)
+                          </div>
+                        </div>
+                      ) : isTax10 ? (
+                        <div className="space-y-0.5">
+                          <Badge className="border-indigo-500/50 bg-indigo-500/20 text-indigo-300 text-[11px] font-medium whitespace-nowrap">
+                            🏛️ หักเข้ากองกลาง 10%
+                          </Badge>
+                          <div className="text-[10px] text-indigo-400/80 font-normal">
+                            (จัดสรรจากกำไร)
+                          </div>
+                        </div>
                       ) : (
                         <Badge variant={isIncome ? "success" : "destructive"}>
-                          {isIncome ? "รายรับ" : "รายจ่าย"}
+                          {isIncome ? "รายรับ" : "รายจ่ายดำเนินงาน"}
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell className="font-medium">{t.category}</TableCell>
+                    <TableCell className="font-medium text-slate-200">
+                      {t.category}
+                    </TableCell>
                     <TableCell className="text-slate-300">
                       {t.reference || "-"}
                     </TableCell>
-                    <TableCell
-                      className={`text-right font-semibold ${
-                        isIncome ? "text-emerald-400" : "text-red-400"
-                      }`}
-                    >
-                      {isIncome ? "+" : "-"}
-                      {(parseFloat(t.amount) || 0).toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                      })}{" "}
-                      ฿
+                    <TableCell className="text-right">
+                      {isTax3 ? (
+                        <div>
+                          <span className="font-mono font-semibold text-amber-300">
+                            ฿{amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          </span>
+                          <div className="text-[10px] text-amber-400/70 font-sans">
+                            ไม่บวกซ้ำในรายจ่าย
+                          </div>
+                        </div>
+                      ) : isTax10 ? (
+                        <div>
+                          <span className="font-mono font-semibold text-indigo-300">
+                            -฿{amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                          </span>
+                          <div className="text-[10px] text-indigo-400/70 font-sans">
+                            หักจากกำไรสุทธิ
+                          </div>
+                        </div>
+                      ) : (
+                        <span
+                          className={`font-mono font-semibold ${
+                            isIncome ? "text-emerald-400" : "text-rose-400"
+                          }`}
+                        >
+                          {isIncome ? "+" : "-"}
+                          {amount.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                          })}{" "}
+                          ฿
+                        </span>
+                      )}
                     </TableCell>
-                    <TableCell className="text-xs text-slate-400">
+                    <TableCell className="text-xs text-slate-400 max-w-[200px] truncate" title={t.note || ""}>
                       {t.note || "-"}
                     </TableCell>
                     <TableCell className="text-center">
@@ -1032,14 +1180,14 @@ export function BudgetView({
               <div className="flex items-center justify-between text-slate-400">
                 <span>
                   {taxMode === "tax3"
-                    ? "ยอดรายจ่ายรวม (เต็ม):"
-                    : "กำไรสุทธิคงเหลือ:"}
+                    ? "ยอดรายจ่ายดำเนินงานจริง:"
+                    : "กำไรจากการดำเนินงาน:"}
                 </span>
                 <span className="font-mono text-slate-200">
                   ฿
                   {taxMode === "tax3"
                     ? stats.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })
-                    : Math.max(0, stats.netProfit).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    : Math.max(0, stats.operatingProfit).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div className="flex items-center justify-between text-slate-400">
@@ -1050,15 +1198,20 @@ export function BudgetView({
               </div>
               <div className="flex items-center justify-between pt-1.5 border-t border-slate-700/60 font-semibold">
                 <span className="text-slate-200">
-                  {taxMode === "tax3" ? "ยอดภาษีนำส่ง:" : "ยอดหักเข้ากองกลาง:"}
+                  {taxMode === "tax3" ? "ยอดภาษีนำส่ง (3%):" : "ยอดหักเข้ากองกลาง (10%):"}
                 </span>
                 <span className="font-mono text-emerald-400 text-sm font-bold">
                   ฿
                   {taxMode === "tax3"
                     ? (stats.expenses * 0.03).toLocaleString(undefined, { minimumFractionDigits: 2 })
-                    : (Math.max(0, stats.netProfit) * 0.1).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    : (Math.max(0, stats.operatingProfit) * 0.1).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </span>
               </div>
+              <p className="text-[11px] text-slate-400 pt-1 leading-relaxed">
+                {taxMode === "tax3"
+                  ? "💡 ภาษีหัก ณ ที่จ่าย 3% รวมอยู่ในยอดค่าตอบแทนทีมงานแล้ว จึงไม่นำมาบวกทับถมในรายจ่ายรวม (บันทึกเพื่อตรวจสอบการนำส่ง)"
+                  : "💡 กองกลาง 10% เป็นการจัดสรรส่วนแบ่งจากกำไร ไม่ใช่รายจ่ายดำเนินงาน โดยจะถูกนำไปหักออกจากกำไรสุทธิ"}
+              </p>
             </div>
 
             <div className="space-y-1.5">
