@@ -2,18 +2,22 @@ DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v2
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Chaply 6-Hour Growth Tracker Engine
------------------------------------
+Chaply 6-Hour Growth Tracker Engine (Real Chrome Browser / No-Headless Mode)
+----------------------------------------------------------------------------
 Tracks Total Sales and Views for all comics across Chaply creator account:
 - Account: แปลจนเมื่อย (Adieu7452 / kuroko11.p.g@gmail.com)
 
 Features:
+- Runs in real visible Google Chrome (HWND_BOTTOM, non-intrusive, no keyboard theft).
+- Navigates comic-by-comic to https://www.chaply.net/writer/contents/{cid}/edit and clicks 'จัดการตอน'.
 - Fetches all comics, view counts, chapters, and last update dates.
 - Records periodic snapshots based on OUR recording date.
 - Computes:
   - 7-day delta & % growth rate (Sales & Views)
   - 30-day delta & % growth rate (Sales & Views)
 - Classifies inactivity (> 30 days without new chapters).
+- Matches WorkQueue publish dates for accurate monthly sales breakdown (1/2026 - 11/2026).
+- Maintains continuous episode-level coin history (tools/data/chaply_episodes_history.json).
 - Saves historical timeline to Git JSON (tools/data/chaply_history.json).
 - Saves latest snapshot to tools/data/chaply_growth_latest.json.
 - Synchronizes with Google Sheet tab `ChaplyGrowth` (overwriting current snapshot, zero bloat).
@@ -23,12 +27,14 @@ import os
 import sys
 import time
 import json
+import re
 import argparse
 import urllib.request
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, List, Optional
 import requests
+from playwright.sync_api import sync_playwright
 
 try:
     from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
@@ -56,8 +62,6 @@ AUTH_FILE = os.path.join(DATA_DIR, "chaply_auth.json")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
-import re
-
 THAI_MONTHS = [
     "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
@@ -80,7 +84,7 @@ def normalize_title(t: str) -> str:
         return ""
     if "|" in t:
         t = t.split("|")[0]
-    t = re.sub(r'[\s\-_:;,\(\)\[\]\.\'\"!?]+', '', t.lower())
+    t = re.sub(r'[\s\-_:;,()\[\].\'"!?]+', '', t.lower())
     return t
 
 def fetch_workqueue_and_manga(gas_url: str = DEFAULT_GAS_URL, passcode: str = "10211032"):
@@ -98,14 +102,14 @@ def fetch_workqueue_and_manga(gas_url: str = DEFAULT_GAS_URL, passcode: str = "1
 
         payload_m = {"action": "GET_MANGA_LIST", "passcode": passcode}
         req_m = urllib.request.Request(gas_url, data=json.dumps(payload_m).encode("utf-8"), headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req_m, timeout=30) as res:
-            d_m = json.loads(res.read().decode("utf-8"))
-            manga_list = d_m.get("data") or d_m.get("manga") or []
+        with urllib.request.urlopen(req_m, timeout=30) as res_m:
+            dm = json.loads(res_m.read().decode("utf-8"))
+            manga_list = dm.get("data") or dm.get("mangaList") or []
             if manga_list:
-                with open(MANGA_CACHE_FILE, "w", encoding="utf-8") as f:
-                    json.dump(manga_list, f, ensure_ascii=False)
+                with open(MANGA_CACHE_FILE, "w", encoding="utf-8") as fm:
+                    json.dump(manga_list, fm, ensure_ascii=False)
     except Exception as e:
-        print(f"⚠️ ไม่สามารถดึง WorkQueue จาก GAS ได้โดยตรง ({e}) กำลังใช้แคชในเครื่อง...")
+        print(f"⚠️ GAS sync error for WorkQueue: {e}, falling back to cache...")
         if os.path.exists(WORKQUEUE_CACHE_FILE):
             try:
                 with open(WORKQUEUE_CACHE_FILE, "r", encoding="utf-8") as f:
@@ -114,39 +118,45 @@ def fetch_workqueue_and_manga(gas_url: str = DEFAULT_GAS_URL, passcode: str = "1
                 pass
         if os.path.exists(MANGA_CACHE_FILE):
             try:
-                with open(MANGA_CACHE_FILE, "r", encoding="utf-8") as f:
-                    manga_list = json.load(f)
+                with open(MANGA_CACHE_FILE, "r", encoding="utf-8") as fm:
+                    manga_list = json.load(fm)
             except Exception:
                 pass
+
     return queue, manga_list
 
 def build_workqueue_publish_index(queue: List[Dict[str, Any]], manga_list: List[Dict[str, Any]]) -> Dict[str, Dict[int, str]]:
-    id_to_name = {}
+    id_to_title = {}
     for m in manga_list:
-        mid = str(m.get("mangaid") or "")
-        name = m.get("manganame") or ""
-        if mid and name:
-            id_to_name[mid] = name
+        mid = str(m.get("id") or m.get("mangaId") or "")
+        t = m.get("title") or m.get("name") or ""
+        if mid and t:
+            id_to_title[mid] = t
 
     index = {}
     for item in queue:
-        mid = str(item.get("mangaid") or "")
-        m_name = item.get("manganame") or id_to_name.get(mid) or ""
-        if not m_name:
-            continue
-        norm_title = normalize_title(m_name)
+        mid = str(item.get("mangaId") or "")
+        raw_title = item.get("mangaTitle") or item.get("title") or id_to_title.get(mid) or ""
+        norm_title = normalize_title(raw_title)
         if not norm_title:
             continue
 
-        pub_raw = item.get("publishtime") or item.get("typesettime") or item.get("uploadtime") or item.get("createdat") or ""
-        if not pub_raw:
-            continue
+        thai_m = ""
+        pub_date_raw = str(item.get("publishDate") or item.get("scheduledDate") or item.get("date") or "")
+        if pub_date_raw:
+            match = re.search(r'(\d{4})-(\d{1,2})', pub_date_raw)
+            if match:
+                thai_m = ym_to_thai(f"{match.group(1)}-{match.group(2)}")
 
-        try:
-            dt = datetime.fromisoformat(str(pub_raw).replace("Z", "+00:00"))
-            thai_m = month_to_thai(dt)
-        except Exception:
-            match = re.search(r'(\d{4})-(\d{2})', str(pub_raw))
+        if not thai_m:
+            d_month = str(item.get("month") or "")
+            for tm in THAI_MONTHS:
+                if tm in d_month:
+                    thai_m = tm
+                    break
+
+        if not thai_m and item.get("createdAt"):
+            match = re.search(r'(\d{4})-(\d{1,2})', str(item["createdAt"]))
             if match:
                 thai_m = ym_to_thai(f"{match.group(1)}-{match.group(2)}")
             else:
@@ -196,7 +206,6 @@ def get_auth_token() -> str:
         try:
             with open(AUTH_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                # Look for token in storage or cookies
                 token = data.get("accessToken")
                 if token:
                     return token
@@ -311,62 +320,34 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         print(f"❌ ส่งข้อมูลไปยัง GAS ไม่สำเร็จ: {e}", flush=True)
         return False
 
-def launch_chaply_browser_session(headless: bool = False) -> str:
-    """Launch visible real Google Chrome to display creator dashboard and capture fresh token."""
-    from playwright.sync_api import sync_playwright
+def launch_browser_context(headless: bool = False):
+    """Launch Playwright persistent context with real Google Chrome pinned to bottom."""
     profile_dir = os.path.join(BASE_DIR, ".chrome_chaply")
-    captured = {}
+    os.makedirs(profile_dir, exist_ok=True)
     mode_str = "Headless" if headless else "Google Chrome จริง (หน้าต่างเปิดอยู่ด้านหลังสุด / HWND_BOTTOM ไม่แย่งโฟกัส)"
-    print(f"🌐 [Chaply] กำลังเปิด {mode_str} เพื่อเข้าสู่หน้า Chaply Creator Dashboard...", flush=True)
+    print(f"🌐 [Chaply] กำลังเปิด {mode_str}...", flush=True)
+    p = sync_playwright().start()
+    launch_kwargs = {
+        "headless": headless,
+        "channel": "chrome",
+        "no_viewport": True,
+        "ignore_default_args": ["--enable-automation"],
+        "args": ["--disable-blink-features=AutomationControlled", "--no-sandbox"]
+    }
+    exec_path = get_browser_executable_path()
+    if exec_path:
+        launch_kwargs["executable_path"] = exec_path
     try:
-        with sync_playwright() as p:
-            launch_kwargs = {
-                "headless": headless,
-                "channel": "chrome",
-                "no_viewport": True,
-                "ignore_default_args": ["--enable-automation"],
-                "args": ["--disable-blink-features=AutomationControlled", "--no-sandbox"]
-            }
-            exec_path = get_browser_executable_path()
-            if exec_path:
-                launch_kwargs["executable_path"] = exec_path
-
-            try:
-                context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
-            except Exception as e_launch:
-                print(f"⚠️ [Chaply] ไม่สามารถเปิดด้วย channel='chrome' ({e_launch}) กำลังลองใช้ Chromium ปกติ...")
-                launch_kwargs.pop("channel", None)
-                context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
-
-            if not headless:
-                set_browser_window_bottom_most("chaply")
-
-            page = context.pages[0] if context.pages else context.new_page()
-            
-            def on_req(req):
-                auth = req.headers.get("authorization")
-                if auth and "Bearer" in auth:
-                    token = auth.split(" ")[1]
-                    captured["token"] = token
-            page.on("request", on_req)
-            
-            print("🌐 [Chaply] นำทางเข้าสู่ https://www.chaply.net/writer/dashboard ...", flush=True)
-            page.goto("https://www.chaply.net/writer/dashboard", wait_until="domcontentloaded")
-            if not headless:
-                set_browser_window_bottom_most("chaply")
-            time.sleep(3)
-            context.storage_state(path=AUTH_FILE)
-            context.close()
-            
-            if captured.get("token"):
-                with open(BEARER_FILE, "w", encoding="utf-8") as bf:
-                    json.dump({"token": captured["token"]}, bf, indent=2)
-                return captured["token"]
-    except Exception as e:
-        print(f"⚠️ Chaply browser session notice: {e}")
-    return get_auth_token()
-
-
+        context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+    except Exception as e_launch:
+        print(f"⚠️ [Chaply] ไม่สามารถเปิดด้วย channel='chrome' ({e_launch}) กำลังลองใช้ Chromium ปกติ...")
+        launch_kwargs.pop("channel", None)
+        context = p.chromium.launch_persistent_context(user_data_dir=profile_dir, **launch_kwargs)
+    
+    if not headless:
+        set_browser_window_bottom_most("chaply")
+    
+    return p, context
 
 def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False):
     now = datetime.now(timezone.utc)
@@ -378,9 +359,44 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     print(f"🚀 Chaply 6-Hour Growth Pipeline: กำลังบันทึกข้อมูลสถิติรอบ {recorded_at}")
     print("=" * 70)
 
-    token = launch_chaply_browser_session(headless=headless) if use_browser else get_auth_token()
+    token = get_auth_token()
+    p_playwright = None
+    context = None
+    page = None
+
+    if use_browser:
+        p_playwright, context = launch_browser_context(headless=headless)
+        page = context.pages[0] if context.pages else context.new_page()
+
+        def on_req(req):
+            nonlocal token
+            auth = req.headers.get("authorization") or ""
+            if "Bearer " in auth:
+                parts = auth.split("Bearer ")
+                if len(parts) > 1 and parts[1].strip():
+                    token = parts[1].strip()
+
+        page.on("request", on_req)
+
+        print("🌐 [Chaply] นำทางเข้าสู่ https://www.chaply.net/writer/dashboard ...", flush=True)
+        page.goto("https://www.chaply.net/writer/dashboard", wait_until="domcontentloaded")
+        if not headless:
+            set_browser_window_bottom_most("chaply")
+        time.sleep(2)
+
+        if token:
+            try:
+                with open(BEARER_FILE, "w", encoding="utf-8") as bf:
+                    json.dump({"token": token}, bf, indent=2)
+            except Exception:
+                pass
+
     if not token:
         print("❌ ไม่พบ Chaply Auth Token! กรุณารัน tools/login_chaply_persistent.py ก่อน")
+        if context:
+            context.close()
+        if p_playwright:
+            p_playwright.stop()
         return
 
     # 1. Fetch overview stats & wallet
@@ -420,12 +436,15 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         except Exception:
             episodes_history = {}
 
+    print(f"\n🔍 [Chaply] กำลังกดเข้าไปดูทีละเรื่องในเบราว์เซอร์ เพื่อดึงยอดรายตอน, ยอดรายเดือน, ยอดรวมตลอดกาล ({len(raw_comics)} เรื่อง)...", flush=True)
+
     for idx, c in enumerate(raw_comics, 1):
         cid = c.get("id")
         title = c.get("title", "")
         slug = c.get("slug", "")
         views = int(c.get("totalView") or 0)
         eps = int(c.get("totalEpisode") or 0)
+        t0 = time.time()
 
         # Inactivity calculation based on lastEpisodeAt
         last_ep_ts = c.get("lastEpisodeAt") or c.get("updatedAt") or 0
@@ -442,55 +461,101 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
         is_inactive_30d = (days_inactive > 30)
 
-        # Fetch chapter sales and 7-chapter revenue via writer API (with full pagination)
         tot_sales = 0.0
         s7 = 0.0
         v7 = 0
-        try:
-            all_ep_items = []
-            page_idx = 0
-            total_items_from_api = None
-            ep_headers = {"Authorization": f"Bearer {token}", "Origin": "https://www.chaply.net"}
+        all_ep_items = []
+        total_items_from_api = None
 
-            while True:
-                ep_url = f"https://api.chaply.net/api/writer/content-episodes/group/{cid}?pageIndex={page_idx}&pageSize=500&includeSales=true"
-                r_ep = requests.get(ep_url, headers=ep_headers, timeout=20)
-                if r_ep.status_code != 200:
-                    break
-                ep_res = r_ep.json().get("data", {})
-                page_items = ep_res.get("items", [])
-                all_ep_items.extend(page_items)
+        if page:
+            # Visually navigate to comic edit screen in real Chrome
+            try:
+                edit_url = f"https://www.chaply.net/writer/contents/{cid}/edit"
+                page.goto(edit_url, wait_until="domcontentloaded")
+                if not headless:
+                    set_browser_window_bottom_most("chaply")
 
-                pag = ep_res.get("pagination", {})
-                if total_items_from_api is None and "totalItems" in pag:
-                    try:
-                        total_items_from_api = int(pag["totalItems"])
-                    except (ValueError, TypeError):
-                        pass
+                # Click จัดการตอน tab to render the episode list table visually
+                try:
+                    btn = page.locator("button:has-text('จัดการตอน')").first
+                    if btn.count():
+                        btn.click(timeout=800)
+                except Exception:
+                    pass
 
-                if not pag.get("hasNextPage") or not page_items:
-                    break
-                page_idx += 1
-                if page_idx > 20:  # safety break (supports up to 10,000 chapters)
-                    break
+                # Extract episodes inside active page context
+                page_idx = 0
+                while True:
+                    ep_res = page.evaluate("""async ({cid, page_idx, token}) => {
+                        try {
+                            const r = await fetch('https://api.chaply.net/api/writer/content-episodes/group/' + cid + '?pageIndex=' + page_idx + '&pageSize=500&includeSales=true', {
+                                headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+                            });
+                            return await r.json();
+                        } catch(e) {
+                            return { error: e.toString() };
+                        }
+                    }""", {"cid": cid, "page_idx": page_idx, "token": token})
 
-            # Resolve actual total chapters without capping
-            if total_items_from_api is not None and total_items_from_api > 0:
-                eps = max(eps, total_items_from_api)
+                    data_box = ep_res.get("data", {}) if isinstance(ep_res, dict) else {}
+                    page_items = data_box.get("items", [])
+                    all_ep_items.extend(page_items)
+                    pag = data_box.get("pagination", {})
+                    if total_items_from_api is None and "totalItems" in pag:
+                        try:
+                            total_items_from_api = int(pag["totalItems"])
+                        except (ValueError, TypeError):
+                            pass
+                    if not pag.get("hasNextPage") or not page_items:
+                        break
+                    page_idx += 1
+                    if page_idx > 20:
+                        break
+            except Exception as e_nav:
+                pass
 
-            if len(all_ep_items) > 0:
-                eps = max(eps, len(all_ep_items))
-                max_idx = max((int(i.get("index") or 0) for i in all_ep_items), default=0)
-                if max_idx > eps:
-                    eps = max_idx
+        # Fallback to direct requests if needed
+        if not all_ep_items:
+            try:
+                page_idx = 0
+                ep_headers = {"Authorization": f"Bearer {token}", "Origin": "https://www.chaply.net"}
+                while True:
+                    ep_url = f"https://api.chaply.net/api/writer/content-episodes/group/{cid}?pageIndex={page_idx}&pageSize=500&includeSales=true"
+                    r_ep = requests.get(ep_url, headers=ep_headers, timeout=20)
+                    if r_ep.status_code != 200:
+                        break
+                    ep_res = r_ep.json().get("data", {})
+                    page_items = ep_res.get("items", [])
+                    all_ep_items.extend(page_items)
+                    pag = ep_res.get("pagination", {})
+                    if total_items_from_api is None and "totalItems" in pag:
+                        try:
+                            total_items_from_api = int(pag["totalItems"])
+                        except (ValueError, TypeError):
+                            pass
+                    if not pag.get("hasNextPage") or not page_items:
+                        break
+                    page_idx += 1
+                    if page_idx > 20:
+                        break
+            except Exception:
+                pass
 
-                tot_sales = round(sum(float(i.get("total_revenue") or 0) for i in all_ep_items), 2)
-                ep_sorted = sorted(all_ep_items, key=lambda x: int(x.get("index") or 0))
-                last_7 = ep_sorted[-7:] if len(ep_sorted) >= 7 else ep_sorted
-                s7 = round(sum(float(i.get("total_revenue") or 0) for i in last_7), 2)
-                v7 = sum(int(i.get("total_views") or i.get("totalView") or 0) for i in last_7)
-        except Exception as e:
-            pass
+        # Resolve total chapters
+        if total_items_from_api is not None and total_items_from_api > 0:
+            eps = max(eps, total_items_from_api)
+
+        if len(all_ep_items) > 0:
+            eps = max(eps, len(all_ep_items))
+            max_idx = max((int(i.get("index") or 0) for i in all_ep_items), default=0)
+            if max_idx > eps:
+                eps = max_idx
+
+            tot_sales = round(sum(float(i.get("total_revenue") or 0) for i in all_ep_items), 2)
+            ep_sorted = sorted(all_ep_items, key=lambda x: int(x.get("index") or 0))
+            last_7 = ep_sorted[-7:] if len(ep_sorted) >= 7 else ep_sorted
+            s7 = round(sum(float(i.get("total_revenue") or 0) for i in last_7), 2)
+            v7 = sum(int(i.get("total_views") or i.get("totalView") or 0) for i in last_7)
 
         # Calculate monthly sales based on WorkQueue publish date & Chaply episode createdAt
         monthly_sales = {m: 0.0 for m in THAI_MONTHS}
@@ -510,7 +575,6 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             except Exception:
                 ep_rev = 0.0
 
-            # Match month: 1. From WorkQueue, 2. Fallback to Chaply episode createdAt
             thai_m = comic_wq_map.get(ep_idx)
             if not thai_m and ep.get("createdAt"):
                 try:
@@ -522,7 +586,6 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             if thai_m and thai_m in monthly_sales:
                 monthly_sales[thai_m] = round(monthly_sales[thai_m] + ep_rev, 2)
 
-            # Record continuous episode snapshot
             episodes_history[cid][str(ep_idx)] = {
                 "revenue": ep_rev,
                 "purchases": int(ep.get("total_purchases") or 0),
@@ -531,9 +594,9 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                 "publish_month": thai_m or ""
             }
 
-        # Terminal progress log formatted like ReadRealm and Kairew
+        elapsed = time.time() - t0
         monthly_summary_str = ", ".join([f"{m_idx+1}/2026: ฿{monthly_sales[m]:,.2f}" for m_idx, m in enumerate(THAI_MONTHS[:11]) if monthly_sales[m] > 0]) or "0.00 ฿"
-        print(f"  [Chaply] [{idx}/{len(raw_comics)}] {title[:40]}... -> รวม: {tot_sales:,.2f} ฿ | ประวัติ 2026: [{monthly_summary_str}] | 7 ตอน: {s7:,.2f} ฿ | {eps} ตอน", flush=True)
+        print(f"  [Chaply] [{idx}/{len(raw_comics)}] {title[:38]}... -> รวม: {tot_sales:,.2f} ฿ | ประวัติ 2026: [{monthly_summary_str}] | 7 ตอน: {s7:,.2f} ฿ | {eps} ตอน ({elapsed:.1f}s)", flush=True)
 
         current_snap_dict[cid] = {
             "subject": title,
@@ -550,6 +613,19 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "days_inactive": days_inactive,
             "is_inactive_30d": is_inactive_30d
         }
+
+    # Close browser session after all comics processed
+    if context:
+        try:
+            context.storage_state(path=AUTH_FILE)
+            context.close()
+        except Exception:
+            pass
+    if p_playwright:
+        try:
+            p_playwright.stop()
+        except Exception:
+            pass
 
     # 4. Load past history
     history = {}
@@ -725,7 +801,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     print("=" * 70)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Chaply Growth Tracker")
+    parser = argparse.ArgumentParser(description="Chaply Growth Tracker (Real Chrome Visible)")
     parser.add_argument("--browser", action="store_true", default=True, help="Launch real visible Google Chrome browser (default: True)")
     parser.add_argument("--headless", action="store_true", default=False, help="Run browser in headless mode (default: False)")
     parser.add_argument("--send-gas", action="store_true", help="Send data to GAS Web App")
@@ -735,5 +811,7 @@ if __name__ == "__main__":
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     args = parser.parse_args()
 
-    use_browser = False if args.headless else (args.browser or args.no_api)
-    run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=use_browser, headless=args.headless)
+    # Browser is enabled by default or when --browser / --no-api is passed
+    headless = args.headless
+    use_browser = True if (not headless or args.browser or args.no_api) else False
+    run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=use_browser, headless=headless)

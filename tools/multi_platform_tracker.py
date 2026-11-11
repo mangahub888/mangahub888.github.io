@@ -304,6 +304,8 @@ def main():
         common_args.append("--headless")
     elif args.browser or args.no_api:
         common_args.append("--browser")
+    if args.no_api:
+        common_args.append("--no-api")
     if args.send_gas:
         common_args.append("--send-gas")
         common_args.extend(["--gas-url", args.gas_url or DEFAULT_GAS_URL])
