@@ -1368,11 +1368,26 @@ ightarrow$ ข้ามทั้งดึงคำออโต้และ QC �
 
 ---
 
+---
+
+### I. ระบบ 1-Click Weekly Multi-Platform Tracker & P&L Auto-Sync (11 พ.ย. 2569)
+- **สคริปต์ 1-Click ประจำสัปดาห์ (`RUN_WEEKLY_TRACKER.bat`)**:
+  - `git pull origin main`
+  - รัน Google Chrome จริง (`HWND_BOTTOM`, No-API) ดึงสถิติ 3 แพลตฟอร์ม (ReadRealm, Kairew, Chaply) พร้อมส่ง Growth Snapshot ขึ้น GAS
+  - รัน `tools/sync_monthly_pnl.py --recent-two` คำนวณและกระทบยอด P&L 2 เดือนล่าสุดลงชีต `MangaSales` อัตโนมัติ
+  - Build Frontend (`npm run build`)
+  - Git Commit & Push ขึ้น GitHub อัตโนมัติ
+- **สคริปต์ซิงค์ P&L แยกย่อย (`RUN_SYNC_PNL_ONLY.bat`)**:
+  - เมนู 1-Click เลือกรอบเดือนที่ต้องการซิงค์ (ล่าสุด 2 เดือน / ทั้งปี 2026 / เดือนปัจจุบัน)
+- **การประมวลผลย้อนหลังครบ 11 เดือน (2026-01 ถึง 2026-11)**:
+  - แก้ไข Bug ใน `backend/Code.js` (`calculateAndSyncMonthlyMangaSales`) ที่เคยทับค่า `sale.month` ของเดือนอื่น และ Deploy ขึ้น Production Version `@123`
+  - ประมวลผลย้อนหลังสำเร็จครบทุกเดือน บันทึกประวัติในชีต `MangaSales` รวม 422 แถวเรียบร้อยแล้ว
+
 ## 2. ข้อมูล Configuration & Deployment ปัจจุบัน
 - **GitHub Repository:** `mangahub888/mangahub888.github.io` (Branch: `main`)
 - **Live URL:** [https://mangahub888.github.io/](https://mangahub888.github.io/)
 - **Google Apps Script Production Deployment ID:**  
-  `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` (Active Version: **`@109`**)
+  `AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw` (Active Version: **`@123`**)
 - **Google Drive Root Folder:** `1hA_5XjT1gLnzrAOFpT-COVfIbuSfVG6_` (`แปลจนเมื่อย`)
 - **LDPlayer Port:** `127.0.0.1:5555` / `emulator-5554`
 - **Frida Client/Server Version:** `16.7.19` (Android x86_64 server binary at `/data/local/tmp/fsd`)
