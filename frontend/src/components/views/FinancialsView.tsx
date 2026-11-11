@@ -378,7 +378,7 @@ export function FinancialsView({
         if (liveRes.ok) {
           const json = await liveRes.json();
 
-          if (json && json.comics && json.comics.length > 0) {
+          if (json && Array.isArray(json.comics)) {
             setTrackerData(json);
             setLoadingGrowth(false);
             return json;
@@ -395,7 +395,7 @@ export function FinancialsView({
       if (res.ok) {
         const json = await res.json();
 
-        if (json && json.comics && json.comics.length > 0) {
+        if (json && Array.isArray(json.comics)) {
           setTrackerData(json);
           setLoadingGrowth(false);
           return json;
