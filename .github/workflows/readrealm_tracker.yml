@@ -2,8 +2,8 @@ name: Multi-Platform 6-Hour Growth Tracker Pipeline (ReadRealm + Kairew + Chaply
 
 on:
   # รันอัตโนมัติทุกๆ 6 ชั่วโมง (และรองรับการสั่งรันจาก Google Apps Script 6h Trigger)
-  schedule:
-    - cron: '0 */6 * * *'
+  # schedule:
+  #   - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       platform:
