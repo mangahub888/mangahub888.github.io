@@ -397,6 +397,10 @@ function doPost(e) {
       case 'CLEAR_MANGA_SALES':
         result = clearMangaSales();
         break;
+      case 'CLEAR_ALL_PLATFORM_SHEETS':
+      case 'CLEAR_GROWTH_DATA':
+        result = clearAllPlatformSheets();
+        break;
       case 'CALCULATE_AND_SYNC_MONTHLY_MANGA_SALES':
       case 'SYNC_MONTHLY_MANGA_SALES':
       case 'CALCULATE_MONTHLY_P_L':
@@ -2858,6 +2862,47 @@ function clearMangaSales() {
   } catch (err) {
     console.error('clearMangaSales Error:', err);
     return { error: 'Clear MangaSales Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function clearGrowthSheet(sheetName) {
+  try {
+    const ss = getSpreadsheet();
+    const sheet = ss.getSheetByName(sheetName);
+    if (!sheet) return;
+    const lastRow = sheet.getLastRow();
+    const lastCol = sheet.getLastColumn();
+    if (lastRow > 1 && lastCol > 0) {
+      sheet.getRange(2, 1, lastRow - 1, lastCol).clearContent();
+    }
+  } catch (e) {
+    console.error('clearGrowthSheet error for ' + sheetName, e);
+  }
+}
+
+function clearAllPlatformSheets() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    clearGrowthSheet(MANGA_SALES_SHEET_NAME);
+    clearGrowthSheet(READREALM_GROWTH_SHEET_NAME);
+    clearGrowthSheet(KAIREW_GROWTH_SHEET_NAME);
+    clearGrowthSheet(CHAPLY_GROWTH_SHEET_NAME);
+    clearGrowthSheet(READREALM_TIMELINE_SHEET_NAME);
+    clearGrowthSheet(KAIREW_TIMELINE_SHEET_NAME);
+    clearGrowthSheet(CHAPLY_TIMELINE_SHEET_NAME);
+
+    PropertiesService.getScriptProperties().deleteProperty('READREALM_GROWTH_LATEST_SUMMARY');
+    PropertiesService.getScriptProperties().deleteProperty('KAIREW_GROWTH_LATEST_SUMMARY');
+    PropertiesService.getScriptProperties().deleteProperty('CHAPLY_GROWTH_LATEST_SUMMARY');
+
+    invalidateCache(['manga_sales', 'financial_sales', 'readrealm_growth', 'kairew_growth', 'chaply_growth']);
+    return { success: true, message: 'All platform sheets cleared successfully' };
+  } catch (err) {
+    console.error('clearAllPlatformSheets Error:', err);
+    return { error: err.toString() };
   } finally {
     lock.releaseLock();
   }
