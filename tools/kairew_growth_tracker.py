@@ -502,7 +502,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
 
         return False
 
-def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, foreground: bool = False):
+def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, foreground: bool = False, no_api: bool = False, force_refresh: bool = False):
 
     now = datetime.now(timezone.utc)
 
@@ -524,9 +524,24 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     print("🔄 กำลังตรวจสอบการดึงข้อมูลจาก Kairew...")
 
-    # Try browser or direct fast HTTP requests
+    # Pre-load existing monthly sales from disk cache for baseline comparison
+    existing_monthly_cache = {}
+    latest_kw_file = os.path.join(DATA_DIR, "kairew_growth_latest.json")
+    if os.path.exists(latest_kw_file):
+        try:
+            with open(latest_kw_file, "r", encoding="utf-8") as kf:
+                old_d = json.load(kf)
+                for old_c in old_d.get("comics", []):
+                    if old_c.get("comic_id"):
+                        existing_monthly_cache[str(old_c["comic_id"])] = old_c.get("monthly_sales", {})
+        except Exception:
+            pass
 
-    page_data = fetch_kairew_data_via_browser(headless=headless, foreground=foreground) if use_browser else fetch_kairew_data_via_requests() or {}
+    # Strictly real browser if no_api or use_browser is set
+    if no_api or use_browser or force_refresh:
+        page_data = fetch_kairew_data_via_browser(headless=headless, foreground=foreground)
+    else:
+        page_data = fetch_kairew_data_via_requests() or fetch_kairew_data_via_browser(headless=headless, foreground=foreground) or {}
 
     # If direct fetch didn't return data, check cached props file (< 30 mins)
 
@@ -593,10 +608,16 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     else:
         monthly_sales_map = fetch_all_kairew_monthly_stats(cartoon_list, year=now.year)
 
-    for c in cartoon_list:
+    print(f"\n🔍 [Kairew] ประมวลผลและเทียบสถิติเจาะลึก 80 เรื่อง (ยอดรวม, ยอดรายเดือน 12 เดือน, 7 ตอนล่าสุด)...", flush=True)
+    for idx, c in enumerate(cartoon_list, 1):
         cid = str(c.get('id'))
-        if cid in monthly_sales_map:
-            c['monthly_sales'] = monthly_sales_map[cid]
+        m_dict = dict(existing_monthly_cache.get(cid, {}))
+        fresh_m = monthly_sales_map.get(cid, {})
+        for m_name, val in fresh_m.items():
+            if val > 0 or m_name not in m_dict:
+                m_dict[m_name] = val
+        c['monthly_sales'] = m_dict
+        
         stat_item = per_comic_stats.get(cid, {})
         if stat_item:
             if stat_item.get("total_sales"):
@@ -605,6 +626,14 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                 except (ValueError, TypeError):
                     pass
             c['sales_7_chapters'] = round(float(stat_item.get("sales_7_chapters") or 0.0), 2)
+            
+        title = c.get('name', '')
+        non_zero_m = [f"{m[:3]}:{v:,.0f}" for m, v in m_dict.items() if v > 0]
+        m_summary = " ".join(non_zero_m) if non_zero_m else f"พ.ย.:{m_dict.get('พฤศจิกายน', 0.0):,.1f}"
+        s7 = c.get('sales_7_chapters', 0.0)
+        tot = float(c.get('sales') or 0.0)
+        eps = c.get('episode_count', 0)
+        print(f"  [Kairew] [{idx}/{len(cartoon_list)}] {title} -> รวม: {tot:,.2f} ฿ | ประวัติ 2026: [{m_summary}] | 7 ตอน: {s7:,.2f} ฿ | {eps} ตอน", flush=True)
 
     try:
 
@@ -992,9 +1021,20 @@ if __name__ == "__main__":
 
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     parser.add_argument("--foreground", action="store_true", default=False, help="Launch Chrome in foreground")
+    parser.add_argument("--no-api", action="store_true", default=False, help="Force real visible Google Chrome browser only")
+    parser.add_argument("--force-refresh", action="store_true", default=False, help="Force refresh via browser session")
 
     args = parser.parse_args()
 
-    use_browser = False if args.headless else args.browser
+    use_browser = True if (args.no_api or args.force_refresh) else (False if args.headless else args.browser)
 
-    run_kairew_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=use_browser, headless=args.headless, foreground=args.foreground)
+    run_kairew_pipeline(
+        send_to_gas=args.send_gas,
+        gas_url=args.gas_url,
+        passcode=args.passcode,
+        use_browser=use_browser,
+        headless=args.headless,
+        foreground=args.foreground,
+        no_api=args.no_api,
+        force_refresh=args.force_refresh
+    )

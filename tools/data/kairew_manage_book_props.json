@@ -720,8 +720,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -752,7 +752,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 311,
@@ -984,8 +984,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -1016,7 +1016,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 322,
@@ -1066,7 +1066,7 @@
         "share_episode_count": 67,
         "episode_count": 67,
         "episode_last_at": "2026-03-15 21:45:25",
-        "view_count": 10341,
+        "view_count": 10342,
         "like_count": 9,
         "comment_count": 0,
         "bookmark_count": 9,
@@ -1161,7 +1161,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-25 19:44:33",
-        "updated_at": "2026-11-11 08:40:32",
+        "updated_at": "2026-11-11 09:29:34",
         "deleted_at": null,
         "tag_list": [
           {
@@ -1261,8 +1261,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -1293,7 +1293,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 321,
@@ -1333,7 +1333,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": null,
-        "sales": 3573.0,
+        "sales": 3576.6,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -1342,7 +1342,7 @@
         "share_episode_count": 154,
         "episode_count": 154,
         "episode_last_at": "2026-11-06 02:16:15",
-        "view_count": 58572,
+        "view_count": 58597,
         "like_count": 79,
         "comment_count": 2,
         "bookmark_count": 94,
@@ -1437,7 +1437,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-25 19:46:43",
-        "updated_at": "2026-11-11 08:43:41",
+        "updated_at": "2026-11-11 10:17:18",
         "deleted_at": null,
         "tag_list": [
           {
@@ -1525,8 +1525,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -1557,7 +1557,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 320,
@@ -1575,10 +1575,10 @@
           "สิงหาคม": 451.8,
           "กันยายน": 630.0,
           "ตุลาคม": 370.8,
-          "พฤศจิกายน": 262.8,
+          "พฤศจิกายน": 266.4,
           "ธันวาคม": 0.0
         },
-        "sales_7_chapters": 325.8
+        "sales_7_chapters": 329.4
       },
       {
         "id": 335,
@@ -1607,7 +1607,7 @@
         "share_episode_count": 369,
         "episode_count": 369,
         "episode_last_at": "2026-11-09 20:27:52",
-        "view_count": 33741,
+        "view_count": 33743,
         "like_count": 77,
         "comment_count": 1,
         "bookmark_count": 87,
@@ -1702,7 +1702,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-25 19:49:01",
-        "updated_at": "2026-11-11 07:13:35",
+        "updated_at": "2026-11-11 10:13:54",
         "deleted_at": null,
         "tag_list": [
           {
@@ -1802,8 +1802,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -1834,7 +1834,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 319,
@@ -2079,8 +2079,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -2111,7 +2111,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 315,
@@ -2151,7 +2151,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": "ดาวโกสต์สตาร์ปรากฎขึ้นอย่างกระทันหัน ทำให้สรรพชีวิตบนดาวโลกเกินการวิวัฒนาการกลายเป็นอสูรร้ายทำลายมนุษยชาติ ในช่วงวิกฤตมนุษย์สูญพันธ์ ผู้คนได้ค้นพบหนทางล็อกอินเข้าสู่โกสต์สตาร์ และค้นพบว่าพวกเขาสามารถค้นหาพลังบนดาวโกสต์สตาร์ได้ ดังนั้นเพื่อมีชีวิตรอดมนุษย์จึงเริ่มต้นออกสำรวจ…\r\n\r\nENG: The Lord of the Wheel of Destiny\r\n\r\nTH: เจ้าแห่งกงล้อโชคชะตา",
-        "sales": 6346.8,
+        "sales": 6363.0,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -2160,7 +2160,7 @@
         "share_episode_count": 275,
         "episode_count": 275,
         "episode_last_at": "2026-10-26 01:41:11",
-        "view_count": 604165,
+        "view_count": 604184,
         "like_count": 137,
         "comment_count": 0,
         "bookmark_count": 164,
@@ -2255,7 +2255,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-25 19:58:13",
-        "updated_at": "2026-11-11 08:58:49",
+        "updated_at": "2026-11-11 10:14:40",
         "deleted_at": null,
         "tag_list": [
           {
@@ -2343,8 +2343,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -2375,7 +2375,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 323,
@@ -2393,10 +2393,10 @@
           "สิงหาคม": 982.8,
           "กันยายน": 59.4,
           "ตุลาคม": 619.2,
-          "พฤศจิกายน": 160.2,
+          "พฤศจิกายน": 176.4,
           "ธันวาคม": 0.0
         },
-        "sales_7_chapters": 205.2
+        "sales_7_chapters": 217.8
       },
       {
         "id": 342,
@@ -2607,8 +2607,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -2639,7 +2639,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 324,
@@ -2690,7 +2690,7 @@
         "share_episode_count": 56,
         "episode_count": 56,
         "episode_last_at": "2026-11-04 23:29:03",
-        "view_count": 39425,
+        "view_count": 39426,
         "like_count": 68,
         "comment_count": 2,
         "bookmark_count": 79,
@@ -2785,7 +2785,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-25 20:06:14",
-        "updated_at": "2026-11-11 08:26:54",
+        "updated_at": "2026-11-11 09:40:05",
         "deleted_at": null,
         "tag_list": [
           {
@@ -2897,8 +2897,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -2929,7 +2929,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 325,
@@ -2969,7 +2969,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": "“ห้าสิบปีหลังจากโลกแห่งเกมหลอมรวมเข้ากับความเป็นจริง…”\r\n\r\nโลกใบใหม่ได้ถือกำเนิดขึ้น พร้อมกับยอดนักรบผู้แบกรับภาระปกป้องมนุษยชาติ เขาทุ่มเททั้งชีวิตเพื่อสันติ… แต่สุดท้ายกลับถูกหักหลัง! ผู้มีอำนาจสูงสุด หวาดกลัวในพลังของเขา จึงสั่งฆ่าเขาอย่างเลือดเย็น\r\n\r\nก่อนตาย…เขาปลดปล่อยพลังลับสุดท้าย — “กระจกสะท้อนวิญญาณ” — และผนึกจิตวิญญาณตัวเองไว้ใต้ผืนน้ำของทะเลสาบเงียบงัน\r\n\r\nราชาสั่งลบชื่อเขาออกจากหน้าประวัติศาสตร์…บิดเบือนทุกเรื่องราว และตราเขาให้กลายเป็น “ผู้ทรยศ”\r\n\r\nแต่เรื่องราวยังไม่จบ…\r\n\r\nหลายสิบปีผ่านไป ในร่างของชายใกล้ตาย นักรบผู้นั้นได้ “ตื่นขึ้น” อีกครั้ง พร้อมพลังแห่งกระจกสะท้อน และความแค้นที่ไม่มีวันจาง…\r\n\r\nเกมแห่งการล้างแค้นจึงเริ่มต้นขึ้น —\r\n\r\nเมื่อเงาสะท้อนจากอดีต กลับมาทวงคืนทุกอย่างที่ถูกขโมยไป!",
-        "sales": 15190.2,
+        "sales": 15192.0,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -2978,7 +2978,7 @@
         "share_episode_count": 74,
         "episode_count": 74,
         "episode_last_at": "2026-11-06 22:43:41",
-        "view_count": 83573,
+        "view_count": 83591,
         "like_count": 126,
         "comment_count": 0,
         "bookmark_count": 149,
@@ -3073,7 +3073,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-25 20:11:34",
-        "updated_at": "2026-11-11 08:59:35",
+        "updated_at": "2026-11-11 10:17:30",
         "deleted_at": null,
         "tag_list": [
           {
@@ -3161,8 +3161,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -3193,7 +3193,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 326,
@@ -3211,10 +3211,10 @@
           "สิงหาคม": 2658.6,
           "กันยายน": 1553.4,
           "ตุลาคม": 1481.4,
-          "พฤศจิกายน": 1017.0,
+          "พฤศจิกายน": 1018.8,
           "ธันวาคม": 0.0
         },
-        "sales_7_chapters": 955.8
+        "sales_7_chapters": 957.6
       },
       {
         "id": 345,
@@ -3425,8 +3425,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -3457,7 +3457,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 298,
@@ -3702,8 +3702,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -3734,7 +3734,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 328,
@@ -3992,8 +3992,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -4024,7 +4024,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 271,
@@ -4075,7 +4075,7 @@
         "share_episode_count": 100,
         "episode_count": 101,
         "episode_last_at": "2026-02-12 12:48:56",
-        "view_count": 56796,
+        "view_count": 56797,
         "like_count": 36,
         "comment_count": 0,
         "bookmark_count": 40,
@@ -4170,7 +4170,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-25 20:32:07",
-        "updated_at": "2026-11-10 22:43:48",
+        "updated_at": "2026-11-11 10:04:15",
         "deleted_at": null,
         "tag_list": [
           {
@@ -4282,8 +4282,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -4314,7 +4314,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 331,
@@ -4572,8 +4572,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -4604,7 +4604,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 343,
@@ -4656,7 +4656,7 @@
         "share_episode_count": 130,
         "episode_count": 130,
         "episode_last_at": "2026-06-13 10:59:22",
-        "view_count": 65547,
+        "view_count": 65548,
         "like_count": 55,
         "comment_count": 0,
         "bookmark_count": 71,
@@ -4751,7 +4751,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-28 19:32:30",
-        "updated_at": "2026-11-11 08:59:35",
+        "updated_at": "2026-11-11 09:50:09",
         "deleted_at": null,
         "tag_list": [
           {
@@ -4875,8 +4875,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -4907,7 +4907,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 344,
@@ -5139,8 +5139,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -5171,7 +5171,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 345,
@@ -5403,8 +5403,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -5435,7 +5435,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 346,
@@ -5667,8 +5667,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -5699,7 +5699,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 369,
@@ -5970,8 +5970,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -6002,7 +6002,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 372,
@@ -6057,7 +6057,7 @@
         "share_episode_count": 213,
         "episode_count": 213,
         "episode_last_at": "2026-11-06 22:42:20",
-        "view_count": 15845,
+        "view_count": 15854,
         "like_count": 30,
         "comment_count": 0,
         "bookmark_count": 44,
@@ -6152,7 +6152,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-30 00:56:31",
-        "updated_at": "2026-11-11 06:50:27",
+        "updated_at": "2026-11-11 09:38:49",
         "deleted_at": null,
         "tag_list": [
           {
@@ -6312,8 +6312,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -6344,7 +6344,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 371,
@@ -6393,7 +6393,7 @@
         "share_episode_count": 143,
         "episode_count": 143,
         "episode_last_at": "2026-11-06 02:17:47",
-        "view_count": 49529,
+        "view_count": 49531,
         "like_count": 57,
         "comment_count": 0,
         "bookmark_count": 82,
@@ -6488,7 +6488,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-09-30 00:58:15",
-        "updated_at": "2026-11-11 08:17:47",
+        "updated_at": "2026-11-11 09:36:26",
         "deleted_at": null,
         "tag_list": [
           {
@@ -6576,8 +6576,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -6608,7 +6608,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 373,
@@ -6659,7 +6659,7 @@
         "share_episode_count": 15,
         "episode_count": 15,
         "episode_last_at": "2025-11-27 21:47:09",
-        "view_count": 1264,
+        "view_count": 1265,
         "like_count": 3,
         "comment_count": 0,
         "bookmark_count": 7,
@@ -6754,7 +6754,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-10-01 01:27:05",
-        "updated_at": "2026-11-11 01:12:20",
+        "updated_at": "2026-11-11 09:24:12",
         "deleted_at": null,
         "tag_list": [
           {
@@ -6866,8 +6866,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -6898,7 +6898,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 377,
@@ -7117,8 +7117,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -7149,7 +7149,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 393,
@@ -7197,7 +7197,7 @@
         "share_episode_count": 114,
         "episode_count": 114,
         "episode_last_at": "2026-11-07 22:31:18",
-        "view_count": 77449,
+        "view_count": 77468,
         "like_count": 78,
         "comment_count": 2,
         "bookmark_count": 100,
@@ -7292,7 +7292,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-10-05 12:46:33",
-        "updated_at": "2026-11-11 05:30:21",
+        "updated_at": "2026-11-11 10:14:00",
         "deleted_at": null,
         "tag_list": [
           {
@@ -7368,8 +7368,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -7400,7 +7400,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 402,
@@ -7645,8 +7645,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -7677,7 +7677,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 415,
@@ -7730,7 +7730,7 @@
         "share_episode_count": 11,
         "episode_count": 11,
         "episode_last_at": "2025-11-23 20:14:13",
-        "view_count": 4531,
+        "view_count": 4532,
         "like_count": 5,
         "comment_count": 0,
         "bookmark_count": 7,
@@ -7825,7 +7825,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-10-12 15:37:21",
-        "updated_at": "2026-11-10 23:01:53",
+        "updated_at": "2026-11-11 09:28:37",
         "deleted_at": null,
         "tag_list": [
           {
@@ -7961,8 +7961,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -7993,7 +7993,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 419,
@@ -8042,7 +8042,7 @@
         "share_episode_count": 64,
         "episode_count": 64,
         "episode_last_at": "2026-11-06 02:21:34",
-        "view_count": 79405,
+        "view_count": 79407,
         "like_count": 168,
         "comment_count": 5,
         "bookmark_count": 190,
@@ -8137,7 +8137,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-10-16 21:48:24",
-        "updated_at": "2026-11-11 08:54:00",
+        "updated_at": "2026-11-11 09:40:10",
         "deleted_at": null,
         "tag_list": [
           {
@@ -8225,8 +8225,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -8257,7 +8257,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 428,
@@ -8489,8 +8489,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -8521,7 +8521,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 481,
@@ -8572,7 +8572,7 @@
         "share_episode_count": 22,
         "episode_count": 22,
         "episode_last_at": "2026-04-07 15:07:30",
-        "view_count": 7478,
+        "view_count": 7479,
         "like_count": 18,
         "comment_count": 0,
         "bookmark_count": 19,
@@ -8667,7 +8667,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-11-14 14:45:51",
-        "updated_at": "2026-11-11 00:00:05",
+        "updated_at": "2026-11-11 09:28:29",
         "deleted_at": null,
         "tag_list": [
           {
@@ -8779,8 +8779,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -8811,7 +8811,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 537,
@@ -8853,7 +8853,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": "“ชูอิจิ” เป็นเพียงเด็กม.ปลายธรรมดาคนหนึ่งในญี่ปุ่นยุคปัจจุบัน\r\n\r\nหลังจากสูญเสียพ่อไป เขาก็ต้องกัดฟันต่อสู้เพื่อปกป้องแม่กับน้องสาว ทว่า…สิ่งที่ได้รับกลับมีแค่การกลั่นแกล้งซ้ำแล้วซ้ำเล่า\r\n\r\nจนกระทั่งอุบัติเหตุอันโหดร้ายได้พรากชีวิตเขาไปก่อนเวลาอันควร\r\n\r\n…แต่เมื่อเขาลืมตาขึ้นอีกครั้ง\r\n\r\nเขากลับพบว่าตัวเองได้เกิดใหม่ในร่างของ “ลูคัส ไรอัน”—บุตรชายขุนนางแห่งต่างโลก\r\n\r\nลูคัสเคยล่วงเกินเทพแห่งเวทมนตร์ จึงถูกสาปให้ไร้พลังเวทไปตลอดชีวิต และสุดท้ายก็ต้องจบชีวิตลงอย่างน่าอนาถ\r\n\r\nแต่ในตอนนี้ วิญญาณของชูอิจิได้เข้ามาแทนที่ พร้อมพรจาก “มาร์ส” เทพแห่งสงคราม\r\n\r\nโชคชะตาใหม่ของเขาได้เริ่มต้นขึ้นแล้ว…\r\n\r\nในโลกที่เวทมนตร์คือทุกสิ่ง และนักรบผู้ใช้พลังร่างกายถูกเหยียดหยาม\r\n\r\nเขาจะไม่มีวันยอมถูกเหยียบย่ำอีกต่อไป\r\n\r\nในนามของลูคัส—เขาจะฝึกฝนศาสตร์แห่งการต่อสู้ และใช้กำปั้นลิขิตชะตาของตนเอง!",
-        "sales": 30949.0,
+        "sales": 30952.6,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -8862,7 +8862,7 @@
         "share_episode_count": 129,
         "episode_count": 129,
         "episode_last_at": "2026-11-10 18:07:22",
-        "view_count": 462114,
+        "view_count": 462128,
         "like_count": 224,
         "comment_count": 3,
         "bookmark_count": 291,
@@ -8957,7 +8957,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-11-14 15:27:30",
-        "updated_at": "2026-11-11 08:59:41",
+        "updated_at": "2026-11-11 10:17:13",
         "deleted_at": null,
         "tag_list": [
           {
@@ -9069,8 +9069,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -9101,7 +9101,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 538,
@@ -9119,7 +9119,7 @@
           "สิงหาคม": 3004.2,
           "กันยายน": 972.0,
           "ตุลาคม": 439.2,
-          "พฤศจิกายน": 180.0,
+          "พฤศจิกายน": 183.6,
           "ธันวาคม": 0.0
         },
         "sales_7_chapters": 111.6
@@ -9398,8 +9398,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -9430,7 +9430,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 583,
@@ -9662,8 +9662,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -9694,7 +9694,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 593,
@@ -9913,8 +9913,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -9945,7 +9945,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 594,
@@ -9999,7 +9999,7 @@
         "share_episode_count": 20,
         "episode_count": 20,
         "episode_last_at": "2025-12-10 21:58:07",
-        "view_count": 3555,
+        "view_count": 3556,
         "like_count": 4,
         "comment_count": 0,
         "bookmark_count": 4,
@@ -10094,7 +10094,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-11-25 13:25:04",
-        "updated_at": "2026-11-11 08:55:07",
+        "updated_at": "2026-11-11 10:03:43",
         "deleted_at": null,
         "tag_list": [
           {
@@ -10242,8 +10242,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -10274,7 +10274,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 600,
@@ -10532,8 +10532,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -10564,7 +10564,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 614,
@@ -10796,8 +10796,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -10828,7 +10828,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 618,
@@ -11086,8 +11086,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -11118,7 +11118,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 664,
@@ -11159,7 +11159,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": "นารุกามิ สุบารุ ผู้เป็นทั้งผู้เล่นที่แข็งแกร่งที่สุดและจ้าวสายฟ้า ถูกเพื่อนที่ไว้วางใจหักหลังและสังหารระหว่างการพิชิตหอคอย\r\nชั่ววินาทีสุดท้าย หลังทุ่มพลังทั้งหมดเพื่อปกป้องสหาย เขาลืมตาขึ้น—ทั้งที่รู้ว่าตัวเองตายไปแล้ว—กลับพบว่าตนเกิดใหม่ในโลกอีกยี่สิบปีข้างหน้า ความจริงถูกฝังกลบ และผู้ทรยศอย่างเคียวโจ อิสึกิ กลับก้าวขึ้นสู่ตำแหน่งผู้เล่นอันดับหนึ่ง เพื่อการล้างแค้น… และเพื่อสหายที่อาจยังมีชีวิตรอคอย เขาต้องแข็งแกร่งขึ้นอีกครั้งให้ได้โดยเร็ว “วิธีเดิม… ใช้ไม่ได้อีกต่อไป” ยอดผู้เล่นผู้ได้โอกาสครั้งที่สอง เลือกเดินเส้นทางใหม่—ไลฟ์สตรีม ไม่สำคัญว่าพื้นที่สตรีมจะเต็มไปด้วยคนเลียนแบบตำนานซึ่งชื่อ นารุกามิ สุบารุ “เพราะของแท้… มีเพียงหนึ่งเดียว”",
-        "sales": 3187.8,
+        "sales": 3189.6,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -11168,7 +11168,7 @@
         "share_episode_count": 72,
         "episode_count": 72,
         "episode_last_at": "2026-11-10 22:54:16",
-        "view_count": 20215,
+        "view_count": 20217,
         "like_count": 57,
         "comment_count": 0,
         "bookmark_count": 64,
@@ -11263,7 +11263,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-12-07 17:37:37",
-        "updated_at": "2026-11-11 07:47:01",
+        "updated_at": "2026-11-11 10:16:13",
         "deleted_at": null,
         "tag_list": [
           {
@@ -11363,8 +11363,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -11395,7 +11395,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 666,
@@ -11413,10 +11413,10 @@
           "สิงหาคม": 367.2,
           "กันยายน": 248.4,
           "ตุลาคม": 162.0,
-          "พฤศจิกายน": 63.0,
+          "พฤศจิกายน": 64.8,
           "ธันวาคม": 0.0
         },
-        "sales_7_chapters": 207.0
+        "sales_7_chapters": 208.8
       },
       {
         "id": 729,
@@ -11444,7 +11444,7 @@
         "share_episode_count": 50,
         "episode_count": 50,
         "episode_last_at": "2026-04-10 18:43:08",
-        "view_count": 13061,
+        "view_count": 13063,
         "like_count": 17,
         "comment_count": 0,
         "bookmark_count": 18,
@@ -11539,7 +11539,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-12-21 18:00:57",
-        "updated_at": "2026-11-10 22:53:40",
+        "updated_at": "2026-11-11 09:16:22",
         "deleted_at": null,
         "tag_list": [
           {
@@ -11627,8 +11627,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -11659,7 +11659,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 734,
@@ -11904,8 +11904,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -11936,7 +11936,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 735,
@@ -11987,7 +11987,7 @@
         "share_episode_count": 22,
         "episode_count": 22,
         "episode_last_at": "2026-04-07 22:09:36",
-        "view_count": 83186,
+        "view_count": 83187,
         "like_count": 88,
         "comment_count": 1,
         "bookmark_count": 77,
@@ -12082,7 +12082,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-12-28 16:18:48",
-        "updated_at": "2026-11-11 06:38:26",
+        "updated_at": "2026-11-11 09:09:30",
         "deleted_at": null,
         "tag_list": [
           {
@@ -12194,8 +12194,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -12226,7 +12226,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 770,
@@ -12275,7 +12275,7 @@
         "share_episode_count": 62,
         "episode_count": 62,
         "episode_last_at": "2026-10-20 15:04:09",
-        "view_count": 93497,
+        "view_count": 93498,
         "like_count": 110,
         "comment_count": 0,
         "bookmark_count": 132,
@@ -12370,7 +12370,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-12-28 16:27:41",
-        "updated_at": "2026-11-11 07:58:50",
+        "updated_at": "2026-11-11 09:14:09",
         "deleted_at": null,
         "tag_list": [
           {
@@ -12458,8 +12458,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -12490,7 +12490,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 771,
@@ -12761,8 +12761,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -12793,7 +12793,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 773,
@@ -13051,8 +13051,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -13083,7 +13083,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 788,
@@ -13136,7 +13136,7 @@
         "share_episode_count": 44,
         "episode_count": 44,
         "episode_last_at": "2026-11-07 22:31:56",
-        "view_count": 17523,
+        "view_count": 17524,
         "like_count": 60,
         "comment_count": 1,
         "bookmark_count": 75,
@@ -13231,7 +13231,7 @@
         },
         "deleted_by": null,
         "created_at": "2025-12-31 13:42:49",
-        "updated_at": "2026-11-11 07:23:15",
+        "updated_at": "2026-11-11 10:12:21",
         "deleted_at": null,
         "tag_list": [
           {
@@ -13367,8 +13367,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -13399,7 +13399,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 789,
@@ -13631,8 +13631,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -13663,7 +13663,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 902,
@@ -13921,8 +13921,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -13953,7 +13953,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 1109,
@@ -14224,8 +14224,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -14256,7 +14256,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 2067,
@@ -14307,7 +14307,7 @@
         "share_episode_count": 36,
         "episode_count": 36,
         "episode_last_at": "2026-11-10 22:52:33",
-        "view_count": 14600,
+        "view_count": 14601,
         "like_count": 33,
         "comment_count": 0,
         "bookmark_count": 41,
@@ -14402,7 +14402,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-03-20 20:23:16",
-        "updated_at": "2026-11-11 07:25:49",
+        "updated_at": "2026-11-11 10:03:37",
         "deleted_at": null,
         "tag_list": [
           {
@@ -14514,8 +14514,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -14546,7 +14546,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 2612,
@@ -14765,8 +14765,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -14797,7 +14797,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 2684,
@@ -15029,8 +15029,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -15061,7 +15061,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 3384,
@@ -15110,7 +15110,7 @@
         "share_episode_count": 36,
         "episode_count": 36,
         "episode_last_at": "2026-11-10 18:01:43",
-        "view_count": 7311,
+        "view_count": 7313,
         "like_count": 20,
         "comment_count": 0,
         "bookmark_count": 31,
@@ -15205,7 +15205,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-04-24 15:57:03",
-        "updated_at": "2026-11-11 02:32:13",
+        "updated_at": "2026-11-11 09:24:05",
         "deleted_at": null,
         "tag_list": [
           {
@@ -15293,8 +15293,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -15325,7 +15325,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 3574,
@@ -15570,8 +15570,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -15602,7 +15602,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 4395,
@@ -15652,7 +15652,7 @@
         "share_episode_count": 26,
         "episode_count": 26,
         "episode_last_at": "2026-11-07 22:26:47",
-        "view_count": 4748,
+        "view_count": 4756,
         "like_count": 13,
         "comment_count": 0,
         "bookmark_count": 14,
@@ -15747,7 +15747,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-05-31 01:26:45",
-        "updated_at": "2026-11-11 03:28:58",
+        "updated_at": "2026-11-11 09:25:31",
         "deleted_at": null,
         "tag_list": [
           {
@@ -15847,8 +15847,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -15879,7 +15879,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 4680,
@@ -16150,8 +16150,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -16182,7 +16182,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 4681,
@@ -16233,7 +16233,7 @@
         "share_episode_count": 4,
         "episode_count": 4,
         "episode_last_at": "2026-06-06 15:42:08",
-        "view_count": 623,
+        "view_count": 624,
         "like_count": 1,
         "comment_count": 0,
         "bookmark_count": 4,
@@ -16328,7 +16328,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-05-31 01:44:28",
-        "updated_at": "2026-11-11 01:10:37",
+        "updated_at": "2026-11-11 10:17:22",
         "deleted_at": null,
         "tag_list": [
           {
@@ -16440,8 +16440,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -16472,7 +16472,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 4682,
@@ -16522,7 +16522,7 @@
         "share_episode_count": 29,
         "episode_count": 29,
         "episode_last_at": "2026-10-23 21:34:52",
-        "view_count": 9044,
+        "view_count": 9045,
         "like_count": 32,
         "comment_count": 0,
         "bookmark_count": 55,
@@ -16617,7 +16617,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-06-13 13:50:40",
-        "updated_at": "2026-11-11 08:34:15",
+        "updated_at": "2026-11-11 09:43:18",
         "deleted_at": null,
         "tag_list": [
           {
@@ -16717,8 +16717,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -16749,7 +16749,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 5083,
@@ -16789,7 +16789,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": "\"เจียงเหยียน\" ผู้ครอบครองสกิลโกงระดับพระเจ้า…แต่กลับถูกพวกสารเลวหลอกใช้จนหมดประโยชน์และถูกทิ้งให้ตายอย่างอนาถท่ามกลางฝูงมอนสเตอร์ที่บุกโลก!! ในวินาทีแห่งความเคียดแค้น ดวงจิตของเขากลับ ย้อนเวลากลับมาในช่วงเวลาก่อนที่จะ \"ปลุกพลังอาชีพ\"! โอกาสครั้งที่สองมาถึงแล้ว.. ครั้งนี้เขาจะไม่ยอมเป็น\r\nเบี้ยล่างให้ใคร! เจียงเหยียนเลือกที่จะชุ่มพัฒนาตัวเองอย่างเงียบ ๆ แอบฟาร์มความแข็งแกร่งเพียงลำพัง เพื่อเปลี่ยนเส้นทางชีวิตอันโหดร้าย และก้าว ขึ้นมาเป็นผู้กอบกู้โลกที่กำลังจะถูกกลืนกินโดยฝูงอสูรจากเกตมอนสเตอร์! ด้วยระบบสุดเกรียนที่ติดตัวมา: [แค่เปลี่ยนตัวอักษรในสกิลเพียงคำเดียว... เอฟเฟกต์ก็เปลี่ยนจากหน้า\r\nมือเป็นหลังมือ!] จากสกิลธรรมดา ๆ พอกระดิกนิ้วแก้คำนิดเดียว ก็กลายเป็นมหาเวททำลายล้าง! งานนี้บอกเลยว่า... ทั้งพวกทรยศและฝูงมอนสเตอร์หน้าไหน ก็ต้องโดนเขา ปั่นจนหัวหมุนแน่นอน!",
-        "sales": 1029.6,
+        "sales": 1033.2,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -16798,7 +16798,7 @@
         "share_episode_count": 32,
         "episode_count": 32,
         "episode_last_at": "2026-10-23 21:36:12",
-        "view_count": 5217,
+        "view_count": 5219,
         "like_count": 14,
         "comment_count": 0,
         "bookmark_count": 22,
@@ -16893,7 +16893,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-06-13 13:58:02",
-        "updated_at": "2026-11-11 08:56:35",
+        "updated_at": "2026-11-11 10:10:18",
         "deleted_at": null,
         "tag_list": [
           {
@@ -16981,8 +16981,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -17013,7 +17013,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 5084,
@@ -17031,7 +17031,7 @@
           "สิงหาคม": 55.8,
           "กันยายน": 365.4,
           "ตุลาคม": 385.2,
-          "พฤศจิกายน": 61.2,
+          "พฤศจิกายน": 64.8,
           "ธันวาคม": 0.0
         },
         "sales_7_chapters": 237.6
@@ -17258,8 +17258,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -17290,7 +17290,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 5086,
@@ -17522,8 +17522,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -17554,7 +17554,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 5363,
@@ -17602,7 +17602,7 @@
         "share_episode_count": 6,
         "episode_count": 6,
         "episode_last_at": "2026-11-10 22:46:04",
-        "view_count": 825,
+        "view_count": 826,
         "like_count": 3,
         "comment_count": 0,
         "bookmark_count": 3,
@@ -17697,7 +17697,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-07-21 23:18:57",
-        "updated_at": "2026-11-11 05:52:28",
+        "updated_at": "2026-11-11 10:10:42",
         "deleted_at": null,
         "tag_list": [
           {
@@ -17773,8 +17773,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -17805,7 +17805,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6066,
@@ -18024,8 +18024,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -18056,7 +18056,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6067,
@@ -18275,8 +18275,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -18307,7 +18307,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6068,
@@ -18355,7 +18355,7 @@
         "share_episode_count": 20,
         "episode_count": 20,
         "episode_last_at": "2026-10-23 20:17:08",
-        "view_count": 4078,
+        "view_count": 4081,
         "like_count": 12,
         "comment_count": 0,
         "bookmark_count": 21,
@@ -18450,7 +18450,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-07-21 23:29:58",
-        "updated_at": "2026-11-11 07:08:10",
+        "updated_at": "2026-11-11 09:51:25",
         "deleted_at": null,
         "tag_list": [
           {
@@ -18526,8 +18526,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -18558,7 +18558,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6069,
@@ -18598,7 +18598,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": "ยุคฟื้นฟูพลังปราณ สัตว์อสูรออกอาละวาด สภาพแวดล้อมของมนุษยชาติเลวร้ายลงถึงขีดสุดจนทำได้เพียงหลบซ่อนตัวอยู่ตามเมืองป้อมปราการ; 'หานหลิน' นักเรียนม.ปลายปี 3 แห่งเมืองป้อมปราการ กำลังมุ่งมั่นฝึกฝนอย่างหนักเพื่อเตรียมสอบเข้ามหาวิทยาลัย; อันดับหนึ่งสำนักเซียน อันดับสองนิกายเทพ อันดับสามวิทยาลัยเต๋า เป้าหมายเดิมของหานหลินมีเพียงการสอบเข้า 1 ใน 36 มหาวิทยาลัยนิกายเทพระดับสองเท่านั้น ทว่าเมื่อเขาสามารถทะลุมิติข้ามไปยัง 'โลกวิทยายุทธ์ขั้นสูง' อีกใบได้... เป้าหมายการสอบเข้าของเขาก็พลิกผันไปตลอดกาล!",
-        "sales": 169.2,
+        "sales": 180.0,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -18607,7 +18607,7 @@
         "share_episode_count": 16,
         "episode_count": 16,
         "episode_last_at": "2026-11-10 18:04:34",
-        "view_count": 1967,
+        "view_count": 1972,
         "like_count": 12,
         "comment_count": 0,
         "bookmark_count": 17,
@@ -18702,7 +18702,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-07-21 23:32:00",
-        "updated_at": "2026-11-10 23:22:09",
+        "updated_at": "2026-11-11 09:22:23",
         "deleted_at": null,
         "tag_list": [
           {
@@ -18790,8 +18790,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -18822,7 +18822,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6070,
@@ -18840,10 +18840,10 @@
           "สิงหาคม": 0.0,
           "กันยายน": 7.2,
           "ตุลาคม": 140.4,
-          "พฤศจิกายน": 21.6,
+          "พฤศจิกายน": 32.4,
           "ธันวาคม": 0.0
         },
-        "sales_7_chapters": 126.0
+        "sales_7_chapters": 136.8
       },
       {
         "id": 6064,
@@ -19067,8 +19067,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -19099,7 +19099,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6071,
@@ -19140,7 +19140,7 @@
         "is_age_18_plus": false,
         "excerpt": null,
         "description": "'กู้เฉิน' ผู้ครอบครองอาชีพที่แข็งแกร่งที่สุด ถูกน้องชายลอบกัดจนตกตาย ทว่าเขาได้ย้อนเวลากลับมาเกิดใหม่ในวัย 18 ปี ช่วงเวลาที่ยังไม่ได้ปลุกพลังอาชีพ ในชาติก่อนแม้กู้เฉินจะถูกพ่อแท้ๆ ทอดทิ้งไว้กับครอบครัวชาวนา ถูกแม่เลี้ยงและน้องชายกดขี่ข่มเหงสารพัด แต่เมื่อเติบโตขึ้น เขาก็ยังคงมองคนพวกนั้นเป็นครอบครัว การเอาแต่ยอมถอยให้เสมอมา นำไปสู่จุดจบที่ถูกแทงข้างหลังอย่างเจ็บปวด เมื่อได้รับโอกาสเกิดใหม่ เขาได้ผสานเข้ากับสายเลือดของจอมมาร ตัดสินใจเลือกเดินบนเส้นทางสายใหม่ ประกาศตัดขาดความสัมพันธ์กับตระกูลอย่างเด็ดขาด จุติเป็น 'ซัมมอนเนอร์แห่งความมืด' และอาศัยพรสวรรค์สุดแกร่งรวมถึงประสบการณ์จากชาติก่อน เปิดฉากเส้นทางการอัปเลเวลทะลวงขีดจำกัด!",
-        "sales": 311.4,
+        "sales": 313.2,
         "status": "approved",
         "share_status": "share",
         "book_status": "ongoing",
@@ -19149,7 +19149,7 @@
         "share_episode_count": 20,
         "episode_count": 20,
         "episode_last_at": "2026-11-10 22:51:15",
-        "view_count": 12214,
+        "view_count": 12215,
         "like_count": 33,
         "comment_count": 0,
         "bookmark_count": 52,
@@ -19244,7 +19244,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-07-21 23:36:05",
-        "updated_at": "2026-11-11 08:33:15",
+        "updated_at": "2026-11-11 09:22:39",
         "deleted_at": null,
         "tag_list": [
           {
@@ -19344,8 +19344,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -19376,7 +19376,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6072,
@@ -19394,10 +19394,10 @@
           "สิงหาคม": 0.0,
           "กันยายน": 111.6,
           "ตุลาคม": 140.4,
-          "พฤศจิกายน": 59.4,
+          "พฤศจิกายน": 61.2,
           "ธันวาคม": 0.0
         },
-        "sales_7_chapters": 145.8
+        "sales_7_chapters": 147.6
       },
       {
         "id": 6682,
@@ -19424,7 +19424,7 @@
         "share_episode_count": 37,
         "episode_count": 37,
         "episode_last_at": "2026-10-23 16:39:35",
-        "view_count": 2563,
+        "view_count": 2564,
         "like_count": 4,
         "comment_count": 0,
         "bookmark_count": 6,
@@ -19519,7 +19519,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-08-16 18:31:10",
-        "updated_at": "2026-11-11 08:51:17",
+        "updated_at": "2026-11-11 09:29:26",
         "deleted_at": null,
         "tag_list": [
           {
@@ -19595,8 +19595,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -19627,7 +19627,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 6698,
@@ -19859,8 +19859,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -19891,7 +19891,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 7316,
@@ -19941,10 +19941,10 @@
         "share_episode_count": 19,
         "episode_count": 19,
         "episode_last_at": "2026-11-09 00:57:33",
-        "view_count": 7006,
-        "like_count": 17,
+        "view_count": 7043,
+        "like_count": 18,
         "comment_count": 0,
-        "bookmark_count": 22,
+        "bookmark_count": 23,
         "rating": null,
         "discount_percent": null,
         "min_episode": null,
@@ -20036,7 +20036,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-09-04 13:35:47",
-        "updated_at": "2026-11-11 09:01:04",
+        "updated_at": "2026-11-11 09:34:24",
         "deleted_at": null,
         "tag_list": [
           {
@@ -20136,8 +20136,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -20168,7 +20168,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 7317,
@@ -20216,7 +20216,7 @@
         "share_episode_count": 12,
         "episode_count": 12,
         "episode_last_at": "2026-10-19 16:22:27",
-        "view_count": 6998,
+        "view_count": 7000,
         "like_count": 13,
         "comment_count": 0,
         "bookmark_count": 26,
@@ -20311,7 +20311,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-09-04 13:37:34",
-        "updated_at": "2026-11-11 08:47:37",
+        "updated_at": "2026-11-11 10:00:40",
         "deleted_at": null,
         "tag_list": [
           {
@@ -20387,8 +20387,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -20419,7 +20419,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 7318,
@@ -20651,8 +20651,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -20683,7 +20683,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 7319,
@@ -20902,8 +20902,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -20934,7 +20934,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 7320,
@@ -21153,8 +21153,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -21185,7 +21185,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 8139,
@@ -21234,7 +21234,7 @@
         "share_episode_count": 12,
         "episode_count": 12,
         "episode_last_at": "2026-10-28 13:32:56",
-        "view_count": 2352,
+        "view_count": 2353,
         "like_count": 10,
         "comment_count": 0,
         "bookmark_count": 21,
@@ -21329,7 +21329,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-09-30 23:19:07",
-        "updated_at": "2026-11-11 06:28:51",
+        "updated_at": "2026-11-11 09:37:23",
         "deleted_at": null,
         "tag_list": [
           {
@@ -21417,8 +21417,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -21449,7 +21449,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 8140,
@@ -21499,7 +21499,7 @@
         "share_episode_count": 23,
         "episode_count": 23,
         "episode_last_at": "2026-11-07 23:36:12",
-        "view_count": 1412,
+        "view_count": 1413,
         "like_count": 5,
         "comment_count": 0,
         "bookmark_count": 9,
@@ -21594,7 +21594,7 @@
         },
         "deleted_by": null,
         "created_at": "2026-09-30 23:22:36",
-        "updated_at": "2026-11-11 08:33:05",
+        "updated_at": "2026-11-11 09:52:52",
         "deleted_at": null,
         "tag_list": [
           {
@@ -21694,8 +21694,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -21726,7 +21726,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 8142,
@@ -21958,8 +21958,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -21990,7 +21990,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 8143,
@@ -22209,8 +22209,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -22241,7 +22241,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 8144,
@@ -22473,8 +22473,8 @@
           "username": "0886172880",
           "email": "hiyamuraesumi@gmail.com",
           "tel": "0886172880",
-          "balance": "4865.23",
-          "coin_sale": "4865.23",
+          "balance": "4900.42",
+          "coin_sale": "4900.42",
           "coin_donate": "0.00",
           "fee_form_sale": null,
           "writer_level_id": 1,
@@ -22505,7 +22505,7 @@
           "deleted_by": null,
           "deleted_at": null,
           "created_at": "2025-09-24 21:00:11",
-          "updated_at": "2026-11-11 08:59:41"
+          "updated_at": "2026-11-11 10:10:18"
         },
         "original": {
           "id": 9298,
@@ -22587,8 +22587,8 @@
       "username": "0886172880",
       "email": "hiyamuraesumi@gmail.com",
       "tel": "0886172880",
-      "balance": "4865.23",
-      "coin_sale": "4865.23",
+      "balance": "4900.42",
+      "coin_sale": "4900.42",
       "coin_donate": "0.00",
       "fee_form_sale": null,
       "writer_level_id": 1,
@@ -22619,7 +22619,7 @@
       "deleted_by": null,
       "deleted_at": null,
       "created_at": "2025-09-24 21:00:11",
-      "updated_at": "2026-11-11 08:59:41"
+      "updated_at": "2026-11-11 10:10:18"
     }
   }
 }
