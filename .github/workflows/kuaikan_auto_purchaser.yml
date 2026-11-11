@@ -71,10 +71,10 @@ jobs:
 
           if [ -n "$COMIC_ID" ]; then
             echo "🎯 Purchasing single chapter ComicID: $COMIC_ID"
-            python tools/kuaikan_playwright_purchaser.py --comic-id "$COMIC_ID" --topic-id "$TOPIC_ID" --cooldown "$COOLDOWN"
+            xvfb-run -a python tools/kuaikan_playwright_purchaser.py --comic-id "$COMIC_ID" --topic-id "$TOPIC_ID" --cooldown "$COOLDOWN" --headless
           elif [ "$ALL_PENDING" = "true" ] || [ "${{ github.event_name }}" = "schedule" ]; then
             echo "📋 Scanning and purchasing all pending locked KuaiKan chapters..."
-            python tools/kuaikan_playwright_purchaser.py --all-pending --max-chapters "$MAX_CH" --cooldown "$COOLDOWN"
+            xvfb-run -a python tools/kuaikan_playwright_purchaser.py --all-pending --max-chapters "$MAX_CH" --cooldown "$COOLDOWN" --headless
           else
             echo "⚠️ No action specified."
           fi

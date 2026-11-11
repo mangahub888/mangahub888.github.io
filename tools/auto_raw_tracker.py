@@ -150,7 +150,7 @@ def process_single_chapter(task):
         print(f"\n🔒 ตรวจพบตอนติด Lock (ComicID: {comic_id}) -> กำลังปลดล็อคด้วย KuaiKan Auto-Purchaser (Playwright Headless)...")
         try:
             from kuaikan_playwright_purchaser import purchase_chapter_playwright
-            pw_res = purchase_chapter_playwright(comic_id=comic_id, topic_id=task.get("topicId") or "")
+            pw_res = purchase_chapter_playwright(comic_id=comic_id, topic_id=task.get("topicId") or "", headless=True)
             if pw_res.get("success") and pw_res.get("imagesCount", 0) > 1:
                 print(f"   🎉 Playwright ซื้อและปลดล็อคตอน {chapter_title} สำเร็จ! ({pw_res.get('imagesCount')} ภาพ)")
                 res = call_gas("TEST_KUAIKAN_CHAPTER", {"comicId": comic_id, "autoPurchase": False})
