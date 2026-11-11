@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="mh-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+    <linearGradient id="mh-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <!-- Background Rounded Squircle -->
+  <rect width="64" height="64" rx="16" fill="#0b0f19" />
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#mh-grad)" stroke="#818cf8" stroke-width="2" />
+  
+  <!-- Book / Manga Pages Icon -->
+  <path d="M14 44 C 20 40, 28 40, 32 43 C 36 40, 44 40, 50 44 L 50 20 C 44 17, 36 17, 32 20 C 28 17, 20 17, 14 20 Z" fill="#ffffff" />
+  <path d="M32 20 L 32 43" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" />
+  
+  <!-- Center Accent Bookmark -->
+  <path d="M30 16 L 34 16 L 34 26 L 32 24 L 30 26 Z" fill="url(#mh-accent)" />
+  
+  <!-- Subtle Manga Speed Lines / Spark -->
+  <circle cx="48" cy="16" r="3" fill="#fbbf24" />
+</svg>

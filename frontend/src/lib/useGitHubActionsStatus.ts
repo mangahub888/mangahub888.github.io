@@ -36,8 +36,15 @@ export async function fetchGitHubActionsRuns(): Promise<GitHubWorkflowRun[]> {
       }
       return []
     }
-    const json = await res.json()
-    return Array.isArray(json.workflow_runs) ? json.workflow_runs : []
+    const text = await res.text()
+    if (!text || !text.trim()) return []
+    let json: any
+    try {
+      json = JSON.parse(text)
+    } catch {
+      return []
+    }
+    return Array.isArray(json?.workflow_runs) ? json.workflow_runs : []
   } catch (err) {
     console.warn("Failed to fetch GitHub Actions runs:", err)
     return []

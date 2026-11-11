@@ -49,7 +49,17 @@ export async function callGasApi<T = any>(action: string, payload: any = {}, cus
     throw new Error(`HTTP Error: ${response.status}`)
   }
 
-  const result = await response.json()
+  const text = await response.text()
+  if (!text || !text.trim()) {
+    throw new Error("Empty response received from GAS server")
+  }
+
+  let result: any
+  try {
+    result = JSON.parse(text)
+  } catch (err: any) {
+    throw new Error(`Failed to parse GAS response as JSON: ${text.slice(0, 150)}`)
+  }
 
   if (result.status === "error") {
     const err: any = new Error(result.message || "เกิดข้อผิดพลาดจากเซิร์ฟเวอร์ GAS")

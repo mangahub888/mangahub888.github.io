@@ -39,7 +39,17 @@ assert(indexContent.includes('http-equiv="Pragma" content="no-cache"'), 'index.h
 assert(indexContent.includes('http-equiv="Expires" content="0"'), 'index.html MUST contain Expires meta tag')
 assert(indexContent.includes('vite:preloadError'), 'index.html MUST contain vite:preloadError listener')
 assert(indexContent.includes('mgh_preload_retry'), 'index.html MUST include preload retry cooldown guard to prevent infinite reload loops')
-console.log('✓ Test 2 Passed: index.html contains anti-caching meta tags and loop-protected preloadError recovery')
+assert(indexContent.includes('mgh_bundle_reload_ts'), 'index.html MUST include main bundle capture-phase script error recovery')
+assert(indexContent.includes('serviceWorker'), 'index.html MUST include serviceWorker unregistration guard')
+assert(indexContent.includes('favicon.ico'), 'index.html MUST link to favicon.ico')
+assert(indexContent.includes('favicon.svg'), 'index.html MUST link to favicon.svg')
+console.log('✓ Test 2 Passed: index.html contains anti-caching meta tags, loop-protected preloadError recovery, script error capture, and favicon links')
+
+// Test 2b: Verify dist/favicon.ico and dist/favicon.svg exist
+console.log('\n[Test 2b] Verifying dist/favicon.ico & favicon.svg existence...')
+assert(fs.existsSync(path.resolve(distDir, 'favicon.ico')), 'dist/favicon.ico MUST exist')
+assert(fs.existsSync(path.resolve(distDir, 'favicon.svg')), 'dist/favicon.svg MUST exist')
+console.log('✓ Test 2b Passed: favicon.ico and favicon.svg exist in dist')
 
 // Test 3: Verify dist/404.html has Cache-Control meta tags
 console.log('\n[Test 3] Verifying dist/404.html anti-caching meta tags...')

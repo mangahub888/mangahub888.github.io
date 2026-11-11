@@ -71,6 +71,10 @@ export function cleanCacheBustingParams() {
       url.searchParams.delete("_v")
       changed = true
     }
+    if (url.searchParams.has("_nocache")) {
+      url.searchParams.delete("_nocache")
+      changed = true
+    }
     if (url.searchParams.has("_reload")) {
       url.searchParams.delete("_reload")
       changed = true
@@ -138,7 +142,14 @@ export async function fetchRemoteVersion(
       return null
     }
 
-    const data: AppVersionInfo = await response.json()
+    const text = await response.text()
+    if (!text || !text.trim()) return null
+    let data: AppVersionInfo
+    try {
+      data = JSON.parse(text)
+    } catch {
+      return null
+    }
     return data
   } catch (err: any) {
     if (err?.name !== "AbortError") {

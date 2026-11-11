@@ -366,9 +366,14 @@ export function FinancialsView({
             `https://api.github.com/repos/mangahub888/mangahub888.github.io/commits/main?_t=${Date.now()}`,
           );
           if (commitRes.ok) {
-            const commitData = await commitRes.json();
-            if (commitData?.sha) {
-              liveUrl = `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/${commitData.sha}/tools/data/multi_platform_growth_latest.json`;
+            const commitText = await commitRes.text();
+            if (commitText && commitText.trim()) {
+              try {
+                const commitData = JSON.parse(commitText);
+                if (commitData?.sha) {
+                  liveUrl = `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/${commitData.sha}/tools/data/multi_platform_growth_latest.json`;
+                }
+              } catch {}
             }
           }
         } catch {}
@@ -376,12 +381,18 @@ export function FinancialsView({
         const liveRes = await fetch(liveUrl);
 
         if (liveRes.ok) {
-          const json = await liveRes.json();
-
-          if (json && Array.isArray(json.comics)) {
-            setTrackerData(json);
-            setLoadingGrowth(false);
-            return json;
+          const liveText = await liveRes.text();
+          if (liveText && liveText.trim()) {
+            try {
+              const json = JSON.parse(liveText);
+              if (json && Array.isArray(json.comics)) {
+                setTrackerData(json);
+                setLoadingGrowth(false);
+                return json;
+              }
+            } catch (err) {
+              console.warn("Could not parse live growth json", err);
+            }
           }
         }
       } catch {}
@@ -393,12 +404,18 @@ export function FinancialsView({
       );
 
       if (res.ok) {
-        const json = await res.json();
-
-        if (json && Array.isArray(json.comics)) {
-          setTrackerData(json);
-          setLoadingGrowth(false);
-          return json;
+        const localText = await res.text();
+        if (localText && localText.trim()) {
+          try {
+            const json = JSON.parse(localText);
+            if (json && Array.isArray(json.comics)) {
+              setTrackerData(json);
+              setLoadingGrowth(false);
+              return json;
+            }
+          } catch (err) {
+            console.warn("Could not parse local growth json", err);
+          }
         }
       }
     } catch (e) {

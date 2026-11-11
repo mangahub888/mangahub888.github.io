@@ -198,7 +198,14 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
           `https://raw.githubusercontent.com/mangahub888/mangahub888.github.io/main/tools/data/project_ideas_latest.json?_t=${Date.now()}`
         )
         if (liveRes.ok) {
-          const json = await liveRes.json()
+          const liveText = await liveRes.text()
+          if (!liveText || !liveText.trim()) return
+          let json: any
+          try {
+            json = JSON.parse(liveText)
+          } catch {
+            return
+          }
           if (json && Array.isArray(json.items) && json.items.length > 0) {
             setRawData((prev: any) => {
               const prevHasComix = Boolean(prev?.sources?.comix?.items?.length)
@@ -226,7 +233,14 @@ export function ProjectIdeasView({ onOpenAddManga }: ProjectIdeasViewProps) {
       // 2. Public local asset
       const res = await fetch(`./data/project_ideas_latest.json?_t=${Date.now()}`, { cache: "no-store" })
       if (res.ok) {
-        const json = await res.json()
+        const localText = await res.text()
+        if (!localText || !localText.trim()) return
+        let json: any
+        try {
+          json = JSON.parse(localText)
+        } catch {
+          return
+        }
         if (json && Array.isArray(json.items) && json.items.length > 0) {
           setRawData(json)
           if (json?.sources?.comix?.items?.length) {

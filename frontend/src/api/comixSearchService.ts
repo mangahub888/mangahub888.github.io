@@ -144,7 +144,12 @@ function decryptComixResponse(e_str: string): any {
     payload[i] = raw[i + 2] ^ rotated_key[i % 1024]
   }
   const jsonStr = new TextDecoder("utf-8").decode(payload)
-  return JSON.parse(jsonStr)
+  if (!jsonStr || !jsonStr.trim()) return null
+  try {
+    return JSON.parse(jsonStr)
+  } catch {
+    return null
+  }
 }
 
 export interface LiveComixItem {
@@ -234,7 +239,14 @@ export async function searchComixLive(keyword: string, limit = 20): Promise<Live
 
     if (resp.ok) {
       const x_enc = resp.headers.get("x-enc")
-      const body = await resp.json()
+      const rawText = await resp.text()
+      if (!rawText || !rawText.trim()) return []
+      let body: any
+      try {
+        body = JSON.parse(rawText)
+      } catch {
+        return []
+      }
       let resultData: any = body
       if (x_enc === "2" && body && body.e) {
         const dec = decryptComixResponse(body.e)
