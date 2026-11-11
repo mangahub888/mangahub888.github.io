@@ -34,6 +34,9 @@ echo.
 if %EXIT_CODE% EQU 0 (
     echo [SUCCESS] Multi-platform growth data fetched and synced successfully.
     echo.
+    echo [INFO] Syncing and Calculating Monthly PnL Ledger (Google Sheets)...
+    python tools\sync_monthly_pnl.py --recent-two
+    echo.
     echo [INFO] Rebuilding Frontend Production Bundle...
     cd frontend
     call npm run build

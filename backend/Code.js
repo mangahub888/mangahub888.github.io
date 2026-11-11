@@ -3370,7 +3370,7 @@ function calculateAndSyncMonthlyMangaSales(targetMonth) {
     const sheetRows = allFinalSales.map(sale => {
       return headers.map(header => {
         if (header === 'date') return sale.date ? String(sale.date).slice(0, 10) : lastDayStr;
-        if (header === 'month') return targetMonth;
+        if (header === 'month') return sale.month ? String(sale.month).slice(0, 7) : targetMonth;
         if (header === 'serieschapterid') return sale.serieschapterid || '';
         if (header === 'seriesname') return sale.seriesname || '';
         if (header === 'chapterscount') return sale.chapterscount || 0;
