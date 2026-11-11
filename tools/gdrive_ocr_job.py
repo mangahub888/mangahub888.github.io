@@ -24,6 +24,7 @@ os.environ["PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK"] = "True"
 
 import argparse
 import json
+import re
 import time
 import base64
 from datetime import datetime, timezone
@@ -289,10 +290,25 @@ def sort_boxes_and_lines_by_direction(items: list, direction: str = "ltr", y_tol
     ordered = []
     for band in bands:
         if direction == "rtl":
-            # Right-to-Left: Highest X2 (rightmost) comes first
-            band_sorted = sorted(band, key=lambda it: get_coords(it)[2], reverse=True)
+            # Right-to-Left (Japanese Manga / Comix.to Reading Order):
+            # Primary: Highest X2 (rightmost) comes first.
+            # Secondary: If horizontal positions are very close (same vertical column, <= 40px),
+            #            Top-to-Bottom (lowest Y1 first).
+            import functools
+            def rtl_cmp(a, b):
+                ax1, ay1, ax2, ay2 = get_coords(a)
+                bx1, by1, bx2, by2 = get_coords(b)
+                # If difference in right edge is significant (> 40px), rightmost first
+                if abs(ax2 - bx2) > 40:
+                    return -1 if ax2 > bx2 else 1
+                # If in the same vertical column (close X), Top-to-Bottom (lowest Y1 first)
+                if abs(ay1 - by1) > 20:
+                    return -1 if ay1 < by1 else 1
+                return -1 if ax2 > bx2 else 1
+
+            band_sorted = sorted(band, key=functools.cmp_to_key(rtl_cmp))
         else:
-            # Left-to-Right: Lowest X1 (leftmost) comes first
+            # Default (Webtoon / Longstrip / Other sources): Lowest X1 (leftmost) comes first
             band_sorted = sorted(band, key=lambda it: get_coords(it)[0])
         ordered.extend(band_sorted)
 
@@ -312,17 +328,18 @@ def resolve_reading_direction(
     - 'rtl' (Right-to-Left): Japanese Manga (e.g. from comix.to)
     - 'ltr' (Left-to-Right): Webtoon / Manhwa / Manhua
     """
-    if cli_direction and cli_direction.lower() in ["ltr", "rtl"]:
-        return cli_direction.lower()
-
     combined_check = f"{source_url} {manga_id} {manga_name} {doc_url}".lower()
     if gas_manga_matched:
-        for k in ["rawurl", "sourceurl", "url", "originalurl", "link", "platform", "notes"]:
+        for k in ["rawurl", "sourceurl", "url", "originalurl", "link", "platform", "notes", "scangroup"]:
             val = str(gas_manga_matched.get(k) or "").lower()
             combined_check += f" {val}"
 
+    # If source URL or metadata originates from comix.to / comix, always use Manga RTL order
     if "comix.to" in combined_check or "comix" in combined_check:
         return "rtl"
+
+    if cli_direction and cli_direction.lower() in ["ltr", "rtl"]:
+        return cli_direction.lower()
 
     return "ltr"
 
@@ -952,22 +969,21 @@ def main():
 
     # Resolve reading direction (comix.to -> rtl, webtoon -> ltr)
     gas_matched = None
-    if getattr(args, "reading_direction", "auto") and args.reading_direction.lower() in ["ltr", "rtl"]:
+    cli_check = f"{getattr(args, 'source_url', '')} {getattr(args, 'manga_id', '')} {args.manga_name} {args.doc_url}".lower()
+    if "comix.to" in cli_check or "comix" in cli_check:
+        reading_dir = "rtl"
+    elif getattr(args, "reading_direction", "auto") and args.reading_direction.lower() in ["ltr", "rtl"]:
         reading_dir = args.reading_direction.lower()
     else:
-        cli_check = f"{getattr(args, 'source_url', '')} {getattr(args, 'manga_id', '')} {args.manga_name} {args.doc_url}".lower()
-        if "comix.to" in cli_check or "comix" in cli_check:
-            reading_dir = "rtl"
-        else:
-            gas_matched = fetch_manga_metadata_from_gas(args.manga_name, getattr(args, "manga_id", ""), args.gas_url, args.gas_passcode)
-            reading_dir = resolve_reading_direction(
-                cli_direction=getattr(args, "reading_direction", "auto"),
-                manga_id=getattr(args, "manga_id", ""),
-                manga_name=args.manga_name,
-                source_url=getattr(args, "source_url", ""),
-                doc_url=args.doc_url,
-                gas_manga_matched=gas_matched
-            )
+        gas_matched = fetch_manga_metadata_from_gas(args.manga_name, getattr(args, "manga_id", ""), args.gas_url, args.gas_passcode)
+        reading_dir = resolve_reading_direction(
+            cli_direction=getattr(args, "reading_direction", "auto"),
+            manga_id=getattr(args, "manga_id", ""),
+            manga_name=args.manga_name,
+            source_url=getattr(args, "source_url", ""),
+            doc_url=args.doc_url,
+            gas_manga_matched=gas_matched
+        )
 
     dir_label = "มังงะญี่ปุ่น ขวาไปซ้าย (RTL)" if reading_dir == "rtl" else "เว็บตูน/มังฮวา บนลงล่าง ซ้ายไปขวา (TTB/LTR)"
     print(f"🧭 Reading Direction Mode: {reading_dir.upper()} ({dir_label})")
