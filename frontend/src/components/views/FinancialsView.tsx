@@ -55,6 +55,7 @@ import initialGroupedData from "@/data/grouped_matched_comics.json";
 import initialMappingData from "@/data/comic_cross_platform_mapping.json";
 
 import { callGasApi } from "@/api/gasClient";
+import { isWithholdingTax3Transaction } from "./BudgetView";
 
 import { toast } from "sonner";
 
@@ -1167,6 +1168,8 @@ export function FinancialsView({
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   });
   const [isSyncing, setIsSyncing] = React.useState<boolean>(false);
+  // Withholding Tax 3% Deduction Toggle (Default: true / หักค่าใช้จ่ายภาษี 3% ออกจากต้นทุน)
+  const [deductWithholdingTax, setDeductWithholdingTax] = React.useState<boolean>(true);
 
   const handleToggleSalesSort = (field: "profit" | "date" | "revenue" | "cost" | "chapters" | "name") => {
     if (salesSortBy === field) {
@@ -1625,7 +1628,8 @@ export function FinancialsView({
       const name = String(s.seriesname || "").trim().toLowerCase();
       if (name === "unknown" || name.startsWith("manga #")) return false;
       const rev = parseFloat(s.revenue) || 0;
-      const cost = parseFloat(s.totalcost) || 0;
+      const rawCost = parseFloat(s.totalcost) || 0;
+      const cost = deductWithholdingTax ? Math.round(rawCost * 0.97 * 100) / 100 : rawCost;
       const ch = parseInt(s.chapterscount, 10) || 0;
       if (rev <= 0 && cost <= 0 && ch <= 0) return false;
       return true;
@@ -1672,11 +1676,13 @@ export function FinancialsView({
     // Default & Selected Sorting: Profit DESC (Highest profit on top, losses at bottom)
     list.sort((a, b) => {
       const revA = parseFloat(a.revenue) || 0;
-      const costA = parseFloat(a.totalcost) || 0;
+      const rawCostA = parseFloat(a.totalcost) || 0;
+      const costA = deductWithholdingTax ? Math.round(rawCostA * 0.97 * 100) / 100 : rawCostA;
       const profitA = revA - costA;
 
       const revB = parseFloat(b.revenue) || 0;
-      const costB = parseFloat(b.totalcost) || 0;
+      const rawCostB = parseFloat(b.totalcost) || 0;
+      const costB = deductWithholdingTax ? Math.round(rawCostB * 0.97 * 100) / 100 : rawCostB;
       const profitB = revB - costB;
 
       if (salesSortBy === "profit") {
@@ -1705,7 +1711,7 @@ export function FinancialsView({
     });
 
     return list;
-  }, [resolvedSalesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms]);
+  }, [resolvedSalesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms, deductWithholdingTax]);
 
   // Dynamic Monthly Reconciliation Data based on focused month
   const reconciledMonthData = React.useMemo(() => {
@@ -1715,6 +1721,11 @@ export function FinancialsView({
         monthLabel: "ยังไม่มีข้อมูล",
         totalRev: 0,
         totalCost: 0,
+        grossCost: 0,
+        tax3Amount: 0,
+        recordedTax3: 0,
+        netCost: 0,
+        isTaxDeducted: deductWithholdingTax,
         netProfit: 0,
         margin: 0,
         seriesCount: 0,
@@ -1739,6 +1750,11 @@ export function FinancialsView({
         monthLabel: "ยังไม่มีข้อมูล",
         totalRev: 0,
         totalCost: 0,
+        grossCost: 0,
+        tax3Amount: 0,
+        recordedTax3: 0,
+        netCost: 0,
+        isTaxDeducted: deductWithholdingTax,
         netProfit: 0,
         margin: 0,
         seriesCount: 0,
@@ -1764,6 +1780,11 @@ export function FinancialsView({
         monthLabel: targetM,
         totalRev: 0,
         totalCost: 0,
+        grossCost: 0,
+        tax3Amount: 0,
+        recordedTax3: 0,
+        netCost: 0,
+        isTaxDeducted: deductWithholdingTax,
         netProfit: 0,
         margin: 0,
         seriesCount: 0,
@@ -1801,7 +1822,21 @@ export function FinancialsView({
 
     // Primary Total Revenue is strictly from Budget Transactions if available
     const totalRev = totalBudgetRev > 0 ? totalBudgetRev : ledgerRev;
-    const totalCost = ledgerCost > 0 ? ledgerCost : totalBudgetExp;
+    const grossCost = ledgerCost > 0 ? ledgerCost : totalBudgetExp;
+
+    // Check if withholding tax 3% is recorded in transactions for this month
+    const budgetTax3Items = (transactionList || []).filter((t) => {
+      if (!t.date) return false;
+      const dStr = String(t.date).slice(0, 7);
+      const isTargetMonth = dStr === targetM || (t.date && String(t.date).startsWith(targetM));
+      return isTargetMonth && isWithholdingTax3Transaction(t);
+    });
+    const recordedTax3 = budgetTax3Items.reduce((acc, t) => acc + (parseFloat(t.amount) || 0), 0);
+    const calculatedTax3 = Math.round(grossCost * 0.03 * 100) / 100;
+    const tax3Amount = recordedTax3 > 0 ? recordedTax3 : calculatedTax3;
+    const netCost = Math.max(0, Math.round((grossCost - tax3Amount) * 100) / 100);
+
+    const totalCost = deductWithholdingTax ? netCost : grossCost;
     const netProfit = totalRev - totalCost;
     const margin = totalRev > 0 ? (netProfit / totalRev) * 100 : 0;
     const totalChapters = monthSales.reduce((acc, s) => acc + (parseInt(s.chapterscount, 10) || 0), 0);
@@ -1841,6 +1876,11 @@ export function FinancialsView({
       monthLabel,
       totalRev,
       totalCost,
+      grossCost,
+      tax3Amount,
+      recordedTax3,
+      netCost,
+      isTaxDeducted: deductWithholdingTax,
       netProfit,
       margin,
       seriesCount: monthSales.length,
@@ -1852,7 +1892,7 @@ export function FinancialsView({
       budgetRevenue: totalBudgetRev,
       ledgerRevenue: ledgerRev,
     };
-  }, [resolvedSalesList, selectedLedgerMonth, availableSalesMonths, transactionList]);
+  }, [resolvedSalesList, selectedLedgerMonth, availableSalesMonths, transactionList, deductWithholdingTax]);
 
   const summary = React.useMemo(() => {
     let totalRev = 0;
@@ -1864,7 +1904,9 @@ export function FinancialsView({
     filteredSales.forEach((s) => {
       const rev = parseFloat(s.revenue) || 0;
 
-      const cost = parseFloat(s.totalcost) || 0;
+      const rawCost = parseFloat(s.totalcost) || 0;
+
+      const cost = deductWithholdingTax ? Math.round(rawCost * 0.97 * 100) / 100 : rawCost;
 
       const profit = rev - cost;
 
@@ -1904,8 +1946,15 @@ export function FinancialsView({
       : totalRev;
     const finalSummaryCost = totalCost > 0 ? totalCost : (reconciledMonthData.totalCost || 0);
 
+    const grossSummaryCost = reconciledMonthData.grossCost || (deductWithholdingTax ? Math.round((finalSummaryCost / 0.97) * 100) / 100 : finalSummaryCost);
+    const taxSummaryAmount = reconciledMonthData.tax3Amount || Math.max(0, Math.round((grossSummaryCost - finalSummaryCost) * 100) / 100);
+
     return {
       totalRev: finalSummaryRev,
+
+      grossCost: grossSummaryCost,
+
+      taxAmount: taxSummaryAmount,
 
       totalCost: finalSummaryCost,
 
@@ -1915,7 +1964,7 @@ export function FinancialsView({
 
       topLosses,
     };
-  }, [filteredSales, reconciledMonthData]);
+  }, [filteredSales, reconciledMonthData, deductWithholdingTax]);
 
   const chartsData = React.useMemo(() => {
     const websiteRevenue: Record<string, number> = {};
@@ -2069,7 +2118,7 @@ export function FinancialsView({
         })),
       },
     };
-  }, [filteredSales, reconciledMonthData]);
+  }, [filteredSales, reconciledMonthData, deductWithholdingTax]);
 
   const autoFillFinDetails = async (mId: string, dStr: string) => {
     if (!mId || !dStr) return;
@@ -4045,13 +4094,29 @@ export function FinancialsView({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                <span>
-                  บันทึกต้นทุนรายเรื่องครบ{" "}
-                  <strong className="text-white">{reconciledMonthData.seriesCount} เรื่อง</strong>{" "}
-                  ({reconciledMonthData.totalChapters} ตอน)
-                </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setDeductWithholdingTax((prev) => !prev)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border shadow-xs cursor-pointer ${
+                    deductWithholdingTax
+                      ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25"
+                      : "bg-slate-800/80 text-slate-300 border-slate-700 hover:bg-slate-700"
+                  }`}
+                  title="สลับการหักภาษี ณ ที่จ่าย 3% (คลิกเพื่อเปลี่ยนเป็น Gross หรือ Net)"
+                >
+                  <span className={`w-2 h-2 rounded-full ${deductWithholdingTax ? "bg-emerald-400 animate-pulse" : "bg-slate-500"}`} />
+                  <span>{deductWithholdingTax ? "✓ หักค่าใช้จ่ายภาษี 3% (Net)" : "ยอดเต็มยังไม่หักภาษี (Gross)"}</span>
+                </button>
+
+                <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <span>
+                    บันทึกต้นทุนรายเรื่องครบ{" "}
+                    <strong className="text-white">{reconciledMonthData.seriesCount} เรื่อง</strong>{" "}
+                    ({reconciledMonthData.totalChapters} ตอน)
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -4095,18 +4160,55 @@ export function FinancialsView({
               <div className="rounded-xl border border-red-500/20 bg-red-950/20 p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-red-300">💸 ตัดจ่ายเงินเดือนทีมงาน (Expenses)</span>
-                  <Badge variant="outline" className="text-[10px] text-red-300 border-red-500/30">
-                    PayoutClaims (Paid)
-                  </Badge>
+                  <div className="flex items-center gap-1.5">
+                    <Badge variant="outline" className="text-[10px] text-red-300 border-red-500/30">
+                      PayoutClaims (Paid)
+                    </Badge>
+                    {deductWithholdingTax && (
+                      <Badge className="text-[10px] bg-emerald-500/20 text-emerald-300 border-emerald-500/30 font-semibold">
+                        หักภาษี 3% แล้ว
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div>
-                  <div className="text-2xl font-black text-red-400 tracking-tight">
-                    ฿{reconciledMonthData.totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <div className="flex items-baseline gap-2">
+                    <div className="text-2xl font-black text-red-400 tracking-tight">
+                      ฿{reconciledMonthData.totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    {deductWithholdingTax && (
+                      <span className="text-xs font-bold text-emerald-400">
+                        (สุทธิ Net)
+                      </span>
+                    )}
                   </div>
                   <p className="text-[11px] text-slate-400 mt-0.5">
                     อนุมัติและจ่ายเงินแล้วตามรอบงาน ({reconciledMonthData.seriesCount} เรื่อง)
                   </p>
                 </div>
+
+                {/* Tax & Gross breakdown */}
+                <div className="rounded-lg bg-black/40 border border-slate-800/80 p-2.5 space-y-1 text-xs">
+                  <div className="flex justify-between text-slate-400">
+                    <span>ยอดรวมก่อนหัก (Gross):</span>
+                    <span className="font-medium text-slate-200">
+                      ฿{reconciledMonthData.grossCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-amber-300 font-medium">
+                    <span>หักภาษี ณ ที่จ่าย 3% (Withholding Tax):</span>
+                    <span>
+                      -฿{reconciledMonthData.tax3Amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-emerald-300 font-bold border-t border-slate-800/80 pt-1">
+                    <span>ยอดตัดจ่ายจริงสุทธิ (Net Payout):</span>
+                    <span>
+                      ฿{reconciledMonthData.netCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs text-slate-300">
                   <div className="flex justify-between">
                     <span className="text-slate-400">จำนวนตอนที่ผลิตจริง:</span>
@@ -4118,7 +4220,9 @@ export function FinancialsView({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400">สถานะการกระทบยอด:</span>
-                    <span className="font-medium text-emerald-400">แมตช์ตรงกับใบเบิก</span>
+                    <span className="font-medium text-emerald-400">
+                      {deductWithholdingTax ? "แมตช์ตรงกับใบเบิก (หักภาษี 3% เรียบร้อย)" : "แมตช์ตรงกับใบเบิก (ยอด Gross)"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -4136,7 +4240,11 @@ export function FinancialsView({
                     <div className={`text-2xl font-black tracking-tight ${reconciledMonthData.netProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                       {reconciledMonthData.netProfit >= 0 ? "+" : ""}฿{reconciledMonthData.netProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5">กำไรสุทธิหลังหักต้นทุนค่าแรงการ์ตูนทุกเรื่อง</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      {deductWithholdingTax
+                        ? "กำไรสุทธิหลังหักต้นทุนค่าแรงการ์ตูน (หักภาษี ณ ที่จ่าย 3% แล้ว)"
+                        : "กำไรสุทธิหลังหักต้นทุนค่าแรงการ์ตูนทุกเรื่อง (Gross)"}
+                    </p>
                   </div>
                 </div>
                 <div className="rounded-lg bg-emerald-950/40 border border-emerald-500/20 p-2.5 space-y-1 text-xs">
@@ -4144,6 +4252,12 @@ export function FinancialsView({
                     <span>ต้นทุนเฉลี่ย/ตอน (Avg Cost):</span>
                     <span className="font-semibold text-white">~฿{reconciledMonthData.avgCostPerChapter.toFixed(2)} / ตอน</span>
                   </div>
+                  {deductWithholdingTax && (
+                    <div className="flex justify-between text-slate-300">
+                      <span>ภาษีหัก ณ ที่จ่าย 3%:</span>
+                      <span className="font-semibold text-amber-300">฿{reconciledMonthData.tax3Amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-slate-300">
                     <span>อัตราส่วนกำไร (Margin):</span>
                     <span className="font-semibold text-emerald-400">+{reconciledMonthData.margin.toFixed(2)}%</span>
@@ -4179,7 +4293,14 @@ export function FinancialsView({
 
             <Card className="p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400">ต้นทุนรวม</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs text-slate-400">ต้นทุนรวม</p>
+                  {deductWithholdingTax && (
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      หักภาษี 3% แล้ว
+                    </span>
+                  )}
+                </div>
 
                 <p className="text-2xl font-bold text-red-400 mt-1">
                   {summary.totalCost.toLocaleString(undefined, {
@@ -4187,6 +4308,11 @@ export function FinancialsView({
                   })}{" "}
                   ฿
                 </p>
+                {deductWithholdingTax && summary.taxAmount > 0 && (
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    (Gross ฿{summary.grossCost.toLocaleString(undefined, { minimumFractionDigits: 2 })} - ภาษี ฿{summary.taxAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })})
+                  </p>
+                )}
               </div>
 
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/20 text-red-400">
@@ -4581,7 +4707,7 @@ export function FinancialsView({
 
                     <TableHead className="text-right cursor-pointer hover:text-white transition-colors" onClick={() => handleToggleSalesSort("cost")}>
                       <div className="flex items-center justify-end gap-1">
-                        <span>ต้นทุนรวม</span>
+                        <span>ต้นทุนรวม{deductWithholdingTax ? " (สุทธิ)" : ""}</span>
                         {salesSortBy === "cost" ? (
                           salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-red-400" /> : <ArrowUp className="h-3 w-3 text-red-400" />
                         ) : (
@@ -4639,7 +4765,9 @@ export function FinancialsView({
                     filteredSales.map((sale, idx) => {
                       const rev = parseFloat(sale.revenue) || 0;
 
-                      const cost = parseFloat(sale.totalcost) || 0;
+                      const rawCost = parseFloat(sale.totalcost) || 0;
+
+                      const cost = deductWithholdingTax ? Math.round(rawCost * 0.97 * 100) / 100 : rawCost;
 
                       const profit = rev - cost;
                       const isUrgent = isTitleUrgent(sale.seriesname, sale.mangaid);
@@ -4838,7 +4966,14 @@ export function FinancialsView({
                           </TableCell>
 
                           <TableCell className="text-right text-red-400">
-                            {cost.toLocaleString()} ฿
+                            <div>
+                              <span>{cost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</span>
+                              {deductWithholdingTax && rawCost > 0 && (
+                                <span className="block text-[10px] text-slate-500 font-normal">
+                                  (ก่อนหัก {rawCost.toLocaleString()})
+                                </span>
+                              )}
+                            </div>
                           </TableCell>
 
                           <TableCell className="text-right font-semibold">
