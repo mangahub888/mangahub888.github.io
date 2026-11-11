@@ -1383,6 +1383,21 @@ ightarrow$ ข้ามทั้งดึงคำออโต้และ QC �
   - แก้ไข Bug ใน `backend/Code.js` (`calculateAndSyncMonthlyMangaSales`) ที่เคยทับค่า `sale.month` ของเดือนอื่น และ Deploy ขึ้น Production Version `@123`
   - ประมวลผลย้อนหลังสำเร็จครบทุกเดือน บันทึกประวัติในชีต `MangaSales` รวม 422 แถวเรียบร้อยแล้ว
 
+### J. ระบบ Chaply Continuous Episode Snapshot & WorkQueue Publish Matching (11 พ.ย. 2569)
+- **การจับคู่รายได้รายตอนสู่รอบเดือน (Episode-to-Month Attribution)**:
+  - ปรับปรุง `tools/chaply_growth_tracker.py` ดึงข้อมูล `WorkQueue` และ `mangaList` จากระบบ
+  - สร้างดัชนีจับคู่ `(normalized_title, chapter_number) -> publish_month` เพื่อรู้ว่าตอนใดถูกเผยแพร่ในเดือนใด (และใช้ `createdAt` ของตอนบน Chaply เป็น Fallback)
+  - นำรายได้จริงของตอนที่เผยแพร่ในแต่ละเดือนมารวมเป็น `monthly_sales: { "มกราคม": ..., ..., "ตุลาคม": ..., "พฤศจิกายน": ... }`
+  - นำรายได้ของทุกตอนในหน้ารายตอนมารวมเป็น `total_sales` (ยอดสะสมตลอดกาล) ของเรื่องนั้น
+- **บันทึก Snapshot รายตอนต่อเนื่อง (`chaply_episodes_history.json`)**:
+  - บันทึกประวัติรายได้ ยอดซื้อ และยอดวิวของทุกตอนเก็บไว้ในประวัติ Git เพื่อใช้ติดตามการเปลี่ยนแปลงอย่างต่อเนื่อง
+- **นำ Chaply กลับเข้าสู่สมุดบันทึกกำไรขาดทุน (P&L Ledger - Tab 3)**:
+  - ปรับปรุง `frontend/src/components/views/FinancialsView.tsx`:
+    - คืนค่าปุ่มตัวกรอง **CH** และ Type `"ch"` ใน `salesPlatformFilter`
+    - คืนค่า Chaply Resolver ใน `getSalePlatforms`
+    - เพิ่มการคำนวณรายได้ Chaply ประจำเดือนตามตอนที่เผยแพร่ลงในตาราง P&L และ Tooltip แจกแจงรายได้
+  - ผ่านการทดสอบ Build 100% (0 errors) และ Push สู่ Git Production เรียบร้อยแล้ว
+
 ## 2. ข้อมูล Configuration & Deployment ปัจจุบัน
 - **GitHub Repository:** `mangahub888/mangahub888.github.io` (Branch: `main`)
 - **Live URL:** [https://mangahub888.github.io/](https://mangahub888.github.io/)
