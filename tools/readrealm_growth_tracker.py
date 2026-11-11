@@ -61,6 +61,27 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
+THAI_MONTH_ABBR = {
+    "ม.ค.": 1, "ก.พ.": 2, "มี.ค.": 3, "เม.ย.": 4, "พ.ค.": 5, "มิ.ย.": 6,
+    "ก.ค.": 7, "ส.ค.": 8, "ก.ย.": 9, "ต.ค.": 10, "พ.ย.": 11, "ธ.ค.": 12
+}
+
+def parse_thai_chapter_date(date_str: str) -> Optional[datetime]:
+    if not date_str:
+        return None
+    parts = date_str.strip().split()
+    if len(parts) >= 3:
+        try:
+            d = int(parts[0])
+            m_abbr = parts[1]
+            y = int(parts[2])
+            m = THAI_MONTH_ABBR.get(m_abbr, 1)
+            ce_year = y - 543 if y > 2400 else y
+            return datetime(ce_year, m, d)
+        except Exception:
+            pass
+    return None
+
 THAI_MONTHS = [
     "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
@@ -1308,149 +1329,19 @@ def fetch_writer_total_sales(cid: str, token: str, acc: Optional[Dict[str, Any]]
 
 
 
-def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
-
-    """Fetch complete comics list and latest stats for an account."""
-
-    token = acc.get("_cached_token") or get_valid_token(acc)
-
+def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) -> List[Dict[str, Any]]:
+    """Fetch complete comics list and latest stats for an account by automating the real visible Google Chrome browser page-by-page and comic-by-comic (mgeko style, zero API calls)."""
     comics_list = []
-
-    page = 1
-
-    per_page = 50
-
     now_utc = datetime.now(timezone.utc)
-
-    cached_chapter_map = get_known_cached_chapter_counts()
-
-
+    now_dt = datetime.now()
+    cur_month_th = THAI_MONTHS[now_dt.month - 1]
 
     print(f"\n=======================================================")
-
-    print(f"📚 [{acc['name']}] กำลังดึงรายชื่อการ์ตูนและสถิติล่าสุด...")
-
+    print(f"🌐 [{acc['name']}] กำลังเปิดเบราว์เซอร์จริง (Non-Headless) ดึงข้อมูลหน้าเว็บ...")
     print(f"=======================================================")
 
-
-
-    while True:
-
-        url = f"https://api-writer.readrealm.co/writer/comics/getComicsList?comic_subject=&comic_status=&comic_category=&comic_rating=&comic_publish=&per_page={per_page}&page={page}"
-
-        active_token = acc.get("_cached_token") or token
-
-        data = call_api(url, active_token, acc)
-
-        if not data or not isinstance(data, dict):
-
-            if page == 1:
-
-                print(f"⚠️ [{acc['name']}] ไม่ได้รับข้อมูลตอบกลับจาก API ในหน้าแรก")
-
-            break
-
-
-
-        total = data.get("total", 0)
-
-        items = data.get("data", [])
-
-        if not items:
-
-            if page == 1:
-
-                print(f"⚠️ [{acc['name']}] ไม่พบรายการการ์ตูนในหน้าแรก (total: {total})")
-
-            break
-
-
-
-        for item in items:
-
-            cid = item.get("comic_ID")
-
-            subject = (item.get("comic_subject") or "").strip()
-
-            views = int(item.get("comic_views") or 0)
-
-            sales = float(item.get("comic_total_sales") or 0.0)
-
-            api_ch_count = int(item.get("comic_chapter_publish_count") or item.get("comic_total_chapter") or 0)
-
-            cached_ch_count = cached_chapter_map.get(cid, 0)
-
-            # Phase 2: Engine Chapter Protection - prevent API -1 bug from regressing verified chapter counts
-
-            ch_count = max(api_ch_count, cached_ch_count)
-
-            if cached_ch_count > api_ch_count:
-
-                print(f"    🛡️ [{acc['name']}] Chapter Protection: {subject} (API={api_ch_count} -> รักษาค่าจริง={ch_count} ตอน)")
-
-            last_ch_updated = item.get("comic_chapter_updated_at")
-
-
-
-            days_inactive = 9999
-
-            if last_ch_updated:
-
-                try:
-
-                    dt = datetime.fromisoformat(last_ch_updated.replace("Z", "+00:00"))
-
-                    days_inactive = max(0, (now_utc - dt).days)
-
-                except Exception:
-
-                    pass
-
-
-
-            comics_list.append({
-
-                "comic_id": cid,
-
-                "subject": subject,
-
-                "account": acc["name"],
-
-                "account_id": acc["id"],
-
-                "total_views": views,
-
-                "total_sales": sales,
-
-                "chapters_count": ch_count,
-
-                "last_chapter_updated_at": last_ch_updated,
-
-                "days_inactive": days_inactive,
-
-                "is_inactive_30d": days_inactive > 30
-
-            })
-
-
-
-        print(f"  [{acc['name']}] โหลดหน้า {page}: สะสม {len(comics_list)} / {total} เรื่อง")
-
-        if len(comics_list) >= total:
-
-            break
-
-        page += 1
-
-
-
-    print(f"✓ [{acc['name']}] ดึงรายชื่อการ์ตูนเสร็จสิ้น: ทั้งหมด {len(comics_list)} เรื่อง")
-    print(f"📊 [{acc['name']}] กำลังดึงสถิติเจาะลึกรายเรื่อง (ยอดขายรายตอน 7 ตอนล่าสุด, ยอดรายเดือน, ยอดรวมตลอดกาล)...", flush=True)
-
-    current_thai_year = datetime.now().year + 543
-    now_dt = datetime.now()
-    cur_year_ce = now_dt.year
-    cur_month = now_dt.month
+    profile_dir = acc["profile_dir"]
+    os.makedirs(profile_dir, exist_ok=True)
 
     # Pre-load known monthly sales cache from disk for baseline
     stats_cache_map = {}
@@ -1466,59 +1357,334 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
             except Exception:
                 pass
 
-    cur_year_str = str(datetime.now().year)
-    cur_month_prefix = datetime.now().strftime("%Y-%m")
-    cur_month_th = THAI_MONTHS[datetime.now().month - 1]
+    chrome_exe = get_browser_executable_path()
+    launch_kwargs = {
+        "headless": headless,
+        "args": [
+            "--disable-blink-features=AutomationControlled",
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--window-size=1280,800"
+        ]
+    }
+    if chrome_exe:
+        launch_kwargs["executable_path"] = chrome_exe
+    else:
+        launch_kwargs["channel"] = "chrome"
 
-    def enrich_comic(c):
-        cid = c.get("comic_id")
-        # 1. Real-time Lifetime Total Sales & Views from getComicInformation
+    with sync_playwright() as p:
         try:
-            info_url = f"https://api-writer.readrealm.co/writer/comics/getComicInformation/{cid}"
-            info_data = call_api(info_url, token, acc, retries=1)
-            if info_data and isinstance(info_data, dict):
-                c_sales = float(info_data.get("comic_total_sales") or 0.0)
-                if c_sales > 0:
-                    c["total_sales"] = c_sales
-                c_views = int(info_data.get("comic_views") or 0)
-                if c_views > 0:
-                    c["total_views"] = c_views
+            context = p.chromium.launch_persistent_context(
+                user_data_dir=profile_dir,
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                **launch_kwargs
+            )
+        except Exception as e_launch:
+            launch_kwargs.pop("channel", None)
+            launch_kwargs.pop("executable_path", None)
+            context = p.chromium.launch_persistent_context(
+                user_data_dir=profile_dir,
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                **launch_kwargs
+            )
+
+        if not headless:
+            set_browser_window_bottom_most("readrealm")
+
+        context.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+            window.chrome = { runtime: {} };
+        """)
+
+        page = context.pages[0] if context.pages else context.new_page()
+
+        tokens = []
+        def on_req(req):
+            try:
+                if "authorization" in req.headers:
+                    auth_h = req.headers["authorization"]
+                    if auth_h and auth_h.startswith("Bearer ") and len(auth_h) > 20:
+                        tokens.append(auth_h)
+            except Exception:
+                pass
+        page.on("request", on_req)
+
+        analytics_cache = {}
+        def on_res(res):
+            u = res.url
+            if "analytics" in u:
+                try:
+                    analytics_cache[u] = res.json()
+                except Exception:
+                    pass
+        page.on("response", on_res)
+
+        page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
+        if not headless:
+            set_browser_window_bottom_most("readrealm")
+        page.wait_for_timeout(2500)
+
+        if "/login" in page.url:
+            print(f"🔑 [{acc['name']}] ตรวจพบหน้าเข้าสู่ระบบ -> ทำการล็อกอิน...", flush=True)
+            try:
+                page.evaluate("""async (creds) => {
+                    const csrfRes = await fetch('/api/auth/csrf');
+                    const { csrfToken } = await csrfRes.json();
+                    if (!csrfToken) return;
+                    const params = new URLSearchParams();
+                    params.append('csrfToken', csrfToken);
+                    params.append('username_or_email', creds.username);
+                    params.append('password', creds.password);
+                    params.append('callbackUrl', 'https://readrealm.co');
+                    await fetch('/api/auth/callback/credentials', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: params.toString()
+                    });
+                }""", {"username": acc["username"], "password": acc["password"]})
+            except Exception:
+                pass
+            page.goto("https://readrealm.co/writer/comics", wait_until="domcontentloaded")
+            page.wait_for_timeout(2500)
+
+        if tokens:
+            latest_tok = tokens[-1]
+            acc["_cached_token"] = latest_tok
+            try:
+                with open(acc["bearer_file"], "w", encoding="utf-8") as bf:
+                    json.dump({"bearer_token": latest_tok, "updated_at": now_utc.isoformat()}, bf, indent=2)
+            except Exception:
+                pass
+
+        print(f"📄 [{acc['name']}] กำลังกวาดรายชื่อการ์ตูนทีละหน้าจาก DOM...", flush=True)
+        page_nums = page.evaluate(r"""() => {
+            const btns = Array.from(document.querySelectorAll('button, .join-item'));
+            const nums = [];
+            btns.forEach(b => {
+                const txt = b.innerText.trim();
+                if (/^\d+$/.test(txt)) nums.push(parseInt(txt));
+            });
+            return nums.length ? Math.max(...nums) : 1;
+        }""")
+        total_pages = max(1, page_nums)
+        print(f"  [{acc['name']}] ตรวจพบทั้งหมด {total_pages} หน้า")
+
+        seen_cids = set()
+
+        for cur_p in range(1, total_pages + 1):
+            if cur_p > 1:
+                clicked = page.evaluate(f"""() => {{
+                    const btns = Array.from(document.querySelectorAll('button, .join-item'));
+                    const target = btns.find(b => b.innerText.trim() === '{cur_p}');
+                    if (target) {{
+                        target.click();
+                        return true;
+                    }}
+                    return false;
+                }}""")
+                if not clicked:
+                    btn_loc = page.locator("button.join-item, button").filter(has_text=f"^{cur_p}$").first
+                    if btn_loc.count():
+                        btn_loc.click()
+                page.wait_for_timeout(1200)
+
+            page_cards = page.evaluate(r"""() => {
+                const links = Array.from(document.querySelectorAll('a[href*="/writer/comic/"]')).filter(a => !a.href.endsWith('/add'));
+                return links.map(a => {
+                    const href = a.getAttribute('href') || '';
+                    const cid = href.split('/').pop();
+                    const parent = a.parentElement;
+                    const fullText = parent ? parent.innerText : a.innerText;
+                    
+                    const linkLines = a.innerText.split('\n').map(s => s.trim()).filter(Boolean);
+                    const title = linkLines[0] || '';
+                    
+                    let chCount = 0;
+                    let views = 0;
+                    if (linkLines.length >= 2) {
+                        chCount = parseInt(linkLines[1].replace(/,/g, '')) || 0;
+                    }
+                    if (linkLines.length >= 3) {
+                        let vStr = linkLines[2].replace(/,/g, '');
+                        let f = 1;
+                        if (vStr.endsWith('K') || vStr.endsWith('k')) { f = 1000; vStr = vStr.slice(0, -1); }
+                        else if (vStr.endsWith('M') || vStr.endsWith('m')) { f = 1000000; vStr = vStr.slice(0, -1); }
+                        views = Math.round((parseFloat(vStr) || 0) * f);
+                    }
+                    
+                    let sales = 0;
+                    const mSales = fullText.match(/ยอดขาย\s*\n\s*([\d,\.]+[KkMm]?)/);
+                    if (mSales) {
+                        let sStr = mSales[1].replace(/,/g, '');
+                        let f = 1;
+                        if (sStr.endsWith('K') || sStr.endsWith('k')) { f = 1000; sStr = sStr.slice(0, -1); }
+                        else if (sStr.endsWith('M') || sStr.endsWith('m')) { f = 1000000; sStr = sStr.slice(0, -1); }
+                        sales = (parseFloat(sStr) || 0) * f;
+                    }
+                    
+                    return {
+                        cid: cid,
+                        subject: title,
+                        chapters_count: chCount,
+                        total_views: views,
+                        total_sales: sales
+                    };
+                });
+            }""")
+
+            new_cards_count = 0
+            for c in page_cards:
+                cid = c.get("cid")
+                if cid and cid not in seen_cids:
+                    seen_cids.add(cid)
+                    c["comic_id"] = cid
+                    c["account"] = acc["name"]
+                    c["account_id"] = acc["id"]
+                    c["days_inactive"] = 0
+                    c["is_inactive_30d"] = False
+                    c["monthly_sales"] = dict(stats_cache_map.get(cid, {}))
+                    c["sales_7_chapters"] = 0.0
+                    c["views_7_chapters"] = 0
+                    c["last_chapter_updated_at"] = ""
+                    comics_list.append(c)
+                    new_cards_count += 1
+
+            print(f"  [{acc['name']}] หน้า {cur_p}/{total_pages}: ได้รับ {new_cards_count} เรื่อง (สะสม {len(comics_list)} เรื่อง)")
+
+        print(f"✓ [{acc['name']}] กวาดรายชื่อหน้าเว็บสำเร็จ: รวมทั้งสิ้น {len(comics_list)} เรื่อง\n")
+
+        print(f"🔍 [{acc['name']}] กำลังกดเข้าไปดูทีละเรื่อง เพื่อดึงยอดรายตอน, ยอดรายเดือน, ยอดรวมตลอดกาล...", flush=True)
+
+        for idx, c in enumerate(comics_list, 1):
+            cid = c["comic_id"]
+            subj = c["subject"]
+            t0 = time.time()
+            print(f"  [{acc['name']}] [{idx}/{len(comics_list)}] {subj} ({cid})...", end="", flush=True)
+
+            try:
+                analytics_cache.clear()
+                page.goto(f"https://readrealm.co/writer/comic/{cid}", wait_until="domcontentloaded")
+
+                # Tab A: รายงานและสถิติ
+                stat_btn = page.locator("button:has-text('รายงานและสถิติ'), li:has-text('รายงานและสถิติ'), a:has-text('รายงานและสถิติ')").first
+                if stat_btn.count():
+                    stat_btn.click()
+                    try:
+                        page.wait_for_selector("text='รายงานการขายรายเดือน'", timeout=2000)
+                        page.wait_for_timeout(350)
+                    except Exception:
+                        page.wait_for_timeout(500)
+
+                dom_stats = page.evaluate(r"""() => {
+                    const txt = document.body.innerText;
+                    const mTot = txt.match(/ยอดขายรวม\s*:\s*([\d,\.]+)/);
+                    const mMonth = txt.match(/ยอดขายรวมรายเดือน\s*:\s*([\d,\.]+)/);
+                    const mYear = txt.match(/ยอดขายรวมรายปี\s*:\s*([\d,\.]+)/);
+                    return {
+                        total_sales: mTot ? parseFloat(mTot[1].replace(/,/g, '')) : 0,
+                        month_sales: mMonth ? parseFloat(mMonth[1].replace(/,/g, '')) : 0,
+                        year_sales: mYear ? parseFloat(mYear[1].replace(/,/g, '')) : 0
+                    };
+                }""")
+
+                tot_sales = dom_stats.get("total_sales", 0)
+                month_sales = dom_stats.get("month_sales", 0)
+
+                for u, b in analytics_cache.items():
+                    if "getDefaultSaleReport" in u and isinstance(b, dict):
+                        api_tot = float(b.get("all_sale_sum") or 0)
+                        if api_tot > 0 and tot_sales == 0:
+                            tot_sales = api_tot
+                    elif "getMonthSaleReport" in u and isinstance(b, dict):
+                        api_mon = float(b.get("sum_data") or 0)
+                        if api_mon > 0 and month_sales == 0:
+                            month_sales = api_mon
+
+                if tot_sales > 0:
+                    c["total_sales"] = tot_sales
+                m_dict = c.get("monthly_sales", {})
+                m_dict[cur_month_th] = month_sales
+                c["monthly_sales"] = m_dict
+
+                # Tab B: รายชื่อตอน
+                ch_btn = page.locator("button:has-text('รายชื่อตอน'), li:has-text('รายชื่อตอน'), a:has-text('รายชื่อตอน')").first
+                if ch_btn.count():
+                    ch_btn.click()
+                    try:
+                        page.wait_for_selector("table tbody tr", timeout=2000)
+                        page.evaluate(r"""() => {
+                            const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.trim() === '1000 รายการ');
+                            if (btn) btn.click();
+                        }""")
+                        page.wait_for_timeout(350)
+                    except Exception:
+                        page.wait_for_timeout(300)
+
+                ch_data = page.evaluate(r"""() => {
+                    const trs = Array.from(document.querySelectorAll('table tbody tr'));
+                    if (!trs.length) return { ch_count: 0, sales_7: 0, views_7: 0, last_date: '' };
+                    
+                    const eps = trs.map(tr => {
+                        const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+                        let v = (tds[2] || '0').replace(/,/g, '');
+                        let f = 1;
+                        if (v.endsWith('K') || v.endsWith('k')) { f = 1000; v = v.slice(0, -1); }
+                        else if (v.endsWith('M') || v.endsWith('m')) { f = 1000000; v = v.slice(0, -1); }
+                        let parsedViews = Math.round((parseFloat(v) || 0) * f);
+                        
+                        return {
+                            idx: tds[0],
+                            name: tds[1],
+                            views: parsedViews,
+                            sales: parseFloat((tds[4] || '0').replace(/,/g, '')) || 0,
+                            status: tds[5],
+                            date: tds[6]
+                        };
+                    });
+                    const last7 = eps.slice(-7);
+                    const s7 = last7.reduce((a, b) => a + b.sales, 0);
+                    const v7 = last7.reduce((a, b) => a + b.views, 0);
+                    
+                    let lastDate = '';
+                    for (let i = eps.length - 1; i >= 0; i--) {
+                        if (eps[i].date) {
+                            lastDate = eps[i].date;
+                            break;
+                        }
+                    }
+                    
+                    return {
+                        ch_count: eps.length,
+                        sales_7: Math.round(s7 * 100) / 100,
+                        views_7: v7,
+                        last_date: lastDate
+                    };
+                }""")
+
+                ch_count = ch_data.get("ch_count", 0)
+                if ch_count > 0:
+                    c["chapters_count"] = max(c.get("chapters_count", 0), ch_count)
+                c["sales_7_chapters"] = ch_data.get("sales_7", 0.0)
+                c["views_7_chapters"] = ch_data.get("views_7", 0)
+
+                last_date_str = ch_data.get("last_date", "")
+                if last_date_str:
+                    dt = parse_thai_chapter_date(last_date_str)
+                    if dt:
+                        c["last_chapter_updated_at"] = dt.isoformat()
+                        c["days_inactive"] = max(0, (now_dt - dt).days)
+                        c["is_inactive_30d"] = c["days_inactive"] > 30
+
+                elapsed = time.time() - t0
+                print(f" ✓ รวม: {c['total_sales']:,.2f} ฿ | เดือนนี้: {month_sales:,.2f} ฿ | 7 ตอน: {c['sales_7_chapters']:,.2f} ฿ | {c['chapters_count']} ตอน ({elapsed:.1f}s)", flush=True)
+
+            except Exception as e_c:
+                print(f" ⚠️ ({e_c})", flush=True)
+
+        try:
+            context.close()
         except Exception:
             pass
-
-        # 2. Real-time Chapter-level sales, 7-chapter revenue, and monthly sales calibration
-        try:
-            ch_url = f"https://api-writer.readrealm.co/writer/comics/chapters/getChaptersList?comic_ID={cid}&page=1&per_page=200&sort_column=asc"
-            ch_res = call_api(ch_url, token, acc, retries=1)
-            raw_ch = ch_res.get("data", []) if (isinstance(ch_res, dict) and isinstance(ch_res.get("data"), list)) else []
-            if raw_ch:
-                last7 = raw_ch[-7:] if len(raw_ch) >= 7 else raw_ch
-                c["sales_7_chapters"] = round(sum(float(x.get("comic_chapter_total_sales") or 0.0) for x in last7), 2)
-                c["views_7_chapters"] = sum(int(x.get("comic_chapter_views") or 0) for x in last7)
-                c["chapters_count"] = max(c.get("chapters_count", 0), len(raw_ch))
-
-                # Month sales calculation from chapter publication records
-                m_dict = dict(stats_cache_map.get(cid, {}))
-                cur_month_ch_sum = round(sum(
-                    float(x.get("comic_chapter_total_sales") or 0.0)
-                    for x in raw_ch
-                    if str(x.get("comic_chapter_publish_datetime") or "").startswith(cur_month_prefix)
-                ), 2)
-                if cur_month_ch_sum > 0 or cur_month_th not in m_dict:
-                    m_dict[cur_month_th] = cur_month_ch_sum
-                c["monthly_sales"] = m_dict
-            else:
-                c["sales_7_chapters"] = 0.0
-                c["views_7_chapters"] = 0
-                c["monthly_sales"] = stats_cache_map.get(cid, {})
-        except Exception:
-            c["sales_7_chapters"] = 0.0
-            c["views_7_chapters"] = 0
-            c["monthly_sales"] = stats_cache_map.get(cid, {})
-
-    with ThreadPoolExecutor(max_workers=8) as executor:
-        list(executor.map(enrich_comic, comics_list))
-    print(f"✓ [{acc['name']}] ดึงสถิติเจาะลึกรายเรื่องสำเร็จครบทั้ง {len(comics_list)} เรื่อง", flush=True)
 
     # Persist into stats file
     try:
@@ -1526,7 +1692,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any]) -> List[Dict[str, Any]]:
         stats_file_path = os.path.join(DATA_DIR, stats_file_name)
         with open(stats_file_path, "w", encoding="utf-8") as sf:
             json.dump({"comics": comics_list, "updated_at": datetime.now().isoformat()}, sf, ensure_ascii=False, indent=2)
-        print(f"✓ [{acc['name']}] บันทึกแคชสถิติเจาะลึกลง {stats_file_name}")
+        print(f"💾 [{acc['name']}] บันทึกข้อมูลลง {stats_file_name} สำเร็จ")
     except Exception as e_sf:
         print(f"⚠️ [{acc['name']}] ไม่สามารถบันทึกแคชสถิติ: {e_sf}")
 
@@ -1728,25 +1894,18 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     for acc in ACCOUNTS:
 
-        # Step 1: Ensure valid active token (refresh only if missing, expired, or force_refresh requested)
-
-        token = None if (no_api or force_refresh) else get_valid_token(acc, force_refresh=force_refresh)
-
-        if not token:
-
-            auth_desc = "NO API Mode: กำลังเปิด Google Chrome จริงเพื่อดึงเซสชันล่าสุด" if no_api else "กำลังขอรับ Token ใหม่"
-
-            print(f"🌐 [{acc['name']}] {auth_desc} (use_browser={use_browser})...", flush=True)
-
-            token = refresh_account_token(acc, headless=not use_browser, force_browser=use_browser or no_api, no_api=no_api)
-
-        acc["_cached_token"] = token
+        # In browser / no_api mode, fetch_all_comics_for_account directly automates the browser
+        if not (use_browser or no_api):
+            token = get_valid_token(acc, force_refresh=force_refresh)
+            if not token:
+                token = refresh_account_token(acc, headless=not use_browser, force_browser=False, no_api=False)
+            acc["_cached_token"] = token
 
         acc_comics = []
 
         try:
 
-            acc_comics = fetch_all_comics_for_account(acc)
+            acc_comics = fetch_all_comics_for_account(acc, headless=not use_browser)
 
         except Exception as e:
 
