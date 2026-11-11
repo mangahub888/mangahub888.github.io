@@ -1589,6 +1589,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) ->
 
                 tot_sales = dom_stats.get("total_sales", 0)
                 month_sales = dom_stats.get("month_sales", 0)
+                m_dict = dict(c.get("monthly_sales", {}))
 
                 for u, b in analytics_cache.items():
                     if "getDefaultSaleReport" in u and isinstance(b, dict):
@@ -1599,11 +1600,36 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) ->
                         api_mon = float(b.get("sum_data") or 0)
                         if api_mon > 0 and month_sales == 0:
                             month_sales = api_mon
+                    elif "getYearSaleReport" in u and isinstance(b, dict):
+                        year_arr = b.get("data", [])
+                        if isinstance(year_arr, list):
+                            for m_idx, m_val in enumerate(year_arr):
+                                if m_idx < len(THAI_MONTHS):
+                                    th_m = THAI_MONTHS[m_idx]
+                                    m_dict[th_m] = round(float(m_val or 0.0), 2)
+
+                # Fallback: If getYearSaleReport wasn't in cache, fetch it directly in browser context
+                if not any("getYearSaleReport" in u for u in analytics_cache):
+                    try:
+                        tok = tokens[-1] if tokens else (acc.get("_cached_token") or "")
+                        if tok:
+                            yr_res = page.evaluate("""async ([tok, cid]) => {
+                                const res = await fetch(`https://api-writer.readrealm.co/writer/comics/analytics/getYearSaleReport?year=2569&comic_ID=${cid}`, {
+                                    headers: { 'Authorization': tok }
+                                });
+                                return await res.json();
+                            }""", [tok, cid])
+                            if yr_res and isinstance(yr_res.get("data"), list):
+                                for m_idx, m_val in enumerate(yr_res["data"]):
+                                    if m_idx < len(THAI_MONTHS):
+                                        m_dict[THAI_MONTHS[m_idx]] = round(float(m_val or 0.0), 2)
+                    except Exception:
+                        pass
 
                 if tot_sales > 0:
                     c["total_sales"] = tot_sales
-                m_dict = c.get("monthly_sales", {})
-                m_dict[cur_month_th] = month_sales
+                if cur_month_th not in m_dict or month_sales > 0:
+                    m_dict[cur_month_th] = month_sales
                 c["monthly_sales"] = m_dict
 
                 # Tab B: รายชื่อตอน
@@ -1676,7 +1702,9 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) ->
                         c["is_inactive_30d"] = c["days_inactive"] > 30
 
                 elapsed = time.time() - t0
-                print(f" ✓ รวม: {c['total_sales']:,.2f} ฿ | เดือนนี้: {month_sales:,.2f} ฿ | 7 ตอน: {c['sales_7_chapters']:,.2f} ฿ | {c['chapters_count']} ตอน ({elapsed:.1f}s)", flush=True)
+                non_zero_m = [f"{m[:3]}:{v:,.0f}" for m, v in m_dict.items() if v > 0]
+                m_summary = " ".join(non_zero_m) if non_zero_m else f"{cur_month_th}:{month_sales:,.1f}"
+                print(f" ✓ รวม: {c['total_sales']:,.2f} ฿ | เดือนนี้: {month_sales:,.2f} ฿ | ประวัติ 2569: [{m_summary}] | 7 ตอน: {c['sales_7_chapters']:,.2f} ฿ | {c['chapters_count']} ตอน ({elapsed:.1f}s)", flush=True)
 
             except Exception as e_c:
                 print(f" ⚠️ ({e_c})", flush=True)

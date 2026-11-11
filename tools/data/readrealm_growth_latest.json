@@ -1,11 +1,11 @@
 {
-  "pipeline_recorded_at": "2026-11-11T01:47:09.506905+00:00",
+  "pipeline_recorded_at": "2026-11-11T02:48:15.274168+00:00",
   "date_reference": "2026-11-11",
   "total_comics": 237,
-  "total_sales_portfolio": 5779855.3,
-  "total_views_portfolio": 20471602,
-  "lionking_sales": 4414468.5,
-  "lionking_views": 16825652,
+  "total_sales_portfolio": 5780935.0,
+  "total_views_portfolio": 20472104,
+  "lionking_sales": 4415548.2,
+  "lionking_views": 16826154,
   "lionking_count": 156,
   "adieu_sales": 1365386.8,
   "adieu_views": 3645950,
@@ -13,8 +13,8 @@
   "top_sales_comic": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
   "top_growth_comic_7d": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
   "top_growth_comic_30d": "",
-  "total_inactive_30d": 106,
-  "total_active_30d": 131,
+  "total_inactive_30d": 182,
+  "total_active_30d": 55,
   "has_7d_baseline": true,
   "has_30d_baseline": false,
   "comics": [
@@ -25,16 +25,16 @@
       "account_id": "lionking",
       "chapters_count": 213,
       "total_views": 1300000,
-      "total_sales": 497200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2025-05-20T00:00:00",
-      "days_inactive": 540,
-      "is_inactive_30d": true,
+      "total_sales": 497272.4,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-11-06T00:00:00",
+      "days_inactive": 5,
+      "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": -38127,
         "views_growth_pct": -2.85,
-        "sales_delta": 773.6,
-        "sales_growth_pct": 0.16
+        "sales_delta": 846.0,
+        "sales_growth_pct": 0.17
       },
       "growth_30d": {
         "views_delta": 0,
@@ -42,8 +42,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 36.6,
-      "views_7_chapters": 61500,
+      "sales_7_chapters": 2089.8,
+      "views_7_chapters": 1672,
       "monthly_sales": {
         "มกราคม": 3970.8,
         "กุมภาพันธ์": 3052.8,
@@ -55,7 +55,7 @@
         "สิงหาคม": 3096.0,
         "กันยายน": 3582.0,
         "ตุลาคม": 2514.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 1513.8
       }
     },
     {
@@ -65,16 +65,16 @@
       "account_id": "lionking",
       "chapters_count": 369,
       "total_views": 1200000,
-      "total_sales": 462200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "total_sales": 462300,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-10-13T00:00:00",
+      "days_inactive": 759,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -49035,
         "views_growth_pct": -3.93,
-        "sales_delta": 1462.7,
-        "sales_growth_pct": 0.32
+        "sales_delta": 1562.7,
+        "sales_growth_pct": 0.34
       },
       "growth_30d": {
         "views_delta": 0,
@@ -82,8 +82,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 18804.6,
-      "views_7_chapters": 25885,
+      "sales_7_chapters": 425.6,
+      "views_7_chapters": 19200,
       "monthly_sales": {
         "มกราคม": 10315.8,
         "กุมภาพันธ์": 9999.0,
@@ -94,8 +94,8 @@
         "กรกฎาคม": 8028.0,
         "สิงหาคม": 6768.0,
         "กันยายน": 6642.0,
-        "ตุลาคม": 5733.0,
-        "พฤศจิกายน": 2527.2
+        "ตุลาคม": 5734.8,
+        "พฤศจิกายน": 2534.4
       }
     },
     {
@@ -106,10 +106,10 @@
       "chapters_count": 324,
       "total_views": 1700000,
       "total_sales": 426200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-08-03T00:00:00",
+      "days_inactive": 465,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -86316,
         "views_growth_pct": -4.83,
@@ -122,8 +122,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 8532.4,
-      "views_7_chapters": 22506,
+      "sales_7_chapters": 4415.4,
+      "views_7_chapters": 4502,
       "monthly_sales": {
         "มกราคม": 3128.4,
         "กุมภาพันธ์": 3627.0,
@@ -146,9 +146,9 @@
       "chapters_count": 275,
       "total_views": 1800000,
       "total_sales": 328700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-10-26T00:00:00",
+      "days_inactive": 16,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": -58364,
@@ -162,8 +162,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 3585.6,
-      "views_7_chapters": 10914,
+      "sales_7_chapters": 858.6,
+      "views_7_chapters": 670,
       "monthly_sales": {
         "มกราคม": 4440.6,
         "กุมภาพันธ์": 4741.2,
@@ -175,7 +175,7 @@
         "สิงหาคม": 2377.8,
         "กันยายน": 964.8,
         "ตุลาคม": 3418.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 356.4
       }
     },
     {
@@ -186,10 +186,10 @@
       "chapters_count": 82,
       "total_views": 419200,
       "total_sales": 225500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-09-17T00:00:00",
+      "days_inactive": 420,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -71,
         "views_growth_pct": -0.02,
@@ -202,8 +202,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 1647.8,
-      "views_7_chapters": 1478,
+      "sales_7_chapters": 4310.8,
+      "views_7_chapters": 5638,
       "monthly_sales": {
         "มกราคม": 1302.4,
         "กุมภาพันธ์": 873.4,
@@ -215,7 +215,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -225,16 +225,16 @@
       "account_id": "lionking",
       "chapters_count": 143,
       "total_views": 962400,
-      "total_sales": 224400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "total_sales": 224439.4,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-08-13T00:00:00",
+      "days_inactive": 455,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 6095,
         "views_growth_pct": 0.64,
-        "sales_delta": 338.6,
-        "sales_growth_pct": 0.15
+        "sales_delta": 378.0,
+        "sales_growth_pct": 0.17
       },
       "growth_30d": {
         "views_delta": 0,
@@ -242,8 +242,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 1508.4,
-      "views_7_chapters": 1178,
+      "sales_7_chapters": 19.1,
+      "views_7_chapters": 46700,
       "monthly_sales": {
         "มกราคม": 3393.0,
         "กุมภาพันธ์": 2606.4,
@@ -255,7 +255,7 @@
         "สิงหาคม": 3195.0,
         "กันยายน": 2143.8,
         "ตุลาคม": 1836.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 491.4
       }
     },
     {
@@ -264,17 +264,17 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 154,
-      "total_views": 448200,
-      "total_sales": 154585.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2025-10-15T00:00:00",
-      "days_inactive": 392,
-      "is_inactive_30d": true,
+      "total_views": 448300,
+      "total_sales": 154611,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-11-06T00:00:00",
+      "days_inactive": 5,
+      "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 1638,
-        "views_growth_pct": 0.37,
-        "sales_delta": 633.6,
-        "sales_growth_pct": 0.41
+        "views_delta": 1738,
+        "views_growth_pct": 0.39,
+        "sales_delta": 658.8,
+        "sales_growth_pct": 0.43
       },
       "growth_30d": {
         "views_delta": 0,
@@ -282,8 +282,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 8.2,
-      "views_7_chapters": 17000,
+      "sales_7_chapters": 2214.0,
+      "views_7_chapters": 2037,
       "monthly_sales": {
         "มกราคม": 10569.6,
         "กุมภาพันธ์": 7450.2,
@@ -295,7 +295,7 @@
         "สิงหาคม": 4491.0,
         "กันยายน": 4795.2,
         "ตุลาคม": 3231.0,
-        "พฤศจิกายน": 775.8
+        "พฤศจิกายน": 801
       }
     },
     {
@@ -306,9 +306,9 @@
       "chapters_count": 130,
       "total_views": 517500,
       "total_sales": 149249,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2025-09-21T00:00:00",
-      "days_inactive": 416,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-06-13T00:00:00",
+      "days_inactive": 151,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 900,
@@ -322,8 +322,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 11.0,
-      "views_7_chapters": 27800,
+      "sales_7_chapters": 5405.4,
+      "views_7_chapters": 5094,
       "monthly_sales": {
         "มกราคม": 8182.8,
         "กุมภาพันธ์": 9144.0,
@@ -346,10 +346,10 @@
       "chapters_count": 126,
       "total_views": 377100,
       "total_sales": 130199.99999999999,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2025-09-27T00:00:00",
-      "days_inactive": 410,
-      "is_inactive_30d": true,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-11-01T00:00:00",
+      "days_inactive": 10,
+      "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 384,
         "views_growth_pct": 0.1,
@@ -362,8 +362,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 14.2,
-      "views_7_chapters": 20200,
+      "sales_7_chapters": 1081.8,
+      "views_7_chapters": 852,
       "monthly_sales": {
         "มกราคม": 2158.2,
         "กุมภาพันธ์": 1686.6,
@@ -375,7 +375,7 @@
         "สิงหาคม": 1371.6,
         "กันยายน": 1321.2,
         "ตุลาคม": 583.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 268.2
       }
     },
     {
@@ -385,16 +385,16 @@
       "account_id": "lionking",
       "chapters_count": 240,
       "total_views": 639500,
-      "total_sales": 127700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
+      "total_sales": 127800,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-11-07T00:00:00",
+      "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 1208,
         "views_growth_pct": 0.19,
-        "sales_delta": 171.4,
-        "sales_growth_pct": 0.13
+        "sales_delta": 271.4,
+        "sales_growth_pct": 0.21
       },
       "growth_30d": {
         "views_delta": 0,
@@ -402,8 +402,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 2455.2,
-      "views_7_chapters": 3969,
+      "sales_7_chapters": 694.8,
+      "views_7_chapters": 588,
       "monthly_sales": {
         "มกราคม": 2138.4,
         "กุมภาพันธ์": 1530.0,
@@ -415,7 +415,7 @@
         "สิงหาคม": 1270.8,
         "กันยายน": 1063.8,
         "ตุลาคม": 556.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 324
       }
     },
     {
@@ -425,16 +425,16 @@
       "account_id": "lionking",
       "chapters_count": 130,
       "total_views": 532100,
-      "total_sales": 122000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 122074.2,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-05T00:00:00",
       "days_inactive": 6,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 1353,
         "views_growth_pct": 0.25,
-        "sales_delta": 357.8,
-        "sales_growth_pct": 0.29
+        "sales_delta": 432.0,
+        "sales_growth_pct": 0.36
       },
       "growth_30d": {
         "views_delta": 0,
@@ -442,8 +442,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 1524.6,
-      "views_7_chapters": 1516,
+      "sales_7_chapters": 1537.2,
+      "views_7_chapters": 1523,
       "monthly_sales": {
         "มกราคม": 12733.2,
         "กุมภาพันธ์": 11592.0,
@@ -455,7 +455,7 @@
         "สิงหาคม": 3753.0,
         "กันยายน": 2761.2,
         "ตุลาคม": 2323.8,
-        "พฤศจิกายน": 630
+        "พฤศจิกายน": 658.8
       }
     },
     {
@@ -466,7 +466,7 @@
       "chapters_count": 89,
       "total_views": 349500,
       "total_sales": 120824.35,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-03-06T00:00:00",
       "days_inactive": 615,
       "is_inactive_30d": true,
@@ -495,7 +495,7 @@
         "สิงหาคม": 399.6,
         "กันยายน": 190.8,
         "ตุลาคม": 113.4,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -506,10 +506,10 @@
       "chapters_count": 90,
       "total_views": 239200,
       "total_sales": 107100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-02-13T00:00:00",
+      "days_inactive": 271,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -46,
         "views_growth_pct": -0.02,
@@ -523,7 +523,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1949.2,
-      "views_7_chapters": 2667,
+      "views_7_chapters": 2651,
       "monthly_sales": {
         "มกราคม": 1621.4,
         "กุมภาพันธ์": 1091.2,
@@ -535,7 +535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -546,9 +546,9 @@
       "chapters_count": 118,
       "total_views": 358700,
       "total_sales": 106000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2025-08-11T00:00:00",
-      "days_inactive": 457,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-07-26T00:00:00",
+      "days_inactive": 108,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -29,
@@ -562,8 +562,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 1661.6,
-      "views_7_chapters": 14900,
+      "sales_7_chapters": 3772.8,
+      "views_7_chapters": 3429,
       "monthly_sales": {
         "มกราคม": 2327.4,
         "กุมภาพันธ์": 1738.8,
@@ -575,7 +575,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -586,7 +586,7 @@
       "chapters_count": 103,
       "total_views": 237900,
       "total_sales": 104214.65,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-02-09T00:00:00",
       "days_inactive": 640,
       "is_inactive_30d": true,
@@ -625,16 +625,16 @@
       "account_id": "lionking",
       "chapters_count": 64,
       "total_views": 306800,
-      "total_sales": 103000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 103033.2,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-06T00:00:00",
       "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 3418,
         "views_growth_pct": 1.13,
-        "sales_delta": 1574.2,
-        "sales_growth_pct": 1.55
+        "sales_delta": 1607.4,
+        "sales_growth_pct": 1.58
       },
       "growth_30d": {
         "views_delta": 0,
@@ -643,7 +643,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 824.1,
-      "views_7_chapters": 10827,
+      "views_7_chapters": 10829,
       "monthly_sales": {
         "มกราคม": 4894.2,
         "กุมภาพันธ์": 3501.0,
@@ -655,7 +655,7 @@
         "สิงหาคม": 13325.4,
         "กันยายน": 19167.6,
         "ตุลาคม": 7196.4,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 2748.6
       }
     },
     {
@@ -666,7 +666,7 @@
       "chapters_count": 100,
       "total_views": 493400,
       "total_sales": 102119.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-02-10T00:00:00",
       "days_inactive": 274,
       "is_inactive_30d": true,
@@ -706,10 +706,10 @@
       "chapters_count": 69,
       "total_views": 353600,
       "total_sales": 100800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-01-21T00:00:00",
+      "days_inactive": 294,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -19,
         "views_growth_pct": -0.01,
@@ -735,7 +735,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -746,7 +746,7 @@
       "chapters_count": 60,
       "total_views": 270700,
       "total_sales": 96700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -775,7 +775,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -786,7 +786,7 @@
       "chapters_count": 114,
       "total_views": 378600,
       "total_sales": 96276.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-07T00:00:00",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -826,10 +826,10 @@
       "chapters_count": 73,
       "total_views": 215400,
       "total_sales": 93500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-01-10T00:00:00",
+      "days_inactive": 305,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -17,
         "views_growth_pct": -0.01,
@@ -855,7 +855,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -865,16 +865,16 @@
       "account_id": "lionking",
       "chapters_count": 74,
       "total_views": 278200,
-      "total_sales": 83000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 83007,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-06T00:00:00",
       "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 3600,
         "views_growth_pct": 1.31,
-        "sales_delta": 1010.0,
-        "sales_growth_pct": 1.23
+        "sales_delta": 1017.0,
+        "sales_growth_pct": 1.24
       },
       "growth_30d": {
         "views_delta": 0,
@@ -906,7 +906,7 @@
       "chapters_count": 80,
       "total_views": 227700,
       "total_sales": 74900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-10-02T00:00:00",
       "days_inactive": 770,
       "is_inactive_30d": true,
@@ -935,7 +935,7 @@
         "สิงหาคม": 139.2,
         "กันยายน": 172.8,
         "ตุลาคม": 110.4,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -946,10 +946,10 @@
       "chapters_count": 39,
       "total_views": 136200,
       "total_sales": 69600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-02-05T00:00:00",
+      "days_inactive": 644,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -23,
         "views_growth_pct": -0.02,
@@ -962,8 +962,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 11374.4,
-      "views_7_chapters": 7912,
+      "sales_7_chapters": 11.1,
+      "views_7_chapters": 7640,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -975,7 +975,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -985,16 +985,16 @@
       "account_id": "lionking",
       "chapters_count": 94,
       "total_views": 200700,
-      "total_sales": 66100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 66167.4,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-02-02T00:00:00",
       "days_inactive": 647,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 16,
         "views_growth_pct": 0.01,
-        "sales_delta": -35.0,
-        "sales_growth_pct": -0.05
+        "sales_delta": 32.4,
+        "sales_growth_pct": 0.05
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1024,17 +1024,17 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 130,
-      "total_views": 308400,
-      "total_sales": 59400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
+      "total_views": 308500,
+      "total_sales": 59484.6,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-11-07T00:00:00",
+      "days_inactive": 4,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 5840,
-        "views_growth_pct": 1.93,
-        "sales_delta": 554.4,
-        "sales_growth_pct": 0.94
+        "views_delta": 5940,
+        "views_growth_pct": 1.96,
+        "sales_delta": 639.0,
+        "sales_growth_pct": 1.09
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1042,7 +1042,7 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 957.6,
+      "sales_7_chapters": 959.4,
       "views_7_chapters": 800,
       "monthly_sales": {
         "มกราคม": 2718.0,
@@ -1055,7 +1055,7 @@
         "สิงหาคม": 1780.2,
         "กันยายน": 1569.6,
         "ตุลาคม": 1128.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 702
       }
     },
     {
@@ -1064,17 +1064,17 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 129,
-      "total_views": 262400,
-      "total_sales": 59108.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_views": 262500,
+      "total_sales": 59121,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 2262,
-        "views_growth_pct": 0.87,
-        "sales_delta": 221.4,
-        "sales_growth_pct": 0.38
+        "views_delta": 2362,
+        "views_growth_pct": 0.91,
+        "sales_delta": 234.0,
+        "sales_growth_pct": 0.4
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1082,8 +1082,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 239.4,
-      "views_7_chapters": 236,
+      "sales_7_chapters": 244.8,
+      "views_7_chapters": 240,
       "monthly_sales": {
         "มกราคม": 6768.0,
         "กุมภาพันธ์": 6310.8,
@@ -1095,7 +1095,7 @@
         "สิงหาคม": 1936.8,
         "กันยายน": 2480.4,
         "ตุลาคม": 709.2,
-        "พฤศจิกายน": 293.4
+        "พฤศจิกายน": 306
       }
     },
     {
@@ -1106,10 +1106,10 @@
       "chapters_count": 50,
       "total_views": 134200,
       "total_sales": 51400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-03-11T00:00:00",
+      "days_inactive": 610,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -4,
         "views_growth_pct": -0.0,
@@ -1123,7 +1123,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 6083.4,
-      "views_7_chapters": 4587,
+      "views_7_chapters": 4565,
       "monthly_sales": {
         "มกราคม": 19.8,
         "กุมภาพันธ์": 22.0,
@@ -1135,7 +1135,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1146,7 +1146,7 @@
       "chapters_count": 115,
       "total_views": 194300,
       "total_sales": 50386.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-09-02T00:00:00",
       "days_inactive": 435,
       "is_inactive_30d": true,
@@ -1186,10 +1186,10 @@
       "chapters_count": 60,
       "total_views": 95200,
       "total_sales": 49700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-02-06T00:00:00",
+      "days_inactive": 278,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -7,
         "views_growth_pct": -0.01,
@@ -1215,7 +1215,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1225,15 +1225,15 @@
       "account_id": "lionking",
       "chapters_count": 158,
       "total_views": 219800,
-      "total_sales": 39000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "total_sales": 39001.8,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-07-19T00:00:00",
+      "days_inactive": 480,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 797,
         "views_growth_pct": 0.36,
-        "sales_delta": 0.0,
+        "sales_delta": 1.8,
         "sales_growth_pct": 0.0
       },
       "growth_30d": {
@@ -1255,7 +1255,7 @@
         "สิงหาคม": 156.0,
         "กันยายน": 155.0,
         "ตุลาคม": 79.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 80.8
       }
     },
     {
@@ -1266,10 +1266,10 @@
       "chapters_count": 68,
       "total_views": 126200,
       "total_sales": 38800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-12-08T00:00:00",
+      "days_inactive": 338,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -55,
         "views_growth_pct": -0.04,
@@ -1295,7 +1295,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1306,10 +1306,10 @@
       "chapters_count": 34,
       "total_views": 66300,
       "total_sales": 36800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-26T00:00:00",
+      "days_inactive": 503,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -32,
         "views_growth_pct": -0.05,
@@ -1322,8 +1322,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 9693.2,
-      "views_7_chapters": 6245,
+      "sales_7_chapters": 912.6,
+      "views_7_chapters": 6149,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1335,7 +1335,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1345,16 +1345,16 @@
       "account_id": "lionking",
       "chapters_count": 81,
       "total_views": 142000,
-      "total_sales": 35900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "total_sales": 35937,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-05-21T00:00:00",
+      "days_inactive": 174,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 48,
         "views_growth_pct": 0.03,
-        "sales_delta": -17.2,
-        "sales_growth_pct": -0.05
+        "sales_delta": 19.8,
+        "sales_growth_pct": 0.06
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1386,7 +1386,7 @@
       "chapters_count": 102,
       "total_views": 166000,
       "total_sales": 33388.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-28T00:00:00",
       "days_inactive": 14,
       "is_inactive_30d": false,
@@ -1403,7 +1403,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 779.4,
-      "views_7_chapters": 629,
+      "views_7_chapters": 630,
       "monthly_sales": {
         "มกราคม": 4167.0,
         "กุมภาพันธ์": 5788.8,
@@ -1426,10 +1426,10 @@
       "chapters_count": 161,
       "total_views": 110700,
       "total_sales": 33200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2025-07-19T00:00:00",
-      "days_inactive": 480,
-      "is_inactive_30d": true,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 34,
         "views_growth_pct": 0.03,
@@ -1466,7 +1466,7 @@
       "chapters_count": 76,
       "total_views": 182200,
       "total_sales": 32200.000000000004,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-27T00:00:00",
       "days_inactive": 653,
       "is_inactive_30d": true,
@@ -1506,7 +1506,7 @@
       "chapters_count": 50,
       "total_views": 72900,
       "total_sales": 31000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-08-22T00:00:00",
       "days_inactive": 446,
       "is_inactive_30d": true,
@@ -1535,7 +1535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1545,16 +1545,16 @@
       "account_id": "lionking",
       "chapters_count": 56,
       "total_views": 141000,
-      "total_sales": 30076.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 30083.4,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-04T00:00:00",
       "days_inactive": 7,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 1080,
         "views_growth_pct": 0.77,
-        "sales_delta": 275.4,
-        "sales_growth_pct": 0.92
+        "sales_delta": 282.6,
+        "sales_growth_pct": 0.95
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1562,8 +1562,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 1706.4,
-      "views_7_chapters": 1623,
+      "sales_7_chapters": 1713.6,
+      "views_7_chapters": 1627,
       "monthly_sales": {
         "มกราคม": 2799.0,
         "กุมภาพันธ์": 2338.2,
@@ -1575,7 +1575,7 @@
         "สิงหาคม": 1704.6,
         "กันยายน": 1265.4,
         "ตุลาคม": 1076.4,
-        "พฤศจิกายน": 347.4
+        "พฤศจิกายน": 354.6
       }
     },
     {
@@ -1586,7 +1586,7 @@
       "chapters_count": 107,
       "total_views": 137900,
       "total_sales": 29500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-09-09T00:00:00",
       "days_inactive": 428,
       "is_inactive_30d": true,
@@ -1615,7 +1615,7 @@
         "สิงหาคม": 280.0,
         "กันยายน": 96.0,
         "ตุลาคม": 80.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1626,10 +1626,10 @@
       "chapters_count": 58,
       "total_views": 79800,
       "total_sales": 29500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-08-24T00:00:00",
+      "days_inactive": 444,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -12,
         "views_growth_pct": -0.02,
@@ -1655,7 +1655,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1666,7 +1666,7 @@
       "chapters_count": 68,
       "total_views": 69000,
       "total_sales": 29200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -1695,7 +1695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1706,7 +1706,7 @@
       "chapters_count": 93,
       "total_views": 115700,
       "total_sales": 28600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-11-25T00:00:00",
       "days_inactive": 351,
       "is_inactive_30d": true,
@@ -1735,7 +1735,7 @@
         "สิงหาคม": 61.2,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1744,17 +1744,17 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 72,
-      "total_views": 83900,
-      "total_sales": 28337.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_views": 84000,
+      "total_sales": 28353.6,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 2282,
-        "views_growth_pct": 2.8,
-        "sales_delta": 397.8,
-        "sales_growth_pct": 1.42
+        "views_delta": 2382,
+        "views_growth_pct": 2.92,
+        "sales_delta": 414.0,
+        "sales_growth_pct": 1.48
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1762,8 +1762,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 1256.4,
-      "views_7_chapters": 1075,
+      "sales_7_chapters": 1263.6,
+      "views_7_chapters": 1082,
       "monthly_sales": {
         "มกราคม": 2692.8,
         "กุมภาพันธ์": 2043.0,
@@ -1775,7 +1775,7 @@
         "สิงหาคม": 2057.4,
         "กันยายน": 1956.6,
         "ตุลาคม": 1395.0,
-        "พฤศจิกายน": 441
+        "พฤศจิกายน": 457.2
       }
     },
     {
@@ -1785,16 +1785,16 @@
       "account_id": "lionking",
       "chapters_count": 70,
       "total_views": 85100,
-      "total_sales": 26900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 26928,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 152,
         "views_growth_pct": 0.18,
-        "sales_delta": -19.0,
-        "sales_growth_pct": -0.07
+        "sales_delta": 9.0,
+        "sales_growth_pct": 0.03
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1825,16 +1825,16 @@
       "account_id": "lionking",
       "chapters_count": 51,
       "total_views": 43900,
-      "total_sales": 26800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "total_sales": 26878.3,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-07-02T00:00:00",
+      "days_inactive": 862,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -7,
         "views_growth_pct": -0.02,
-        "sales_delta": -56.7,
-        "sales_growth_pct": -0.21
+        "sales_delta": 21.6,
+        "sales_growth_pct": 0.08
       },
       "growth_30d": {
         "views_delta": 0,
@@ -1855,7 +1855,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 68.4,
         "ตุลาคม": 171.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 23.2
       }
     },
     {
@@ -1866,7 +1866,7 @@
       "chapters_count": 120,
       "total_views": 155000,
       "total_sales": 26505,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-28T00:00:00",
       "days_inactive": 14,
       "is_inactive_30d": false,
@@ -1906,7 +1906,7 @@
       "chapters_count": 62,
       "total_views": 118200,
       "total_sales": 25585.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-20T00:00:00",
       "days_inactive": 22,
       "is_inactive_30d": false,
@@ -1923,7 +1923,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1524.6,
-      "views_7_chapters": 1355,
+      "views_7_chapters": 1356,
       "monthly_sales": {
         "มกราคม": 5022.0,
         "กุมภาพันธ์": 2815.2,
@@ -1946,10 +1946,10 @@
       "chapters_count": 64,
       "total_views": 83100,
       "total_sales": 24900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-08-30T00:00:00",
+      "days_inactive": 803,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 31,
         "views_growth_pct": 0.04,
@@ -1975,7 +1975,7 @@
         "สิงหาคม": 1.6,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -1986,7 +1986,7 @@
       "chapters_count": 46,
       "total_views": 61800,
       "total_sales": 24800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-08-28T00:00:00",
       "days_inactive": 440,
       "is_inactive_30d": true,
@@ -2015,7 +2015,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2026,10 +2026,10 @@
       "chapters_count": 34,
       "total_views": 46000,
       "total_sales": 23600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-08-21T00:00:00",
+      "days_inactive": 447,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -31,
         "views_growth_pct": -0.07,
@@ -2055,7 +2055,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2066,10 +2066,10 @@
       "chapters_count": 44,
       "total_views": 90000,
       "total_sales": 23400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-10T00:00:00",
+      "days_inactive": 519,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -14,
         "views_growth_pct": -0.02,
@@ -2095,7 +2095,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2106,7 +2106,7 @@
       "chapters_count": 67,
       "total_views": 69700,
       "total_sales": 20900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-02-04T00:00:00",
       "days_inactive": 280,
       "is_inactive_30d": true,
@@ -2135,7 +2135,7 @@
         "สิงหาคม": 232.2,
         "กันยายน": 50.4,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2146,10 +2146,10 @@
       "chapters_count": 46,
       "total_views": 53600,
       "total_sales": 20400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-05-01T00:00:00",
+      "days_inactive": 559,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -93,
         "views_growth_pct": -0.17,
@@ -2175,7 +2175,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2186,10 +2186,10 @@
       "chapters_count": 49,
       "total_views": 43800,
       "total_sales": 19500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-01-26T00:00:00",
+      "days_inactive": 289,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -5,
         "views_growth_pct": -0.01,
@@ -2215,7 +2215,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2225,16 +2225,16 @@
       "account_id": "lionking",
       "chapters_count": 60,
       "total_views": 76100,
-      "total_sales": 19400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
+      "total_sales": 19461.6,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-11-06T00:00:00",
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 85,
         "views_growth_pct": 0.11,
-        "sales_delta": 5.0,
-        "sales_growth_pct": 0.03
+        "sales_delta": 66.6,
+        "sales_growth_pct": 0.34
       },
       "growth_30d": {
         "views_delta": 0,
@@ -2255,7 +2255,7 @@
         "สิงหาคม": 1000.8,
         "กันยายน": 1069.2,
         "ตุลาคม": 804.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 160.2
       }
     },
     {
@@ -2266,10 +2266,10 @@
       "chapters_count": 37,
       "total_views": 45400,
       "total_sales": 18800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-05-30T00:00:00",
+      "days_inactive": 530,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -64,
         "views_growth_pct": -0.14,
@@ -2295,7 +2295,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2306,10 +2306,10 @@
       "chapters_count": 40,
       "total_views": 42200,
       "total_sales": 18200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-02-11T00:00:00",
+      "days_inactive": 273,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -13,
         "views_growth_pct": -0.03,
@@ -2323,7 +2323,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 3555.2,
-      "views_7_chapters": 3358,
+      "views_7_chapters": 3314,
       "monthly_sales": {
         "มกราคม": 1788.6,
         "กุมภาพันธ์": 2464.0,
@@ -2335,7 +2335,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2346,10 +2346,10 @@
       "chapters_count": 30,
       "total_views": 37800,
       "total_sales": 17700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-11-14T00:00:00",
+      "days_inactive": 727,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -44,
         "views_growth_pct": -0.12,
@@ -2375,7 +2375,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2386,10 +2386,10 @@
       "chapters_count": 25,
       "total_views": 39900,
       "total_sales": 17100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-03-26T00:00:00",
+      "days_inactive": 595,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -9,
         "views_growth_pct": -0.02,
@@ -2415,7 +2415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2426,7 +2426,7 @@
       "chapters_count": 50,
       "total_views": 66900,
       "total_sales": 16600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-09-09T00:00:00",
       "days_inactive": 428,
       "is_inactive_30d": true,
@@ -2455,7 +2455,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2466,7 +2466,7 @@
       "chapters_count": 69,
       "total_views": 82100,
       "total_sales": 16200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-09-01T00:00:00",
       "days_inactive": 436,
       "is_inactive_30d": true,
@@ -2495,7 +2495,7 @@
         "สิงหาคม": 486.0,
         "กันยายน": 262.8,
         "ตุลาคม": 48.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2506,10 +2506,10 @@
       "chapters_count": 57,
       "total_views": 35600,
       "total_sales": 15700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-01-07T00:00:00",
+      "days_inactive": 308,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -86,
         "views_growth_pct": -0.24,
@@ -2535,7 +2535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2546,10 +2546,10 @@
       "chapters_count": 41,
       "total_views": 57100,
       "total_sales": 14400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-12-26T00:00:00",
+      "days_inactive": 685,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -90,
         "views_growth_pct": -0.16,
@@ -2575,7 +2575,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2585,16 +2585,16 @@
       "account_id": "lionking",
       "chapters_count": 53,
       "total_views": 45200,
-      "total_sales": 12800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
+      "total_sales": 12801.6,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-10-23T00:00:00",
+      "days_inactive": 19,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 242,
         "views_growth_pct": 0.54,
-        "sales_delta": 36.2,
-        "sales_growth_pct": 0.28
+        "sales_delta": 37.8,
+        "sales_growth_pct": 0.3
       },
       "growth_30d": {
         "views_delta": 0,
@@ -2603,7 +2603,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 946.8,
-      "views_7_chapters": 812,
+      "views_7_chapters": 813,
       "monthly_sales": {
         "มกราคม": 1157.4,
         "กุมภาพันธ์": 1112.4,
@@ -2615,7 +2615,7 @@
         "สิงหาคม": 459.0,
         "กันยายน": 2001.6,
         "ตุลาคม": 736.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 45
       }
     },
     {
@@ -2626,7 +2626,7 @@
       "chapters_count": 31,
       "total_views": 37500,
       "total_sales": 12700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-06-19T00:00:00",
       "days_inactive": 510,
       "is_inactive_30d": true,
@@ -2655,7 +2655,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2666,10 +2666,10 @@
       "chapters_count": 16,
       "total_views": 33200,
       "total_sales": 12600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-02-04T00:00:00",
+      "days_inactive": 645,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -35,
         "views_growth_pct": -0.11,
@@ -2682,7 +2682,7 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 6898.6,
+      "sales_7_chapters": 3002.9,
       "views_7_chapters": 4575,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -2695,7 +2695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2705,16 +2705,16 @@
       "account_id": "lionking",
       "chapters_count": 70,
       "total_views": 60200,
-      "total_sales": 11800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 11898.25,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-03-14T00:00:00",
       "days_inactive": 972,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 79,
         "views_growth_pct": 0.13,
-        "sales_delta": -67.1,
-        "sales_growth_pct": -0.57
+        "sales_delta": 31.15,
+        "sales_growth_pct": 0.26
       },
       "growth_30d": {
         "views_delta": 0,
@@ -2746,7 +2746,7 @@
       "chapters_count": 46,
       "total_views": 39800,
       "total_sales": 11100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -2775,7 +2775,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2786,7 +2786,7 @@
       "chapters_count": 40,
       "total_views": 62100,
       "total_sales": 11000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-06-17T00:00:00",
       "days_inactive": 512,
       "is_inactive_30d": true,
@@ -2815,7 +2815,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2826,7 +2826,7 @@
       "chapters_count": 42,
       "total_views": 34500,
       "total_sales": 10900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-07-30T00:00:00",
       "days_inactive": 469,
       "is_inactive_30d": true,
@@ -2855,7 +2855,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2866,7 +2866,7 @@
       "chapters_count": 44,
       "total_views": 32500,
       "total_sales": 9450,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-06-07T00:00:00",
       "days_inactive": 157,
       "is_inactive_30d": true,
@@ -2906,10 +2906,10 @@
       "chapters_count": 35,
       "total_views": 17700,
       "total_sales": 9300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-01-08T00:00:00",
+      "days_inactive": 672,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -48,
         "views_growth_pct": -0.27,
@@ -2935,7 +2935,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2946,7 +2946,7 @@
       "chapters_count": 24,
       "total_views": 24400,
       "total_sales": 8900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-01-16T00:00:00",
       "days_inactive": 299,
       "is_inactive_30d": true,
@@ -2975,7 +2975,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -2986,7 +2986,7 @@
       "chapters_count": 44,
       "total_views": 49600,
       "total_sales": 8775,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-07T00:00:00",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -3026,7 +3026,7 @@
       "chapters_count": 27,
       "total_views": 34000,
       "total_sales": 8659.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-06T00:00:00",
       "days_inactive": 5,
       "is_inactive_30d": false,
@@ -3066,7 +3066,7 @@
       "chapters_count": 44,
       "total_views": 24200,
       "total_sales": 8500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-12-04T00:00:00",
       "days_inactive": 342,
       "is_inactive_30d": true,
@@ -3095,7 +3095,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3106,7 +3106,7 @@
       "chapters_count": 49,
       "total_views": 59000,
       "total_sales": 8400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-09-20T00:00:00",
       "days_inactive": 417,
       "is_inactive_30d": true,
@@ -3135,7 +3135,7 @@
         "สิงหาคม": 9.0,
         "กันยายน": 0.0,
         "ตุลาคม": 41.4,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3145,16 +3145,16 @@
       "account_id": "lionking",
       "chapters_count": 41,
       "total_views": 65600,
-      "total_sales": 8100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 8179.2,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-03-29T00:00:00",
       "days_inactive": 227,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 60,
         "views_growth_pct": 0.09,
-        "sales_delta": -79.2,
-        "sales_growth_pct": -0.97
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -3175,7 +3175,7 @@
         "สิงหาคม": 45.0,
         "กันยายน": 122.4,
         "ตุลาคม": 52.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3186,7 +3186,7 @@
       "chapters_count": 29,
       "total_views": 20700,
       "total_sales": 7750.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
@@ -3226,7 +3226,7 @@
       "chapters_count": 23,
       "total_views": 43400,
       "total_sales": 7400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-05T00:00:00",
       "days_inactive": 675,
       "is_inactive_30d": true,
@@ -3255,7 +3255,7 @@
         "สิงหาคม": 8.0,
         "กันยายน": 22.4,
         "ตุลาคม": 28.8,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3266,7 +3266,7 @@
       "chapters_count": 25,
       "total_views": 19000,
       "total_sales": 7400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-19T00:00:00",
       "days_inactive": 661,
       "is_inactive_30d": true,
@@ -3295,7 +3295,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3306,7 +3306,7 @@
       "chapters_count": 32,
       "total_views": 21000,
       "total_sales": 7333.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
@@ -3345,16 +3345,16 @@
       "account_id": "lionking",
       "chapters_count": 30,
       "total_views": 44200,
-      "total_sales": 7300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 7307.6,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-08-15T00:00:00",
       "days_inactive": 453,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 62,
         "views_growth_pct": 0.14,
-        "sales_delta": -7.6,
-        "sales_growth_pct": -0.1
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -3375,7 +3375,7 @@
         "สิงหาคม": 172.8,
         "กันยายน": 61.2,
         "ตุลาคม": 88.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3386,7 +3386,7 @@
       "chapters_count": 29,
       "total_views": 15600,
       "total_sales": 7300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-04-07T00:00:00",
       "days_inactive": 583,
       "is_inactive_30d": true,
@@ -3415,7 +3415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3426,7 +3426,7 @@
       "chapters_count": 33,
       "total_views": 17600,
       "total_sales": 7300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -3455,7 +3455,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3466,7 +3466,7 @@
       "chapters_count": 22,
       "total_views": 31600,
       "total_sales": 7100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-04-07T00:00:00",
       "days_inactive": 218,
       "is_inactive_30d": true,
@@ -3495,7 +3495,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3506,10 +3506,10 @@
       "chapters_count": 22,
       "total_views": 19600,
       "total_sales": 6900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-02-26T00:00:00",
+      "days_inactive": 989,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -9,
         "views_growth_pct": -0.05,
@@ -3535,7 +3535,7 @@
         "สิงหาคม": 23.9,
         "กันยายน": 30.4,
         "ตุลาคม": 5.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3546,7 +3546,7 @@
       "chapters_count": 61,
       "total_views": 72500,
       "total_sales": 6600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2023-12-22T00:00:00",
       "days_inactive": 1055,
       "is_inactive_30d": true,
@@ -3575,7 +3575,7 @@
         "สิงหาคม": 1.75,
         "กันยายน": 19.25,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3586,10 +3586,10 @@
       "chapters_count": 47,
       "total_views": 14400,
       "total_sales": 6600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-12-04T00:00:00",
+      "days_inactive": 342,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -68,
         "views_growth_pct": -0.47,
@@ -3615,7 +3615,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3625,16 +3625,16 @@
       "account_id": "lionking",
       "chapters_count": 36,
       "total_views": 41900,
-      "total_sales": 6474.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 6476.4,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 491,
         "views_growth_pct": 1.19,
-        "sales_delta": 165.6,
-        "sales_growth_pct": 2.62
+        "sales_delta": 167.4,
+        "sales_growth_pct": 2.65
       },
       "growth_30d": {
         "views_delta": 0,
@@ -3642,8 +3642,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 657.0,
-      "views_7_chapters": 626,
+      "sales_7_chapters": 658.8,
+      "views_7_chapters": 628,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -3655,7 +3655,7 @@
         "สิงหาคม": 1582.2,
         "กันยายน": 945.0,
         "ตุลาคม": 565.2,
-        "พฤศจิกายน": 181.8
+        "พฤศจิกายน": 183.6
       }
     },
     {
@@ -3666,10 +3666,10 @@
       "chapters_count": 19,
       "total_views": 29300,
       "total_sales": 6400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-02-08T00:00:00",
+      "days_inactive": 641,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -82,
         "views_growth_pct": -0.28,
@@ -3695,7 +3695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3706,10 +3706,10 @@
       "chapters_count": 12,
       "total_views": 24100,
       "total_sales": 6200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-09-13T00:00:00",
+      "days_inactive": 789,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -13,
         "views_growth_pct": -0.05,
@@ -3722,7 +3722,7 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 5788.0,
+      "sales_7_chapters": 4683.1,
       "views_7_chapters": 3433,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3735,7 +3735,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3746,7 +3746,7 @@
       "chapters_count": 36,
       "total_views": 22000,
       "total_sales": 5956.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -3785,16 +3785,16 @@
       "account_id": "lionking",
       "chapters_count": 24,
       "total_views": 19900,
-      "total_sales": 5900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 5948.8,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-08-06T00:00:00",
       "days_inactive": 827,
       "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -45,
         "views_growth_pct": -0.23,
-        "sales_delta": -34.4,
-        "sales_growth_pct": -0.58
+        "sales_delta": 14.4,
+        "sales_growth_pct": 0.24
       },
       "growth_30d": {
         "views_delta": 0,
@@ -3826,10 +3826,10 @@
       "chapters_count": 16,
       "total_views": 12100,
       "total_sales": 5600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-08-31T00:00:00",
+      "days_inactive": 802,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -96,
         "views_growth_pct": -0.79,
@@ -3855,7 +3855,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3866,7 +3866,7 @@
       "chapters_count": 46,
       "total_views": 21500,
       "total_sales": 5500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-06-02T00:00:00",
       "days_inactive": 162,
       "is_inactive_30d": true,
@@ -3895,7 +3895,7 @@
         "สิงหาคม": 37.8,
         "กันยายน": 0.0,
         "ตุลาคม": 5.4,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3906,10 +3906,10 @@
       "chapters_count": 22,
       "total_views": 41900,
       "total_sales": 5500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-11-07T00:00:00",
+      "days_inactive": 734,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -86,
         "views_growth_pct": -0.2,
@@ -3935,7 +3935,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -3945,16 +3945,16 @@
       "account_id": "lionking",
       "chapters_count": 50,
       "total_views": 35100,
-      "total_sales": 5400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "total_sales": 5463,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-06-06T00:00:00",
+      "days_inactive": 158,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -30,
         "views_growth_pct": -0.09,
-        "sales_delta": -54.0,
-        "sales_growth_pct": -0.99
+        "sales_delta": 9.0,
+        "sales_growth_pct": 0.17
       },
       "growth_30d": {
         "views_delta": 0,
@@ -3986,7 +3986,7 @@
       "chapters_count": 230,
       "total_views": 23400,
       "total_sales": 5400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-01-20T00:00:00",
       "days_inactive": 295,
       "is_inactive_30d": true,
@@ -4015,7 +4015,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 3.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4026,10 +4026,10 @@
       "chapters_count": 45,
       "total_views": 37000,
       "total_sales": 5400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-10-13T00:00:00",
+      "days_inactive": 759,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -62,
         "views_growth_pct": -0.17,
@@ -4055,7 +4055,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4066,10 +4066,10 @@
       "chapters_count": 38,
       "total_views": 30400,
       "total_sales": 5200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-07-17T00:00:00",
+      "days_inactive": 482,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -32,
         "views_growth_pct": -0.11,
@@ -4095,7 +4095,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 32.4,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4106,10 +4106,10 @@
       "chapters_count": 171,
       "total_views": 19900,
       "total_sales": 5200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-10-17T00:00:00",
+      "days_inactive": 390,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 187,
         "views_growth_pct": 0.95,
@@ -4135,7 +4135,7 @@
         "สิงหาคม": 460.8,
         "กันยายน": 0.0,
         "ตุลาคม": 27.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4146,10 +4146,10 @@
       "chapters_count": 46,
       "total_views": 35800,
       "total_sales": 5200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-12-07T00:00:00",
+      "days_inactive": 339,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -15,
         "views_growth_pct": -0.04,
@@ -4175,7 +4175,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4186,10 +4186,10 @@
       "chapters_count": 22,
       "total_views": 29100,
       "total_sales": 5100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-04-07T00:00:00",
+      "days_inactive": 218,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -8,
         "views_growth_pct": -0.03,
@@ -4215,7 +4215,7 @@
         "สิงหาคม": 37.8,
         "กันยายน": 21.6,
         "ตุลาคม": 21.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4226,7 +4226,7 @@
       "chapters_count": 32,
       "total_views": 37100,
       "total_sales": 5100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-01-15T00:00:00",
       "days_inactive": 1031,
       "is_inactive_30d": true,
@@ -4255,7 +4255,7 @@
         "สิงหาคม": 3.0,
         "กันยายน": 4.5,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4266,10 +4266,10 @@
       "chapters_count": 17,
       "total_views": 35100,
       "total_sales": 5100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-09-16T00:00:00",
+      "days_inactive": 786,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -7,
         "views_growth_pct": -0.02,
@@ -4295,7 +4295,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4306,7 +4306,7 @@
       "chapters_count": 24,
       "total_views": 36700,
       "total_sales": 4900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-06-12T00:00:00",
       "days_inactive": 517,
       "is_inactive_30d": true,
@@ -4335,7 +4335,7 @@
         "สิงหาคม": 16.2,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4346,7 +4346,7 @@
       "chapters_count": 31,
       "total_views": 11200,
       "total_sales": 4900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-03-20T00:00:00",
       "days_inactive": 601,
       "is_inactive_30d": true,
@@ -4375,7 +4375,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4386,10 +4386,10 @@
       "chapters_count": 27,
       "total_views": 19800,
       "total_sales": 4800,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-02-02T00:00:00",
+      "days_inactive": 647,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -66,
         "views_growth_pct": -0.33,
@@ -4415,7 +4415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4426,7 +4426,7 @@
       "chapters_count": 44,
       "total_views": 37200,
       "total_sales": 4700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-10-07T00:00:00",
       "days_inactive": 400,
       "is_inactive_30d": true,
@@ -4455,7 +4455,7 @@
         "สิงหาคม": 30.0,
         "กันยายน": 150.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4466,7 +4466,7 @@
       "chapters_count": 46,
       "total_views": 26700,
       "total_sales": 4500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-05-24T00:00:00",
       "days_inactive": 171,
       "is_inactive_30d": true,
@@ -4483,7 +4483,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 248.4,
-      "views_7_chapters": 273,
+      "views_7_chapters": 274,
       "monthly_sales": {
         "มกราคม": 547.2,
         "กุมภาพันธ์": 1074.6,
@@ -4506,10 +4506,10 @@
       "chapters_count": 29,
       "total_views": 15300,
       "total_sales": 4500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-15T00:00:00",
+      "days_inactive": 514,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -96,
         "views_growth_pct": -0.62,
@@ -4535,7 +4535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4546,7 +4546,7 @@
       "chapters_count": 52,
       "total_views": 19500,
       "total_sales": 4000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-03-18T00:00:00",
       "days_inactive": 238,
       "is_inactive_30d": true,
@@ -4575,7 +4575,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 35.5,
         "ตุลาคม": 22.2,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4586,7 +4586,7 @@
       "chapters_count": 31,
       "total_views": 19900,
       "total_sales": 3900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-07-20T00:00:00",
       "days_inactive": 114,
       "is_inactive_30d": true,
@@ -4615,7 +4615,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4626,10 +4626,10 @@
       "chapters_count": 39,
       "total_views": 15300,
       "total_sales": 3600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-08-14T00:00:00",
+      "days_inactive": 819,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -57,
         "views_growth_pct": -0.37,
@@ -4655,7 +4655,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4666,7 +4666,7 @@
       "chapters_count": 18,
       "total_views": 7700,
       "total_sales": 3600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2023-12-19T00:00:00",
       "days_inactive": 1058,
       "is_inactive_30d": true,
@@ -4695,7 +4695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4706,10 +4706,10 @@
       "chapters_count": 36,
       "total_views": 19200,
       "total_sales": 3500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-09-01T00:00:00",
+      "days_inactive": 436,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -55,
         "views_growth_pct": -0.29,
@@ -4735,7 +4735,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 9.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4746,10 +4746,10 @@
       "chapters_count": 34,
       "total_views": 39100,
       "total_sales": 3500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2025-06-12T00:00:00",
-      "days_inactive": 517,
-      "is_inactive_30d": true,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": -43,
         "views_growth_pct": -0.11,
@@ -4775,7 +4775,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4786,7 +4786,7 @@
       "chapters_count": 44,
       "total_views": 12800,
       "total_sales": 3457.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
@@ -4803,7 +4803,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 408.6,
-      "views_7_chapters": 379,
+      "views_7_chapters": 382,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -4826,7 +4826,7 @@
       "chapters_count": 28,
       "total_views": 20300,
       "total_sales": 3400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-06-11T00:00:00",
       "days_inactive": 518,
       "is_inactive_30d": true,
@@ -4855,7 +4855,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4866,7 +4866,7 @@
       "chapters_count": 26,
       "total_views": 6600,
       "total_sales": 2988,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-28T00:00:00",
       "days_inactive": 14,
       "is_inactive_30d": false,
@@ -4905,16 +4905,16 @@
       "account_id": "lionking",
       "chapters_count": 20,
       "total_views": 35300,
-      "total_sales": 2781,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 2782.8,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 857,
         "views_growth_pct": 2.49,
-        "sales_delta": 336.6,
-        "sales_growth_pct": 13.77
+        "sales_delta": 338.4,
+        "sales_growth_pct": 13.84
       },
       "growth_30d": {
         "views_delta": 0,
@@ -4922,8 +4922,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 1324.8,
-      "views_7_chapters": 1210,
+      "sales_7_chapters": 1326.6,
+      "views_7_chapters": 1212,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -4935,7 +4935,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 1062.0,
         "ตุลาคม": 1310.4,
-        "พฤศจิกายน": 408.6
+        "พฤศจิกายน": 410.4
       }
     },
     {
@@ -4946,7 +4946,7 @@
       "chapters_count": 50,
       "total_views": 13400,
       "total_sales": 2700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-04-10T00:00:00",
       "days_inactive": 215,
       "is_inactive_30d": true,
@@ -4975,7 +4975,7 @@
         "สิงหาคม": 90.0,
         "กันยายน": 32.4,
         "ตุลาคม": 9.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -4986,7 +4986,7 @@
       "chapters_count": 31,
       "total_views": 13600,
       "total_sales": 2600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-08-10T00:00:00",
       "days_inactive": 823,
       "is_inactive_30d": true,
@@ -5015,7 +5015,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 9.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5026,7 +5026,7 @@
       "chapters_count": 25,
       "total_views": 5300,
       "total_sales": 2600,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-03-30T00:00:00",
       "days_inactive": 591,
       "is_inactive_30d": true,
@@ -5055,7 +5055,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5066,7 +5066,7 @@
       "chapters_count": 39,
       "total_views": 11800,
       "total_sales": 2500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-09-04T00:00:00",
       "days_inactive": 68,
       "is_inactive_30d": true,
@@ -5095,7 +5095,7 @@
         "สิงหาคม": 824.4,
         "กันยายน": 142.2,
         "ตุลาคม": 1.8,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5105,16 +5105,16 @@
       "account_id": "lionking",
       "chapters_count": 31,
       "total_views": 10000,
-      "total_sales": 2498.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 2400,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": -34,
         "views_growth_pct": -0.34,
-        "sales_delta": 14.4,
-        "sales_growth_pct": 0.58
+        "sales_delta": -84.0,
+        "sales_growth_pct": -3.38
       },
       "growth_30d": {
         "views_delta": 0,
@@ -5146,7 +5146,7 @@
       "chapters_count": 25,
       "total_views": 12300,
       "total_sales": 2300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-06-17T00:00:00",
       "days_inactive": 147,
       "is_inactive_30d": true,
@@ -5175,7 +5175,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5186,10 +5186,10 @@
       "chapters_count": 21,
       "total_views": 36800,
       "total_sales": 2300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-07-20T00:00:00",
+      "days_inactive": 479,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -80,
         "views_growth_pct": -0.22,
@@ -5203,7 +5203,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 1892.4,
-      "views_7_chapters": 2626,
+      "views_7_chapters": 2584,
       "monthly_sales": {
         "มกราคม": 115.2,
         "กุมภาพันธ์": 234.0,
@@ -5215,7 +5215,7 @@
         "สิงหาคม": 10.8,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5226,10 +5226,10 @@
       "chapters_count": 21,
       "total_views": 18500,
       "total_sales": 2300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-12-21T00:00:00",
+      "days_inactive": 325,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -51,
         "views_growth_pct": -0.27,
@@ -5243,7 +5243,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 2334.2,
-      "views_7_chapters": 2596,
+      "views_7_chapters": 2550,
       "monthly_sales": {
         "มกราคม": 81.4,
         "กุมภาพันธ์": 0.0,
@@ -5255,7 +5255,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5266,7 +5266,7 @@
       "chapters_count": 37,
       "total_views": 12100,
       "total_sales": 2100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-07-10T00:00:00",
       "days_inactive": 854,
       "is_inactive_30d": true,
@@ -5295,7 +5295,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5306,7 +5306,7 @@
       "chapters_count": 26,
       "total_views": 14300,
       "total_sales": 2016,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-07T00:00:00",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -5346,10 +5346,10 @@
       "chapters_count": 22,
       "total_views": 10800,
       "total_sales": 2000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-12-17T00:00:00",
+      "days_inactive": 329,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -86,
         "views_growth_pct": -0.79,
@@ -5375,7 +5375,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 12.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5386,10 +5386,10 @@
       "chapters_count": 27,
       "total_views": 11900,
       "total_sales": 2000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-01-16T00:00:00",
+      "days_inactive": 299,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -10,
         "views_growth_pct": -0.08,
@@ -5415,7 +5415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5426,7 +5426,7 @@
       "chapters_count": 24,
       "total_views": 26500,
       "total_sales": 1900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-03-03T00:00:00",
       "days_inactive": 618,
       "is_inactive_30d": true,
@@ -5455,7 +5455,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5466,7 +5466,7 @@
       "chapters_count": 21,
       "total_views": 13900,
       "total_sales": 1900,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-02-26T00:00:00",
       "days_inactive": 623,
       "is_inactive_30d": true,
@@ -5495,7 +5495,7 @@
         "สิงหาคม": 8.0,
         "กันยายน": 8.0,
         "ตุลาคม": 1.6,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5506,10 +5506,10 @@
       "chapters_count": 36,
       "total_views": 9100,
       "total_sales": 1700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-05-18T00:00:00",
+      "days_inactive": 542,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -75,
         "views_growth_pct": -0.82,
@@ -5535,7 +5535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5546,10 +5546,10 @@
       "chapters_count": 31,
       "total_views": 21700,
       "total_sales": 1700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-02-13T00:00:00",
+      "days_inactive": 1002,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -88,
         "views_growth_pct": -0.4,
@@ -5575,7 +5575,7 @@
         "สิงหาคม": 35.6,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5586,7 +5586,7 @@
       "chapters_count": 12,
       "total_views": 7300,
       "total_sales": 1700,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2023-12-29T00:00:00",
       "days_inactive": 1048,
       "is_inactive_30d": true,
@@ -5615,7 +5615,7 @@
         "สิงหาคม": 8.6,
         "กันยายน": 13.5,
         "ตุลาคม": 11.1,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5624,17 +5624,17 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 37,
-      "total_views": 6700,
-      "total_sales": 1661.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_views": 6800,
+      "total_sales": 1674,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 618,
-        "views_growth_pct": 10.16,
-        "sales_delta": 151.2,
-        "sales_growth_pct": 10.01
+        "views_delta": 718,
+        "views_growth_pct": 11.81,
+        "sales_delta": 163.8,
+        "sales_growth_pct": 10.85
       },
       "growth_30d": {
         "views_delta": 0,
@@ -5642,8 +5642,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 297.0,
-      "views_7_chapters": 207,
+      "sales_7_chapters": 309.6,
+      "views_7_chapters": 214,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -5655,7 +5655,7 @@
         "สิงหาคม": 302.4,
         "กันยายน": 234.0,
         "ตุลาคม": 973.8,
-        "พฤศจิกายน": 151.2
+        "พฤศจิกายน": 163.8
       }
     },
     {
@@ -5665,16 +5665,16 @@
       "account_id": "lionking",
       "chapters_count": 28,
       "total_views": 11200,
-      "total_sales": 1500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "total_sales": 1597.55,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-01-04T00:00:00",
+      "days_inactive": 1042,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -38,
         "views_growth_pct": -0.34,
-        "sales_delta": -97.55,
-        "sales_growth_pct": -6.11
+        "sales_delta": 0.0,
+        "sales_growth_pct": 0.0
       },
       "growth_30d": {
         "views_delta": 0,
@@ -5695,7 +5695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 19.9,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5706,10 +5706,10 @@
       "chapters_count": 20,
       "total_views": 8500,
       "total_sales": 1500,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-01-20T00:00:00",
+      "days_inactive": 295,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -7,
         "views_growth_pct": -0.08,
@@ -5735,7 +5735,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5745,16 +5745,16 @@
       "account_id": "lionking",
       "chapters_count": 28,
       "total_views": 5800,
-      "total_sales": 1431,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 1400,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-02T00:00:00",
       "days_inactive": 9,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 37,
         "views_growth_pct": 0.64,
-        "sales_delta": 9.0,
-        "sales_growth_pct": 0.63
+        "sales_delta": -22.0,
+        "sales_growth_pct": -1.55
       },
       "growth_30d": {
         "views_delta": 0,
@@ -5786,7 +5786,7 @@
       "chapters_count": 32,
       "total_views": 5000,
       "total_sales": 1400,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-08-07T00:00:00",
       "days_inactive": 96,
       "is_inactive_30d": true,
@@ -5815,7 +5815,7 @@
         "สิงหาคม": 291.6,
         "กันยายน": 32.4,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5826,7 +5826,7 @@
       "chapters_count": 19,
       "total_views": 4300,
       "total_sales": 1346.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-09T00:00:00",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -5866,7 +5866,7 @@
       "chapters_count": 23,
       "total_views": 4400,
       "total_sales": 1301.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-07T00:00:00",
       "days_inactive": 4,
       "is_inactive_30d": false,
@@ -5906,7 +5906,7 @@
       "chapters_count": 17,
       "total_views": 9800,
       "total_sales": 1300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-01-16T00:00:00",
       "days_inactive": 1030,
       "is_inactive_30d": true,
@@ -5935,7 +5935,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 7.5,
         "ตุลาคม": 11.35,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5946,10 +5946,10 @@
       "chapters_count": 12,
       "total_views": 6700,
       "total_sales": 1300,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-10-02T00:00:00",
+      "days_inactive": 770,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -1,
         "views_growth_pct": -0.01,
@@ -5975,7 +5975,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -5985,16 +5985,16 @@
       "account_id": "lionking",
       "chapters_count": 20,
       "total_views": 6900,
-      "total_sales": 1252.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 1200,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 38,
         "views_growth_pct": 0.55,
-        "sales_delta": 61.2,
-        "sales_growth_pct": 5.14
+        "sales_delta": 8.4,
+        "sales_growth_pct": 0.7
       },
       "growth_30d": {
         "views_delta": 0,
@@ -6026,10 +6026,10 @@
       "chapters_count": 21,
       "total_views": 5200,
       "total_sales": 1200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2026-01-02T00:00:00",
+      "days_inactive": 313,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -38,
         "views_growth_pct": -0.73,
@@ -6055,7 +6055,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6066,10 +6066,10 @@
       "chapters_count": 25,
       "total_views": 5000,
       "total_sales": 1200,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-11-20T00:00:00",
+      "days_inactive": 356,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -58,
         "views_growth_pct": -1.15,
@@ -6095,7 +6095,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6106,10 +6106,10 @@
       "chapters_count": 31,
       "total_views": 12100,
       "total_sales": 1100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "2026-08-28T00:00:00",
-      "days_inactive": 75,
-      "is_inactive_30d": true,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": -56,
         "views_growth_pct": -0.46,
@@ -6135,7 +6135,7 @@
         "สิงหาคม": 142.2,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6146,7 +6146,7 @@
       "chapters_count": 20,
       "total_views": 10800,
       "total_sales": 1100,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-06-16T00:00:00",
       "days_inactive": 513,
       "is_inactive_30d": true,
@@ -6175,7 +6175,7 @@
         "สิงหาคม": 9.0,
         "กันยายน": 0.0,
         "ตุลาคม": 1.8,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6186,7 +6186,7 @@
       "chapters_count": 25,
       "total_views": 6900,
       "total_sales": 1049.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-02T00:00:00",
       "days_inactive": 9,
       "is_inactive_30d": false,
@@ -6226,7 +6226,7 @@
       "chapters_count": 22,
       "total_views": 8500,
       "total_sales": 1000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-07-14T00:00:00",
       "days_inactive": 120,
       "is_inactive_30d": true,
@@ -6255,7 +6255,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6266,7 +6266,7 @@
       "chapters_count": 18,
       "total_views": 7600,
       "total_sales": 1000,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-06-09T00:00:00",
       "days_inactive": 520,
       "is_inactive_30d": true,
@@ -6295,7 +6295,7 @@
         "สิงหาคม": 5.4,
         "กันยายน": 0.0,
         "ตุลาคม": 5.4,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6306,7 +6306,7 @@
       "chapters_count": 28,
       "total_views": 6500,
       "total_sales": 990,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-03-12T00:00:00",
       "days_inactive": 244,
       "is_inactive_30d": true,
@@ -6335,7 +6335,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6346,10 +6346,10 @@
       "chapters_count": 15,
       "total_views": 8100,
       "total_sales": 930.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-12-28T00:00:00",
+      "days_inactive": 318,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -18,
         "views_growth_pct": -0.22,
@@ -6375,7 +6375,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6386,7 +6386,7 @@
       "chapters_count": 29,
       "total_views": 6900,
       "total_sales": 919.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-05-10T00:00:00",
       "days_inactive": 550,
       "is_inactive_30d": true,
@@ -6415,7 +6415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6426,7 +6426,7 @@
       "chapters_count": 24,
       "total_views": 16700,
       "total_sales": 916.7,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-05T00:00:00",
       "days_inactive": 675,
       "is_inactive_30d": true,
@@ -6455,7 +6455,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 5.0,
         "ตุลาคม": 5.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6466,10 +6466,10 @@
       "chapters_count": 21,
       "total_views": 11600,
       "total_sales": 867.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-06T00:00:00",
+      "days_inactive": 523,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -26,
         "views_growth_pct": -0.22,
@@ -6495,7 +6495,7 @@
         "สิงหาคม": 10.8,
         "กันยายน": 10.8,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6506,10 +6506,10 @@
       "chapters_count": 16,
       "total_views": 5100,
       "total_sales": 722,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-09-19T00:00:00",
+      "days_inactive": 783,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -65,
         "views_growth_pct": -1.26,
@@ -6535,7 +6535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6546,7 +6546,7 @@
       "chapters_count": 20,
       "total_views": 5900,
       "total_sales": 709.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-12-05T00:00:00",
       "days_inactive": 341,
       "is_inactive_30d": true,
@@ -6575,7 +6575,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6586,7 +6586,7 @@
       "chapters_count": 14,
       "total_views": 8400,
       "total_sales": 669.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-11-17T00:00:00",
       "days_inactive": 359,
       "is_inactive_30d": true,
@@ -6615,7 +6615,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6626,7 +6626,7 @@
       "chapters_count": 9,
       "total_views": 10400,
       "total_sales": 620.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-10-13T00:00:00",
       "days_inactive": 759,
       "is_inactive_30d": true,
@@ -6655,7 +6655,7 @@
         "สิงหาคม": 6.4,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6666,7 +6666,7 @@
       "chapters_count": 17,
       "total_views": 3800,
       "total_sales": 610.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-07-12T00:00:00",
       "days_inactive": 122,
       "is_inactive_30d": true,
@@ -6695,7 +6695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6706,10 +6706,10 @@
       "chapters_count": 13,
       "total_views": 4200,
       "total_sales": 572,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-11-22T00:00:00",
+      "days_inactive": 719,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -59,
         "views_growth_pct": -1.39,
@@ -6735,7 +6735,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6745,16 +6745,16 @@
       "account_id": "lionking",
       "chapters_count": 16,
       "total_views": 4500,
-      "total_sales": 534.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "total_sales": 538.2,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
         "views_delta": 47,
         "views_growth_pct": 1.06,
-        "sales_delta": 52.2,
-        "sales_growth_pct": 10.82
+        "sales_delta": 55.8,
+        "sales_growth_pct": 11.57
       },
       "growth_30d": {
         "views_delta": 0,
@@ -6762,8 +6762,8 @@
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
-      "sales_7_chapters": 534.6,
-      "views_7_chapters": 803,
+      "sales_7_chapters": 538.2,
+      "views_7_chapters": 805,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -6775,7 +6775,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 473.4,
-        "พฤศจิกายน": 61.2
+        "พฤศจิกายน": 64.8
       }
     },
     {
@@ -6786,7 +6786,7 @@
       "chapters_count": 13,
       "total_views": 5600,
       "total_sales": 523.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-05-19T00:00:00",
       "days_inactive": 541,
       "is_inactive_30d": true,
@@ -6815,7 +6815,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6826,7 +6826,7 @@
       "chapters_count": 13,
       "total_views": 6500,
       "total_sales": 523.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-04-07T00:00:00",
       "days_inactive": 583,
       "is_inactive_30d": true,
@@ -6855,7 +6855,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6866,7 +6866,7 @@
       "chapters_count": 24,
       "total_views": 7300,
       "total_sales": 493.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-09-27T00:00:00",
       "days_inactive": 410,
       "is_inactive_30d": true,
@@ -6895,7 +6895,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 18.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6906,7 +6906,7 @@
       "chapters_count": 22,
       "total_views": 9100,
       "total_sales": 457.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-06T00:00:00",
       "days_inactive": 674,
       "is_inactive_30d": true,
@@ -6935,7 +6935,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 14.4,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6946,10 +6946,10 @@
       "chapters_count": 15,
       "total_views": 4800,
       "total_sales": 421.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-11-26T00:00:00",
+      "days_inactive": 350,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -4,
         "views_growth_pct": -0.08,
@@ -6975,7 +6975,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 9.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -6986,7 +6986,7 @@
       "chapters_count": 12,
       "total_views": 2700,
       "total_sales": 404.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-04-01T00:00:00",
       "days_inactive": 589,
       "is_inactive_30d": true,
@@ -7015,7 +7015,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7026,10 +7026,10 @@
       "chapters_count": 7,
       "total_views": 2200,
       "total_sales": 402,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-01-22T00:00:00",
+      "days_inactive": 658,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -98,
         "views_growth_pct": -4.26,
@@ -7055,7 +7055,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7066,7 +7066,7 @@
       "chapters_count": 9,
       "total_views": 4100,
       "total_sales": 384,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-05-01T00:00:00",
       "days_inactive": 924,
       "is_inactive_30d": true,
@@ -7095,7 +7095,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7106,10 +7106,10 @@
       "chapters_count": 5,
       "total_views": 3000,
       "total_sales": 364.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-02-21T00:00:00",
+      "days_inactive": 994,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -25,
         "views_growth_pct": -0.83,
@@ -7135,7 +7135,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7146,10 +7146,10 @@
       "chapters_count": 38,
       "total_views": 7000,
       "total_sales": 352.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-04T00:00:00",
+      "days_inactive": 525,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -66,
         "views_growth_pct": -0.93,
@@ -7175,7 +7175,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7186,7 +7186,7 @@
       "chapters_count": 17,
       "total_views": 2400,
       "total_sales": 307.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-28T00:00:00",
       "days_inactive": 14,
       "is_inactive_30d": false,
@@ -7226,7 +7226,7 @@
       "chapters_count": 11,
       "total_views": 3500,
       "total_sales": 275.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-12-07T00:00:00",
       "days_inactive": 339,
       "is_inactive_30d": true,
@@ -7255,7 +7255,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7266,7 +7266,7 @@
       "chapters_count": 12,
       "total_views": 3100,
       "total_sales": 271.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-28T00:00:00",
       "days_inactive": 14,
       "is_inactive_30d": false,
@@ -7306,7 +7306,7 @@
       "chapters_count": 16,
       "total_views": 4800,
       "total_sales": 260.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-10-13T00:00:00",
       "days_inactive": 759,
       "is_inactive_30d": true,
@@ -7335,7 +7335,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7346,10 +7346,10 @@
       "chapters_count": 17,
       "total_views": 5100,
       "total_sales": 259.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-04T00:00:00",
+      "days_inactive": 525,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -41,
         "views_growth_pct": -0.8,
@@ -7375,7 +7375,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7386,10 +7386,10 @@
       "chapters_count": 8,
       "total_views": 2600,
       "total_sales": 236.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2023-11-25T00:00:00",
+      "days_inactive": 1082,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -9,
         "views_growth_pct": -0.34,
@@ -7415,7 +7415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7426,10 +7426,10 @@
       "chapters_count": 8,
       "total_views": 2200,
       "total_sales": 214.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-04-07T00:00:00",
+      "days_inactive": 948,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -53,
         "views_growth_pct": -2.35,
@@ -7455,7 +7455,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7466,10 +7466,10 @@
       "chapters_count": 7,
       "total_views": 28200,
       "total_sales": 198,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-10-15T00:00:00",
+      "days_inactive": 757,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -72,
         "views_growth_pct": -0.25,
@@ -7483,7 +7483,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 198.0,
-      "views_7_chapters": 22062,
+      "views_7_chapters": 21800,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -7495,7 +7495,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7506,7 +7506,7 @@
       "chapters_count": 7,
       "total_views": 17200,
       "total_sales": 182,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-21T00:00:00",
       "days_inactive": 659,
       "is_inactive_30d": true,
@@ -7535,7 +7535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7546,7 +7546,7 @@
       "chapters_count": 12,
       "total_views": 2000,
       "total_sales": 172.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-19T00:00:00",
       "days_inactive": 23,
       "is_inactive_30d": false,
@@ -7586,7 +7586,7 @@
       "chapters_count": 4,
       "total_views": 4700,
       "total_sales": 168,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-06-25T00:00:00",
       "days_inactive": 869,
       "is_inactive_30d": true,
@@ -7615,7 +7615,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7626,7 +7626,7 @@
       "chapters_count": 8,
       "total_views": 8800,
       "total_sales": 157.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-02-04T00:00:00",
       "days_inactive": 1011,
       "is_inactive_30d": true,
@@ -7655,7 +7655,7 @@
         "สิงหาคม": 3.2,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7666,7 +7666,7 @@
       "chapters_count": 137,
       "total_views": 9900,
       "total_sales": 149.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-04-21T00:00:00",
       "days_inactive": 569,
       "is_inactive_30d": true,
@@ -7695,7 +7695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 1.8,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7706,7 +7706,7 @@
       "chapters_count": 6,
       "total_views": 3200,
       "total_sales": 110.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-02-27T00:00:00",
       "days_inactive": 988,
       "is_inactive_30d": true,
@@ -7735,7 +7735,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7746,7 +7746,7 @@
       "chapters_count": 7,
       "total_views": 1000,
       "total_sales": 106,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-26T00:00:00",
       "days_inactive": 654,
       "is_inactive_30d": true,
@@ -7775,7 +7775,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7786,7 +7786,7 @@
       "chapters_count": 27,
       "total_views": 1400,
       "total_sales": 82.8,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-06-11T00:00:00",
       "days_inactive": 153,
       "is_inactive_30d": true,
@@ -7815,7 +7815,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7826,7 +7826,7 @@
       "chapters_count": 11,
       "total_views": 3600,
       "total_sales": 75.6,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-11-17T00:00:00",
       "days_inactive": 359,
       "is_inactive_30d": true,
@@ -7855,7 +7855,7 @@
         "สิงหาคม": 1.8,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7866,10 +7866,10 @@
       "chapters_count": 11,
       "total_views": 3100,
       "total_sales": 72,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-03T00:00:00",
+      "days_inactive": 526,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -73,
         "views_growth_pct": -2.3,
@@ -7895,7 +7895,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 1.8,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7906,7 +7906,7 @@
       "chapters_count": 6,
       "total_views": 3700,
       "total_sales": 42.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-01-23T00:00:00",
       "days_inactive": 1023,
       "is_inactive_30d": true,
@@ -7935,7 +7935,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7946,10 +7946,10 @@
       "chapters_count": 8,
       "total_views": 331,
       "total_sales": 32,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-07T00:00:00",
+      "days_inactive": 522,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -7975,7 +7975,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -7986,10 +7986,10 @@
       "chapters_count": 10,
       "total_views": 405,
       "total_sales": 18,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-02T00:00:00",
+      "days_inactive": 527,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 2,
         "views_growth_pct": 0.5,
@@ -8015,7 +8015,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8026,7 +8026,7 @@
       "chapters_count": 17,
       "total_views": 2500,
       "total_sales": 14.4,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-12-29T00:00:00",
       "days_inactive": 682,
       "is_inactive_30d": true,
@@ -8055,7 +8055,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8066,10 +8066,10 @@
       "chapters_count": 11,
       "total_views": 924,
       "total_sales": 11,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-07T00:00:00",
+      "days_inactive": 522,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -8095,7 +8095,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8106,7 +8106,7 @@
       "chapters_count": 9,
       "total_views": 3400,
       "total_sales": 7.2,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-11-17T00:00:00",
       "days_inactive": 359,
       "is_inactive_30d": true,
@@ -8135,7 +8135,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8146,7 +8146,7 @@
       "chapters_count": 0,
       "total_views": 0,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -8165,7 +8165,17 @@
       "sales_7_chapters": 0.0,
       "views_7_chapters": 0,
       "monthly_sales": {
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0,
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0
       }
     },
     {
@@ -8176,7 +8186,7 @@
       "chapters_count": 9,
       "total_views": 181,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
@@ -8205,7 +8215,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8216,7 +8226,7 @@
       "chapters_count": 7,
       "total_views": 1300,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-04T00:00:00",
       "days_inactive": 7,
       "is_inactive_30d": false,
@@ -8233,7 +8243,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 1181,
+      "views_7_chapters": 1183,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -8245,7 +8255,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8256,7 +8266,7 @@
       "chapters_count": 4,
       "total_views": 378,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-20T00:00:00",
       "days_inactive": 22,
       "is_inactive_30d": false,
@@ -8285,7 +8295,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8294,15 +8304,15 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 7,
-      "total_views": 287,
+      "total_views": 288,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-10-23T00:00:00",
       "days_inactive": 19,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 2,
-        "views_growth_pct": 0.7,
+        "views_delta": 3,
+        "views_growth_pct": 1.05,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -8325,7 +8335,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8336,7 +8346,7 @@
       "chapters_count": 9,
       "total_views": 471,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-09T00:00:00",
       "days_inactive": 2,
       "is_inactive_30d": false,
@@ -8365,7 +8375,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8376,7 +8386,7 @@
       "chapters_count": 0,
       "total_views": 12,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "",
       "days_inactive": 0,
       "is_inactive_30d": false,
@@ -8405,7 +8415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8414,15 +8424,15 @@
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "chapters_count": 6,
-      "total_views": 176,
+      "total_views": 177,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-11-10T00:00:00",
       "days_inactive": 1,
       "is_inactive_30d": false,
       "growth_7d": {
-        "views_delta": 61,
-        "views_growth_pct": 53.04,
+        "views_delta": 62,
+        "views_growth_pct": 53.91,
         "sales_delta": 0.0,
         "sales_growth_pct": 0.0
       },
@@ -8433,7 +8443,7 @@
         "sales_growth_pct": 0.0
       },
       "sales_7_chapters": 0.0,
-      "views_7_chapters": 149,
+      "views_7_chapters": 150,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -8445,7 +8455,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8456,7 +8466,7 @@
       "chapters_count": 4,
       "total_views": 530,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-06-06T00:00:00",
       "days_inactive": 158,
       "is_inactive_30d": true,
@@ -8485,7 +8495,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8496,7 +8506,7 @@
       "chapters_count": 6,
       "total_views": 3500,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-03-23T00:00:00",
       "days_inactive": 233,
       "is_inactive_30d": true,
@@ -8525,7 +8535,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8536,10 +8546,10 @@
       "chapters_count": 8,
       "total_views": 2300,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-06T00:00:00",
+      "days_inactive": 523,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -99,
         "views_growth_pct": -4.13,
@@ -8565,7 +8575,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8576,7 +8586,7 @@
       "chapters_count": 1,
       "total_views": 112,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-12-14T00:00:00",
       "days_inactive": 332,
       "is_inactive_30d": true,
@@ -8605,7 +8615,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8616,7 +8626,7 @@
       "chapters_count": 10,
       "total_views": 2200,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-06-02T00:00:00",
       "days_inactive": 527,
       "is_inactive_30d": true,
@@ -8645,7 +8655,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8656,7 +8666,7 @@
       "chapters_count": 5,
       "total_views": 1400,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-25T00:00:00",
       "days_inactive": 655,
       "is_inactive_30d": true,
@@ -8685,7 +8695,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8696,7 +8706,7 @@
       "chapters_count": 14,
       "total_views": 9100,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-02-26T00:00:00",
       "days_inactive": 623,
       "is_inactive_30d": true,
@@ -8725,7 +8735,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8736,7 +8746,7 @@
       "chapters_count": 10,
       "total_views": 4300,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-18T00:00:00",
       "days_inactive": 662,
       "is_inactive_30d": true,
@@ -8765,7 +8775,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8776,7 +8786,7 @@
       "chapters_count": 9,
       "total_views": 6400,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-12-16T00:00:00",
       "days_inactive": 695,
       "is_inactive_30d": true,
@@ -8805,7 +8815,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8816,7 +8826,7 @@
       "chapters_count": 3,
       "total_views": 2800,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-08-11T00:00:00",
       "days_inactive": 822,
       "is_inactive_30d": true,
@@ -8845,7 +8855,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8856,7 +8866,7 @@
       "chapters_count": 4,
       "total_views": 1500,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-09-03T00:00:00",
       "days_inactive": 799,
       "is_inactive_30d": true,
@@ -8885,7 +8895,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8896,7 +8906,7 @@
       "chapters_count": 3,
       "total_views": 3300,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-03-15T00:00:00",
       "days_inactive": 971,
       "is_inactive_30d": true,
@@ -8925,7 +8935,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8936,7 +8946,7 @@
       "chapters_count": 4,
       "total_views": 2200,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-03-02T00:00:00",
       "days_inactive": 984,
       "is_inactive_30d": true,
@@ -8965,7 +8975,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -8976,7 +8986,7 @@
       "chapters_count": 8,
       "total_views": 3600,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-02-10T00:00:00",
       "days_inactive": 274,
       "is_inactive_30d": true,
@@ -9005,7 +9015,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9016,7 +9026,7 @@
       "chapters_count": 9,
       "total_views": 10200,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2026-02-11T00:00:00",
       "days_inactive": 273,
       "is_inactive_30d": true,
@@ -9045,7 +9055,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9056,10 +9066,10 @@
       "chapters_count": 3,
       "total_views": 197,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-11-01T00:00:00",
+      "days_inactive": 375,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -9085,7 +9095,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9096,10 +9106,10 @@
       "chapters_count": 5,
       "total_views": 873,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-30T00:00:00",
+      "days_inactive": 499,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -9125,7 +9135,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9136,7 +9146,7 @@
       "chapters_count": 10,
       "total_views": 4100,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-07-21T00:00:00",
       "days_inactive": 478,
       "is_inactive_30d": true,
@@ -9165,7 +9175,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9176,10 +9186,10 @@
       "chapters_count": 1,
       "total_views": 77,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-06T00:00:00",
+      "days_inactive": 523,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": 0,
         "views_growth_pct": 0.0,
@@ -9205,7 +9215,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9216,10 +9226,10 @@
       "chapters_count": 9,
       "total_views": 1100,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-06-04T00:00:00",
+      "days_inactive": 525,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -88,
         "views_growth_pct": -7.41,
@@ -9245,7 +9255,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9256,10 +9266,10 @@
       "chapters_count": 10,
       "total_views": 3600,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2025-05-30T00:00:00",
+      "days_inactive": 530,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -82,
         "views_growth_pct": -2.23,
@@ -9285,7 +9295,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9296,7 +9306,7 @@
       "chapters_count": 5,
       "total_views": 783,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2025-01-13T00:00:00",
       "days_inactive": 667,
       "is_inactive_30d": true,
@@ -9325,7 +9335,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9336,10 +9346,10 @@
       "chapters_count": 4,
       "total_views": 1700,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-11-18T00:00:00",
+      "days_inactive": 723,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -3,
         "views_growth_pct": -0.18,
@@ -9365,7 +9375,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9376,10 +9386,10 @@
       "chapters_count": 3,
       "total_views": 2400,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-10-13T00:00:00",
+      "days_inactive": 759,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -13,
         "views_growth_pct": -0.54,
@@ -9405,7 +9415,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9416,7 +9426,7 @@
       "chapters_count": 2,
       "total_views": 665,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
       "last_chapter_updated_at": "2024-10-06T00:00:00",
       "days_inactive": 766,
       "is_inactive_30d": true,
@@ -9445,7 +9455,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     },
     {
@@ -9456,10 +9466,10 @@
       "chapters_count": 6,
       "total_views": 1600,
       "total_sales": 0,
-      "recorded_at": "2026-11-11T01:47:09.506905+00:00",
-      "last_chapter_updated_at": "",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "recorded_at": "2026-11-11T02:48:15.274168+00:00",
+      "last_chapter_updated_at": "2024-09-03T00:00:00",
+      "days_inactive": 799,
+      "is_inactive_30d": true,
       "growth_7d": {
         "views_delta": -24,
         "views_growth_pct": -1.48,
@@ -9485,7 +9495,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       }
     }
   ]

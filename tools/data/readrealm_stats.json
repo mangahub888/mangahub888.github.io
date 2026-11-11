@@ -22,7 +22,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 2539,
@@ -50,7 +50,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 5392,
@@ -65,8 +65,8 @@
       "comic_id": "MXZg08yOaRDjVqw7A39l",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 325,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 81.4,
         "กุมภาพันธ์": 0.0,
@@ -78,11 +78,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2334.2,
+      "views_7_chapters": 2550,
+      "last_chapter_updated_at": "2025-12-21T00:00:00"
     },
     {
       "cid": "3E8jmDbO029QYZwR5qpa",
@@ -93,8 +93,8 @@
       "comic_id": "3E8jmDbO029QYZwR5qpa",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 295,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 305.8,
         "กุมภาพันธ์": 4.4,
@@ -106,11 +106,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 928.4,
+      "views_7_chapters": 857,
+      "last_chapter_updated_at": "2026-01-20T00:00:00"
     },
     {
       "cid": "3E8jmDbO02AeYZwR5qpa",
@@ -121,8 +121,8 @@
       "comic_id": "3E8jmDbO02AeYZwR5qpa",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 313,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 193.6,
         "กุมภาพันธ์": 22.0,
@@ -134,11 +134,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 624.8,
+      "views_7_chapters": 711,
+      "last_chapter_updated_at": "2026-01-02T00:00:00"
     },
     {
       "cid": "NG8Qg2kxDyRMOz7Kdeo9",
@@ -149,8 +149,8 @@
       "comic_id": "NG8Qg2kxDyRMOz7Kdeo9",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 375,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -162,11 +162,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 167,
+      "last_chapter_updated_at": "2025-11-01T00:00:00"
     },
     {
       "cid": "0AplLrbON0GZYZ15okX2",
@@ -177,8 +177,8 @@
       "comic_id": "0AplLrbON0GZYZ15okX2",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 299,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 103.4,
         "กุมภาพันธ์": 0.0,
@@ -190,11 +190,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 728.2,
+      "views_7_chapters": 546,
+      "last_chapter_updated_at": "2026-01-16T00:00:00"
     },
     {
       "cid": "aDZ1qlAOelpBx5k7gmeM",
@@ -205,8 +205,8 @@
       "comic_id": "aDZ1qlAOelpBx5k7gmeM",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 318,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 44.0,
         "กุมภาพันธ์": 0.0,
@@ -218,11 +218,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 930.6,
+      "views_7_chapters": 2091,
+      "last_chapter_updated_at": "2025-12-28T00:00:00"
     },
     {
       "cid": "JvApmMXVJGeoYg1re8Pa",
@@ -233,8 +233,8 @@
       "comic_id": "JvApmMXVJGeoYg1re8Pa",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 356,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -246,11 +246,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 761.2,
+      "views_7_chapters": 551,
+      "last_chapter_updated_at": "2025-11-20T00:00:00"
     },
     {
       "cid": "Z41KDdWY19m4Yw7MA5Pk",
@@ -261,8 +261,8 @@
       "comic_id": "Z41KDdWY19m4Yw7MA5Pk",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 273,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1788.6,
         "กุมภาพันธ์": 2464.0,
@@ -274,11 +274,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3555.2,
+      "views_7_chapters": 3314,
+      "last_chapter_updated_at": "2026-02-11T00:00:00"
     },
     {
       "cid": "Rr1aN5Wx38MeOk4oPDQd",
@@ -302,7 +302,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 3245,
       "views_7_chapters": 2924,
@@ -317,8 +317,8 @@
       "comic_id": "XrDoGdyOrzkQO8pbqz1a",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 342,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 48.4,
         "กุมภาพันธ์": 6.6,
@@ -330,11 +330,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 888.8,
+      "views_7_chapters": 698,
+      "last_chapter_updated_at": "2025-12-04T00:00:00"
     },
     {
       "cid": "rwEvg7LY8KBQV20blNPp",
@@ -345,8 +345,8 @@
       "comic_id": "rwEvg7LY8KBQV20blNPp",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 499,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -358,11 +358,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 527,
+      "last_chapter_updated_at": "2025-06-30T00:00:00"
     },
     {
       "cid": "nvEqQwJYP9JExedr65l2",
@@ -373,8 +373,8 @@
       "comic_id": "nvEqQwJYP9JExedr65l2",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 339,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 105.6,
         "กุมภาพันธ์": 44.0,
@@ -386,11 +386,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 323.4,
+      "views_7_chapters": 329,
+      "last_chapter_updated_at": "2025-12-07T00:00:00"
     },
     {
       "cid": "kJy7ZdeYZopQxX5PAwB6",
@@ -414,7 +414,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 2131,
@@ -442,7 +442,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 719.4,
       "views_7_chapters": 631,
@@ -457,8 +457,8 @@
       "comic_id": "GmA4egMxWDaLOB8PWbyp",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 523,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -470,11 +470,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 15,
+      "last_chapter_updated_at": "2025-06-06T00:00:00"
     },
     {
       "cid": "JvApmMXVJ9aNOg1re8Pa",
@@ -485,8 +485,8 @@
       "comic_id": "JvApmMXVJ9aNOg1re8Pa",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 289,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 2114.2,
         "กุมภาพันธ์": 310.2,
@@ -498,11 +498,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2050.4,
+      "views_7_chapters": 2142,
+      "last_chapter_updated_at": "2026-01-26T00:00:00"
     },
     {
       "cid": "vGkNElzYlKPZVq27mKdM",
@@ -513,8 +513,8 @@
       "comic_id": "vGkNElzYlKPZVq27mKdM",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 525,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -526,11 +526,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 718,
+      "last_chapter_updated_at": "2025-06-04T00:00:00"
     },
     {
       "cid": "0AplLrbON92NxZ15okX2",
@@ -541,8 +541,8 @@
       "comic_id": "0AplLrbON92NxZ15okX2",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 522,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -554,11 +554,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 32,
+      "views_7_chapters": 153,
+      "last_chapter_updated_at": "2025-06-07T00:00:00"
     },
     {
       "cid": "w9bjalkObG8bVWXyN0K6",
@@ -569,8 +569,8 @@
       "comic_id": "w9bjalkObG8bVWXyN0K6",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 530,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -582,11 +582,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 2003,
+      "last_chapter_updated_at": "2025-05-30T00:00:00"
     },
     {
       "cid": "kJy7ZdeYZoQexX5PAwB6",
@@ -597,8 +597,8 @@
       "comic_id": "kJy7ZdeYZoQexX5PAwB6",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 522,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -610,11 +610,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 11,
+      "views_7_chapters": 430,
+      "last_chapter_updated_at": "2025-06-07T00:00:00"
     },
     {
       "cid": "jamDek8Yo9bBO0Pz1JNw",
@@ -625,8 +625,8 @@
       "comic_id": "jamDek8Yo9bBO0Pz1JNw",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 525,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -638,11 +638,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 259.6,
+      "views_7_chapters": 1189,
+      "last_chapter_updated_at": "2025-06-04T00:00:00"
     },
     {
       "cid": "GmA4egMxWDoqOB8PWbyp",
@@ -653,8 +653,8 @@
       "comic_id": "GmA4egMxWDoqOB8PWbyp",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 514,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -666,11 +666,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1447.6,
+      "views_7_chapters": 1119,
+      "last_chapter_updated_at": "2025-06-15T00:00:00"
     },
     {
       "cid": "a7qNk8mOK6BBxXyvogDn",
@@ -681,8 +681,8 @@
       "comic_id": "a7qNk8mOK6BBxXyvogDn",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 517,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 30.8,
         "กุมภาพันธ์": 2.2,
@@ -694,11 +694,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 946,
-      "views_7_chapters": 583,
-      "last_chapter_updated_at": "2025-06-12T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "RbKaMELO79vqYglzP41q",
@@ -722,7 +722,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 367.4,
       "views_7_chapters": 2147,
@@ -750,7 +750,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1078,
       "views_7_chapters": 836,
@@ -778,7 +778,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1228.4,
       "views_7_chapters": 971,
@@ -806,7 +806,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 411.4,
       "views_7_chapters": 272,
@@ -834,7 +834,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1188,
       "views_7_chapters": 920,
@@ -862,7 +862,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1597.2,
       "views_7_chapters": 856,
@@ -890,7 +890,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 968,
       "views_7_chapters": 692,
@@ -918,7 +918,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 404.8,
       "views_7_chapters": 859,
@@ -946,7 +946,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 523.6,
       "views_7_chapters": 2162,
@@ -974,7 +974,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1896.4,
       "views_7_chapters": 1361,
@@ -1002,7 +1002,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 495,
       "views_7_chapters": 341,
@@ -1030,7 +1030,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1267.2,
       "views_7_chapters": 804,
@@ -1045,8 +1045,8 @@
       "comic_id": "0AplLrbONRyoOZ15okX2",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 447,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 338.8,
         "กุมภาพันธ์": 382.8,
@@ -1058,11 +1058,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3058,
+      "views_7_chapters": 2186,
+      "last_chapter_updated_at": "2025-08-21T00:00:00"
     },
     {
       "cid": "NG8Qg2kxDpdBxz7Kdeo9",
@@ -1086,7 +1086,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1907.4,
       "views_7_chapters": 1559,
@@ -1114,7 +1114,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 0,
@@ -1129,8 +1129,8 @@
       "comic_id": "zkJdZa0Y63Xbxrv4KR5n",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 530,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 79.2,
         "กุมภาพันธ์": 4.4,
@@ -1142,11 +1142,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1595,
+      "views_7_chapters": 948,
+      "last_chapter_updated_at": "2025-05-30T00:00:00"
     },
     {
       "cid": "MvyBR09xzD6WVbd1NrqE",
@@ -1170,7 +1170,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 0,
@@ -1185,8 +1185,8 @@
       "comic_id": "aDZ1qlAOezezV5k7gmeM",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 503,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1198,11 +1198,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 912.6,
+      "views_7_chapters": 6149,
+      "last_chapter_updated_at": "2025-06-26T00:00:00"
     },
     {
       "cid": "rwEvg7LY89g1x20blNPp",
@@ -1226,7 +1226,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 0,
@@ -1241,8 +1241,8 @@
       "comic_id": "XrDoGdyOrNPdO8pbqz1a",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 658,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1254,11 +1254,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 402,
+      "views_7_chapters": 1689,
+      "last_chapter_updated_at": "2025-01-22T00:00:00"
     },
     {
       "cid": "Rr1aN5Wx3MWQVk4oPDQd",
@@ -1269,8 +1269,8 @@
       "comic_id": "Rr1aN5Wx3MWQVk4oPDQd",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 308,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 325.6,
         "กุมภาพันธ์": 90.2,
@@ -1282,11 +1282,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 847,
+      "views_7_chapters": 589,
+      "last_chapter_updated_at": "2026-01-07T00:00:00"
     },
     {
       "cid": "azlwDvqOAyWkObkJoedB",
@@ -1310,7 +1310,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 575,
@@ -1338,7 +1338,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 106,
       "views_7_chapters": 758,
@@ -1366,7 +1366,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 182,
       "views_7_chapters": 11401,
@@ -1381,8 +1381,8 @@
       "comic_id": "EQwLk1zYRD4rO50y2Wed",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 641,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1394,11 +1394,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3677,
+      "views_7_chapters": 2033,
+      "last_chapter_updated_at": "2025-02-08T00:00:00"
     },
     {
       "cid": "3MjZ0qWYgqQnOJLAreG1",
@@ -1409,8 +1409,8 @@
       "comic_id": "3MjZ0qWYgqQnOJLAreG1",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 519,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 85.8,
         "กุมภาพันธ์": 59.4,
@@ -1422,11 +1422,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2134,
+      "views_7_chapters": 1524,
+      "last_chapter_updated_at": "2025-06-10T00:00:00"
     },
     {
       "cid": "lewv7z5O46BGYpqBnAQX",
@@ -1437,8 +1437,8 @@
       "comic_id": "lewv7z5O46BGYpqBnAQX",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 444,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 279.4,
         "กุมภาพันธ์": 103.4,
@@ -1450,11 +1450,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1542.2,
+      "views_7_chapters": 1565,
+      "last_chapter_updated_at": "2025-08-24T00:00:00"
     },
     {
       "cid": "kJy7ZdeYZNvoYX5PAwB6",
@@ -1465,8 +1465,8 @@
       "comic_id": "kJy7ZdeYZNvoYX5PAwB6",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 645,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1478,11 +1478,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3002.9,
+      "views_7_chapters": 4575,
+      "last_chapter_updated_at": "2025-02-04T00:00:00"
     },
     {
       "cid": "Z41KDdWY1QL7Yw7MA5Pk",
@@ -1493,8 +1493,8 @@
       "comic_id": "Z41KDdWY1QL7Yw7MA5Pk",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 294,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 3256.0,
         "กุมภาพันธ์": 673.2,
@@ -1506,11 +1506,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3649.8,
+      "views_7_chapters": 3080,
+      "last_chapter_updated_at": "2026-01-21T00:00:00"
     },
     {
       "cid": "EQwLk1zYRDLQO50y2Wed",
@@ -1521,8 +1521,8 @@
       "comic_id": "EQwLk1zYRDLQO50y2Wed",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 595,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1534,11 +1534,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 4325.2,
+      "views_7_chapters": 2668,
+      "last_chapter_updated_at": "2025-03-26T00:00:00"
     },
     {
       "cid": "NG8Qg2kxDpBoxz7Kdeo9",
@@ -1549,8 +1549,8 @@
       "comic_id": "NG8Qg2kxDpBoxz7Kdeo9",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 271,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1621.4,
         "กุมภาพันธ์": 1091.2,
@@ -1562,11 +1562,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1949.2,
+      "views_7_chapters": 2651,
+      "last_chapter_updated_at": "2026-02-13T00:00:00"
     },
     {
       "cid": "wPZAJq7OkMreYW8Dozkm",
@@ -1577,8 +1577,8 @@
       "comic_id": "wPZAJq7OkMreYW8Dozkm",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 723,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1590,11 +1590,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 1080,
+      "last_chapter_updated_at": "2024-11-18T00:00:00"
     },
     {
       "cid": "w9bjalkObNqAOWXyN0K6",
@@ -1605,8 +1605,8 @@
       "comic_id": "w9bjalkObNqAOWXyN0K6",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 647,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 19.8,
         "กุมภาพันธ์": 19.8,
@@ -1618,11 +1618,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1778.2,
+      "views_7_chapters": 1217,
+      "last_chapter_updated_at": "2025-02-02T00:00:00"
     },
     {
       "cid": "Z41KDdWY1Qy9Yw7MA5Pk",
@@ -1633,8 +1633,8 @@
       "comic_id": "Z41KDdWY1Qy9Yw7MA5Pk",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 338,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 308.0,
         "กุมภาพันธ์": 239.8,
@@ -1646,11 +1646,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1562,
+      "views_7_chapters": 1542,
+      "last_chapter_updated_at": "2025-12-08T00:00:00"
     },
     {
       "cid": "kJy7ZdeYZNRJYX5PAwB6",
@@ -1661,8 +1661,8 @@
       "comic_id": "kJy7ZdeYZNRJYX5PAwB6",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 672,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 66.0,
         "กุมภาพันธ์": 10.0,
@@ -1674,11 +1674,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2732,
+      "views_7_chapters": 1760,
+      "last_chapter_updated_at": "2025-01-08T00:00:00"
     },
     {
       "cid": "p9ZazJMeV9Kax4wK6vRq",
@@ -1689,8 +1689,8 @@
       "comic_id": "p9ZazJMeV9Kax4wK6vRq",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 759,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1702,11 +1702,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 1466,
+      "last_chapter_updated_at": "2024-10-13T00:00:00"
     },
     {
       "cid": "GaDZ1qlAOem2O5k7gmeM",
@@ -1717,8 +1717,8 @@
       "comic_id": "GaDZ1qlAOem2O5k7gmeM",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 719,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1730,11 +1730,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 436,
+      "views_7_chapters": 973,
+      "last_chapter_updated_at": "2024-11-22T00:00:00"
     },
     {
       "cid": "6XrDoGdyOrnQO8pbqz1a",
@@ -1745,8 +1745,8 @@
       "comic_id": "6XrDoGdyOrnQO8pbqz1a",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 757,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1758,11 +1758,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 198,
+      "views_7_chapters": 21800,
+      "last_chapter_updated_at": "2024-10-15T00:00:00"
     },
     {
       "cid": "orKk19EexyzwOWAyR3qL",
@@ -1786,7 +1786,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 240,
@@ -1801,8 +1801,8 @@
       "comic_id": "ovGkNElzYl23Oq27mKdM",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 770,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1814,11 +1814,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1362,
+      "views_7_chapters": 1191,
+      "last_chapter_updated_at": "2024-10-02T00:00:00"
     },
     {
       "cid": "Xm5MEjRdOnXdYg6Ay8ZW",
@@ -1829,8 +1829,8 @@
       "comic_id": "Xm5MEjRdOnXdYg6Ay8ZW",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 305,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 2921.6,
         "กุมภาพันธ์": 202.4,
@@ -1842,11 +1842,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 4576,
+      "views_7_chapters": 4021,
+      "last_chapter_updated_at": "2026-01-10T00:00:00"
     },
     {
       "cid": "7AnZ8eydVLg8O9lJp23X",
@@ -1870,7 +1870,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 3180,
       "views_7_chapters": 1835,
@@ -1885,8 +1885,8 @@
       "comic_id": "jnGrQvMpVQ0qO5J8l2Ez",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 734,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 16.0,
@@ -1898,11 +1898,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2436,
+      "views_7_chapters": 1418,
+      "last_chapter_updated_at": "2024-11-07T00:00:00"
     },
     {
       "cid": "Wng5GbmNxB5qY9AlMyk0",
@@ -1913,8 +1913,8 @@
       "comic_id": "Wng5GbmNxB5qY9AlMyk0",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 727,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 30.0,
         "กุมภาพันธ์": 44.0,
@@ -1926,11 +1926,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 4172,
+      "views_7_chapters": 3067,
+      "last_chapter_updated_at": "2024-11-14T00:00:00"
     },
     {
       "cid": "5qDAm32WxX4XxogPnaGe",
@@ -1941,8 +1941,8 @@
       "comic_id": "5qDAm32WxX4XxogPnaGe",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 610,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 19.8,
         "กุมภาพันธ์": 22.0,
@@ -1954,11 +1954,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 6083.4,
+      "views_7_chapters": 4565,
+      "last_chapter_updated_at": "2025-03-11T00:00:00"
     },
     {
       "cid": "WrwEvg7LY8dNY20blNPp",
@@ -1969,8 +1969,8 @@
       "comic_id": "WrwEvg7LY8dNY20blNPp",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 799,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -1982,11 +1982,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 1142,
+      "last_chapter_updated_at": "2024-09-03T00:00:00"
     },
     {
       "cid": "nNG8Qg2kxDnpVz7Kdeo9",
@@ -2010,7 +2010,7 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 0,
@@ -2025,8 +2025,8 @@
       "comic_id": "Wng5GbmNxBDLV9AlMyk0",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 644,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2038,11 +2038,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 11.1,
+      "views_7_chapters": 7640,
+      "last_chapter_updated_at": "2025-02-05T00:00:00"
     },
     {
       "cid": "pRbKaMELO7kBOglzP41q",
@@ -2053,8 +2053,8 @@
       "comic_id": "pRbKaMELO7kBOglzP41q",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 420,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1302.4,
         "กุมภาพันธ์": 873.4,
@@ -2066,11 +2066,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 4310.8,
+      "views_7_chapters": 5638,
+      "last_chapter_updated_at": "2025-09-17T00:00:00"
     },
     {
       "cid": "7AnZ8eydVL1lY9lJp23X",
@@ -2081,8 +2081,8 @@
       "comic_id": "7AnZ8eydVL1lY9lJp23X",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 783,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2094,11 +2094,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 414,
+      "views_7_chapters": 252,
+      "last_chapter_updated_at": "2024-09-19T00:00:00"
     },
     {
       "cid": "EZ41KDdWY1eKYw7MA5Pk",
@@ -2109,8 +2109,8 @@
       "comic_id": "EZ41KDdWY1eKYw7MA5Pk",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 789,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2122,11 +2122,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 4683.1,
+      "views_7_chapters": 3433,
+      "last_chapter_updated_at": "2024-09-13T00:00:00"
     },
     {
       "cid": "Gle0bk9XVGgwVj34oaQw",
@@ -2137,8 +2137,8 @@
       "comic_id": "Gle0bk9XVGgwVj34oaQw",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 685,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2150,11 +2150,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2082,
+      "views_7_chapters": 1332,
+      "last_chapter_updated_at": "2024-12-26T00:00:00"
     },
     {
       "cid": "L1E4dv9AV5LGOogakpmQ",
@@ -2165,8 +2165,8 @@
       "comic_id": "L1E4dv9AV5LGOogakpmQ",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 278,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 2244.0,
         "กุมภาพันธ์": 492.8,
@@ -2178,11 +2178,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2019.6,
+      "views_7_chapters": 1946,
+      "last_chapter_updated_at": "2026-02-06T00:00:00"
     },
     {
       "cid": "onvEqQwJYPMJxedr65l2",
@@ -2193,8 +2193,8 @@
       "comic_id": "onvEqQwJYPMJxedr65l2",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 559,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2206,11 +2206,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1817.2,
+      "views_7_chapters": 1276,
+      "last_chapter_updated_at": "2025-05-01T00:00:00"
     },
     {
       "cid": "jMvyBR09xzRWxbd1NrqE",
@@ -2221,8 +2221,8 @@
       "comic_id": "jMvyBR09xzRWxbd1NrqE",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 786,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2234,11 +2234,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3128,
+      "views_7_chapters": 2282,
+      "last_chapter_updated_at": "2024-09-16T00:00:00"
     },
     {
       "cid": "4n6r39MJVwGJVNAB81yk",
@@ -2249,8 +2249,8 @@
       "comic_id": "4n6r39MJVwGJVNAB81yk",
       "account": "แปลแล้วแปลอีก",
       "account_id": "adieu",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 802,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 2.0,
@@ -2262,12 +2262,12 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0
+        "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3028,
+      "views_7_chapters": 1979,
+      "last_chapter_updated_at": "2024-08-31T00:00:00"
     }
   ],
-  "updated_at": "2026-11-11T09:00:56.444521"
+  "updated_at": "2026-11-11T10:04:31.759648"
 }
