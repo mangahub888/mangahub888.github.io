@@ -1244,8 +1244,6 @@ export function FinancialsView({
         } catch (e) {}
       }
     });
-    setM.add("2026-10");
-    setM.add("2026-11");
     return Array.from(setM).sort().reverse();
   }, [resolvedSalesList]);
 
@@ -1694,16 +1692,73 @@ export function FinancialsView({
 
   // Dynamic Monthly Reconciliation Data based on focused month
   const reconciledMonthData = React.useMemo(() => {
+    if (!resolvedSalesList || resolvedSalesList.length === 0 || !availableSalesMonths || availableSalesMonths.length === 0) {
+      return {
+        targetMonth: "",
+        monthLabel: "ยังไม่มีข้อมูล",
+        totalRev: 0,
+        totalCost: 0,
+        netProfit: 0,
+        margin: 0,
+        seriesCount: 0,
+        totalChapters: 0,
+        avgCostPerChapter: 0,
+        platformMap: {},
+        hasData: false,
+        hasBudgetRevenue: false,
+        budgetRevenue: 0,
+        ledgerRevenue: 0,
+      };
+    }
+
     const targetM =
       selectedLedgerMonth !== "all"
         ? selectedLedgerMonth
-        : availableSalesMonths[0] || "2026-10";
+        : availableSalesMonths[0];
+
+    if (!targetM) {
+      return {
+        targetMonth: "",
+        monthLabel: "ยังไม่มีข้อมูล",
+        totalRev: 0,
+        totalCost: 0,
+        netProfit: 0,
+        margin: 0,
+        seriesCount: 0,
+        totalChapters: 0,
+        avgCostPerChapter: 0,
+        platformMap: {},
+        hasData: false,
+        hasBudgetRevenue: false,
+        budgetRevenue: 0,
+        ledgerRevenue: 0,
+      };
+    }
 
     const monthSales = (resolvedSalesList || []).filter((s) => {
       if (s.month && String(s.month).trim() === targetM) return true;
       if (s.date && String(s.date).startsWith(targetM)) return true;
       return false;
     });
+
+    if (monthSales.length === 0) {
+      return {
+        targetMonth: targetM,
+        monthLabel: targetM,
+        totalRev: 0,
+        totalCost: 0,
+        netProfit: 0,
+        margin: 0,
+        seriesCount: 0,
+        totalChapters: 0,
+        avgCostPerChapter: 0,
+        platformMap: {},
+        hasData: false,
+        hasBudgetRevenue: false,
+        budgetRevenue: 0,
+        ledgerRevenue: 0,
+      };
+    }
 
     // User Requirement: "รายรับให้ดึงจาก งบประมาณ & บัญชี ซึ่งต้องได้ 60k+"
     const budgetIncomeItems = (transactionList || []).filter((t) => {
