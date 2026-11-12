@@ -767,7 +767,23 @@ def sanitize_filename(name: str) -> str:
     illegal_chars = set(':"<>|*?\r\n\\/')
     cleaned = ''.join('_' if c in illegal_chars else c for c in (name or ''))
     cleaned = re.sub(r'_+', '_', cleaned).strip('_ ')
-    return cleaned or 'chapter'
+    cleaned = cleaned or 'chapter'
+
+    # Linux limits a filename to 255 BYTES (Thai chars are 3 bytes each in UTF-8).
+    # Keep a safe budget (leaves room for suffixes like _ocr.json / .mtp) and
+    # preserve the tail so the chapter number is not lost.
+    max_bytes = 180
+    if len(cleaned.encode('utf-8')) > max_bytes:
+        tail_budget = 45
+        tail = cleaned
+        while len(tail.encode('utf-8')) > tail_budget:
+            tail = tail[1:]
+        head = cleaned
+        head_budget = max_bytes - tail_budget - 1
+        while len(head.encode('utf-8')) > head_budget:
+            head = head[:-1]
+        cleaned = f"{head.rstrip('_ ')}_{tail.lstrip('_ ')}"
+    return cleaned
 
 
 def build_prompt2_tempt_content(manga_name="", chapter_num="", folder_name="", ocr_text="", queue_id="", doc_url="", gas_url=None, passcode="10211032", manga_list=None, queue_items=None, reading_direction="ltr"):
