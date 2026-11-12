@@ -290,6 +290,9 @@ function doPost(e) {
       case 'BATCH_SET_DEFAULT_TRANSLATOR_RE':
         result = batchSetDefaultTranslatorRe();
         break;
+      case 'BATCH_SET_DEFAULT_TYPESETTER_TILLY':
+        result = batchSetDefaultTypesetterTilly();
+        break;
       case 'CLEANUP_OCR_WORKLINKS':
         result = cleanupOcrWorkLinks();
         break;
@@ -1371,6 +1374,12 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
         } else {
           obj.translatorname = 'เร';
         }
+      }
+
+      if (!obj.typesettername || String(obj.typesettername).trim() === '') {
+        const mt = mangaMap[String(obj.mangaid)];
+        const lockedTs = mt && mt.lockedtypesetter ? String(mt.lockedtypesetter).trim() : '';
+        obj.typesettername = lockedTs || 'Tilly';
       }
 
       const transStr = String(obj.translatorname || '').toLowerCase();
@@ -9972,6 +9981,56 @@ function batchSetDefaultTranslatorRe() {
     return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
   } catch (err) {
     console.error('batchSetDefaultTranslatorRe error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * ตั้งค่า TypesetterName ที่ยังว่างอยู่ในคิวงานทั้งหมดเป็นผู้ลงคำหลักของเรื่อง (LockedTypesetter) หรือ 'Tilly'
+ */
+function batchSetDefaultTypesetterTilly() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, updatedCount: 0 };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const tsCol = headers.indexOf('typesettername') + 1;
+    const mangaIdCol = headers.indexOf('mangaid') + 1;
+    if (tsCol <= 0) {
+      return { success: false, error: 'typesettername column not found' };
+    }
+
+    const mangaMap = {};
+    getMangaList().forEach(m => { mangaMap[String(m.mangaid)] = m; });
+
+    let updatedCount = 0;
+    const values = [];
+    for (let i = 1; i < data.length; i++) {
+      let val = String(data[i][tsCol - 1] || '').trim();
+      if (!val) {
+        const m = mangaIdCol > 0 ? mangaMap[String(data[i][mangaIdCol - 1])] : null;
+        const locked = m && m.lockedtypesetter ? String(m.lockedtypesetter).trim() : '';
+        val = locked || 'Tilly';
+        updatedCount++;
+      } else {
+        val = data[i][tsCol - 1];
+      }
+      values.push([val]);
+    }
+
+    if (updatedCount > 0) {
+      sheet.getRange(2, tsCol, values.length, 1).setValues(values);
+      invalidateCache(['workQueue']);
+    }
+    console.log('batchSetDefaultTypesetterTilly: Updated ' + updatedCount + ' rows');
+    return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('batchSetDefaultTypesetterTilly error:', err);
     return { success: false, error: err.toString() };
   } finally {
     lock.releaseLock();
