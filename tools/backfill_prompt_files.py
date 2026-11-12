@@ -68,6 +68,8 @@ def fetch_candidates(manga_list, queue):
             continue
 
         m = manga_map.get(str(q.get("mangaid")), {})
+        check_str = (str(m.get("rawurl") or "") + " " + str(m.get("sourceurl") or "") + " " + wl).lower()
+        reading_dir = "rtl" if ("comix.to" in check_str or "comix" in check_str) else "ltr"
         out.append({
             "queue_id": str(q.get("queueid")),
             "manga_name": m.get("manganame", ""),
@@ -76,6 +78,7 @@ def fetch_candidates(manga_list, queue):
             "folder_id": folder.group(1),
             "txt_id": _file_id_after_tag(wl, r"\[ocr txt\]"),
             "mtp_id": _file_id_after_tag(wl, r"\[mtp\]"),
+            "reading_direction": reading_dir,
         })
     return out
 
@@ -114,6 +117,7 @@ def process(c, idx, total, manga_list, queue, dry_run):
         doc_url=c["doc_url"],
         manga_list=manga_list,
         queue_items=queue,
+        reading_direction=c.get("reading_direction", "ltr")
     )
 
     if dry_run:

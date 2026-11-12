@@ -170,7 +170,9 @@ def extract_text_from_mtp_data(project_data: Dict[str, Any]) -> str:
             "lines": lines
         }
 
-    return format_ocr_text_blocks(image_files, ocr_results)
+    app_settings = project_data.get("appSettings", {})
+    reading_dir = "rtl" if app_settings.get("readingDirection") == "rtl" else "ltr"
+    return format_ocr_text_blocks(image_files, ocr_results, direction=reading_dir)
 
 
 def upload_txt_to_drive(folder_id: str, filename: str, content: str, queue_id: str = "") -> Dict[str, Any]:
