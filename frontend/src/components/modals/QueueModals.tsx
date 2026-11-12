@@ -54,6 +54,13 @@ export function AddQueueModal({
   const [note, setNote] = React.useState("")
   const [submitting, setSubmitting] = React.useState(false)
 
+  const defaultTypesetter = React.useMemo(() => {
+    const tillyMember = (teamList || []).find(
+      (m) => String(m.name || "").trim().toLowerCase() === "tilly"
+    )
+    return tillyMember ? tillyMember.name : "Tilly"
+  }, [teamList])
+
   React.useEffect(() => {
     if (open) {
       if (!preselectedMangaId) {
@@ -64,7 +71,7 @@ export function AddQueueModal({
         setExtractorName("Kikkuk")
         setExtractLinkInput("")
         setTranslatorName("เร")
-        setTypesetterName("")
+        setTypesetterName(defaultTypesetter)
         setTypesetType("จีน")
         setPublisherName("")
         setWorkLink("")
@@ -72,7 +79,7 @@ export function AddQueueModal({
       }
       setChapter(preselectedChapter || "")
     }
-  }, [open, preselectedMangaId, preselectedChapter])
+  }, [open, preselectedMangaId, preselectedChapter, defaultTypesetter])
 
   React.useEffect(() => {
     if (preselectedMangaId) {
@@ -95,9 +102,12 @@ export function AddQueueModal({
       } else {
         setTranslatorName("เร")
       }
+      // ใส่คิวลงคำ default เป็น tilly โดยดูชื่อ จาก team member ในทุกมังงะ
+      setTypesetterName(defaultTypesetter)
     } else {
       setCostPerChapter(0)
       setTranslatorName("เร")
+      setTypesetterName(defaultTypesetter)
     }
   }
 
@@ -408,6 +418,13 @@ export function UpdateQueueModal({
   const [note, setNote] = React.useState("")
   const [submitting, setSubmitting] = React.useState(false)
 
+  const defaultTypesetter = React.useMemo(() => {
+    const tillyMember = (teamList || []).find(
+      (m) => String(m.name || "").trim().toLowerCase() === "tilly"
+    )
+    return tillyMember ? tillyMember.name : "Tilly"
+  }, [teamList])
+
   const manga = React.useMemo(() => {
     if (!item) return null
     return (mangaList || []).find(
@@ -436,7 +453,7 @@ export function UpdateQueueModal({
       setTranslatorName(item.translatorname || defaultTrans)
 
       setTypesetStatus(item.typesetstatus || "รอเริ่ม")
-      setTypesetterName(item.typesettername || "")
+      setTypesetterName(item.typesettername || defaultTypesetter)
       setTypesetType(item.typesettype === "เกาหลี" || item.typesetratetype === "เกาหลี" ? "เกาหลี" : "จีน")
 
       setPublishStatus(item.publishstatus || "รอเริ่ม")
@@ -819,6 +836,13 @@ export function StepUpdateModal({
   const [note, setNote] = React.useState("")
   const [typesetType, setTypesetType] = React.useState<"จีน" | "เกาหลี">("จีน")
 
+  const defaultTypesetter = React.useMemo(() => {
+    const tillyMember = (teamList || []).find(
+      (m) => String(m.name || "").trim().toLowerCase() === "tilly"
+    )
+    return tillyMember ? tillyMember.name : "Tilly"
+  }, [teamList])
+
   const stepLabels: Record<string, string> = {
     upload: "🔼 1. อัปโหลด Raw",
     ocr: "🤖 2. ดึงคำออโต้ (GitHub Actions)",
@@ -858,6 +882,8 @@ export function StepUpdateModal({
       if (!currentAssignee && step.toLowerCase() === "translate") {
         const isPratchaya = String(queueItem.translatorname || "").toLowerCase().includes("pratchaya")
         setAssignee(isPratchaya ? "Pratchaya" : "เร")
+      } else if (!currentAssignee && step.toLowerCase() === "typeset") {
+        setAssignee(defaultTypesetter)
       } else {
         setAssignee(currentAssignee)
       }

@@ -290,6 +290,9 @@ function doPost(e) {
       case 'BATCH_SET_DEFAULT_TRANSLATOR_RE':
         result = batchSetDefaultTranslatorRe();
         break;
+      case 'BATCH_SET_DEFAULT_TYPESETTER_TILLY':
+        result = batchSetDefaultTypesetterTilly();
+        break;
       case 'CLEANUP_OCR_WORKLINKS':
         result = cleanupOcrWorkLinks();
         break;
@@ -1346,6 +1349,10 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
       mangaMap[String(mangaList[m].mangaid)] = mangaList[m];
     }
 
+    const teamMembers = getTeamMembers();
+    const tillyMember = (teamMembers || []).find(m => String(m.name || '').trim().toLowerCase() === 'tilly');
+    const defaultTypesetter = tillyMember ? tillyMember.name : 'Tilly';
+
     const results = [];
     for (let r = 0; r < data.length; r++) {
       const row = data[r];
@@ -1368,6 +1375,10 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
         } else {
           obj.translatorname = 'เร';
         }
+      }
+
+      if (!obj.typesettername || String(obj.typesettername).trim() === '') {
+        obj.typesettername = defaultTypesetter;
       }
 
       const transStr = String(obj.translatorname || '').toLowerCase();
@@ -1431,6 +1442,9 @@ function addQueue(queueData) {
     const now = new Date();
     const mangaList = getMangaList();
     const manga = mangaList.find(m => m.mangaid.toString() === queueData.mangaid.toString());
+    const teamMembers = getTeamMembers();
+    const tillyMember = (teamMembers || []).find(m => String(m.name || '').trim().toLowerCase() === 'tilly');
+    const defaultTypesetter = tillyMember ? tillyMember.name : 'Tilly';
     
     const newRow = headers.map(header => {
       if (header === 'queueid') return id;
@@ -1471,7 +1485,12 @@ function addQueue(queueData) {
         }
         return 'เร';
       }
-      if (header === 'typesettername') return queueData.typesettername || '';
+      if (header === 'typesettername') {
+        if (queueData.typesettername && String(queueData.typesettername).trim() !== '') {
+          return queueData.typesettername;
+        }
+        return defaultTypesetter;
+      }
       if (header === 'typesettype' || header === 'typesetratetype') return queueData.typesettype || queueData.typesetratetype || 'จีน';
       if (header === 'publishername') return queueData.publishername || '';
       if (header === 'postername') return queueData.postername || '';
@@ -8511,21 +8530,43 @@ function triggerMangaOcrWorkflow(params) {
     }
 
     let docUrl = params.docUrl || params.doc_url || '';
-    if (!docUrl && (mangaName || params.queueId)) {
+    let sourceUrl = params.sourceUrl || params.source_url || params.rawUrl || params.raw_url || '';
+    let mangaId = params.mangaId || params.manga_id || '';
+    let readingDirection = params.readingDirection || params.reading_direction || '';
+
+    // Auto-resolve docUrl, sourceUrl, and mangaId from MangaList if needed
+    if (!docUrl || !sourceUrl || !mangaId || !readingDirection) {
       try {
         const mangaList = getMangaList();
         const mClean = mangaName.toLowerCase().replace(/[^\w\u0e00-\u0e7f]+/g, '');
         const matched = mangaList.find(m => {
+          if (mangaId && String(m.mangaid) === String(mangaId)) return true;
           if (m.manganame === mangaName) return true;
           const targetClean = (m.manganame || '').toLowerCase().replace(/[^\w\u0e00-\u0e7f]+/g, '');
           return (mClean && targetClean && (targetClean.includes(mClean) || mClean.includes(targetClean)));
         });
-        if (matched && matched.translationdocurl) {
-          docUrl = matched.translationdocurl;
+        if (matched) {
+          if (!docUrl && matched.translationdocurl) {
+            docUrl = matched.translationdocurl;
+          }
+          if (!sourceUrl) {
+            sourceUrl = matched.rawurl || matched.sourceurl || matched.url || matched.originalurl || '';
+          }
+          if (!mangaId && matched.mangaid) {
+            mangaId = String(matched.mangaid);
+          }
         }
       } catch (e) {
-        console.warn('Could not resolve manga translationdocurl:', e);
+        console.warn('Could not resolve manga metadata for OCR:', e);
       }
+    }
+
+    // Auto-detect reading direction: comix.to / comix -> rtl, else default ltr
+    const checkStr = (String(sourceUrl || '') + ' ' + String(params.worklink || '') + ' ' + String(params.note || '')).toLowerCase();
+    if (checkStr.includes('comix.to') || checkStr.includes('comix')) {
+      readingDirection = 'rtl';
+    } else if (!readingDirection || readingDirection === 'auto') {
+      readingDirection = 'ltr';
     }
 
     const url = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/actions/workflows/' + MANGA_OCR_WORKFLOW_FILE + '/dispatches';
@@ -8538,6 +8579,9 @@ function triggerMangaOcrWorkflow(params) {
         queue_id: String(params.queueId || params.queue_id || ''),
         doc_url: String(docUrl || ''),
         lang: lang,
+        source_url: String(sourceUrl || ''),
+        manga_id: String(mangaId || ''),
+        reading_direction: String(readingDirection || 'auto'),
         google_access_token: googleAccessToken
       }
     };
@@ -8665,6 +8709,8 @@ function scheduledMangaOcr6HourJob() {
       const manga = mangaList.find(m => String(m.mangaid) === String(item.mangaid));
       const mangaTitle = manga ? (manga.manganame || manga.originalname || '') : '';
       const cleanChapter = String(item.chapter || '').replace(/[^\d.]/g, '');
+      const rawUrl = manga ? (manga.rawurl || manga.sourceurl || '') : '';
+      const isComix = rawUrl.toLowerCase().includes('comix.to') || String(item.worklink || '').toLowerCase().includes('comix.to');
 
       console.log('🚀 สั่งรันสเต็ป 2 (ดึงคำออโต้) ไปยัง GitHub Actions:', mangaTitle, 'ตอนที่', cleanChapter, 'Folder:', folderId);
       const res = triggerMangaOcrWorkflow({
@@ -8672,7 +8718,10 @@ function scheduledMangaOcr6HourJob() {
         folderId: folderId,
         mangaName: mangaTitle,
         chapterNum: cleanChapter,
-        lang: resolveOcrLanguage(item, manga)
+        lang: resolveOcrLanguage(item, manga),
+        sourceUrl: rawUrl,
+        mangaId: item.mangaid,
+        readingDirection: isComix ? 'rtl' : 'ltr'
       });
 
       if (res && res.success) {
@@ -9918,6 +9967,53 @@ function batchSetDefaultKikkukExtractor() {
  * ตั้งค่าเริ่มต้นให้คอลัมน์ TranslatorName (ขั้นตอนงานแปล) เป็น 'เร' สำหรับทุกแถวที่ยังว่างอยู่
  * ยกเว้นเรื่องที่ล็อคชื่อไว้ว่า 'pratchaya' ให้เซ็ตเป็น 'Pratchaya' (หรือชื่อตาม lockedtranslator)
  */
+
+/**
+ * ตั้งค่าเริ่มต้นให้คอลัมน์ TypesetterName (ขั้นตอนงานลงคำ) เป็น 'Tilly' (โดยดูชื่อจาก TeamMembers) สำหรับทุกแถวที่ยังว่างอยู่
+ */
+function batchSetDefaultTypesetterTilly() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, updatedCount: 0 };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const typesetterCol = headers.indexOf('typesettername') + 1;
+    if (typesetterCol <= 0) {
+      return { success: false, error: 'typesettername column not found' };
+    }
+
+    const teamMembers = getTeamMembers();
+    const tillyMember = (teamMembers || []).find(m => String(m.name || '').trim().toLowerCase() === 'tilly');
+    const defaultTypesetter = tillyMember ? tillyMember.name : 'Tilly';
+
+    let updatedCount = 0;
+    const typesetValues = [];
+    for (let i = 1; i < data.length; i++) {
+      const currentVal = String(data[i][typesetterCol - 1] || '').trim();
+      let newVal = currentVal;
+      if (!currentVal) {
+        newVal = defaultTypesetter;
+        updatedCount++;
+      }
+      typesetValues.push([newVal]);
+    }
+
+    if (updatedCount > 0) {
+      sheet.getRange(2, typesetterCol, typesetValues.length, 1).setValues(typesetValues);
+      invalidateCache(['workQueue']);
+    }
+
+    return { success: true, updatedCount: updatedCount, defaultTypesetter: defaultTypesetter };
+  } catch (err) {
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function batchSetDefaultTranslatorRe() {
   const lock = LockService.getScriptLock();
   try {
@@ -10034,13 +10130,19 @@ function triggerNextPendingMangaOcr() {
       console.warn('triggerNextPendingMangaOcr: Could not mark ocrstatus=กำลังทำ:', mErr);
     }
 
+    const rawUrl = manga ? (manga.rawurl || manga.sourceurl || '') : '';
+    const isComix = rawUrl.toLowerCase().includes('comix.to') || String(nextItem.worklink || '').toLowerCase().includes('comix.to');
+
     console.log('🚀 Auto-Chaining: สั่งรันคิวถัดไปต่อเนื่อง ->', mangaTitle, 'ตอนที่', cleanChapter, 'Folder:', folderId);
     const res = triggerMangaOcrWorkflow({
       queueId: nextItem.queueid,
       folderId: folderId,
       mangaName: mangaTitle,
       chapterNum: cleanChapter,
-      lang: resolveOcrLanguage(nextItem, manga)
+      lang: resolveOcrLanguage(nextItem, manga),
+      sourceUrl: rawUrl,
+      mangaId: nextItem.mangaid,
+      readingDirection: isComix ? 'rtl' : 'ltr'
     });
 
     return {

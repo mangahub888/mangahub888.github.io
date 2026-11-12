@@ -101,6 +101,13 @@ export function QueueView({
   const [bulkAssignee, setBulkAssignee] = React.useState("__KEEP__")
   const [bulkUpdating, setBulkUpdating] = React.useState(false)
 
+  const defaultTypesetterName = React.useMemo(() => {
+    const tillyMember = (teamList || []).find(
+      (m) => String(m.name || "").trim().toLowerCase() === "tilly"
+    )
+    return tillyMember ? tillyMember.name : "Tilly"
+  }, [teamList])
+
   // Step Modal state
   const [stepModalOpen, setStepModalOpen] = React.useState(false)
   const [activeStepItem, setActiveStepItem] = React.useState<any | null>(null)
@@ -241,11 +248,12 @@ export function QueueView({
 
       // Assignee filter
       if (assigneeFilter !== "all") {
+        const resolvedTypesetter = q.typesettername || defaultTypesetterName
         const matchesAssignee =
           q.uploadername === assigneeFilter ||
           q.extractorname === assigneeFilter ||
           q.translatorname === assigneeFilter ||
-          q.typesettername === assigneeFilter ||
+          resolvedTypesetter === assigneeFilter ||
           q.publishername === assigneeFilter ||
           q.postername === assigneeFilter
         if (!matchesAssignee) return false
@@ -1060,7 +1068,7 @@ export function QueueView({
                       {renderStatusBadge(q, "typeset", q.typesetstatus)}
                       <div className="text-xs text-slate-400 mt-1">
                         <div className="flex items-center gap-1 whitespace-nowrap">
-                          <span className="truncate max-w-[80px]">{q.typesettername || "-"}</span>
+                          <span className="truncate max-w-[80px]">{q.typesettername || defaultTypesetterName}</span>
                           {(q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี") && (
                             <span className="inline-block text-[10px] text-sky-400 font-bold bg-sky-500/10 px-1 py-0.2 rounded border border-sky-500/30 shrink-0">
                               เกาหลี

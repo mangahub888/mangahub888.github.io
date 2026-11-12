@@ -6,6 +6,26 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 ตั้งค่าผู้ลงคำเริ่มต้น (Default Typesetter) เป็น Tilly ในทุกมังงะ โดยอิงชื่อจาก Team Member (11 พ.ย. 2569)
+- **โจทย์และความต้องการของผู้ใช้**:
+  - *"ใส่คิวลงคำ default เป็น tilly โดยดูชื่อ จาก team member ในทุกมังงะ"*
+- **สิ่งที่ได้ปรับปรุงในระบบ**:
+  1. **Frontend Modals (`QueueModals.tsx`)**:
+     - `AddQueueModal`: คำนวณ `defaultTypesetter` โดยค้นหาชื่อที่ตรงกับ `"tilly"` (case-insensitive) จาก `teamList` ของ Team Members หากพบจะใช้ชื่อจริงตามระบบ (เช่น "Tilly") หากไม่พบจะ fallback เป็น "Tilly"
+     - กำหนดให้ฟิลด์ `✍️ ผู้ลงคำ (Typesetter)` ถูกเลือกเป็น `defaultTypesetter` ตั้งแต่เปิดหน้าต่าง และเมื่อเลือก/สลับมังงะเรื่องใดๆ ก็ตามในระบบ ("ในทุกมังงะ")
+     - `UpdateQueueModal`: เมื่อเปิดแก้ไขคิวงาน หากยังไม่มีชื่อคนลงคำ จะ fallback ใส่ `defaultTypesetter`
+     - `StepUpdateModal`: เมื่อเปิด Quick Update ขั้นตอน "ลงคำ (Typesetter)" หากยังไม่มีผู้รับผิดชอบ จะตั้งต้นชื่อเป็น `defaultTypesetter` ให้ทันที
+  2. **Frontend Queue Table & Filter (`QueueView.tsx`)**:
+     - อัปเดตคอลัมน์ผู้ลงคำ หาก `q.typesettername` ยังว่างอยู่ จะแสดงผลด้วยชื่อ `defaultTypesetterName` (Tilly)
+     - ปรับตัวกรอง Assignee Filter ให้ตรวจจับ `resolvedTypesetter = q.typesettername || defaultTypesetterName` ทำให้เมื่อผู้ใช้กรองดูงานของ Tilly จะเห็นคิวงานที่ใช้ค่า default ได้อย่างครบถ้วน
+  3. **Backend Google Apps Script (`backend/Code.js`)**:
+     - `addQueue`: เมื่อเพิ่มคิวงานใหม่ หากไม่ได้ระบุ `typesettername` จะดึงชื่อจาก `getTeamMembers()` เพื่อหาชื่อของ Tilly และบันทึกลงชีต WorkQueue โดยอัตโนมัติ
+     - `getWorkQueue`: เมื่อดึงคิวงานจากชีต หาก `typesettername` ว่าง จะตั้งค่าเป็น default typesetter จาก TeamMembers ให้ทันที
+     - `batchSetDefaultTypesetterTilly`: เพิ่มฟังก์ชันแบตช์อัปเดตแถวเก่าในชีต `WorkQueue` ที่ยังไม่มีชื่อคนลงคำ ให้เป็น Tilly อัตโนมัติ พร้อมรองรับ API action `BATCH_SET_DEFAULT_TYPESETTER_TILLY`
+  4. **การทดสอบ (Verification)**:
+     - `npm --prefix frontend run build`: ผ่าน 100% (tsc & vite build สำเร็จ ไม่มีข้อผิดพลาด)
+     - Unit Test `scratch/test_tilly_default.js`: ผ่านทั้ง 10 Test Assertions ตรวจสอบครอบคลุมทุกกรณีทั้งตัวพิมพ์เล็ก-ใหญ่ และการ fallback
+
 ### 🏆 แยกภาษีหัก ณ ที่จ่าย 3% และกองกลาง 10% ออกจากรายจ่ายดำเนินงานจริง (11 พ.ย. 2569)
 - **โจทย์และความต้องการของผู้ใช้**:
   - *"ใช่แยกออกมา ไม่ต้อง + รวม"*
