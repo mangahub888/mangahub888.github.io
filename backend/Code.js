@@ -829,6 +829,7 @@ function ensureSheetHeaders(sheet, name) {
       ensureCol('ReleaseDay', 'None');
       ensureCol('CostPerChapter', 0);
       ensureCol('LockedTranslator', '');
+      ensureCol('LockedTypesetter', 'Tilly');
       ensureCol('NotifyOnAdd', false);
       ensureCol('Slug', '');
       ensureCol('IsUrgent', false);
@@ -905,7 +906,7 @@ function getSheet(name = SHEET_NAME) {
       sheet.appendRow([
         'MangaID', 'MangaName', 'OriginalName', 'OriginalUrl', 'Status',
         'LastChapter', 'LastUpdated', 'NeedsExtract', 'ReleaseDay',
-        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup'
+        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup', 'LockedTypesetter'
       ]);
       sheet.getRange(1, 1, 1, 15).setFontWeight('bold').setBackground('#4f46e5').setFontColor('#ffffff');
     } else if (name === QUEUE_SHEET_NAME) {
@@ -1108,6 +1109,7 @@ function addManga(manga) {
       if (header === 'releaseday') return manga.releaseday || 'None';
       if (header === 'costperchapter') return manga.costperchapter || 0;
       if (header === 'lockedtranslator') return manga.lockedtranslator || '';
+      if (header === 'lockedtypesetter') return manga.lockedtypesetter || 'Tilly';
       if (header === 'notifyonadd') return manga.notifyonadd !== undefined ? manga.notifyonadd : false;
       if (header === 'slug') return manga.slug || '';
       if (header === 'isurgent') return manga.isurgent !== undefined ? manga.isurgent : false;
@@ -1223,6 +1225,7 @@ function updateManga(id, updatedManga) {
           if (header === 'releaseday') sheet.getRange(rowNum, colNum).setValue(updatedManga.releaseday || 'None');
           if (header === 'costperchapter') sheet.getRange(rowNum, colNum).setValue(updatedManga.costperchapter || 0);
           if (header === 'lockedtranslator') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedtranslator || '');
+          if (header === 'lockedtypesetter') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedtypesetter !== undefined ? updatedManga.lockedtypesetter : 'Tilly');
           if (header === 'notifyonadd') sheet.getRange(rowNum, colNum).setValue(updatedManga.notifyonadd !== undefined ? updatedManga.notifyonadd : false);
           if (header === 'slug') sheet.getRange(rowNum, colNum).setValue(updatedManga.slug || '');
           if (header === 'isurgent') sheet.getRange(rowNum, colNum).setValue(updatedManga.isurgent !== undefined ? updatedManga.isurgent : false);
@@ -1471,7 +1474,7 @@ function addQueue(queueData) {
         }
         return 'เร';
       }
-      if (header === 'typesettername') return queueData.typesettername || '';
+      if (header === 'typesettername') return queueData.typesettername || (manga && manga.lockedtypesetter) || '';
       if (header === 'typesettype' || header === 'typesetratetype') return queueData.typesettype || queueData.typesetratetype || 'จีน';
       if (header === 'publishername') return queueData.publishername || '';
       if (header === 'postername') return queueData.postername || '';

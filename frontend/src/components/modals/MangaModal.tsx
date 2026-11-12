@@ -39,6 +39,7 @@ const mangaSchema = z.object({
   lastchapter: z.union([z.string(), z.number()]).default("0"),
   costperchapter: z.union([z.string(), z.number()]).default(0),
   lockedtranslator: z.string().optional(),
+  lockedtypesetter: z.string().optional(),
   needsextract: z.boolean().default(true),
   notifyonadd: z.boolean().default(false),
   isurgent: z.boolean().default(false),
@@ -188,6 +189,7 @@ export function MangaModal({
           lastchapter: editItem.lastchapter ?? "0",
           costperchapter: editItem.costperchapter ?? 0,
           lockedtranslator: editItem.lockedtranslator || "",
+          lockedtypesetter: editItem.lockedtypesetter ?? "Tilly",
           needsextract:
             editItem.needsextract === undefined
               ? true
@@ -220,6 +222,7 @@ export function MangaModal({
           lastchapter: "0",
           costperchapter: 0,
           lockedtranslator: "",
+          lockedtypesetter: "Tilly",
           needsextract: true,
           notifyonadd: false,
           isurgent: false,
@@ -238,6 +241,20 @@ export function MangaModal({
     return [
       { value: "", label: "-- ไม่มีการล็อคคนแปล --" },
       ...active.map((m) => ({ value: m.name, label: m.name })),
+    ]
+  }, [teamList])
+
+  const typesetterOptions = React.useMemo(() => {
+    const active = (teamList || []).filter(
+      (m) =>
+        m.status === "Active" &&
+        (m.role === "Editor/Typesetter" || m.role === "Multi-role")
+    )
+    const names = active.map((m) => m.name)
+    if (!names.includes("Tilly")) names.unshift("Tilly")
+    return [
+      { value: "", label: "-- ไม่มีการล็อคคนลงคำ --" },
+      ...names.map((n) => ({ value: n, label: n })),
     ]
   }, [teamList])
 
@@ -278,6 +295,7 @@ export function MangaModal({
   }
 
   const lockedTranslator = watch("lockedtranslator") || ""
+  const lockedTypesetter = watch("lockedtypesetter") || ""
   const needsExtract = watch("needsextract")
   const notifyOnAdd = watch("notifyonadd")
   const isUrgent = watch("isurgent")
@@ -479,6 +497,17 @@ export function MangaModal({
               onChange={(val) => setValue("lockedtranslator", val)}
               placeholder="-- ไม่มีการล็อคคนแปล --"
               searchPlaceholder="ค้นหาคนแปล..."
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>ผู้ลงคำหลัก (Auto-select)</Label>
+            <SearchableSelect
+              options={typesetterOptions}
+              value={lockedTypesetter}
+              onChange={(val) => setValue("lockedtypesetter", val)}
+              placeholder="-- ไม่มีการล็อคคนลงคำ --"
+              searchPlaceholder="ค้นหาคนลงคำ..."
             />
           </div>
 

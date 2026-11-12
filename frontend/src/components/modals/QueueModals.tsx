@@ -87,6 +87,7 @@ export function AddQueueModal({
     )
     if (manga) {
       setCostPerChapter(manga.costperchapter || 0)
+      setTypesetterName((manga.lockedtypesetter || "").trim())
       const locked = (manga.lockedtranslator || "").trim()
       if (locked.toLowerCase().includes("pratchaya")) {
         setTranslatorName(manga.lockedtranslator)
@@ -98,6 +99,7 @@ export function AddQueueModal({
     } else {
       setCostPerChapter(0)
       setTranslatorName("เร")
+      setTypesetterName("")
     }
   }
 
@@ -436,7 +438,7 @@ export function UpdateQueueModal({
       setTranslatorName(item.translatorname || defaultTrans)
 
       setTypesetStatus(item.typesetstatus || "รอเริ่ม")
-      setTypesetterName(item.typesettername || "")
+      setTypesetterName(item.typesettername || (manga?.lockedtypesetter || "").trim())
       setTypesetType(item.typesettype === "เกาหลี" || item.typesetratetype === "เกาหลี" ? "เกาหลี" : "จีน")
 
       setPublishStatus(item.publishstatus || "รอเริ่ม")
