@@ -95,7 +95,7 @@ def get_paddle_ocr_engine(lang="ch"):
     }
     try:
         ocr = PaddleOCR(**init_kwargs)
-    except TypeError:
+    except (TypeError, ValueError):
         try:
             ocr = PaddleOCR(lang=lang, use_angle_cls=False, enable_mkldnn=False)
         except Exception:
