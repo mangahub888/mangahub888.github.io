@@ -40,6 +40,8 @@ const mangaSchema = z.object({
   costperchapter: z.union([z.string(), z.number()]).default(0),
   lockedtranslator: z.string().optional(),
   lockedtypesetter: z.string().optional(),
+  lockedpublisher: z.string().optional(),
+  lockedposter: z.string().optional(),
   needsextract: z.boolean().default(true),
   notifyonadd: z.boolean().default(false),
   isurgent: z.boolean().default(false),
@@ -190,6 +192,8 @@ export function MangaModal({
           costperchapter: editItem.costperchapter ?? 0,
           lockedtranslator: editItem.lockedtranslator || "",
           lockedtypesetter: editItem.lockedtypesetter ?? "Tilly",
+          lockedpublisher: editItem.lockedpublisher ?? "Kikkuk",
+          lockedposter: editItem.lockedposter ?? "ภูมิ",
           needsextract:
             editItem.needsextract === undefined
               ? true
@@ -223,6 +227,8 @@ export function MangaModal({
           costperchapter: 0,
           lockedtranslator: "",
           lockedtypesetter: "Tilly",
+          lockedpublisher: "Kikkuk",
+          lockedposter: "ภูมิ",
           needsextract: true,
           notifyonadd: false,
           isurgent: false,
@@ -243,6 +249,24 @@ export function MangaModal({
       ...active.map((m) => ({ value: m.name, label: m.name })),
     ]
   }, [teamList])
+
+  const makeOptions = (defaultName: string, noneLabel: string) => {
+    const active = (teamList || []).filter((m) => m.status === "Active")
+    const names = active.map((m) => m.name)
+    if (!names.includes(defaultName)) names.unshift(defaultName)
+    return [
+      { value: "", label: noneLabel },
+      ...names.map((n) => ({ value: n, label: n })),
+    ]
+  }
+  const publisherOptions = React.useMemo(
+    () => makeOptions("Kikkuk", "-- ไม่มีการล็อค Publisher --"),
+    [teamList]
+  )
+  const posterOptions = React.useMemo(
+    () => makeOptions("ภูมิ", "-- ไม่มีการล็อคคนโพสต์ --"),
+    [teamList]
+  )
 
   const typesetterOptions = React.useMemo(() => {
     const active = (teamList || []).filter(
@@ -296,6 +320,8 @@ export function MangaModal({
 
   const lockedTranslator = watch("lockedtranslator") || ""
   const lockedTypesetter = watch("lockedtypesetter") || ""
+  const lockedPublisher = watch("lockedpublisher") || ""
+  const lockedPoster = watch("lockedposter") || ""
   const needsExtract = watch("needsextract")
   const notifyOnAdd = watch("notifyonadd")
   const isUrgent = watch("isurgent")
@@ -508,6 +534,28 @@ export function MangaModal({
               onChange={(val) => setValue("lockedtypesetter", val)}
               placeholder="-- ไม่มีการล็อคคนลงคำ --"
               searchPlaceholder="ค้นหาคนลงคำ..."
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Publisher หลัก (Auto-select)</Label>
+            <SearchableSelect
+              options={publisherOptions}
+              value={lockedPublisher}
+              onChange={(val) => setValue("lockedpublisher", val)}
+              placeholder="-- ไม่มีการล็อค Publisher --"
+              searchPlaceholder="ค้นหา Publisher..."
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>โพสต์ หลัก (Auto-select)</Label>
+            <SearchableSelect
+              options={posterOptions}
+              value={lockedPoster}
+              onChange={(val) => setValue("lockedposter", val)}
+              placeholder="-- ไม่มีการล็อคคนโพสต์ --"
+              searchPlaceholder="ค้นหาคนโพสต์..."
             />
           </div>
 

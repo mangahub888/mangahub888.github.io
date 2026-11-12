@@ -1079,7 +1079,7 @@ export function QueueView({
                     <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {renderStatusBadge(q, "publish", q.publishstatus)}
                       <div className="text-xs text-slate-400 mt-1 truncate max-w-[110px]">
-                        {q.publishername || "-"}
+                        {q.publishername || (manga && manga.lockedpublisher) || "-"}
                         {pbDur && (
                           <div className="text-[11px] text-slate-500">
                             ⏱️ {pbDur}
@@ -1092,7 +1092,7 @@ export function QueueView({
                     <TableCell className="px-2.5 py-3 whitespace-nowrap">
                       {renderStatusBadge(q, "post", q.poststatus)}
                       <div className="text-xs text-slate-400 mt-1 truncate max-w-[100px]">
-                        {q.postername || "-"}
+                        {q.postername || (manga && manga.lockedposter) || "-"}
                       </div>
                     </TableCell>
 
