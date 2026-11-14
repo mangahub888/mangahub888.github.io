@@ -94,6 +94,8 @@ export function AddQueueModal({
     )
     if (manga) {
       setCostPerChapter(manga.costperchapter || 0)
+      setTypesetterName((manga.lockedtypesetter || "").trim())
+      setPublisherName((manga.lockedpublisher || "").trim())
       const locked = (manga.lockedtranslator || "").trim()
       if (locked.toLowerCase().includes("pratchaya")) {
         setTranslatorName(manga.lockedtranslator)
@@ -108,6 +110,7 @@ export function AddQueueModal({
       setCostPerChapter(0)
       setTranslatorName("เร")
       setTypesetterName(defaultTypesetter)
+      setPublisherName("")
     }
   }
 
@@ -453,14 +456,14 @@ export function UpdateQueueModal({
       setTranslatorName(item.translatorname || defaultTrans)
 
       setTypesetStatus(item.typesetstatus || "รอเริ่ม")
-      setTypesetterName(item.typesettername || defaultTypesetter)
+      setTypesetterName(item.typesettername || (manga?.lockedtypesetter || "").trim() || defaultTypesetter)
       setTypesetType(item.typesettype === "เกาหลี" || item.typesetratetype === "เกาหลี" ? "เกาหลี" : "จีน")
 
       setPublishStatus(item.publishstatus || "รอเริ่ม")
-      setPublisherName(item.publishername || "")
+      setPublisherName(item.publishername || (manga?.lockedpublisher || "").trim())
 
       setPostStatus(item.poststatus || "รอเริ่ม")
-      setPosterName(item.postername || "")
+      setPosterName(item.postername || (manga?.lockedposter || "").trim())
 
       setWorkLink(item.worklink || "")
       setNote(item.note || "")

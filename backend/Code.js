@@ -293,6 +293,9 @@ function doPost(e) {
       case 'BATCH_SET_DEFAULT_TYPESETTER_TILLY':
         result = batchSetDefaultTypesetterTilly();
         break;
+      case 'BATCH_SET_DEFAULT_PUBLISHER_POSTER':
+        result = batchSetDefaultPublisherPoster();
+        break;
       case 'CLEANUP_OCR_WORKLINKS':
         result = cleanupOcrWorkLinks();
         break;
@@ -832,6 +835,9 @@ function ensureSheetHeaders(sheet, name) {
       ensureCol('ReleaseDay', 'None');
       ensureCol('CostPerChapter', 0);
       ensureCol('LockedTranslator', '');
+      ensureCol('LockedTypesetter', 'Tilly');
+      ensureCol('LockedPublisher', 'Kikkuk');
+      ensureCol('LockedPoster', 'ภูมิ');
       ensureCol('NotifyOnAdd', false);
       ensureCol('Slug', '');
       ensureCol('IsUrgent', false);
@@ -908,7 +914,7 @@ function getSheet(name = SHEET_NAME) {
       sheet.appendRow([
         'MangaID', 'MangaName', 'OriginalName', 'OriginalUrl', 'Status',
         'LastChapter', 'LastUpdated', 'NeedsExtract', 'ReleaseDay',
-        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup'
+        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup', 'LockedTypesetter', 'LockedPublisher', 'LockedPoster'
       ]);
       sheet.getRange(1, 1, 1, 15).setFontWeight('bold').setBackground('#4f46e5').setFontColor('#ffffff');
     } else if (name === QUEUE_SHEET_NAME) {
@@ -1111,6 +1117,9 @@ function addManga(manga) {
       if (header === 'releaseday') return manga.releaseday || 'None';
       if (header === 'costperchapter') return manga.costperchapter || 0;
       if (header === 'lockedtranslator') return manga.lockedtranslator || '';
+      if (header === 'lockedtypesetter') return manga.lockedtypesetter || 'Tilly';
+      if (header === 'lockedpublisher') return manga.lockedpublisher || 'Kikkuk';
+      if (header === 'lockedposter') return manga.lockedposter || 'ภูมิ';
       if (header === 'notifyonadd') return manga.notifyonadd !== undefined ? manga.notifyonadd : false;
       if (header === 'slug') return manga.slug || '';
       if (header === 'isurgent') return manga.isurgent !== undefined ? manga.isurgent : false;
@@ -1226,6 +1235,9 @@ function updateManga(id, updatedManga) {
           if (header === 'releaseday') sheet.getRange(rowNum, colNum).setValue(updatedManga.releaseday || 'None');
           if (header === 'costperchapter') sheet.getRange(rowNum, colNum).setValue(updatedManga.costperchapter || 0);
           if (header === 'lockedtranslator') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedtranslator || '');
+          if (header === 'lockedtypesetter') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedtypesetter !== undefined ? updatedManga.lockedtypesetter : 'Tilly');
+          if (header === 'lockedpublisher') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedpublisher !== undefined ? updatedManga.lockedpublisher : 'Kikkuk');
+          if (header === 'lockedposter') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedposter !== undefined ? updatedManga.lockedposter : 'ภูมิ');
           if (header === 'notifyonadd') sheet.getRange(rowNum, colNum).setValue(updatedManga.notifyonadd !== undefined ? updatedManga.notifyonadd : false);
           if (header === 'slug') sheet.getRange(rowNum, colNum).setValue(updatedManga.slug || '');
           if (header === 'isurgent') sheet.getRange(rowNum, colNum).setValue(updatedManga.isurgent !== undefined ? updatedManga.isurgent : false);
@@ -1378,7 +1390,18 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
       }
 
       if (!obj.typesettername || String(obj.typesettername).trim() === '') {
-        obj.typesettername = defaultTypesetter;
+        const mt = mangaMap[String(obj.mangaid)];
+        const lockedTs = mt && mt.lockedtypesetter ? String(mt.lockedtypesetter).trim() : '';
+        obj.typesettername = lockedTs || defaultTypesetter;
+      }
+
+      if ((!obj.publishername || String(obj.publishername).trim() === '') && String(obj.publishstatus || '').trim() !== 'เสร็จแล้ว') {
+        const mp = mangaMap[String(obj.mangaid)];
+        obj.publishername = (mp && mp.lockedpublisher ? String(mp.lockedpublisher).trim() : '') || 'Kikkuk';
+      }
+      if ((!obj.postername || String(obj.postername).trim() === '') && String(obj.poststatus || '').trim() !== 'เสร็จแล้ว') {
+        const mq = mangaMap[String(obj.mangaid)];
+        obj.postername = (mq && mq.lockedposter ? String(mq.lockedposter).trim() : '') || 'ภูมิ';
       }
 
       const transStr = String(obj.translatorname || '').toLowerCase();
@@ -1489,11 +1512,14 @@ function addQueue(queueData) {
         if (queueData.typesettername && String(queueData.typesettername).trim() !== '') {
           return queueData.typesettername;
         }
+        if (manga && manga.lockedtypesetter && String(manga.lockedtypesetter).trim() !== '') {
+          return manga.lockedtypesetter;
+        }
         return defaultTypesetter;
       }
       if (header === 'typesettype' || header === 'typesetratetype') return queueData.typesettype || queueData.typesetratetype || 'จีน';
-      if (header === 'publishername') return queueData.publishername || '';
-      if (header === 'postername') return queueData.postername || '';
+      if (header === 'publishername') return queueData.publishername || (manga && manga.lockedpublisher) || '';
+      if (header === 'postername') return queueData.postername || (manga && manga.lockedposter) || '';
 
       if (header === 'worklink') return queueData.worklink || '';
       if (header === 'note') return queueData.note || '';
@@ -10065,6 +10091,118 @@ function batchSetDefaultTranslatorRe() {
     return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
   } catch (err) {
     console.error('batchSetDefaultTranslatorRe error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * ตั้งค่า TypesetterName ที่ยังว่างอยู่ในคิวงานทั้งหมดเป็นผู้ลงคำหลักของเรื่อง (LockedTypesetter) หรือ 'Tilly'
+ */
+function batchSetDefaultTypesetterTilly() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, updatedCount: 0 };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const tsCol = headers.indexOf('typesettername') + 1;
+    const mangaIdCol = headers.indexOf('mangaid') + 1;
+    if (tsCol <= 0) {
+      return { success: false, error: 'typesettername column not found' };
+    }
+
+    const mangaMap = {};
+    getMangaList().forEach(m => { mangaMap[String(m.mangaid)] = m; });
+
+    let updatedCount = 0;
+    const values = [];
+    for (let i = 1; i < data.length; i++) {
+      let val = String(data[i][tsCol - 1] || '').trim();
+      if (!val) {
+        const m = mangaIdCol > 0 ? mangaMap[String(data[i][mangaIdCol - 1])] : null;
+        const locked = m && m.lockedtypesetter ? String(m.lockedtypesetter).trim() : '';
+        val = locked || 'Tilly';
+        updatedCount++;
+      } else {
+        val = data[i][tsCol - 1];
+      }
+      values.push([val]);
+    }
+
+    if (updatedCount > 0) {
+      sheet.getRange(2, tsCol, values.length, 1).setValues(values);
+      invalidateCache(['workQueue']);
+    }
+    console.log('batchSetDefaultTypesetterTilly: Updated ' + updatedCount + ' rows');
+    return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('batchSetDefaultTypesetterTilly error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * ตั้งค่า PublisherName (ค่าเริ่มต้น Kikkuk) และ PosterName (ค่าเริ่มต้น ภูมิ) ที่ยังว่างอยู่ในคิวงาน
+ * ใช้ผู้รับผิดชอบหลักของเรื่อง (LockedPublisher / LockedPoster) ถ้ามี
+ * ข้ามแถวที่ขั้นตอนนั้น "เสร็จแล้ว" เพื่อไม่ให้กระทบยอดค่าใช้จ่ายย้อนหลัง
+ */
+function batchSetDefaultPublisherPoster() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, publisherUpdated: 0, posterUpdated: 0 };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const pubCol = headers.indexOf('publishername') + 1;
+    const pubStCol = headers.indexOf('publishstatus') + 1;
+    const postCol = headers.indexOf('postername') + 1;
+    const postStCol = headers.indexOf('poststatus') + 1;
+    const mangaIdCol = headers.indexOf('mangaid') + 1;
+    if (pubCol <= 0 || postCol <= 0) {
+      return { success: false, error: 'publishername/postername column not found' };
+    }
+
+    const mangaMap = {};
+    getMangaList().forEach(m => { mangaMap[String(m.mangaid)] = m; });
+
+    let pubUpdated = 0, postUpdated = 0;
+    const pubValues = [], postValues = [];
+    for (let i = 1; i < data.length; i++) {
+      const m = mangaIdCol > 0 ? mangaMap[String(data[i][mangaIdCol - 1])] : null;
+
+      let pubVal = data[i][pubCol - 1];
+      const pubDone = pubStCol > 0 && String(data[i][pubStCol - 1] || '').trim() === 'เสร็จแล้ว';
+      if (!String(pubVal || '').trim() && !pubDone) {
+        pubVal = (m && m.lockedpublisher ? String(m.lockedpublisher).trim() : '') || 'Kikkuk';
+        pubUpdated++;
+      }
+      pubValues.push([pubVal]);
+
+      let postVal = data[i][postCol - 1];
+      const postDone = postStCol > 0 && String(data[i][postStCol - 1] || '').trim() === 'เสร็จแล้ว';
+      if (!String(postVal || '').trim() && !postDone) {
+        postVal = (m && m.lockedposter ? String(m.lockedposter).trim() : '') || 'ภูมิ';
+        postUpdated++;
+      }
+      postValues.push([postVal]);
+    }
+
+    if (pubUpdated > 0) sheet.getRange(2, pubCol, pubValues.length, 1).setValues(pubValues);
+    if (postUpdated > 0) sheet.getRange(2, postCol, postValues.length, 1).setValues(postValues);
+    if (pubUpdated > 0 || postUpdated > 0) invalidateCache(['workQueue']);
+
+    console.log('batchSetDefaultPublisherPoster: publisher ' + pubUpdated + ', poster ' + postUpdated);
+    return { success: true, publisherUpdated: pubUpdated, posterUpdated: postUpdated, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('batchSetDefaultPublisherPoster error:', err);
     return { success: false, error: err.toString() };
   } finally {
     lock.releaseLock();
