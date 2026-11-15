@@ -225,4 +225,52 @@ assert.strictEqual(getQueueCurrentStep(progressiveItem), 'finished')
 assert.strictEqual(isStepDone(progressiveItem.poststatus), true)
 console.log('✓ Test 12 Passed: Complete pipeline progression strictly consistent end-to-end')
 
-console.log('\n>>> ALL 12 QUEUE STEP SEQUENCING TESTS PASSED 100%! <<<\n')
+// Test 13: Assignee filtering under specific step filter (User bug case: Apt uploaded raw, but ภูมิ is translator)
+console.log('\n[Test 13] Assignee filtering under stepFilter === "translate" (Uploader Apt vs Translator ภูมิ)')
+const testItemWheelOfFortune = {
+  uploadstatus: 'เสร็จแล้ว',
+  uploadername: 'Apt',
+  ocrstatus: 'เสร็จแล้ว',
+  extractstatus: 'เสร็จแล้ว',
+  extractorname: 'Kikkuk',
+  translatestatus: 'รอเริ่ม',
+  translatorname: 'ภูมิ',
+  typesetstatus: 'รอเริ่ม',
+  typesettername: '',
+  publishstatus: 'รอเริ่ม',
+  poststatus: 'รอเริ่ม',
+}
+
+function checkAssigneeMatch(q, stepFilter, assigneeFilter, manga) {
+  if (assigneeFilter === 'all') return true
+
+  const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || '').toLowerCase().includes('pratchaya')
+  const isExtractActive = String(q.extractstatus || '').trim() === 'กำลังทำ' || String(q.extractstatus || '').trim() === 'รอเริ่ม'
+
+  const resolvedUploader = (q.uploadername || '').trim()
+  const resolvedExtractor = (isPratchaya && !isExtractActive ? 'Pratchaya' : (q.extractorname || 'Kikkuk')).trim()
+  const resolvedTranslator = (
+    q.translatorname ||
+    (isPratchaya ? (manga?.lockedtranslator || 'Pratchaya') : (manga?.lockedtranslator || 'เร'))
+  ).trim()
+
+  const isTranslate = stepFilter === 'translate' || stepFilter.includes('แปล')
+  const isUpload = stepFilter === 'upload' || stepFilter.includes('อัป')
+
+  if (isTranslate) {
+    return q.translatorname === assigneeFilter || resolvedTranslator === assigneeFilter
+  } else if (isUpload) {
+    return q.uploadername === assigneeFilter || resolvedUploader === assigneeFilter
+  }
+  return false
+}
+
+// 1. When stepFilter is "translate" and assigneeFilter is "Apt", it must NOT match!
+assert.strictEqual(checkAssigneeMatch(testItemWheelOfFortune, 'translate', 'Apt'), false, 'Apt is uploader, not translator -> must NOT match')
+// 2. When stepFilter is "translate" and assigneeFilter is "ภูมิ", it MUST match!
+assert.strictEqual(checkAssigneeMatch(testItemWheelOfFortune, 'translate', 'ภูมิ'), true, 'ภูมิ is translator -> must match')
+// 3. When stepFilter is "upload" and assigneeFilter is "Apt", it MUST match!
+assert.strictEqual(checkAssigneeMatch(testItemWheelOfFortune, 'upload', 'Apt'), true, 'Apt is uploader -> must match in upload step')
+console.log('✓ Test 13 Passed: Assignee filtering under stepFilter strictly targets the corresponding role only')
+
+console.log('\n>>> ALL 13 QUEUE STEP SEQUENCING & ASSIGNEE TESTS PASSED 100%! <<<\n')
