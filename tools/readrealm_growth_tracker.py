@@ -1560,16 +1560,24 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, li
                 if stat_btn.count():
                     stat_btn.click()
                     try:
-                        page.wait_for_selector("text='รายงานการขายรายเดือน'", timeout=2000)
-                        page.wait_for_timeout(350)
+                        page.wait_for_load_state("networkidle", timeout=3000)
                     except Exception:
-                        page.wait_for_timeout(500)
+                        pass
+                    try:
+                        page.wait_for_selector(".animate-pulse, [class*='skeleton'], [class*='loading']", state="detached", timeout=5000)
+                    except Exception:
+                        pass
+                    try:
+                        page.wait_for_selector("text='รายงานการขายรายเดือน'", timeout=3000)
+                    except Exception:
+                        pass
+                    page.wait_for_timeout(400)
 
                 dom_stats = page.evaluate(r"""() => {
                     const txt = document.body.innerText;
-                    const mTot = txt.match(/ยอดขายรวม\s*:\s*([\d,\.]+)/);
-                    const mMonth = txt.match(/ยอดขายรวมรายเดือน\s*:\s*([\d,\.]+)/);
-                    const mYear = txt.match(/ยอดขายรวมรายปี\s*:\s*([\d,\.]+)/);
+                    const mTot = txt.match(/ยอดขายรวม\s*:\s*\n*\s*([\d,\.]+)/);
+                    const mMonth = txt.match(/ยอดขายรวมรายเดือน\s*:\s*\n*\s*([\d,\.]+)/);
+                    const mYear = txt.match(/ยอดขายรวมรายปี\s*:\s*\n*\s*([\d,\.]+)/);
                     return {
                         total_sales: mTot ? parseFloat(mTot[1].replace(/,/g, '')) : 0,
                         month_sales: mMonth ? parseFloat(mMonth[1].replace(/,/g, '')) : 0,
@@ -1579,6 +1587,17 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, li
 
                 tot_sales = dom_stats.get("total_sales", 0)
                 month_sales = dom_stats.get("month_sales", 0)
+                # Direct DOM extraction from Monthly Sales Report Container (Dropdown & Coin Text)
+                try:
+                    m_box = page.locator("div.border-neutral-content:has-text('รายงานการขายรายเดือน'), div:has-text('รายงานการขายรายเดือน')").first
+                    if m_box.count():
+                        coin_elem = m_box.locator("span.text-amber-500, span:has-text('🪙')").first
+                        if coin_elem.count():
+                            c_txt = coin_elem.inner_text().strip().replace('🪙', '').replace(',', '').strip()
+                            if c_txt:
+                                month_sales = float(c_txt)
+                except Exception:
+                    pass
                 m_dict = dict(c.get("monthly_sales", {}))
 
                 for u, b in analytics_cache.items():
@@ -1599,16 +1618,17 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, li
                                     m_dict[th_m] = round(float(m_val or 0.0), 2)
 
                 # Fallback: If getYearSaleReport wasn't in cache, fetch it directly in browser context
+                cur_year_be = now_dt.year + 543
                 if not any("getYearSaleReport" in u for u in analytics_cache):
                     try:
                         tok = tokens[-1] if tokens else (acc.get("_cached_token") or "")
                         if tok:
-                            yr_res = page.evaluate("""async ([tok, cid]) => {
-                                const res = await fetch(`https://api-writer.readrealm.co/writer/comics/analytics/getYearSaleReport?year=2569&comic_ID=${cid}`, {
+                            yr_res = page.evaluate("""async ([tok, cid, yr]) => {
+                                const res = await fetch(`https://api-writer.readrealm.co/writer/comics/analytics/getYearSaleReport?year=${yr}&comic_ID=${cid}`, {
                                     headers: { 'Authorization': tok }
                                 });
                                 return await res.json();
-                            }""", [tok, cid])
+                            }""", [tok, cid, cur_year_be])
                             if yr_res and isinstance(yr_res.get("data"), list):
                                 for m_idx, m_val in enumerate(yr_res["data"]):
                                     if m_idx < len(THAI_MONTHS):

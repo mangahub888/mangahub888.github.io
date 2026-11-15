@@ -181,11 +181,11 @@ def bring_browser_window_to_top(browser_proc=None, page=None, title_filter: str 
 def check_and_handle_antibot_or_login(page, platform_name: str = "", timeout_sec: int = 180) -> bool:
     """
     Adaptive Anti-Bot & Session Loss Handler:
-    1. Checks if current page is blocked by Cloudflare (Turnstile, Just a moment..., Challenge)
-       or has redirected to a login page due to expired session.
+    1. Checks if current page is blocked by Cloudflare (Turnstile, Just a moment..., Challenge),
+       CAPTCHA (hCaptcha, reCAPTCHA, Geetest), or has redirected to a login page due to expired session.
     2. If detected:
        - Brings Google Chrome window to Foreground / Topmost
-       - Emits an audible beep (winsound)
+       - Emits an audible alert beep (winsound)
        - Displays a high-visibility terminal alert banner
        - Waits adaptively for the user to solve the challenge or complete login
     3. Once resolved:
@@ -199,26 +199,36 @@ def check_and_handle_antibot_or_login(page, platform_name: str = "", timeout_sec
 
             cf_title_keywords = [
                 "just a moment", "attention required", "cloudflare",
-                "verify you are human", "ddos-guard", "checking your browser"
+                "verify you are human", "ddos-guard", "checking your browser",
+                "security check", "robot verification", "hcaptcha", "recaptcha",
+                "access denied", "one more step", "challenge validation"
             ]
             for kw in cf_title_keywords:
                 if kw in t:
-                    return True, f"Cloudflare Anti-Bot Title ('{p.title()}')"
+                    return True, f"Anti-Bot / Protection Title ('{p.title()}')"
 
             cf_selectors = [
                 "iframe[src*='cloudflare']",
                 "iframe[src*='challenges.cloudflare.com']",
                 "iframe[src*='turnstile']",
+                "iframe[src*='hcaptcha']",
+                "iframe[src*='recaptcha']",
+                "iframe[src*='geetest']",
                 "#cf-wrapper",
                 "#challenge-stage",
                 ".cf-turnstile",
                 "div[class*='turnstile']",
-                "[name='cf-turnstile-response']"
+                "[name='cf-turnstile-response']",
+                ".g-recaptcha",
+                ".h-captcha",
+                ".geetest_holder",
+                "div[id*='turnstile']",
+                "div[id*='captcha']"
             ]
             for sel in cf_selectors:
                 try:
                     if p.locator(sel).count() > 0:
-                        return True, f"Cloudflare DOM Selector ('{sel}')"
+                        return True, f"Anti-Bot Challenge DOM Selector ('{sel}')"
                 except Exception:
                     pass
 

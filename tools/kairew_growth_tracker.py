@@ -335,9 +335,12 @@ def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = Fal
                                     const graph = d?.props?.graph || {};
                                     const last7 = epStats.slice(-7);
                                     const s7 = last7.reduce((acc, x) => acc + (x.total_sales || 0), 0);
+                                    const bookSales = d?.props?.book?.sales || graph.total || 0;
+                                    const netProfit = d?.props?.book?.profit || d?.props?.summary?.profit || d?.props?.graph?.profit || Math.round(bookSales * 0.7 * 100) / 100;
                                     results[cid] = {
                                         monthly: graph.data || [],
-                                        total_sales: d?.props?.book?.sales || graph.total || 0,
+                                        total_sales: bookSales,
+                                        net_profit: netProfit,
                                         eps_count: epStats.length,
                                         sales_7_chapters: s7
                                     };
@@ -643,6 +646,11 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                     c['sales'] = float(stat_item.get("total_sales"))
                 except (ValueError, TypeError):
                     pass
+            if stat_item.get("net_profit"):
+                try:
+                    c['net_profit'] = float(stat_item.get("net_profit"))
+                except (ValueError, TypeError):
+                    pass
             c['sales_7_chapters'] = round(float(stat_item.get("sales_7_chapters") or 0.0), 2)
             
         title = c.get('name', '')
@@ -716,6 +724,7 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "days_inactive": days_inactive,
             "is_inactive_30d": is_inactive_30d,
             "sales_7_chapters": round(float(c.get("sales_7_chapters") or 0.0), 2),
+            "net_profit": round(float(c.get("net_profit") or (float(c.get("sales") or sales) * 0.7)), 2),
             "monthly_sales": monthly_sales_map.get(cid, {})
         }
 

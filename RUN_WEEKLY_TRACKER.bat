@@ -2,25 +2,27 @@
 chcp 65001 >nul
 set PYTHONUTF8=1
 set PYTHONIOENCODING=utf-8
-title MangaHub Weekly 1-Click Multi-Platform Tracker & PnL Sync
+title MangaHub Weekly 1-Click Multi-Platform Tracker & PnL Sync (Production)
 
 cd /d "%~dp0."
 
 echo =====================================================================
-echo    MangaHub 1-Click All-in-One Weekly Routine ^& PnL Sync
+echo    MangaHub Production Weekly Tracker & PnL Sync System
 echo =====================================================================
 echo.
-echo เลือกระบบการทำงาน (กด Enter เพื่อเลือกรันข้อ 1 ทันที):
+echo เลือกระบบการทำงาน (กด Enter เพื่อเลือกรันข้อ [1] ทันที):
 echo.
-echo   [1] รันเต็มรูปแบบประจำสัปดาห์ (แนะนำสำหรับกดทุก 7 วัน):
-echo       - ดึง Git ล่าสุด
-echo       - รันเบราว์เซอร์จริงดึงยอดขาย ^& ยอดวิว 3 แพลตฟอร์ม (ReadRealm + Kairew + Chaply)
-echo       - ซิงค์ 'สมุดบันทึกต้นทุน ^& PnL' สองเดือนล่าสุด (เดือนก่อน + เดือนปัจจุบัน)
-echo       - Build Frontend ^& Push ขึ้น GitHub อัตโนมัติ
+echo   [1] รันติดตามการเติบโตประจำสัปดาห์ (Live DOM + Adaptive Anti-Bot Window) [แนะนำ]:
+echo       - ดึง Git ล่าสุด (git pull origin main)
+echo       - รัน Google Chrome จริง (เปิดอยู่ด้านหลังสุด HWND_BOTTOM ไม่แย่งโฟกัส)
+echo       - ระบบ Adaptive Anti-Bot Window: หากพบ Turnstile/Captcha จะเด้งขึ้นมาเตือนอัตโนมัติ
+echo       - สกัดข้อมูลสดจาก Live DOM 3 แพลตฟอร์ม (ReadRealm + Kairew + Chaply)
+echo       - ซิงค์ 'สมุดบันทึกต้นทุน & PnL' สองเดือนล่าสุด (เดือนก่อนหน้า + เดือนปัจจุบัน)
+echo       - สรุปภาพรวมและ Build Frontend Production
 echo.
-echo   [2] รันเต็มรูปแบบ + ซิงค์ PnL ย้อนหลังครบทุกเดือน (ม.ค. - พ.ย. 2026)
+echo   [2] รันติดตามประจำสัปดาห์ + ซิงค์ PnL ครบทุกเดือน (มกราคม - ปัจจุบัน 2026)
 echo.
-echo   [3] ซิงค์เฉพาะ 'สมุดบันทึกต้นทุน ^& PnL' อย่างเดียว (ไม่เปิดเบราว์เซอร์ดูดข้อมูลใหม่)
+echo   [3] ซิงค์เฉพาะ PnL อย่างเดียว (คำนวณและกระทบยอด Google Sheets ทันที ไม่เปิดเบราว์เซอร์)
 echo.
 set "CHOICE=1"
 set /p CHOICE="กรุณาเลือก [1, 2 หรือ 3] (ค่าเริ่มต้น [1]): "
@@ -36,10 +38,11 @@ if "%CHOICE%"=="3" goto SYNC_ONLY
 
 :FULL_TRACKER
 echo =====================================================================
-echo [2/5] รัน Google Chrome จริงดึงสถิติยอดขาย ^& ยอดวิว 3 แพลตฟอร์ม...
-echo       - ReadRealm (LionKing + Adieu)
-echo       - Kairew (PlangJonMuey)
-echo       - Chaply (PlangJonMuey)
+echo [2/5] รัน Google Chrome จริงดึงสถิติสดจาก Live DOM 3 แพลตฟอร์ม...
+echo       - ReadRealm (กล่องรายงานการขายรายเดือน + ยอดสะสม + รายตอน)
+echo       - Kairew (stat/{book_id} ยอดขายและกำไรสุทธิ 12 เดือน)
+echo       - Chaply (แท็บจัดการตอน 50 รายการ/หน้า + Timeline 7 วัน)
+echo       * หน้าต่าง Chrome จะทำงานอยู่หลังสุดจอ ไม่รบกวนการทำงาน
 echo =====================================================================
 python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache
 set TRACKER_EXIT=%ERRORLEVEL%
@@ -50,10 +53,10 @@ echo.
 
 :SYNC_STEP
 echo =====================================================================
-echo [3/5] คำนวณและกระทบยอด 'สมุดบันทึกต้นทุน ^& PnL' (Google Sheets)...
+echo [3/5] คำนวณและกระทบยอด 'สมุดบันทึกต้นทุน & PnL' (Google Sheets)...
 echo =====================================================================
 if "%CHOICE%"=="2" (
-    echo [INFO] กำลังซิงค์ทุกเดือน 2026-01 ถึง 2026-11...
+    echo [INFO] กำลังซิงค์ทุกเดือนปี 2026...
     python tools\sync_monthly_pnl.py --all-months
 ) else (
     echo [INFO] กำลังซิงค์รอบ 2 เดือนล่าสุด...
@@ -71,11 +74,17 @@ goto BUILD_STEP
 :BUILD_STEP
 echo.
 echo =====================================================================
-echo [4/5] สร้างชุดโปรดักชัน Frontend และอัปเดตระบบ...
+echo [4/5] สร้างชุดโปรดักชัน Frontend (Production Build)...
 echo =====================================================================
 cd frontend
 call npm run build
+set BUILD_EXIT=%ERRORLEVEL%
 cd ..
+if %BUILD_EXIT% NEQ 0 (
+    echo [ERROR] Frontend Build พบข้อผิดพลาด! รหัส: %BUILD_EXIT%
+    pause
+    exit /b %BUILD_EXIT%
+)
 
 echo.
 echo =====================================================================

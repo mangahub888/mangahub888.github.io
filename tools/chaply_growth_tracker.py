@@ -543,12 +543,26 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                 page.goto(edit_url, wait_until="domcontentloaded")
                 if not headless:
                     set_browser_window_bottom_most("chaply")
+                check_and_handle_antibot_or_login(page, platform_name=f"Chaply ({title})")
 
                 # Click จัดการตอน tab to render the episode list table visually
                 try:
-                    btn = page.locator("button:has-text('จัดการตอน')").first
+                    btn = page.locator("button:has-text('จัดการตอน'), a:has-text('จัดการตอน'), div:has-text('จัดการตอน')").first
                     if btn.count():
                         btn.click(timeout=800)
+                        page.wait_for_timeout(400)
+                        # Switch pagination to 50 items/page if dropdown exists in DOM
+                        page.evaluate("""() => {
+                            const selects = Array.from(document.querySelectorAll('select'));
+                            for (const s of selects) {
+                                const opt50 = Array.from(s.options).find(o => o.value === '50' || o.text.includes('50'));
+                                if (opt50) {
+                                    s.value = opt50.value;
+                                    s.dispatchEvent(new Event('change', { bubbles: true }));
+                                    break;
+                                }
+                            }
+                        }""")
                 except Exception:
                     pass
 
@@ -707,22 +721,32 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     daily_snaps = history.get("daily_snapshots", {})
     six_hour_snaps = history.get("timeline_6h", [])
+    seven_day_snaps = history.get("timeline_7d", [])
 
     daily_snaps[snapshot_date_key] = current_snap_dict
-    six_hour_snaps.append({
+    snap_entry = {
         "timestamp": recorded_at,
         "key": snapshot_time_key,
+        "date": snapshot_date_key,
         "total_comics": len(raw_comics),
         "total_sales_portfolio": lifetime_sales,
         "total_views_portfolio": total_views_overall,
         "snapshot": current_snap_dict
-    })
+    }
+    six_hour_snaps.append(snap_entry)
+
+    # Maintain 7-day timeline snapshots for exact monthly matching
+    if not seven_day_snaps or (datetime.now() - datetime.fromisoformat(seven_day_snaps[-1]["timestamp"])).days >= 7:
+        seven_day_snaps.append(snap_entry)
 
     if len(six_hour_snaps) > 1200:
         six_hour_snaps = six_hour_snaps[-1200:]
+    if len(seven_day_snaps) > 104:
+        seven_day_snaps = seven_day_snaps[-104:]
 
     history["daily_snapshots"] = daily_snaps
     history["timeline_6h"] = six_hour_snaps
+    history["timeline_7d"] = seven_day_snaps
     history["last_updated"] = recorded_at
 
     # 5. Compute 7d & 30d growth
