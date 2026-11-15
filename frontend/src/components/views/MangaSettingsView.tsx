@@ -67,6 +67,7 @@ export function MangaSettingsView({
       const payload = {
         ...manga,
         excludetranslatepayout: newExcluded,
+        ExcludeTranslatePayout: newExcluded,
       }
       const res = await callGasApi("UPDATE_MANGA", {
         id: mangaId,

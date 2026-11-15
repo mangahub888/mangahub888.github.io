@@ -271,7 +271,7 @@ function doPost(e) {
         result = addManga(payload);
         break;
       case 'UPDATE_MANGA':
-        result = updateManga(payload.id, payload.data);
+        result = updateManga(payload.id, payload.data || payload);
         break;
       case 'BATCH_UPDATE_MANGA_DOC_LINKS':
         result = batchUpdateMangaDocLinks(payload.linksMap);
@@ -1044,6 +1044,16 @@ function getSheet(name = SHEET_NAME) {
   return sheet;
 }
 
+function parseBooleanParam(val, fallback = false) {
+  if (val === undefined || val === null || val === '') return fallback;
+  if (typeof val === 'boolean') return val;
+  if (typeof val === 'number') return val !== 0;
+  const s = String(val).trim().toLowerCase();
+  if (s === 'true' || s === '1' || s === 'yes') return true;
+  if (s === 'false' || s === '0' || s === 'no') return false;
+  return fallback;
+}
+
 /**
  * READ: ดึงข้อมูลและแปลงเป็น Object ตามหัวตาราง
  */
@@ -1065,6 +1075,13 @@ function getMangaList() {
         }
         obj[header] = val;
       });
+      // Normalize boolean fields
+      const isExcluded = parseBooleanParam(
+        obj.excludetranslatepayout !== undefined ? obj.excludetranslatepayout : obj.ExcludeTranslatePayout,
+        false
+      );
+      obj.excludetranslatepayout = isExcluded;
+      obj.ExcludeTranslatePayout = isExcluded;
       return obj;
     }).filter(item => item.manganame);
   } catch (err) {
@@ -1101,8 +1118,17 @@ function addManga(manga) {
   try {
     lock.waitLock(30000);
     const sheet = getSheet();
-    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(h => h.toString().toLowerCase().trim());
+    let headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(h => h.toString().toLowerCase().trim());
     
+    if (headers.indexOf('excludetranslatepayout') === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('ExcludeTranslatePayout');
+      if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue(false);
+      }
+      headers.push('excludetranslatepayout');
+    }
+
     const id = getNextId();
     const timestamp = new Date();
     
@@ -1114,20 +1140,27 @@ function addManga(manga) {
       if (header === 'status') return manga.status || 'Ongoing';
       if (header === 'lastchapter') return manga.lastchapter || '0';
       if (header === 'lastupdated') return timestamp;
-      if (header === 'needsextract') return manga.needsextract !== undefined ? manga.needsextract : true;
+      if (header === 'needsextract') return manga.needsextract !== undefined ? parseBooleanParam(manga.needsextract, true) : true;
       if (header === 'releaseday') return manga.releaseday || 'None';
       if (header === 'costperchapter') return manga.costperchapter || 0;
       if (header === 'lockedtranslator') return manga.lockedtranslator || '';
       if (header === 'lockedtypesetter') return manga.lockedtypesetter || 'Tilly';
       if (header === 'lockedpublisher') return manga.lockedpublisher || 'Kikkuk';
       if (header === 'lockedposter') return manga.lockedposter || 'ภูมิ';
-      if (header === 'notifyonadd') return manga.notifyonadd !== undefined ? manga.notifyonadd : false;
+      if (header === 'notifyonadd') return manga.notifyonadd !== undefined ? parseBooleanParam(manga.notifyonadd, false) : false;
       if (header === 'slug') return manga.slug || '';
-      if (header === 'isurgent') return manga.isurgent !== undefined ? manga.isurgent : false;
+      if (header === 'isurgent') return manga.isurgent !== undefined ? parseBooleanParam(manga.isurgent, false) : false;
       if (header === 'translationdocurl') return manga.translationdocurl || '';
 
       if (header === 'scangroup') return manga.scangroup || manga.scanGroup || '';
-      if (header === 'excludetranslatepayout') return manga.excludetranslatepayout !== undefined ? Boolean(manga.excludetranslatepayout) : false;
+      if (header === 'excludetranslatepayout') {
+        const rawVal = manga.excludetranslatepayout !== undefined 
+          ? manga.excludetranslatepayout 
+          : (manga.ExcludeTranslatePayout !== undefined 
+              ? manga.ExcludeTranslatePayout 
+              : (manga.excludeTranslatePayout !== undefined ? manga.excludeTranslatePayout : undefined));
+        return parseBooleanParam(rawVal, false);
+      }
       return '';
     });
 
@@ -1219,8 +1252,17 @@ function updateManga(id, updatedManga) {
   try {
     lock.waitLock(30000);
     const sheet = getSheet();
-    const data = sheet.getDataRange().getValues();
-    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    let data = sheet.getDataRange().getValues();
+    let headers = data[0].map(h => h.toString().toLowerCase().trim());
+    
+    if (headers.indexOf('excludetranslatepayout') === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('ExcludeTranslatePayout');
+      if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue(false);
+      }
+      headers.push('excludetranslatepayout');
+    }
     
     for (let i = 1; i < data.length; i++) {
       if (data[i][0].toString() === id.toString()) {
@@ -1233,20 +1275,27 @@ function updateManga(id, updatedManga) {
           if (header === 'status') sheet.getRange(rowNum, colNum).setValue(updatedManga.status);
           if (header === 'lastchapter') sheet.getRange(rowNum, colNum).setValue(updatedManga.lastchapter);
           if (header === 'lastupdated') sheet.getRange(rowNum, colNum).setValue(new Date());
-          if (header === 'needsextract') sheet.getRange(rowNum, colNum).setValue(updatedManga.needsextract !== undefined ? updatedManga.needsextract : true);
+          if (header === 'needsextract') sheet.getRange(rowNum, colNum).setValue(updatedManga.needsextract !== undefined ? parseBooleanParam(updatedManga.needsextract, true) : true);
           if (header === 'releaseday') sheet.getRange(rowNum, colNum).setValue(updatedManga.releaseday || 'None');
           if (header === 'costperchapter') sheet.getRange(rowNum, colNum).setValue(updatedManga.costperchapter || 0);
           if (header === 'lockedtranslator') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedtranslator || '');
           if (header === 'lockedtypesetter') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedtypesetter !== undefined ? updatedManga.lockedtypesetter : 'Tilly');
           if (header === 'lockedpublisher') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedpublisher !== undefined ? updatedManga.lockedpublisher : 'Kikkuk');
           if (header === 'lockedposter') sheet.getRange(rowNum, colNum).setValue(updatedManga.lockedposter !== undefined ? updatedManga.lockedposter : 'ภูมิ');
-          if (header === 'notifyonadd') sheet.getRange(rowNum, colNum).setValue(updatedManga.notifyonadd !== undefined ? updatedManga.notifyonadd : false);
+          if (header === 'notifyonadd') sheet.getRange(rowNum, colNum).setValue(updatedManga.notifyonadd !== undefined ? parseBooleanParam(updatedManga.notifyonadd, false) : false);
           if (header === 'slug') sheet.getRange(rowNum, colNum).setValue(updatedManga.slug || '');
-          if (header === 'isurgent') sheet.getRange(rowNum, colNum).setValue(updatedManga.isurgent !== undefined ? updatedManga.isurgent : false);
+          if (header === 'isurgent') sheet.getRange(rowNum, colNum).setValue(updatedManga.isurgent !== undefined ? parseBooleanParam(updatedManga.isurgent, false) : false);
           if (header === 'translationdocurl') sheet.getRange(rowNum, colNum).setValue(updatedManga.translationdocurl !== undefined ? updatedManga.translationdocurl : '');
 
           if (header === 'scangroup') sheet.getRange(rowNum, colNum).setValue(updatedManga.scangroup !== undefined ? updatedManga.scangroup : (updatedManga.scanGroup !== undefined ? updatedManga.scanGroup : ''));
-          if (header === 'excludetranslatepayout') sheet.getRange(rowNum, colNum).setValue(updatedManga.excludetranslatepayout !== undefined ? Boolean(updatedManga.excludetranslatepayout) : false);
+          if (header === 'excludetranslatepayout') {
+            const rawVal = updatedManga.excludetranslatepayout !== undefined 
+              ? updatedManga.excludetranslatepayout 
+              : (updatedManga.ExcludeTranslatePayout !== undefined 
+                  ? updatedManga.ExcludeTranslatePayout 
+                  : (updatedManga.excludeTranslatePayout !== undefined ? updatedManga.excludeTranslatePayout : undefined));
+            sheet.getRange(rowNum, colNum).setValue(parseBooleanParam(rawVal, false));
+          }
         });
         invalidateCache('mangaList');
         

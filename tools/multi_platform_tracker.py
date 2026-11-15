@@ -297,6 +297,8 @@ def main():
     parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default=os.environ.get("PASSCODE", DEFAULT_PASSCODE), help="GAS Web App Passcode")
     parser.add_argument("--consolidate-only", action="store_true", help="Consolidate existing latest JSON files without re-fetching")
+    parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
+    parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
     args = parser.parse_args()
 
     common_args = []
@@ -306,6 +308,10 @@ def main():
         common_args.append("--browser")
     if args.no_api:
         common_args.append("--no-api")
+    if args.live_html:
+        common_args.append("--live-html")
+    if args.no_cache:
+        common_args.append("--no-cache")
     if args.send_gas:
         common_args.append("--send-gas")
         common_args.extend(["--gas-url", args.gas_url or DEFAULT_GAS_URL])
@@ -324,6 +330,10 @@ def main():
                 rr_args.append("--no-api")
             if args.force_refresh or args.no_api:
                 rr_args.append("--force-refresh")
+            if args.live_html:
+                rr_args.append("--live-html")
+            if args.no_cache:
+                rr_args.append("--no-cache")
             if args.send_gas:
                 rr_args.append("--sync-gas")
                 rr_args.extend(["--gas-url", args.gas_url or DEFAULT_GAS_URL])

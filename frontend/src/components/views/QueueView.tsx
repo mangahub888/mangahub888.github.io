@@ -249,14 +249,113 @@ export function QueueView({
 
       // Assignee filter
       if (assigneeFilter !== "all") {
-        const resolvedTypesetter = resolveTypesetterName(q.typesettername, defaultTypesetterName)
-        const matchesAssignee =
-          q.uploadername === assigneeFilter ||
-          q.extractorname === assigneeFilter ||
-          q.translatorname === assigneeFilter ||
-          resolvedTypesetter === assigneeFilter ||
-          q.publishername === assigneeFilter ||
-          q.postername === assigneeFilter
+        const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || "").toLowerCase().includes("pratchaya")
+        const isExtractActive = String(q.extractstatus || "").trim() === "กำลังทำ" || String(q.extractstatus || "").trim() === "รอเริ่ม"
+
+        const resolvedUploader = (q.uploadername || "").trim()
+        const resolvedExtractor = (isPratchaya && !isExtractActive ? "Pratchaya" : (q.extractorname || "Kikkuk")).trim()
+        const resolvedTranslator = (
+          q.translatorname ||
+          (isPratchaya
+            ? manga?.lockedtranslator || "Pratchaya"
+            : (manga && manga.lockedtranslator) || "เร")
+        ).trim()
+        const resolvedTypesetter = resolveTypesetterName(
+          q.typesettername,
+          (manga && manga.lockedtypesetter) || defaultTypesetterName
+        ).trim()
+        const resolvedPublisher = (q.publishername || (manga && manga.lockedpublisher) || "").trim()
+        const resolvedPoster = (q.postername || (manga && manga.lockedposter) || "").trim()
+
+        const isUpload = stepFilter === "upload" || stepFilter.includes("อัป")
+        const isOcr = stepFilter === "ocr" || stepFilter.includes("ocr") || stepFilter.includes("ดึงคำออโต้")
+        const isExtract = stepFilter === "extract" || stepFilter.includes("QC") || (stepFilter.includes("ดึงคำ") && !stepFilter.includes("ออโต้"))
+        const isTranslate = stepFilter === "translate" || stepFilter.includes("แปล")
+        const isTypeset = stepFilter === "typeset" || stepFilter.includes("ลงคำ")
+        const isPublish = stepFilter === "publish" || stepFilter.includes("publish") || stepFilter.includes("เผยแพร่")
+        const isPost = stepFilter === "post" || stepFilter.includes("โพสต์")
+        const isPublishPost = stepFilter === "publish_post" || (stepFilter.includes("publish") && stepFilter.includes("post"))
+
+        let matchesAssignee = false
+
+        if (isTranslate) {
+          // Strictly check translator ONLY
+          matchesAssignee =
+            q.translatorname === assigneeFilter ||
+            resolvedTranslator === assigneeFilter
+        } else if (isUpload) {
+          matchesAssignee =
+            q.uploadername === assigneeFilter ||
+            resolvedUploader === assigneeFilter
+        } else if (isOcr) {
+          matchesAssignee =
+            q.extractorname === assigneeFilter ||
+            resolvedExtractor === assigneeFilter
+        } else if (isExtract) {
+          matchesAssignee =
+            q.extractorname === assigneeFilter ||
+            resolvedExtractor === assigneeFilter
+        } else if (isTypeset) {
+          matchesAssignee =
+            q.typesettername === assigneeFilter ||
+            resolvedTypesetter === assigneeFilter
+        } else if (isPublish) {
+          matchesAssignee =
+            q.publishername === assigneeFilter ||
+            resolvedPublisher === assigneeFilter
+        } else if (isPost) {
+          matchesAssignee =
+            q.postername === assigneeFilter ||
+            resolvedPoster === assigneeFilter
+        } else if (isPublishPost) {
+          matchesAssignee =
+            q.publishername === assigneeFilter ||
+            resolvedPublisher === assigneeFilter ||
+            q.postername === assigneeFilter ||
+            resolvedPoster === assigneeFilter
+        } else {
+          // stepFilter === "all"
+          // If completionFilter === "incomplete", check assignee of current active incomplete step
+          if (completionFilter === "incomplete") {
+            const curStep = getQueueCurrentStep(q, mangaList)
+            if (curStep === "upload") {
+              matchesAssignee = q.uploadername === assigneeFilter || resolvedUploader === assigneeFilter
+            } else if (curStep === "ocr" || curStep === "extract") {
+              matchesAssignee = q.extractorname === assigneeFilter || resolvedExtractor === assigneeFilter
+            } else if (curStep === "translate") {
+              matchesAssignee = q.translatorname === assigneeFilter || resolvedTranslator === assigneeFilter
+            } else if (curStep === "typeset") {
+              matchesAssignee = q.typesettername === assigneeFilter || resolvedTypesetter === assigneeFilter
+            } else if (curStep === "publish") {
+              matchesAssignee = q.publishername === assigneeFilter || resolvedPublisher === assigneeFilter
+            } else if (curStep === "post") {
+              matchesAssignee = q.postername === assigneeFilter || resolvedPoster === assigneeFilter
+            } else {
+              matchesAssignee =
+                q.uploadername === assigneeFilter ||
+                resolvedUploader === assigneeFilter ||
+                q.extractorname === assigneeFilter ||
+                resolvedExtractor === assigneeFilter ||
+                q.translatorname === assigneeFilter ||
+                resolvedTranslator === assigneeFilter ||
+                resolvedTypesetter === assigneeFilter ||
+                resolvedPublisher === assigneeFilter ||
+                resolvedPoster === assigneeFilter
+            }
+          } else {
+            matchesAssignee =
+              q.uploadername === assigneeFilter ||
+              resolvedUploader === assigneeFilter ||
+              q.extractorname === assigneeFilter ||
+              resolvedExtractor === assigneeFilter ||
+              q.translatorname === assigneeFilter ||
+              resolvedTranslator === assigneeFilter ||
+              resolvedTypesetter === assigneeFilter ||
+              resolvedPublisher === assigneeFilter ||
+              resolvedPoster === assigneeFilter
+          }
+        }
+
         if (!matchesAssignee) return false
       }
 
@@ -296,6 +395,7 @@ export function QueueView({
     assigneeFilter,
     urgentFilter,
     showPublishPost,
+    defaultTypesetterName,
   ])
 
   const assigneeOptions = React.useMemo(() => {

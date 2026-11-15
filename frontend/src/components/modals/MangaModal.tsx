@@ -301,6 +301,8 @@ export function MangaModal({
     try {
       const payload = {
         ...values,
+        excludetranslatepayout: Boolean(values.excludetranslatepayout),
+        ExcludeTranslatePayout: Boolean(values.excludetranslatepayout),
         releaseday: selectedDays.length > 0 ? selectedDays.join(", ") : "None",
       }
 
@@ -573,7 +575,12 @@ export function MangaModal({
               <input
                 type="checkbox"
                 checked={excludeTranslatePayout}
-                onChange={(e) => setValue("excludetranslatepayout", e.target.checked)}
+                onChange={(e) =>
+                  setValue("excludetranslatepayout", e.target.checked, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
                 className="mt-0.5 h-5 w-5 accent-amber-500 rounded cursor-pointer shrink-0"
               />
               <div className="space-y-1">

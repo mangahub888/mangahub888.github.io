@@ -37,15 +37,29 @@ import requests
 from playwright.sync_api import sync_playwright
 
 try:
-    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+    from browser_utils import (
+        get_browser_executable_path,
+        set_browser_window_bottom_most,
+        bring_browser_window_to_top,
+        check_and_handle_antibot_or_login
+    )
 except ImportError:
     try:
-        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
+        from tools.browser_utils import (
+            get_browser_executable_path,
+            set_browser_window_bottom_most,
+            bring_browser_window_to_top,
+            check_and_handle_antibot_or_login
+        )
     except ImportError:
-        def get_browser_executable_path() -> Optional[str]:
+        def get_browser_executable_path():
             return None
         def set_browser_window_bottom_most(title_filter: str = ""):
             pass
+        def bring_browser_window_to_top(browser_proc=None, page=None, title_filter: str = ""):
+            pass
+        def check_and_handle_antibot_or_login(page, platform_name: str = "", timeout_sec: int = 180) -> bool:
+            return True
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -349,7 +363,7 @@ def launch_browser_context(headless: bool = False):
     
     return p, context
 
-def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False):
+def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, live_html: bool = False, no_cache: bool = False):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -383,6 +397,56 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         if not headless:
             set_browser_window_bottom_most("chaply")
         time.sleep(2)
+        check_and_handle_antibot_or_login(page, platform_name="Chaply")
+
+        # Auto-login if redirected to login page
+        if "/auth/login" in page.url or "/login" in page.url:
+            print("🔑 [Chaply] ตรวจพบหน้า Login -> ดำเนินการกรอกข้อมูลเข้าสู่ระบบ...", flush=True)
+            try:
+                email_inp = page.locator("input[name='email'], input[type='email']").first
+                pass_inp = page.locator("input[name='password'], input[type='password']").first
+                if email_inp.count() and pass_inp.count():
+                    email_inp.fill("kuroko11.p.g@gmail.com")
+                    pass_inp.fill("@Poom112345ad")
+                    time.sleep(0.5)
+                    btn = page.locator("button[type='submit']").first
+                    if btn.count():
+                        btn.click()
+                        time.sleep(3)
+            except Exception as e_log:
+                print(f"⚠️ [Chaply] Login notice: {e_log}")
+            check_and_handle_antibot_or_login(page, platform_name="Chaply")
+            page.goto("https://www.chaply.net/writer/dashboard", wait_until="domcontentloaded")
+            time.sleep(2)
+
+        # Scrape live Dashboard HTML DOM numbers directly
+        dom_dash_stats = page.evaluate(r"""() => {
+            const txt = document.body.innerText;
+            let grossSales = 0;
+            const mGross = txt.match(/ยอดขายรวม\s*\([^\)]*\)\s*\n+\s*฿?([\d,\.]+)/);
+            if (mGross) grossSales = parseFloat(mGross[1].replace(/,/g, '')) || 0;
+            
+            let netIncome = 0;
+            const mNet = txt.match(/รายได้สุทธิ\s*:\s*฿?([\d,\.]+)/) || txt.match(/รายได้ตลอดชีพ\s*\n+\s*฿?([\d,\.]+)/);
+            if (mNet) netIncome = parseFloat(mNet[1].replace(/,/g, '')) || 0;
+            
+            let curMonth = 0;
+            const mMon = txt.match(/เดือนนี้\s*\n+\s*฿?([\d,\.]+)/);
+            if (mMon) curMonth = parseFloat(mMon[1].replace(/,/g, '')) || 0;
+            
+            let totViews = 0;
+            const mViews = txt.match(/จำนวนการดูทั้งหมด\s*\n+\s*([\d,\.]+[KkMm]?)/);
+            if (mViews) {
+                let vStr = mViews[1].replace(/,/g, '');
+                let f = 1;
+                if (vStr.endsWith('K') || vStr.endsWith('k')) { f = 1000; vStr = vStr.slice(0, -1); }
+                else if (vStr.endsWith('M') || vStr.endsWith('m')) { f = 1000000; vStr = vStr.slice(0, -1); }
+                totViews = Math.round((parseFloat(vStr) || 0) * f);
+            }
+            return { gross_sales: grossSales, net_income: netIncome, current_month_sales: curMonth, total_views: totViews };
+        }""")
+        if dom_dash_stats and dom_dash_stats.get('gross_sales', 0) > 0:
+            print(f"📊 [Chaply Live DOM] ยอดขายรวม: {dom_dash_stats['gross_sales']:,.2f} ฿ | สุทธิ: {dom_dash_stats['net_income']:,.2f} ฿ | เดือนนี้: {dom_dash_stats['current_month_sales']:,.2f} ฿ | วิว: {dom_dash_stats['total_views']:,}")
 
         if token:
             try:
@@ -405,6 +469,11 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     stats = meta.get("stats", {})
     lifetime_sales = float(wallet.get("lifetimeEarn") or stats.get("revenue", {}).get("lifetimeEarn") or 0.0)
     total_views_overall = int(stats.get("engagement", {}).get("totalViews") or 0)
+    if 'dom_dash_stats' in locals() and dom_dash_stats and dom_dash_stats.get('gross_sales', 0) > 0:
+        if live_html or no_cache or lifetime_sales == 0:
+            lifetime_sales = float(dom_dash_stats['gross_sales'])
+        if live_html or no_cache or total_views_overall == 0:
+            total_views_overall = int(dom_dash_stats.get('total_views', 0))
     print(f"💰 ข้อมูลบัญชี: ยอดขายสะสม {lifetime_sales:,.2f} บาท | ยอดวิวรวม {total_views_overall:,} วิว")
 
     # 2. Fetch all comics
@@ -809,9 +878,19 @@ if __name__ == "__main__":
     parser.add_argument("--force-refresh", action="store_true", default=False, help="Force refresh tokens through real browser session")
     parser.add_argument("--gas-url", type=str, default=os.environ.get("GAS_URL") or os.environ.get("GAS_WEBAPP_URL") or DEFAULT_GAS_URL, help="GAS Web App URL")
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
+    parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
+    parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
     args = parser.parse_args()
 
     # Browser is enabled by default or when --browser / --no-api is passed
     headless = args.headless
     use_browser = True if (not headless or args.browser or args.no_api) else False
-    run_chaply_pipeline(send_to_gas=args.send_gas, gas_url=args.gas_url, passcode=args.passcode, use_browser=use_browser, headless=headless)
+    run_chaply_pipeline(
+        send_to_gas=args.send_gas,
+        gas_url=args.gas_url,
+        passcode=args.passcode,
+        use_browser=use_browser,
+        headless=headless,
+        live_html=args.live_html,
+        no_cache=args.no_cache
+    )

@@ -41,7 +41,7 @@ echo       - ReadRealm (LionKing + Adieu)
 echo       - Kairew (PlangJonMuey)
 echo       - Chaply (PlangJonMuey)
 echo =====================================================================
-python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh
+python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache
 set TRACKER_EXIT=%ERRORLEVEL%
 if %TRACKER_EXIT% NEQ 0 (
     echo [WARNING] การดึงข้อมูลแพลตฟอร์มเสร็จสิ้นด้วยรหัส: %TRACKER_EXIT%

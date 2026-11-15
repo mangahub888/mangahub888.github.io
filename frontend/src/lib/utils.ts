@@ -38,8 +38,17 @@ export function isUrgentManga(manga: any): boolean {
 
 export function isTranslatePayoutExcluded(manga: any): boolean {
   if (!manga) return false
-  const v = manga.excludetranslatepayout ?? manga.ExcludeTranslatePayout
-  return v === true || String(v).toLowerCase() === 'true' || v === 1 || String(v) === '1'
+  const v =
+    manga.excludetranslatepayout !== undefined
+      ? manga.excludetranslatepayout
+      : manga.ExcludeTranslatePayout !== undefined
+      ? manga.ExcludeTranslatePayout
+      : manga.excludeTranslatePayout !== undefined
+      ? manga.excludeTranslatePayout
+      : manga.exclude_translate_payout
+  if (v === true || v === 1) return true
+  const s = String(v ?? '').trim().toLowerCase()
+  return s === 'true' || s === '1' || s === 'yes'
 }
 
 /**

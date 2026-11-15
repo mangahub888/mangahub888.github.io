@@ -345,6 +345,10 @@ export default function App() {
 
   const updateMangaCache = (newManga: any[]) => {
     setMangaList(newManga)
+    queryClient.setQueryData(["initialDashboardData", passcode], (old: any) => {
+      if (!old) return old
+      return { ...old, manga: newManga }
+    })
   }
 
   const updateTeamCache = (newTeam: any[]) => {

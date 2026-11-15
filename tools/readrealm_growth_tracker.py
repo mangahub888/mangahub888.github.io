@@ -138,42 +138,29 @@ ACCOUNTS = [
 
 
 try:
-
-    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
-
+    from browser_utils import (
+        get_browser_executable_path,
+        set_browser_window_bottom_most,
+        bring_browser_window_to_top,
+        check_and_handle_antibot_or_login
+    )
 except ImportError:
-
     try:
-
-        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
-
+        from tools.browser_utils import (
+            get_browser_executable_path,
+            set_browser_window_bottom_most,
+            bring_browser_window_to_top,
+            check_and_handle_antibot_or_login
+        )
     except ImportError:
-
-        def get_browser_executable_path() -> Optional[str]:
-
-            if sys.platform == "win32":
-
-                candidates = [
-
-                    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-
-                    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-
-                ]
-
-                for p in candidates:
-
-                    if os.path.exists(p):
-
-                        return p
-
+        def get_browser_executable_path():
             return None
-
-
-
         def set_browser_window_bottom_most(title_filter: str = ""):
-
             pass
+        def bring_browser_window_to_top(browser_proc=None, page=None, title_filter: str = ""):
+            pass
+        def check_and_handle_antibot_or_login(page, platform_name: str = "", timeout_sec: int = 180) -> bool:
+            return True
 
 
 
@@ -1329,7 +1316,7 @@ def fetch_writer_total_sales(cid: str, token: str, acc: Optional[Dict[str, Any]]
 
 
 
-def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) -> List[Dict[str, Any]]:
+def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, live_html: bool = False, no_cache: bool = False) -> List[Dict[str, Any]]:
     """Fetch complete comics list and latest stats for an account by automating the real visible Google Chrome browser page-by-page and comic-by-comic (mgeko style, zero API calls)."""
     comics_list = []
     now_utc = datetime.now(timezone.utc)
@@ -1343,19 +1330,20 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) ->
     profile_dir = acc["profile_dir"]
     os.makedirs(profile_dir, exist_ok=True)
 
-    # Pre-load known monthly sales cache from disk for baseline
+    # Pre-load known monthly sales cache from disk for baseline (disabled if live_html or no_cache)
     stats_cache_map = {}
-    for p_name in ["readrealm_stats_lionking.json", "readrealm_stats.json"]:
-        p_path = os.path.join(DATA_DIR, p_name)
-        if os.path.exists(p_path):
-            try:
-                with open(p_path, "r", encoding="utf-8") as f:
-                    s_data = json.load(f)
-                    for c_item in s_data.get("comics", []):
-                        if c_item.get("comic_id"):
-                            stats_cache_map[c_item["comic_id"]] = c_item.get("monthly_sales", {})
-            except Exception:
-                pass
+    if not (live_html or no_cache):
+        for p_name in ["readrealm_stats_lionking.json", "readrealm_stats.json"]:
+            p_path = os.path.join(DATA_DIR, p_name)
+            if os.path.exists(p_path):
+                try:
+                    with open(p_path, "r", encoding="utf-8") as f:
+                        s_data = json.load(f)
+                        for c_item in s_data.get("comics", []):
+                            if c_item.get("comic_id"):
+                                stats_cache_map[c_item["comic_id"]] = c_item.get("monthly_sales", {})
+                except Exception:
+                    pass
 
     chrome_exe = get_browser_executable_path()
     launch_kwargs = {
@@ -1423,6 +1411,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) ->
         if not headless:
             set_browser_window_bottom_most("readrealm")
         page.wait_for_timeout(2500)
+        check_and_handle_antibot_or_login(page, platform_name=f"ReadRealm ({acc['name']})")
 
         if "/login" in page.url:
             print(f"🔑 [{acc['name']}] ตรวจพบหน้าเข้าสู่ระบบ -> ทำการล็อกอิน...", flush=True)
@@ -1564,6 +1553,7 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False) ->
             try:
                 analytics_cache.clear()
                 page.goto(f"https://readrealm.co/writer/comic/{cid}", wait_until="domcontentloaded")
+                check_and_handle_antibot_or_login(page, platform_name=f"ReadRealm ({subj})")
 
                 # Tab A: รายงานและสถิติ
                 stat_btn = page.locator("button:has-text('รายงานและสถิติ'), li:has-text('รายงานและสถิติ'), a:has-text('รายงานและสถิติ')").first
@@ -1892,7 +1882,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
 
 
 
-def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, force_refresh: bool = False, no_api: bool = False):
+def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, force_refresh: bool = False, no_api: bool = False, live_html: bool = False, no_cache: bool = False):
 
     now = datetime.now(timezone.utc)
 
@@ -1933,7 +1923,7 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
         try:
 
-            acc_comics = fetch_all_comics_for_account(acc, headless=not use_browser)
+            acc_comics = fetch_all_comics_for_account(acc, headless=not use_browser, live_html=live_html, no_cache=no_cache)
 
         except Exception as e:
 
@@ -1944,10 +1934,11 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         # If live fetch returned 0 comics for this account, restore from cache
 
         if not acc_comics:
-
-            print(f"⚠️ Live fetch returned 0 comics for [{acc['name']}]. Preserving previous snapshot for this account...")
-
-            acc_comics = restore_account_comics_from_cache(acc["id"], acc["name"])
+            if live_html or no_cache:
+                print(f"⚠️ Live fetch returned 0 comics for [{acc['name']}]. [LIVE-HTML / NO-CACHE: Skipping cache fallback]")
+            else:
+                print(f"⚠️ Live fetch returned 0 comics for [{acc['name']}]. Preserving previous snapshot for this account...")
+                acc_comics = restore_account_comics_from_cache(acc["id"], acc["name"])
 
 
 
@@ -1957,7 +1948,7 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     # Fallback to LATEST_GROWTH_FILE first if live fetch returned 0 (prevents overwriting 368 chapters with old 200-cap cache)
 
-    if not all_current_comics and os.path.exists(LATEST_GROWTH_FILE):
+    if not all_current_comics and not (live_html or no_cache) and os.path.exists(LATEST_GROWTH_FILE):
 
         print("⚠️ Live fetch returned 0 comics. Preserving latest growth snapshot...")
 
@@ -2005,8 +1996,7 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     # Secondary fallback to cached stats if LATEST_GROWTH_FILE was also empty
 
-    if not all_current_comics:
-
+    if not all_current_comics and not (live_html or no_cache):
         print("⚠️ Live fetch returned 0 comics. Checking cached stats files...")
 
         cached_lk = os.path.join(DATA_DIR, "readrealm_stats_lionking.json")
@@ -2584,6 +2574,8 @@ if __name__ == "__main__":
     parser.add_argument("--gas-url", type=str, default="", help="GAS Web App exec URL")
 
     parser.add_argument("--passcode", type=str, default="10211032", help="GAS Passcode")
+    parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
+    parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
 
     args = parser.parse_args()
 
@@ -2609,7 +2601,11 @@ if __name__ == "__main__":
 
         force_refresh=force_refresh,
 
-        no_api=no_api
+        no_api=no_api,
+
+        live_html=args.live_html,
+
+        no_cache=args.no_cache
 
     )
 

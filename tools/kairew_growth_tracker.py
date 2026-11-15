@@ -97,38 +97,29 @@ ACCOUNT_INFO = {
 }
 
 try:
-
-    from browser_utils import get_browser_executable_path, set_browser_window_bottom_most
-
+    from browser_utils import (
+        get_browser_executable_path,
+        set_browser_window_bottom_most,
+        bring_browser_window_to_top,
+        check_and_handle_antibot_or_login
+    )
 except ImportError:
-
     try:
-
-        from tools.browser_utils import get_browser_executable_path, set_browser_window_bottom_most
-
+        from tools.browser_utils import (
+            get_browser_executable_path,
+            set_browser_window_bottom_most,
+            bring_browser_window_to_top,
+            check_and_handle_antibot_or_login
+        )
     except ImportError:
-
-        def get_browser_executable_path() -> Optional[str]:
-
-            candidates = [
-
-                r"C:\Program Files\Google\Chrome\Application\chrome.exe",
-
-                r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-
-            ]
-
-            for p in candidates:
-
-                if os.path.exists(p):
-
-                    return p
-
+        def get_browser_executable_path():
             return None
-
         def set_browser_window_bottom_most(title_filter: str = ""):
-
             pass
+        def bring_browser_window_to_top(browser_proc=None, page=None, title_filter: str = ""):
+            pass
+        def check_and_handle_antibot_or_login(page, platform_name: str = "", timeout_sec: int = 180) -> bool:
+            return True
 
 def fetch_kairew_data_via_requests() -> Optional[Dict[str, Any]]:
 
@@ -174,7 +165,7 @@ def fetch_kairew_data_via_requests() -> Optional[Dict[str, Any]]:
 
     return None
 
-def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = False) -> Dict[str, Any]:
+def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = False, live_html: bool = False, no_cache: bool = False) -> Dict[str, Any]:
 
     """Launch persistent context to extract manage-book props from Kairew in visible non-headless mode."""
 
@@ -238,7 +229,8 @@ def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = Fal
 
             set_browser_window_bottom_most("kairew")
 
-        time.sleep(4)
+        time.sleep(2)
+        check_and_handle_antibot_or_login(page, platform_name="Kairew")
 
         # Check if redirected to login
 
@@ -288,10 +280,35 @@ def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = Fal
 
         props_data = page.evaluate("""() => {
             const app = document.getElementById('app');
-            if (!app) return null;
+            let data = null;
+            if (app) {
+                try { data = JSON.parse(app.dataset.page); } catch(e) {}
+            }
+            if (!data) data = { props: {} };
+            
+            // Scrape live HTML DOM table directly
             try {
-                return JSON.parse(app.dataset.page);
-            } catch(e) { return null; }
+                const trs = Array.from(document.querySelectorAll('table tbody tr'));
+                const domRows = trs.map(tr => {
+                    const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+                    if (tds.length >= 8) {
+                        const lines = (tds[1] || '').split('\n').map(s => s.trim()).filter(Boolean);
+                        const title = lines[0] || '';
+                        const eps = parseInt(lines[1] || '0') || 0;
+                        let vStr = (lines[2] || '0').replace(/,/g, '');
+                        let f = 1;
+                        if (vStr.endsWith('K') || vStr.endsWith('k')) { f = 1000; vStr = vStr.slice(0, -1); }
+                        else if (vStr.endsWith('M') || vStr.endsWith('m')) { f = 1000000; vStr = vStr.slice(0, -1); }
+                        const views = Math.round((parseFloat(vStr) || 0) * f);
+                        const sales = parseFloat((tds[7] || '0').replace(/,/g, '')) || 0.0;
+                        return { title, eps, views, sales, date_str: tds[2] || '' };
+                    }
+                    return null;
+                }).filter(Boolean);
+                data._dom_table_rows = domRows;
+            } catch(e) {}
+
+            return data;
         }""")
 
         # In-browser deep-dive per-comic sales & chapters extraction (No-Headless Real Chrome)
@@ -502,7 +519,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
 
         return False
 
-def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, foreground: bool = False, no_api: bool = False, force_refresh: bool = False):
+def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, foreground: bool = False, no_api: bool = False, force_refresh: bool = False, live_html: bool = False, no_cache: bool = False):
 
     now = datetime.now(timezone.utc)
 
@@ -524,28 +541,29 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     print("🔄 กำลังตรวจสอบการดึงข้อมูลจาก Kairew...")
 
-    # Pre-load existing monthly sales from disk cache for baseline comparison
+    # Pre-load existing monthly sales from disk cache for baseline comparison (disabled if live_html or no_cache)
     existing_monthly_cache = {}
-    latest_kw_file = os.path.join(DATA_DIR, "kairew_growth_latest.json")
-    if os.path.exists(latest_kw_file):
-        try:
-            with open(latest_kw_file, "r", encoding="utf-8") as kf:
-                old_d = json.load(kf)
-                for old_c in old_d.get("comics", []):
-                    if old_c.get("comic_id"):
-                        existing_monthly_cache[str(old_c["comic_id"])] = old_c.get("monthly_sales", {})
-        except Exception:
-            pass
+    if not (live_html or no_cache):
+        latest_kw_file = os.path.join(DATA_DIR, "kairew_growth_latest.json")
+        if os.path.exists(latest_kw_file):
+            try:
+                with open(latest_kw_file, "r", encoding="utf-8") as kf:
+                    old_d = json.load(kf)
+                    for old_c in old_d.get("comics", []):
+                        if old_c.get("comic_id"):
+                            existing_monthly_cache[str(old_c["comic_id"])] = old_c.get("monthly_sales", {})
+            except Exception:
+                pass
 
     # Strictly real browser if no_api or use_browser is set
-    if no_api or use_browser or force_refresh:
-        page_data = fetch_kairew_data_via_browser(headless=headless, foreground=foreground)
+    if no_api or use_browser or force_refresh or live_html or no_cache:
+        page_data = fetch_kairew_data_via_browser(headless=headless, foreground=foreground, live_html=live_html, no_cache=no_cache)
     else:
         page_data = fetch_kairew_data_via_requests() or fetch_kairew_data_via_browser(headless=headless, foreground=foreground) or {}
 
     # If direct fetch didn't return data, check cached props file (< 30 mins)
 
-    if not page_data or not page_data.get("props"):
+    if (not page_data or not page_data.get("props")) and not (live_html or no_cache):
 
         cached_props_file = os.path.join(DATA_DIR, "kairew_manage_book_props.json")
 
@@ -1023,6 +1041,8 @@ if __name__ == "__main__":
     parser.add_argument("--foreground", action="store_true", default=False, help="Launch Chrome in foreground")
     parser.add_argument("--no-api", action="store_true", default=False, help="Force real visible Google Chrome browser only")
     parser.add_argument("--force-refresh", action="store_true", default=False, help="Force refresh via browser session")
+    parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
+    parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
 
     args = parser.parse_args()
 
@@ -1036,5 +1056,7 @@ if __name__ == "__main__":
         headless=args.headless,
         foreground=args.foreground,
         no_api=args.no_api,
-        force_refresh=args.force_refresh
+        force_refresh=args.force_refresh,
+        live_html=args.live_html,
+        no_cache=args.no_cache
     )
