@@ -12,7 +12,6 @@
       "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
-        "พฤศจิกายน": 0.0,
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
         "มีนาคม": 0.0,
@@ -22,7 +21,8 @@
         "กรกฎาคม": 0.0,
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
-        "ตุลาคม": 0.0
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 0,
@@ -32,12 +32,12 @@
       "cid": "7vgQpJ2VjRK3V6Zr5GmX",
       "subject": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
       "chapters_count": 9,
-      "total_views": 181,
+      "total_views": 2600,
       "total_sales": 0,
       "comic_id": "7vgQpJ2VjRK3V6Zr5GmX",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1,
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -53,7 +53,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 77,
+      "views_7_chapters": 1930,
       "last_chapter_updated_at": "2026-11-10T00:00:00"
     },
     {
@@ -65,7 +65,7 @@
       "comic_id": "DBQ4k6PYpQnnx8qrm0J5",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 7,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -81,19 +81,19 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 1185,
-      "last_chapter_updated_at": "2026-11-04T00:00:00"
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "BAyoRlNxvJEbxdqp18wL",
       "subject": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
       "chapters_count": 23,
       "total_views": 4400,
-      "total_sales": 1310.4,
+      "total_sales": 1312.2,
       "comic_id": "BAyoRlNxvJEbxdqp18wL",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 4,
+      "days_inactive": 8,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -106,22 +106,22 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 1092.6,
-        "พฤศจิกายน": 217.8
+        "พฤศจิกายน": 219.6
       },
-      "sales_7_chapters": 450,
-      "views_7_chapters": 395,
+      "sales_7_chapters": 451.8,
+      "views_7_chapters": 399,
       "last_chapter_updated_at": "2026-11-07T00:00:00"
     },
     {
       "cid": "9ZazJMeV9LJwO4wK6vRq",
       "subject": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
       "chapters_count": 12,
-      "total_views": 3100,
-      "total_sales": 271.8,
+      "total_views": 3200,
+      "total_sales": 277.2,
       "comic_id": "9ZazJMeV9LJwO4wK6vRq",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 14,
+      "days_inactive": 18,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -134,22 +134,22 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 198.0,
-        "พฤศจิกายน": 73.8
+        "พฤศจิกายน": 79.2
       },
-      "sales_7_chapters": 271.8,
-      "views_7_chapters": 1237,
+      "sales_7_chapters": 277.2,
+      "views_7_chapters": 1264,
       "last_chapter_updated_at": "2026-10-28T00:00:00"
     },
     {
       "cid": "jamDek8YoebyO0Pz1JNw",
       "subject": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
       "chapters_count": 4,
-      "total_views": 380,
+      "total_views": 382,
       "total_sales": 0,
       "comic_id": "jamDek8YoebyO0Pz1JNw",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 22,
+      "days_inactive": 26,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -165,7 +165,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 348,
+      "views_7_chapters": 349,
       "last_chapter_updated_at": "2026-10-20T00:00:00"
     },
     {
@@ -177,7 +177,7 @@
       "comic_id": "nvEqQwJYPz8NOedr65l2",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 14,
+      "days_inactive": 18,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -193,19 +193,19 @@
         "พฤศจิกายน": 1.8
       },
       "sales_7_chapters": 307.8,
-      "views_7_chapters": 341,
+      "views_7_chapters": 344,
       "last_chapter_updated_at": "2026-10-28T00:00:00"
     },
     {
       "cid": "wPZAJq7OkDryVW8Dozkm",
       "subject": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
       "chapters_count": 25,
-      "total_views": 6900,
-      "total_sales": 1049.4,
+      "total_views": 7000,
+      "total_sales": 1067.4,
       "comic_id": "wPZAJq7OkDryVW8Dozkm",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 9,
+      "days_inactive": 13,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -218,10 +218,10 @@
         "สิงหาคม": 0.0,
         "กันยายน": 459.0,
         "ตุลาคม": 306.0,
-        "พฤศจิกายน": 284.4
+        "พฤศจิกายน": 302.4
       },
-      "sales_7_chapters": 316.8,
-      "views_7_chapters": 210,
+      "sales_7_chapters": 329.4,
+      "views_7_chapters": 223,
       "last_chapter_updated_at": "2026-11-02T00:00:00"
     },
     {
@@ -229,11 +229,11 @@
       "subject": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
       "chapters_count": 12,
       "total_views": 2000,
-      "total_sales": 172.8,
+      "total_sales": 176.4,
       "comic_id": "zkJdZa0Y6n5NYrv4KR5n",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 23,
+      "days_inactive": 27,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -246,22 +246,22 @@
         "สิงหาคม": 0.0,
         "กันยายน": 0.0,
         "ตุลาคม": 162.0,
-        "พฤศจิกายน": 10.8
+        "พฤศจิกายน": 14.4
       },
-      "sales_7_chapters": 172.8,
-      "views_7_chapters": 943,
+      "sales_7_chapters": 176.4,
+      "views_7_chapters": 957,
       "last_chapter_updated_at": "2026-10-19T00:00:00"
     },
     {
       "cid": "3MjZ0qWYgw1oYJLAreG1",
       "subject": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
       "chapters_count": 19,
-      "total_views": 4300,
-      "total_sales": 1351.8,
+      "total_views": 4400,
+      "total_sales": 1411.2,
       "comic_id": "3MjZ0qWYgw1oYJLAreG1",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
+      "days_inactive": 6,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -274,11 +274,11 @@
         "สิงหาคม": 0.0,
         "กันยายน": 21.6,
         "ตุลาคม": 1081.8,
-        "พฤศจิกายน": 248.4
+        "พฤศจิกายน": 307.8
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 797.4,
+      "views_7_chapters": 561,
+      "last_chapter_updated_at": "2026-11-09T00:00:00"
     },
     {
       "cid": "rwEvg7LY8QnJx20blNPp",
@@ -289,7 +289,7 @@
       "comic_id": "rwEvg7LY8QnJx20blNPp",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 14,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -304,20 +304,20 @@
         "ตุลาคม": 2615.4,
         "พฤศจิกายน": 106.2
       },
-      "sales_7_chapters": 504,
-      "views_7_chapters": 443,
-      "last_chapter_updated_at": "2026-10-28T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "n6r39MJVwpqjYNAB81yk",
       "subject": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
-      "chapters_count": 37,
-      "total_views": 6900,
-      "total_sales": 1674,
+      "chapters_count": 43,
+      "total_views": 7600,
+      "total_sales": 1888.2,
       "comic_id": "n6r39MJVwpqjYNAB81yk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 19,
+      "days_inactive": 4,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -330,22 +330,22 @@
         "สิงหาคม": 302.4,
         "กันยายน": 234.0,
         "ตุลาคม": 973.8,
-        "พฤศจิกายน": 163.8
+        "พฤศจิกายน": 378.0
       },
-      "sales_7_chapters": 309.6,
-      "views_7_chapters": 214,
-      "last_chapter_updated_at": "2026-10-23T00:00:00"
+      "sales_7_chapters": 165.6,
+      "views_7_chapters": 115,
+      "last_chapter_updated_at": "2026-11-11T00:00:00"
     },
     {
       "cid": "aDZ1qlAOewl3Y5k7gmeM",
       "subject": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
       "chapters_count": 20,
-      "total_views": 35500,
-      "total_sales": 2856.6,
+      "total_views": 36100,
+      "total_sales": 3124.8,
       "comic_id": "aDZ1qlAOewl3Y5k7gmeM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1,
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -358,103 +358,19 @@
         "สิงหาคม": 0.0,
         "กันยายน": 1062.0,
         "ตุลาคม": 1310.4,
-        "พฤศจิกายน": 484.2
+        "พฤศจิกายน": 752.4
       },
-      "sales_7_chapters": 1391.4,
-      "views_7_chapters": 1258,
+      "sales_7_chapters": 1589.4,
+      "views_7_chapters": 1416,
       "last_chapter_updated_at": "2026-11-10T00:00:00"
     },
     {
       "cid": "m5MEjRdOnnzbOg6Ay8ZW",
       "subject": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack S",
-      "chapters_count": 7,
-      "total_views": 288,
+      "chapters_count": 10,
+      "total_views": 388,
       "total_sales": 0,
       "comic_id": "m5MEjRdOnnzbOg6Ay8ZW",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 0.0,
-        "สิงหาคม": 0.0,
-        "กันยายน": 0.0,
-        "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0.0
-      },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
-    },
-    {
-      "cid": "a7qNk8mOK95RYXyvogDn",
-      "subject": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
-      "chapters_count": 16,
-      "total_views": 4500,
-      "total_sales": 547.2,
-      "comic_id": "a7qNk8mOK95RYXyvogDn",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 1,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 0.0,
-        "สิงหาคม": 0.0,
-        "กันยายน": 0.0,
-        "ตุลาคม": 473.4,
-        "พฤศจิกายน": 73.8
-      },
-      "sales_7_chapters": 547.2,
-      "views_7_chapters": 813,
-      "last_chapter_updated_at": "2026-11-10T00:00:00"
-    },
-    {
-      "cid": "EQwLk1zYRR9KY50y2Wed",
-      "subject": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
-      "chapters_count": 20,
-      "total_views": 6900,
-      "total_sales": 1252.8,
-      "comic_id": "EQwLk1zYRR9KY50y2Wed",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 19,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 0.0,
-        "สิงหาคม": 0.0,
-        "กันยายน": 117.0,
-        "ตุลาคม": 1074.6,
-        "พฤศจิกายน": 61.2
-      },
-      "sales_7_chapters": 786.6,
-      "views_7_chapters": 575,
-      "last_chapter_updated_at": "2026-10-23T00:00:00"
-    },
-    {
-      "cid": "7vgQpJ2VjRM9V6Zr5GmX",
-      "subject": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
-      "chapters_count": 9,
-      "total_views": 471,
-      "total_sales": 0,
-      "comic_id": "7vgQpJ2VjRM9V6Zr5GmX",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "days_inactive": 2,
@@ -473,14 +389,98 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 178,
+      "views_7_chapters": 171,
+      "last_chapter_updated_at": "2026-11-13T00:00:00"
+    },
+    {
+      "cid": "a7qNk8mOK95RYXyvogDn",
+      "subject": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+      "chapters_count": 16,
+      "total_views": 4600,
+      "total_sales": 595.8,
+      "comic_id": "a7qNk8mOK95RYXyvogDn",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 5,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 473.4,
+        "พฤศจิกายน": 122.4
+      },
+      "sales_7_chapters": 595.8,
+      "views_7_chapters": 861,
+      "last_chapter_updated_at": "2026-11-10T00:00:00"
+    },
+    {
+      "cid": "EQwLk1zYRR9KY50y2Wed",
+      "subject": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+      "chapters_count": 23,
+      "total_views": 7000,
+      "total_sales": 1265.4,
+      "comic_id": "EQwLk1zYRR9KY50y2Wed",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 1,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 117.0,
+        "ตุลาคม": 1074.6,
+        "พฤศจิกายน": 73.8
+      },
+      "sales_7_chapters": 410.4,
+      "views_7_chapters": 312,
+      "last_chapter_updated_at": "2026-11-14T00:00:00"
+    },
+    {
+      "cid": "7vgQpJ2VjRM9V6Zr5GmX",
+      "subject": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+      "chapters_count": 9,
+      "total_views": 476,
+      "total_sales": 0,
+      "comic_id": "7vgQpJ2VjRM9V6Zr5GmX",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 6,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0
+      },
+      "sales_7_chapters": 0,
+      "views_7_chapters": 180,
       "last_chapter_updated_at": "2026-11-09T00:00:00"
     },
     {
       "cid": "DBQ4k6PYpQr5x8qrm0J5",
       "subject": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
       "chapters_count": 0,
-      "total_views": 12,
+      "total_views": 13,
       "total_sales": 0,
       "comic_id": "DBQ4k6PYpQr5x8qrm0J5",
       "account": "แปลจนเมื่อย",
@@ -508,177 +508,9 @@
       "cid": "BAyoRlNxvJpaxdqp18wL",
       "subject": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
       "chapters_count": 6,
-      "total_views": 181,
+      "total_views": 206,
       "total_sales": 0,
       "comic_id": "BAyoRlNxvJpaxdqp18wL",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 1,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 0.0,
-        "สิงหาคม": 0.0,
-        "กันยายน": 0.0,
-        "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0.0
-      },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 153,
-      "last_chapter_updated_at": "2026-11-10T00:00:00"
-    },
-    {
-      "cid": "ng5GbmNxBrg8x9AlMyk0",
-      "subject": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
-      "chapters_count": 28,
-      "total_views": 5800,
-      "total_sales": 1431,
-      "comic_id": "ng5GbmNxBrg8x9AlMyk0",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 135.0,
-        "สิงหาคม": 457.2,
-        "กันยายน": 720.0,
-        "ตุลาคม": 90.0,
-        "พฤศจิกายน": 28.8
-      },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
-    },
-    {
-      "cid": "RbKaMELO7plPVglzP41q",
-      "subject": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
-      "chapters_count": 31,
-      "total_views": 10000,
-      "total_sales": 2498.4,
-      "comic_id": "RbKaMELO7plPVglzP41q",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 19,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 606.6,
-        "สิงหาคม": 966.6,
-        "กันยายน": 540.0,
-        "ตุลาคม": 352.8,
-        "พฤศจิกายน": 32.4
-      },
-      "sales_7_chapters": 367.2,
-      "views_7_chapters": 333,
-      "last_chapter_updated_at": "2026-10-23T00:00:00"
-    },
-    {
-      "cid": "kJy7ZdeYZRJJYX5PAwB6",
-      "subject": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
-      "chapters_count": 32,
-      "total_views": 21100,
-      "total_sales": 7333.2,
-      "comic_id": "kJy7ZdeYZRJJYX5PAwB6",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 19,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 169.2,
-        "กรกฎาคม": 1544.4,
-        "สิงหาคม": 498.6,
-        "กันยายน": 2651.4,
-        "ตุลาคม": 2307.6,
-        "พฤศจิกายน": 162
-      },
-      "sales_7_chapters": 1591.2,
-      "views_7_chapters": 1508,
-      "last_chapter_updated_at": "2026-10-23T00:00:00"
-    },
-    {
-      "cid": "NG8Qg2kxDyqvOz7Kdeo9",
-      "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
-      "chapters_count": 29,
-      "total_views": 20700,
-      "total_sales": 7750.8,
-      "comic_id": "NG8Qg2kxDyqvOz7Kdeo9",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 19,
-      "is_inactive_30d": false,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 106.2,
-        "กรกฎาคม": 1119.6,
-        "สิงหาคม": 2457.0,
-        "กันยายน": 1735.2,
-        "ตุลาคม": 1418.4,
-        "พฤศจิกายน": 914.4
-      },
-      "sales_7_chapters": 1926,
-      "views_7_chapters": 1720,
-      "last_chapter_updated_at": "2026-10-23T00:00:00"
-    },
-    {
-      "cid": "rKk19Eexy8ZpYWAyR3qL",
-      "subject": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
-      "chapters_count": 4,
-      "total_views": 530,
-      "total_sales": 0,
-      "comic_id": "rKk19Eexy8ZpYWAyR3qL",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 158,
-      "is_inactive_30d": true,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 0.0,
-        "สิงหาคม": 0.0,
-        "กันยายน": 0.0,
-        "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0.0
-      },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 255,
-      "last_chapter_updated_at": "2026-06-06T00:00:00"
-    },
-    {
-      "cid": "Z41KDdWY1989Yw7MA5Pk",
-      "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
-      "chapters_count": 27,
-      "total_views": 34100,
-      "total_sales": 8661.6,
-      "comic_id": "Z41KDdWY1989Yw7MA5Pk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "days_inactive": 5,
@@ -691,25 +523,193 @@
         "พฤษภาคม": 0.0,
         "มิถุนายน": 0.0,
         "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0
+      },
+      "sales_7_chapters": 0,
+      "views_7_chapters": 173,
+      "last_chapter_updated_at": "2026-11-10T00:00:00"
+    },
+    {
+      "cid": "ng5GbmNxBrg8x9AlMyk0",
+      "subject": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+      "chapters_count": 28,
+      "total_views": 6500,
+      "total_sales": 1704.6,
+      "comic_id": "ng5GbmNxBrg8x9AlMyk0",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 13,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 135.0,
+        "สิงหาคม": 457.2,
+        "กันยายน": 720.0,
+        "ตุลาคม": 90.0,
+        "พฤศจิกายน": 302.4
+      },
+      "sales_7_chapters": 369,
+      "views_7_chapters": 336,
+      "last_chapter_updated_at": "2026-11-02T00:00:00"
+    },
+    {
+      "cid": "RbKaMELO7plPVglzP41q",
+      "subject": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+      "chapters_count": 31,
+      "total_views": 10100,
+      "total_sales": 2500.2,
+      "comic_id": "RbKaMELO7plPVglzP41q",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 23,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 606.6,
+        "สิงหาคม": 966.6,
+        "กันยายน": 540.0,
+        "ตุลาคม": 352.8,
+        "พฤศจิกายน": 34.2
+      },
+      "sales_7_chapters": 369,
+      "views_7_chapters": 339,
+      "last_chapter_updated_at": "2026-10-23T00:00:00"
+    },
+    {
+      "cid": "kJy7ZdeYZRJJYX5PAwB6",
+      "subject": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+      "chapters_count": 34,
+      "total_views": 21200,
+      "total_sales": 7414.2,
+      "comic_id": "kJy7ZdeYZRJJYX5PAwB6",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 1,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 169.2,
+        "กรกฎาคม": 1544.4,
+        "สิงหาคม": 498.6,
+        "กันยายน": 2651.4,
+        "ตุลาคม": 2307.6,
+        "พฤศจิกายน": 243.0
+      },
+      "sales_7_chapters": 991.8,
+      "views_7_chapters": 971,
+      "last_chapter_updated_at": "2026-11-14T00:00:00"
+    },
+    {
+      "cid": "NG8Qg2kxDyqvOz7Kdeo9",
+      "subject": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+      "chapters_count": 29,
+      "total_views": 20800,
+      "total_sales": 7768.8,
+      "comic_id": "NG8Qg2kxDyqvOz7Kdeo9",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 23,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 106.2,
+        "กรกฎาคม": 1119.6,
+        "สิงหาคม": 2457.0,
+        "กันยายน": 1735.2,
+        "ตุลาคม": 1418.4,
+        "พฤศจิกายน": 932.4
+      },
+      "sales_7_chapters": 1938.6,
+      "views_7_chapters": 1747,
+      "last_chapter_updated_at": "2026-10-23T00:00:00"
+    },
+    {
+      "cid": "rKk19Eexy8ZpYWAyR3qL",
+      "subject": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
+      "chapters_count": 4,
+      "total_views": 531,
+      "total_sales": 0,
+      "comic_id": "rKk19Eexy8ZpYWAyR3qL",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0
+      },
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
+    },
+    {
+      "cid": "Z41KDdWY1989Yw7MA5Pk",
+      "subject": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+      "chapters_count": 28,
+      "total_views": 34300,
+      "total_sales": 8753.4,
+      "comic_id": "Z41KDdWY1989Yw7MA5Pk",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 0,
+      "is_inactive_30d": false,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
         "สิงหาคม": 2570.4,
         "กันยายน": 3864.6,
         "ตุลาคม": 1927.8,
-        "พฤศจิกายน": 298.8
+        "พฤศจิกายน": 390.6
       },
-      "sales_7_chapters": 1612.8,
-      "views_7_chapters": 1517,
-      "last_chapter_updated_at": "2026-11-06T00:00:00"
+      "sales_7_chapters": 1197,
+      "views_7_chapters": 1119,
+      "last_chapter_updated_at": "2026-11-15T00:00:00"
     },
     {
       "cid": "GmA4egMxWRADYB8PWbyp",
       "subject": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
-      "chapters_count": 26,
-      "total_views": 14300,
-      "total_sales": 2021.4,
+      "chapters_count": 27,
+      "total_views": 14500,
+      "total_sales": 2133,
       "comic_id": "GmA4egMxWRADYB8PWbyp",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 4,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -722,23 +722,23 @@
         "สิงหาคม": 707.4,
         "กันยายน": 540.0,
         "ตุลาคม": 498.6,
-        "พฤศจิกายน": 275.4
+        "พฤศจิกายน": 387.0
       },
-      "sales_7_chapters": 588.6,
-      "views_7_chapters": 437,
-      "last_chapter_updated_at": "2026-11-07T00:00:00"
+      "sales_7_chapters": 545.4,
+      "views_7_chapters": 380,
+      "last_chapter_updated_at": "2026-11-15T00:00:00"
     },
     {
       "cid": "3MjZ0qWYgJ4XVJLAreG1",
       "subject": "กบฏแห่งตระกูลขุนนางทรราช | The Rebel of the Tyrant Noble House",
       "chapters_count": 32,
       "total_views": 5000,
-      "total_sales": 1400,
+      "total_sales": 1495.8,
       "comic_id": "3MjZ0qWYgJ4XVJLAreG1",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 96,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -752,20 +752,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 522,
-      "views_7_chapters": 429,
-      "last_chapter_updated_at": "2026-08-07T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "Z41KDdWY19goYw7MA5Pk",
       "subject": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
       "chapters_count": 36,
       "total_views": 22100,
-      "total_sales": 5959.8,
+      "total_sales": 6006.6,
       "comic_id": "Z41KDdWY19goYw7MA5Pk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -778,22 +778,22 @@
         "สิงหาคม": 2471.0,
         "กันยายน": 1133.8,
         "ตุลาคม": 1126.8,
-        "พฤศจิกายน": 61.2
+        "พฤศจิกายน": 108.0
       },
-      "sales_7_chapters": 277.2,
-      "views_7_chapters": 246,
-      "last_chapter_updated_at": "2026-11-10T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "zkJdZa0Y69dkVrv4KR5n",
       "subject": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
       "chapters_count": 44,
-      "total_views": 12900,
-      "total_sales": 3400,
+      "total_views": 13000,
+      "total_sales": 3492,
       "comic_id": "zkJdZa0Y69dkVrv4KR5n",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 19,
+      "days_inactive": 23,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -806,10 +806,10 @@
         "สิงหาคม": 649.8,
         "กันยายน": 334.8,
         "ตุลาคม": 423.0,
-        "พฤศจิกายน": 232.2
+        "พฤศจิกายน": 262.8
       },
-      "sales_7_chapters": 408.6,
-      "views_7_chapters": 383,
+      "sales_7_chapters": 421.2,
+      "views_7_chapters": 393,
       "last_chapter_updated_at": "2026-10-23T00:00:00"
     },
     {
@@ -821,7 +821,7 @@
       "comic_id": "vGkNElzYlM0vxq27mKdM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 153,
+      "days_inactive": 157,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -849,8 +849,8 @@
       "comic_id": "RbKaMELO7pk0VglzP41q",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 126,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -864,20 +864,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 601.2,
+      "views_7_chapters": 458,
+      "last_chapter_updated_at": "2026-07-12T00:00:00"
     },
     {
       "cid": "m5MEjRdOnz8dOg6Ay8ZW",
       "subject": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
       "chapters_count": 36,
-      "total_views": 41900,
-      "total_sales": 6400,
+      "total_views": 42600,
+      "total_sales": 6629.4,
       "comic_id": "m5MEjRdOnz8dOg6Ay8ZW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1,
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -890,10 +890,10 @@
         "สิงหาคม": 1582.2,
         "กันยายน": 945.0,
         "ตุลาคม": 565.2,
-        "พฤศจิกายน": 187.2
+        "พฤศจิกายน": 336.6
       },
-      "sales_7_chapters": 662.4,
-      "views_7_chapters": 633,
+      "sales_7_chapters": 761.4,
+      "views_7_chapters": 718,
       "last_chapter_updated_at": "2026-11-10T00:00:00"
     },
     {
@@ -905,7 +905,7 @@
       "comic_id": "RbKaMELO7p0pVglzP41q",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 233,
+      "days_inactive": 237,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -929,12 +929,12 @@
       "subject": "จุติใหม่ระดับ SS: มหาเวทคลั่งถล่มอะคาเดมี่ | The SS-Class Freshman of the Magic Academy",
       "chapters_count": 22,
       "total_views": 8500,
-      "total_sales": 1000,
+      "total_sales": 1092.6,
       "comic_id": "NRm4EX9VE3Q4x63qZJ2W",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 120,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -948,20 +948,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 642.6,
-      "views_7_chapters": 458,
-      "last_chapter_updated_at": "2026-07-14T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "vGkNElzYlMjDxq27mKdM",
       "subject": "จุติใหม่มหาโจร: พลิกโลกออนไลน์ สยบใต้หล้า | Rebirth of the Thief Who Roamed The World",
       "chapters_count": 39,
       "total_views": 11800,
-      "total_sales": 2500,
+      "total_sales": 2565,
       "comic_id": "vGkNElzYlMjDxq27mKdM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 68,
+      "days_inactive": 72,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -977,7 +977,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 363.6,
-      "views_7_chapters": 408,
+      "views_7_chapters": 410,
       "last_chapter_updated_at": "2026-09-04T00:00:00"
     },
     {
@@ -989,7 +989,7 @@
       "comic_id": "qDAm32WxX12BOogPnaGe",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 244,
+      "days_inactive": 248,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 259.2,
@@ -1011,13 +1011,13 @@
     {
       "cid": "peQDXZlx2laqV5n0JWoR",
       "subject": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
-      "chapters_count": 44,
-      "total_views": 49700,
-      "total_sales": 8800,
+      "chapters_count": 45,
+      "total_views": 50000,
+      "total_sales": 8883,
       "comic_id": "peQDXZlx2laqV5n0JWoR",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 4,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -1030,22 +1030,22 @@
         "สิงหาคม": 1431.0,
         "กันยายน": 754.2,
         "ตุลาคม": 343.8,
-        "พฤศจิกายน": 365.4
+        "พฤศจิกายน": 432.0
       },
-      "sales_7_chapters": 565.2,
-      "views_7_chapters": 512,
-      "last_chapter_updated_at": "2026-11-07T00:00:00"
+      "sales_7_chapters": 491.4,
+      "views_7_chapters": 480,
+      "last_chapter_updated_at": "2026-11-15T00:00:00"
     },
     {
       "cid": "1E4dv9AV5M2rVogakpmQ",
       "subject": "คารวะจอมมารแห่งยุทธภพ | Greetings, Sect Leader",
       "chapters_count": 31,
       "total_views": 12100,
-      "total_sales": 1100,
+      "total_sales": 1152,
       "comic_id": "1E4dv9AV5M2rVogakpmQ",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 75,
+      "days_inactive": 79,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -1061,19 +1061,19 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 171,
-      "views_7_chapters": 175,
+      "views_7_chapters": 177,
       "last_chapter_updated_at": "2026-08-28T00:00:00"
     },
     {
       "cid": "RbKaMELO7p6PVglzP41q",
       "subject": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
-      "chapters_count": 62,
-      "total_views": 118200,
-      "total_sales": 25600,
+      "chapters_count": 65,
+      "total_views": 119900,
+      "total_sales": 25923.6,
       "comic_id": "RbKaMELO7p6PVglzP41q",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 22,
+      "days_inactive": 2,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 5022.0,
@@ -1086,22 +1086,22 @@
         "สิงหาคม": 2476.8,
         "กันยายน": 1769.4,
         "ตุลาคม": 1749.6,
-        "พฤศจิกายน": 135
+        "พฤศจิกายน": 457.2
       },
-      "sales_7_chapters": 1531.8,
-      "views_7_chapters": 1367,
-      "last_chapter_updated_at": "2026-10-20T00:00:00"
+      "sales_7_chapters": 966.6,
+      "views_7_chapters": 794,
+      "last_chapter_updated_at": "2026-11-13T00:00:00"
     },
     {
       "cid": "kJy7ZdeYZRaJYX5PAwB6",
       "subject": "การกลับมาของจักรพรรดิเขมือบล้างโลก | Return of the Devourer",
       "chapters_count": 22,
       "total_views": 31600,
-      "total_sales": 7100,
+      "total_sales": 7137,
       "comic_id": "kJy7ZdeYZRaJYX5PAwB6",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 218,
+      "days_inactive": 222,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1402.2,
@@ -1125,12 +1125,12 @@
       "subject": "พลังยุทธ์ขั้นสูง : มีแค่อัจฉริยะเท่านั้นถึงจะได้พบข้า : High Martial Arts: Genius Is Only the Threshold to Meeting Me!",
       "chapters_count": 25,
       "total_views": 12300,
-      "total_sales": 2300,
+      "total_sales": 2345.4,
       "comic_id": "GmA4egMxWRmDYB8PWbyp",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 151,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 72.0,
@@ -1144,21 +1144,21 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 887.4,
+      "views_7_chapters": 871,
+      "last_chapter_updated_at": "2026-06-17T00:00:00"
     },
     {
       "cid": "aDZ1qlAOelRbx5k7gmeM",
       "subject": "เลเวล 0 ที่แข็งแกร่งที่สุด – ครองความไร้เทียมทานด้วยสกิลวิเคราะห์",
       "chapters_count": 44,
       "total_views": 32500,
-      "total_sales": 9400,
+      "total_sales": 9450,
       "comic_id": "aDZ1qlAOelRbx5k7gmeM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 157,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 1789.2,
         "กุมภาพันธ์": 790.2,
@@ -1172,20 +1172,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 25.2
       },
-      "sales_7_chapters": 639,
-      "views_7_chapters": 606,
-      "last_chapter_updated_at": "2026-06-07T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "m5MEjRdOnzKZOg6Ay8ZW",
       "subject": "Mr. War : อดีตทหารที่แข็งแกร่งที่สุด | Mr.War: The Ultimate Ex-soldier",
       "chapters_count": 50,
       "total_views": 13400,
-      "total_sales": 2700,
+      "total_sales": 2768.4,
       "comic_id": "m5MEjRdOnzKZOg6Ay8ZW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 215,
+      "days_inactive": 219,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 792.0,
@@ -1208,12 +1208,12 @@
       "cid": "NG8Qg2kxDy5KOz7Kdeo9",
       "subject": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
       "chapters_count": 72,
-      "total_views": 84100,
-      "total_sales": 28400,
+      "total_views": 84700,
+      "total_sales": 28562.4,
       "comic_id": "NG8Qg2kxDy5KOz7Kdeo9",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1,
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 2692.8,
@@ -1226,10 +1226,10 @@
         "สิงหาคม": 2057.4,
         "กันยายน": 1956.6,
         "ตุลาคม": 1395.0,
-        "พฤศจิกายน": 516.6
+        "พฤศจิกายน": 666.0
       },
-      "sales_7_chapters": 1321.2,
-      "views_7_chapters": 1119,
+      "sales_7_chapters": 1409.4,
+      "views_7_chapters": 1189,
       "last_chapter_updated_at": "2026-11-10T00:00:00"
     },
     {
@@ -1241,7 +1241,7 @@
       "comic_id": "n6r39MJVwDZvYNAB81yk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 339,
+      "days_inactive": 343,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 12.6,
@@ -1265,11 +1265,11 @@
       "subject": "เอาชีวิตรอดวันสิ้นโลก ด้วยบังเกอร์เทพเหนือชั้น | Surviving the Heat Apocalypse with My God-Tier Safehouse",
       "chapters_count": 46,
       "total_views": 26700,
-      "total_sales": 4500,
+      "total_sales": 4528.8,
       "comic_id": "rKk19Eexy8DRYWAyR3qL",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 171,
+      "days_inactive": 175,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 547.2,
@@ -1293,11 +1293,11 @@
       "subject": "ผู้รอดเพียงหนึ่ง—ไร้เทียมทานในเกมตายครั้งที่สอง | The Surviving Player: Unrivaled in the Second Death Game",
       "chapters_count": 46,
       "total_views": 21500,
-      "total_sales": 5500,
+      "total_sales": 5560.2,
       "comic_id": "m5MEjRdOnzbrOg6Ay8ZW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 162,
+      "days_inactive": 166,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1026.0,
@@ -1313,7 +1313,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 462.6,
-      "views_7_chapters": 487,
+      "views_7_chapters": 488,
       "last_chapter_updated_at": "2026-06-02T00:00:00"
     },
     {
@@ -1321,12 +1321,12 @@
       "subject": "เลือดหยดเดียวชั่วนิรันดร์—ข้ายังไร้พ่ายทั่วหล้า | Invincible With Only a Single Point of HP",
       "chapters_count": 31,
       "total_views": 19900,
-      "total_sales": 3900,
+      "total_sales": 3976.2,
       "comic_id": "MXZg08yOaRBJVqw7A39l",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 118,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 158.4,
@@ -1340,9 +1340,9 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 865.8,
+      "views_7_chapters": 807,
+      "last_chapter_updated_at": "2026-07-20T00:00:00"
     },
     {
       "cid": "0AplLrbON0b5YZ15okX2",
@@ -1353,7 +1353,7 @@
       "comic_id": "0AplLrbON0b5YZ15okX2",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 341,
+      "days_inactive": 345,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 32.4,
@@ -1369,19 +1369,19 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 504,
-      "views_7_chapters": 1600,
+      "views_7_chapters": 1601,
       "last_chapter_updated_at": "2025-12-05T00:00:00"
     },
     {
       "cid": "ng5GbmNxB4zEV9AlMyk0",
       "subject": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
       "chapters_count": 102,
-      "total_views": 166100,
-      "total_sales": 33400,
+      "total_views": 166500,
+      "total_sales": 33458.4,
       "comic_id": "ng5GbmNxB4zEV9AlMyk0",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 14,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 4167.0,
@@ -1394,22 +1394,22 @@
         "สิงหาคม": 2379.6,
         "กันยายน": 2829.6,
         "ตุลาคม": 1638.0,
-        "พฤศจิกายน": 138.6
+        "พฤศจิกายน": 192.6
       },
-      "sales_7_chapters": 792,
-      "views_7_chapters": 639,
-      "last_chapter_updated_at": "2026-10-28T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "azlwDvqOA7BpYbkJoedB",
       "subject": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign",
       "chapters_count": 129,
-      "total_views": 262600,
-      "total_sales": 59100,
+      "total_views": 268200,
+      "total_sales": 59544,
       "comic_id": "azlwDvqOA7BpYbkJoedB",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1,
+      "days_inactive": 5,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 6768.0,
@@ -1422,10 +1422,10 @@
         "สิงหาคม": 1936.8,
         "กันยายน": 2480.4,
         "ตุลาคม": 709.2,
-        "พฤศจิกายน": 329.4
+        "พฤศจิกายน": 729.0
       },
-      "sales_7_chapters": 262.8,
-      "views_7_chapters": 254,
+      "sales_7_chapters": 495,
+      "views_7_chapters": 421,
       "last_chapter_updated_at": "2026-11-10T00:00:00"
     },
     {
@@ -1433,11 +1433,11 @@
       "subject": "ข้า…ชาวนา ผู้ปลูกวิญญาณแห่งความตาย | I, Farmer, Plant the Undead",
       "chapters_count": 22,
       "total_views": 29100,
-      "total_sales": 5100,
+      "total_sales": 5153.4,
       "comic_id": "rKk19Eexy89DYWAyR3qL",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 218,
+      "days_inactive": 222,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1627.2,
@@ -1453,19 +1453,19 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1917,
-      "views_7_chapters": 1719,
+      "views_7_chapters": 1720,
       "last_chapter_updated_at": "2026-04-07T00:00:00"
     },
     {
       "cid": "GmA4egMxWR5KYB8PWbyp",
       "subject": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
-      "chapters_count": 60,
-      "total_views": 76100,
-      "total_sales": 19400,
+      "chapters_count": 61,
+      "total_views": 76500,
+      "total_sales": 19539,
       "comic_id": "GmA4egMxWR5KYB8PWbyp",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 5,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 2107.8,
@@ -1478,22 +1478,22 @@
         "สิงหาคม": 1000.8,
         "กันยายน": 1069.2,
         "ตุลาคม": 804.6,
-        "พฤศจิกายน": 160.2
+        "พฤศจิกายน": 237.6
       },
-      "sales_7_chapters": 597.6,
-      "views_7_chapters": 539,
-      "last_chapter_updated_at": "2026-11-06T00:00:00"
+      "sales_7_chapters": 507.6,
+      "views_7_chapters": 453,
+      "last_chapter_updated_at": "2026-11-12T00:00:00"
     },
     {
       "cid": "ng5GbmNxB4r5V9AlMyk0",
       "subject": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
-      "chapters_count": 64,
-      "total_views": 306900,
-      "total_sales": 103000,
+      "chapters_count": 65,
+      "total_views": 308400,
+      "total_sales": 103729.8,
       "comic_id": "ng5GbmNxB4r5V9AlMyk0",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 5,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 4894.2,
@@ -1506,11 +1506,11 @@
         "สิงหาคม": 13325.4,
         "กันยายน": 19167.6,
         "ตุลาคม": 7196.4,
-        "พฤศจิกายน": 2773.8
+        "พฤศจิกายน": 3445.2
       },
-      "sales_7_chapters": 836.7,
-      "views_7_chapters": 10873,
-      "last_chapter_updated_at": "2026-11-06T00:00:00"
+      "sales_7_chapters": 1344.1,
+      "views_7_chapters": 8322,
+      "last_chapter_updated_at": "2026-11-15T00:00:00"
     },
     {
       "cid": "a7qNk8mOK595YXyvogDn",
@@ -1521,7 +1521,7 @@
       "comic_id": "a7qNk8mOK595YXyvogDn",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 359,
+      "days_inactive": 363,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1.8,
@@ -1537,19 +1537,19 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 75.6,
-      "views_7_chapters": 1805,
+      "views_7_chapters": 1806,
       "last_chapter_updated_at": "2025-11-17T00:00:00"
     },
     {
       "cid": "EQwLk1zYR9RXV50y2Wed",
       "subject": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
       "chapters_count": 53,
-      "total_views": 45300,
-      "total_sales": 12800,
+      "total_views": 45500,
+      "total_sales": 12843,
       "comic_id": "EQwLk1zYR9RXV50y2Wed",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 19,
+      "days_inactive": 23,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 1157.4,
@@ -1562,10 +1562,10 @@
         "สิงหาคม": 459.0,
         "กันยายน": 2001.6,
         "ตุลาคม": 736.2,
-        "พฤศจิกายน": 48.6
+        "พฤศจิกายน": 86.4
       },
-      "sales_7_chapters": 950.4,
-      "views_7_chapters": 817,
+      "sales_7_chapters": 973.8,
+      "views_7_chapters": 853,
       "last_chapter_updated_at": "2026-10-23T00:00:00"
     },
     {
@@ -1577,7 +1577,7 @@
       "comic_id": "aDZ1qlAOellLx5k7gmeM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 359,
+      "days_inactive": 363,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -1605,7 +1605,7 @@
       "comic_id": "JvApmMXVJ9DeOg1re8Pa",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 359,
+      "days_inactive": 363,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 70.2,
@@ -1621,7 +1621,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 669.6,
-      "views_7_chapters": 1947,
+      "views_7_chapters": 1948,
       "last_chapter_updated_at": "2025-11-17T00:00:00"
     },
     {
@@ -1629,12 +1629,12 @@
       "subject": "วันโลกาวินาศ จุติราชันย์สีชาด | Doomsday Arrival: Evolution into the Crimson King",
       "chapters_count": 50,
       "total_views": 35100,
-      "total_sales": 5400,
+      "total_sales": 5463,
       "comic_id": "qDAm32WxXdXBxogPnaGe",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 162,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 757.8,
         "กุมภาพันธ์": 253.8,
@@ -1648,9 +1648,9 @@
         "ตุลาคม": 7.2,
         "พฤศจิกายน": 27.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 253.8,
+      "views_7_chapters": 169,
+      "last_chapter_updated_at": "2026-06-06T00:00:00"
     },
     {
       "cid": "n6r39MJVwy8JxNAB81yk",
@@ -1661,7 +1661,7 @@
       "comic_id": "n6r39MJVwy8JxNAB81yk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 350,
+      "days_inactive": 354,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 27.0,
@@ -1685,11 +1685,11 @@
       "subject": "ผู้ถือครองขวานเทวะสู่วิถีไร้เทียมทาน",
       "chapters_count": 22,
       "total_views": 10800,
-      "total_sales": 2000,
+      "total_sales": 2046.6,
       "comic_id": "a7qNk8mOK6EKxXyvogDn",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 329,
+      "days_inactive": 333,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 45.0,
@@ -1717,7 +1717,7 @@
       "comic_id": "9ZazJMeV9pXpO4wK6vRq",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 410,
+      "days_inactive": 414,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 16.2,
@@ -1739,13 +1739,13 @@
     {
       "cid": "zkJdZa0Y6gBoxrv4KR5n",
       "subject": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
-      "chapters_count": 56,
-      "total_views": 141100,
-      "total_sales": 30000,
+      "chapters_count": 57,
+      "total_views": 142100,
+      "total_sales": 30272.4,
       "comic_id": "zkJdZa0Y6gBoxrv4KR5n",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 7,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 2799.0,
@@ -1758,22 +1758,22 @@
         "สิงหาคม": 1704.6,
         "กันยายน": 1265.4,
         "ตุลาคม": 1076.4,
-        "พฤศจิกายน": 356.4
+        "พฤศจิกายน": 543.6
       },
-      "sales_7_chapters": 1715.4,
-      "views_7_chapters": 1631,
-      "last_chapter_updated_at": "2026-11-04T00:00:00"
+      "sales_7_chapters": 1576.8,
+      "views_7_chapters": 1562,
+      "last_chapter_updated_at": "2026-11-12T00:00:00"
     },
     {
       "cid": "le0bk9XVGdJ0Yj34oaQw",
       "subject": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
       "chapters_count": 74,
-      "total_views": 278400,
-      "total_sales": 83000,
+      "total_views": 279000,
+      "total_sales": 83143.8,
       "comic_id": "le0bk9XVGdJ0Yj34oaQw",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 5,
+      "days_inactive": 9,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 6102.0,
@@ -1786,10 +1786,10 @@
         "สิงหาคม": 8233.2,
         "กันยายน": 6069.6,
         "ตุลาคม": 4413.6,
-        "พฤศจิกายน": 1611.0
+        "พฤศจิกายน": 1706.4
       },
-      "sales_7_chapters": 2849.4,
-      "views_7_chapters": 2664,
+      "sales_7_chapters": 2901.6,
+      "views_7_chapters": 2770,
       "last_chapter_updated_at": "2026-11-06T00:00:00"
     },
     {
@@ -1797,11 +1797,11 @@
       "subject": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
       "chapters_count": 70,
       "total_views": 85100,
-      "total_sales": 26900,
+      "total_sales": 26933.4,
       "comic_id": "NG8Qg2kxDk7gYz7Kdeo9",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 19,
+      "days_inactive": 23,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 1512.0,
@@ -1814,22 +1814,22 @@
         "สิงหาคม": 1369.8,
         "กันยายน": 1006.2,
         "ตุลาคม": 795.6,
-        "พฤศจิกายน": 21.6
+        "พฤศจิกายน": 25.2
       },
-      "sales_7_chapters": 756,
-      "views_7_chapters": 614,
+      "sales_7_chapters": 759.6,
+      "views_7_chapters": 621,
       "last_chapter_updated_at": "2026-10-23T00:00:00"
     },
     {
       "cid": "n6r39MJVwynpxNAB81yk",
       "subject": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
-      "chapters_count": 130,
-      "total_views": 532200,
-      "total_sales": 122100,
+      "chapters_count": 131,
+      "total_views": 532900,
+      "total_sales": 122328,
       "comic_id": "n6r39MJVwynpxNAB81yk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 6,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 12733.2,
@@ -1842,23 +1842,23 @@
         "สิงหาคม": 3753.0,
         "กันยายน": 2761.2,
         "ตุลาคม": 2323.8,
-        "พฤศจิกายน": 711.0
+        "พฤศจิกายน": 912.6
       },
-      "sales_7_chapters": 1564.2,
-      "views_7_chapters": 1538,
-      "last_chapter_updated_at": "2026-11-05T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "RbKaMELO79JaYglzP41q",
       "subject": "จากศัตรูคู่อาฆาตกลายมาเป็นศัตรูคู่บำเพ็ญรัก",
       "chapters_count": 41,
       "total_views": 65600,
-      "total_sales": 8100,
+      "total_sales": 8179.2,
       "comic_id": "RbKaMELO79JaYglzP41q",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 231,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1110.6,
         "กุมภาพันธ์": 579.6,
@@ -1872,21 +1872,21 @@
         "ตุลาคม": 52.2,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1267.2,
+      "views_7_chapters": 1186,
+      "last_chapter_updated_at": "2026-03-29T00:00:00"
     },
     {
       "cid": "3E8jmDbO0ePeVZwR5qpa",
       "subject": "บุปผาไร้ใจเบ่งบานในยามสิบราตรี | Revenge of the Bloom Flower",
       "chapters_count": 67,
       "total_views": 69700,
-      "total_sales": 20900,
+      "total_sales": 20991.6,
       "comic_id": "3E8jmDbO0ePeVZwR5qpa",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 284,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1522.8,
         "กุมภาพันธ์": 545.4,
@@ -1900,20 +1900,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1537.2,
+      "views_7_chapters": 1183,
+      "last_chapter_updated_at": "2026-02-04T00:00:00"
     },
     {
       "cid": "n6r39MJVwy58xNAB81yk",
       "subject": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely",
       "chapters_count": 120,
-      "total_views": 155100,
-      "total_sales": 26500,
+      "total_views": 155300,
+      "total_sales": 26535.6,
       "comic_id": "n6r39MJVwy58xNAB81yk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 14,
+      "days_inactive": 18,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 1161.0,
@@ -1926,7 +1926,7 @@
         "สิงหาคม": 1036.8,
         "กันยายน": 1261.8,
         "ตุลาคม": 606.6,
-        "พฤศจิกายน": 165.6
+        "พฤศจิกายน": 196.2
       },
       "sales_7_chapters": 151.2,
       "views_7_chapters": 97,
@@ -1941,8 +1941,8 @@
       "comic_id": "MvyBR09xzjQlxbd1NrqE",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 517,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 9.0,
         "กุมภาพันธ์": 0.0,
@@ -1956,20 +1956,20 @@
         "ตุลาคม": 1.8,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1155.6,
+      "views_7_chapters": 1767,
+      "last_chapter_updated_at": "2025-06-16T00:00:00"
     },
     {
       "cid": "jamDek8Yo9knO0Pz1JNw",
       "subject": "อดีตตัวร้ายขอพาลูกเมียไปสู่หนทางเซียน",
       "chapters_count": 44,
       "total_views": 37200,
-      "total_sales": 4700,
+      "total_sales": 4778.4,
       "comic_id": "jamDek8Yo9knO0Pz1JNw",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 400,
+      "days_inactive": 404,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 231.0,
@@ -1997,8 +1997,8 @@
       "comic_id": "n6r39MJVwyojxNAB81yk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 523,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2013,19 +2013,19 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 1544,
-      "last_chapter_updated_at": "2025-06-06T00:00:00"
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "m5MEjRdOnLD7Yg6Ay8ZW",
       "subject": "เทพอัญเชิญอสูร ฝ่าวิกฤตวันสิ้นโลก | Lord of Summoning! When Anomalies Descend Upon The Human World",
       "chapters_count": 36,
       "total_views": 19200,
-      "total_sales": 3500,
+      "total_sales": 3501,
       "comic_id": "m5MEjRdOnLD7Yg6Ay8ZW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 436,
+      "days_inactive": 440,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 91.8,
@@ -2053,7 +2053,7 @@
       "comic_id": "PDM46rGYmEwRYZlomvzL",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 332,
+      "days_inactive": 336,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -2081,7 +2081,7 @@
       "comic_id": "wPZAJq7OknKlxW8Dozkm",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 523,
+      "days_inactive": 527,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 34.2,
@@ -2109,7 +2109,7 @@
       "comic_id": "w9bjalkObGyBVWXyN0K6",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 527,
+      "days_inactive": 531,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -2137,8 +2137,8 @@
       "comic_id": "peQDXZlx2LavV5n0JWoR",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 527,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 16.2,
         "กุมภาพันธ์": 0.0,
@@ -2152,9 +2152,9 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 18,
-      "views_7_chapters": 67,
-      "last_chapter_updated_at": "2025-06-02T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "EQwLk1zYRXPKO50y2Wed",
@@ -2165,7 +2165,7 @@
       "comic_id": "EQwLk1zYRXPKO50y2Wed",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 526,
+      "days_inactive": 530,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -2189,11 +2189,11 @@
       "subject": "วิวัฒนาการสะท้านโลกา: กำเนิดราชันย์อสูร | Martial Evolution: Start by Awakening the King of Monsters",
       "chapters_count": 38,
       "total_views": 30400,
-      "total_sales": 5200,
+      "total_sales": 5238,
       "comic_id": "azlwDvqOA0lZxbkJoedB",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 482,
+      "days_inactive": 486,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 145.8,
@@ -2217,11 +2217,11 @@
       "subject": "ซัมมอนเนอร์: ผู้เปิดประตูสู่เหวนรก | Devil Summoner, I am the Abyss Lord",
       "chapters_count": 18,
       "total_views": 7600,
-      "total_sales": 1000,
+      "total_sales": 1069.2,
       "comic_id": "rKk19Eexy7y6VWAyR3qL",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 520,
+      "days_inactive": 524,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 5.4,
@@ -2237,7 +2237,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 957.6,
-      "views_7_chapters": 2216,
+      "views_7_chapters": 2217,
       "last_chapter_updated_at": "2025-06-09T00:00:00"
     },
     {
@@ -2245,11 +2245,11 @@
       "subject": "จากสายเปย์ สู่ผู้ไร้เทียมทาน",
       "chapters_count": 49,
       "total_views": 59000,
-      "total_sales": 8400,
+      "total_sales": 8497.2,
       "comic_id": "le0bk9XVGdGLYj34oaQw",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 417,
+      "days_inactive": 421,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -2277,8 +2277,8 @@
       "comic_id": "aDZ1qlAOe1z7O5k7gmeM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 529,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 4.8,
         "กุมภาพันธ์": 28.8,
@@ -2292,20 +2292,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 83.2,
+      "views_7_chapters": 78,
+      "last_chapter_updated_at": "2025-06-04T00:00:00"
     },
     {
       "cid": "BAyoRlNxvwZ2Odqp18wL",
       "subject": "เกิดใหม่พร้อมพลังทะยานสู่จุดสูงสุด",
       "chapters_count": 36,
       "total_views": 9100,
-      "total_sales": 1700,
+      "total_sales": 1735.2,
       "comic_id": "BAyoRlNxvwZ2Odqp18wL",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 542,
+      "days_inactive": 546,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 39.6,
@@ -2327,13 +2327,13 @@
     {
       "cid": "ng5GbmNxBA34Y9AlMyk0",
       "subject": "อิสระทางทรัพย์ พันธะทางใจ",
-      "chapters_count": 130,
-      "total_views": 308700,
-      "total_sales": 59500,
+      "chapters_count": 131,
+      "total_views": 310400,
+      "total_sales": 59731.2,
       "comic_id": "ng5GbmNxBA34Y9AlMyk0",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 4,
+      "days_inactive": 0,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 2718.0,
@@ -2346,11 +2346,11 @@
         "สิงหาคม": 1780.2,
         "กันยายน": 1569.6,
         "ตุลาคม": 1128.6,
-        "พฤศจิกายน": 768.6
+        "พฤศจิกายน": 948.6
       },
-      "sales_7_chapters": 995.4,
-      "views_7_chapters": 826,
-      "last_chapter_updated_at": "2026-11-07T00:00:00"
+      "sales_7_chapters": 928.8,
+      "views_7_chapters": 786,
+      "last_chapter_updated_at": "2026-11-15T00:00:00"
     },
     {
       "cid": "9ZazJMeV9pZwO4wK6vRq",
@@ -2361,7 +2361,7 @@
       "comic_id": "9ZazJMeV9pZwO4wK6vRq",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 390,
+      "days_inactive": 394,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 174.6,
@@ -2389,7 +2389,7 @@
       "comic_id": "lewv7z5O460DYpqBnAQX",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 479,
+      "days_inactive": 483,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 115.2,
@@ -2413,11 +2413,11 @@
       "subject": "เหล่าปรมาจารย์หญิงล้วนอยากตอกข้า",
       "chapters_count": 30,
       "total_views": 44200,
-      "total_sales": 7300,
+      "total_sales": 7309.4,
       "comic_id": "qDAm32WxXR7gVogPnaGe",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 453,
+      "days_inactive": 457,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 259.2,
@@ -2430,22 +2430,22 @@
         "สิงหาคม": 172.8,
         "กันยายน": 61.2,
         "ตุลาคม": 88.2,
-        "พฤศจิกายน": 0.0
+        "พฤศจิกายน": 1.8
       },
       "sales_7_chapters": 1936.8,
-      "views_7_chapters": 1850,
+      "views_7_chapters": 1851,
       "last_chapter_updated_at": "2025-08-15T00:00:00"
     },
     {
       "cid": "XrDoGdyOrN17O8pbqz1a",
       "subject": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
-      "chapters_count": 154,
-      "total_views": 448300,
-      "total_sales": 154600,
+      "chapters_count": 156,
+      "total_views": 450200,
+      "total_sales": 155178,
       "comic_id": "XrDoGdyOrN17O8pbqz1a",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 5,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 10569.6,
@@ -2458,22 +2458,22 @@
         "สิงหาคม": 4491.0,
         "กันยายน": 4795.2,
         "ตุลาคม": 3231.0,
-        "พฤศจิกายน": 822.6
+        "พฤศจิกายน": 1368.0
       },
-      "sales_7_chapters": 2235.6,
-      "views_7_chapters": 2063,
-      "last_chapter_updated_at": "2026-11-06T00:00:00"
+      "sales_7_chapters": 1981.8,
+      "views_7_chapters": 1796,
+      "last_chapter_updated_at": "2026-11-12T00:00:00"
     },
     {
       "cid": "wPZAJq7OkMwlYW8Dozkm",
       "subject": "ฟ้าประทานแหวนทะลุมิติพิชิตต่างโลก",
       "chapters_count": 100,
-      "total_views": 493400,
-      "total_sales": 102100,
+      "total_views": 493600,
+      "total_sales": 102119.4,
       "comic_id": "wPZAJq7OkMwlYW8Dozkm",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 274,
+      "days_inactive": 278,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1776.6,
@@ -2501,7 +2501,7 @@
       "comic_id": "m5MEjRdOnANbxg6Ay8ZW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 517,
+      "days_inactive": 521,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 34.2,
@@ -2525,11 +2525,11 @@
       "subject": "จากลิงน้ำ ก้าวสู่มรรคาแห่งเทพ",
       "chapters_count": 93,
       "total_views": 115700,
-      "total_sales": 28600,
+      "total_sales": 28648.8,
       "comic_id": "0AplLrbONRg1OZ15okX2",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 351,
+      "days_inactive": 355,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 394.2,
@@ -2557,8 +2557,8 @@
       "comic_id": "DBQ4k6PYpRqvO8qrm0J5",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 659,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2573,8 +2573,8 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 823,
+      "last_chapter_updated_at": "2025-01-25T00:00:00"
     },
     {
       "cid": "9ZazJMeV9AnzV4wK6vRq",
@@ -2585,7 +2585,7 @@
       "comic_id": "9ZazJMeV9AnzV4wK6vRq",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 623,
+      "days_inactive": 627,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -2613,8 +2613,8 @@
       "comic_id": "kJy7ZdeYZN4LYX5PAwB6",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 666,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 0.0,
@@ -2629,19 +2629,19 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "views_7_chapters": 1723,
+      "last_chapter_updated_at": "2025-01-18T00:00:00"
     },
     {
       "cid": "NG8Qg2kxDpNKxz7Kdeo9",
       "subject": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
-      "chapters_count": 114,
-      "total_views": 378900,
-      "total_sales": 96300,
+      "chapters_count": 115,
+      "total_views": 384100,
+      "total_sales": 97646.4,
       "comic_id": "NG8Qg2kxDpNKxz7Kdeo9",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 4,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 5502.6,
@@ -2654,23 +2654,23 @@
         "สิงหาคม": 7569.0,
         "กันยายน": 8505.0,
         "ตุลาคม": 6001.2,
-        "พฤศจิกายน": 2503.8
+        "พฤศจิกายน": 3754.8
       },
-      "sales_7_chapters": 3963.6,
-      "views_7_chapters": 3336,
-      "last_chapter_updated_at": "2026-11-07T00:00:00"
+      "sales_7_chapters": 3949.2,
+      "views_7_chapters": 3291,
+      "last_chapter_updated_at": "2026-11-12T00:00:00"
     },
     {
       "cid": "NG8Qg2kxDpAjxz7Kdeo9",
       "subject": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
       "chapters_count": 130,
-      "total_views": 517500,
-      "total_sales": 149200,
+      "total_views": 518100,
+      "total_sales": 149286.8,
       "comic_id": "NG8Qg2kxDpAjxz7Kdeo9",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 151,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 8182.8,
         "กุมภาพันธ์": 9144.0,
@@ -2682,22 +2682,22 @@
         "สิงหาคม": 617.4,
         "กันยายน": 961.2,
         "ตุลาคม": 306.0,
-        "พฤศจิกายน": 79.2
+        "พฤศจิกายน": 117.0
       },
-      "sales_7_chapters": 5405.4,
-      "views_7_chapters": 5094,
-      "last_chapter_updated_at": "2026-06-13T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "NG8Qg2kxDpAgxz7Kdeo9",
       "subject": "สุดยอดยีนเทพเจ้า | Super God Gene",
       "chapters_count": 230,
-      "total_views": 23400,
+      "total_views": 23500,
       "total_sales": 5400,
       "comic_id": "NG8Qg2kxDpAgxz7Kdeo9",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 295,
+      "days_inactive": 299,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 640.8,
@@ -2725,7 +2725,7 @@
       "comic_id": "jamDek8YoaZkO0Pz1JNw",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 569,
+      "days_inactive": 573,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 28.8,
@@ -2748,12 +2748,12 @@
       "cid": "GmA4egMxWXvKOB8PWbyp",
       "subject": "หลังจากลืมตาขึ้นมาศิษย์ของข้ากลับกลายเป็นจักรพรรดินีปีศาจ | My Empress's Disciple Will Become a Villain",
       "chapters_count": 69,
-      "total_views": 82100,
-      "total_sales": 16200,
+      "total_views": 82200,
+      "total_sales": 16210.8,
       "comic_id": "GmA4egMxWXvKOB8PWbyp",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 436,
+      "days_inactive": 440,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 225.0,
@@ -2776,13 +2776,13 @@
       "cid": "9ZazJMeV9AJjV4wK6vRq",
       "subject": "จอมมารเก็บขยะ",
       "chapters_count": 22,
-      "total_views": 9100,
+      "total_views": 9200,
       "total_sales": 457.6,
       "comic_id": "9ZazJMeV9AJjV4wK6vRq",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 674,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 0.0,
         "กุมภาพันธ์": 12.8,
@@ -2796,21 +2796,21 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 385.6,
-      "views_7_chapters": 271,
-      "last_chapter_updated_at": "2025-01-06T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "aDZ1qlAOez8oV5k7gmeM",
       "subject": "วิถีเซียนพิศวง",
       "chapters_count": 40,
       "total_views": 62100,
-      "total_sales": 11000,
+      "total_sales": 11070.2,
       "comic_id": "aDZ1qlAOez8oV5k7gmeM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 516,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 18.0,
         "กุมภาพันธ์": 0.0,
@@ -2824,20 +2824,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1018.8,
+      "views_7_chapters": 752,
+      "last_chapter_updated_at": "2025-06-17T00:00:00"
     },
     {
       "cid": "enEj08zOqEjoO6W34lpa",
       "subject": "หมื่นเผ่าพันธุ์รุกราน ขอเริ่มต้นด้วยการฝึกอสูรระดับตำนาน",
       "chapters_count": 81,
-      "total_views": 142100,
-      "total_sales": 35900,
+      "total_views": 142200,
+      "total_sales": 35938.8,
       "comic_id": "enEj08zOqEjoO6W34lpa",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 174,
+      "days_inactive": 178,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1765.8,
@@ -2850,10 +2850,10 @@
         "สิงหาคม": 100.8,
         "กันยายน": 95.4,
         "ตุลาคม": 1.8,
-        "พฤศจิกายน": 19.8
+        "พฤศจิกายน": 21.6
       },
       "sales_7_chapters": 435.6,
-      "views_7_chapters": 396,
+      "views_7_chapters": 397,
       "last_chapter_updated_at": "2026-05-21T00:00:00"
     },
     {
@@ -2861,11 +2861,11 @@
       "subject": "ข้าคือแพทย์ยุทธไร้เทียมทาน",
       "chapters_count": 52,
       "total_views": 19500,
-      "total_sales": 4000,
+      "total_sales": 4015.9,
       "comic_id": "nvEqQwJYPwGJVedr65l2",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 238,
+      "days_inactive": 242,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 4.0,
@@ -2881,7 +2881,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 656,
-      "views_7_chapters": 619,
+      "views_7_chapters": 625,
       "last_chapter_updated_at": "2026-03-18T00:00:00"
     },
     {
@@ -2893,7 +2893,7 @@
       "comic_id": "wPZAJq7OkMq2YW8Dozkm",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 695,
+      "days_inactive": 699,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -2917,11 +2917,11 @@
       "subject": "หลอมปราณ 3000 ขั้น : ข้าสยบจักรพรรดินีเป็นศิษย์น้อย",
       "chapters_count": 23,
       "total_views": 43400,
-      "total_sales": 7400,
+      "total_sales": 7406.4,
       "comic_id": "zkJdZa0Y63kbxrv4KR5n",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 675,
+      "days_inactive": 679,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 80.0,
@@ -2949,7 +2949,7 @@
       "comic_id": "3MjZ0qWYgqZkOJLAreG1",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 675,
+      "days_inactive": 679,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 5.0,
@@ -2973,11 +2973,11 @@
       "subject": "วิถีเซียนนอกรีต",
       "chapters_count": 24,
       "total_views": 26500,
-      "total_sales": 1900,
+      "total_sales": 1952.6,
       "comic_id": "rwEvg7LY89k1x20blNPp",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 618,
+      "days_inactive": 622,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 12.6,
@@ -3000,13 +3000,13 @@
       "cid": "MvyBR09xzDB0Vbd1NrqE",
       "subject": "ขอตายอีกที เดี๋ยวพี่จะเทพให้ดู| The More I Die, the More Invincible I Become",
       "chapters_count": 107,
-      "total_views": 137900,
-      "total_sales": 29500,
+      "total_views": 138000,
+      "total_sales": 29557.2,
       "comic_id": "MvyBR09xzDB0Vbd1NrqE",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 490,
-      "is_inactive_30d": true,
+      "days_inactive": 0,
+      "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 1201.6,
         "กุมภาพันธ์": 716.8,
@@ -3020,20 +3020,20 @@
         "ตุลาคม": 80.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 1513.8,
-      "views_7_chapters": 9600,
-      "last_chapter_updated_at": "2025-07-09T00:00:00"
+      "sales_7_chapters": 0,
+      "views_7_chapters": 0,
+      "last_chapter_updated_at": ""
     },
     {
       "cid": "1GmA4egMxWPnOB8PWbyp",
       "subject": "หากข้ายังมีชีวิต ข้าจะต้องกลายเป็นมหาจอมมาร | If I Don’t Die Soon, I’ll End Up Ruling The Demon Realm",
       "chapters_count": 115,
-      "total_views": 194400,
-      "total_sales": 50300,
+      "total_views": 194800,
+      "total_sales": 50387.8,
       "comic_id": "1GmA4egMxWPnOB8PWbyp",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 435,
+      "days_inactive": 439,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 374.4,
@@ -3046,7 +3046,7 @@
         "สิงหาคม": 280.0,
         "กันยายน": 188.8,
         "ตุลาคม": 289.6,
-        "พฤศจิกายน": 329.6
+        "พฤศจิกายน": 331.2
       },
       "sales_7_chapters": 2012,
       "views_7_chapters": 2022,
@@ -3061,7 +3061,7 @@
       "comic_id": "7AnZ8eydVLJ3x9lJp23X",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 682,
+      "days_inactive": 686,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3089,7 +3089,7 @@
       "comic_id": "pRbKaMELO7mZYglzP41q",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 759,
+      "days_inactive": 763,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3117,7 +3117,7 @@
       "comic_id": "onvEqQwJYPyAxedr65l2",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 822,
+      "days_inactive": 826,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3133,7 +3133,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 0,
-      "views_7_chapters": 1832,
+      "views_7_chapters": 1833,
       "last_chapter_updated_at": "2024-08-11T00:00:00"
     },
     {
@@ -3143,34 +3143,6 @@
       "total_views": 1500,
       "total_sales": 0,
       "comic_id": "NazlwDvqOAPgxbkJoedB",
-      "account": "แปลจนเมื่อย",
-      "account_id": "lionking",
-      "days_inactive": 799,
-      "is_inactive_30d": true,
-      "monthly_sales": {
-        "มกราคม": 0.0,
-        "กุมภาพันธ์": 0.0,
-        "มีนาคม": 0.0,
-        "เมษายน": 0.0,
-        "พฤษภาคม": 0.0,
-        "มิถุนายน": 0.0,
-        "กรกฎาคม": 0.0,
-        "สิงหาคม": 0.0,
-        "กันยายน": 0.0,
-        "ตุลาคม": 0.0,
-        "พฤศจิกายน": 0.0
-      },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 734,
-      "last_chapter_updated_at": "2024-09-03T00:00:00"
-    },
-    {
-      "cid": "KenEj08zOq5EO6W34lpa",
-      "subject": "รีเซ็ทชีวิต กลับขึ้นมาจัดระเบียบโลก",
-      "chapters_count": 16,
-      "total_views": 4800,
-      "total_sales": 260.8,
-      "comic_id": "KenEj08zOq5EO6W34lpa",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
       "days_inactive": 0,
@@ -3193,16 +3165,44 @@
       "last_chapter_updated_at": ""
     },
     {
+      "cid": "KenEj08zOq5EO6W34lpa",
+      "subject": "รีเซ็ทชีวิต กลับขึ้นมาจัดระเบียบโลก",
+      "chapters_count": 16,
+      "total_views": 4800,
+      "total_sales": 260.8,
+      "comic_id": "KenEj08zOq5EO6W34lpa",
+      "account": "แปลจนเมื่อย",
+      "account_id": "lionking",
+      "days_inactive": 763,
+      "is_inactive_30d": true,
+      "monthly_sales": {
+        "มกราคม": 0.0,
+        "กุมภาพันธ์": 0.0,
+        "มีนาคม": 0.0,
+        "เมษายน": 0.0,
+        "พฤษภาคม": 0.0,
+        "มิถุนายน": 0.0,
+        "กรกฎาคม": 0.0,
+        "สิงหาคม": 0.0,
+        "กันยายน": 0.0,
+        "ตุลาคม": 0.0,
+        "พฤศจิกายน": 0.0
+      },
+      "sales_7_chapters": 68.8,
+      "views_7_chapters": 535,
+      "last_chapter_updated_at": "2024-10-13T00:00:00"
+    },
+    {
       "cid": "5qDAm32WxX3GYogPnaGe",
       "subject": "ก๊อบลินกระจอกอย่างข้าจะไปสู่เทพก๊อบลินให้ดู!",
       "chapters_count": 118,
       "total_views": 358700,
-      "total_sales": 106000,
+      "total_sales": 106049.4,
       "comic_id": "5qDAm32WxX3GYogPnaGe",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 112,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 2327.4,
         "กุมภาพันธ์": 1738.8,
@@ -3216,20 +3216,20 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 3772.8,
+      "views_7_chapters": 3429,
+      "last_chapter_updated_at": "2026-07-26T00:00:00"
     },
     {
       "cid": "0NRm4EX9VE81O63qZJ2W",
       "subject": "ปรามาสแห่งเทพ",
       "chapters_count": 21,
       "total_views": 13900,
-      "total_sales": 1900,
+      "total_sales": 1950.4,
       "comic_id": "0NRm4EX9VE81O63qZJ2W",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 623,
+      "days_inactive": 627,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 28.8,
@@ -3251,13 +3251,13 @@
     {
       "cid": "lkJy7ZdeYZvMYX5PAwB6",
       "subject": "ผู้ฝึกกระบี่เต็มเวลา",
-      "chapters_count": 126,
-      "total_views": 377200,
-      "total_sales": 130199.99999999999,
+      "chapters_count": 128,
+      "total_views": 377800,
+      "total_sales": 130365,
       "comic_id": "lkJy7ZdeYZvMYX5PAwB6",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
+      "days_inactive": 1,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 2158.2,
@@ -3270,23 +3270,23 @@
         "สิงหาคม": 1371.6,
         "กันยายน": 1321.2,
         "ตุลาคม": 583.2,
-        "พฤศจิกายน": 273.6
+        "พฤศจิกายน": 396.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 732.6,
+      "views_7_chapters": 629,
+      "last_chapter_updated_at": "2026-11-14T00:00:00"
     },
     {
       "cid": "0NRm4EX9VEKzx63qZJ2W",
       "subject": "ฉันคือผู้ผูกมัดพันธสัญญารับใช้ตัวเอง",
       "chapters_count": 76,
-      "total_views": 182200,
-      "total_sales": 32200.000000000004,
+      "total_views": 182300,
+      "total_sales": 32294.4,
       "comic_id": "0NRm4EX9VEKzx63qZJ2W",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 657,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 268.8,
         "กุมภาพันธ์": 696.0,
@@ -3300,9 +3300,9 @@
         "ตุลาคม": 124.8,
         "พฤศจิกายน": 1.6
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2483.2,
+      "views_7_chapters": 2021,
+      "last_chapter_updated_at": "2025-01-27T00:00:00"
     },
     {
       "cid": "p9ZazJMeV9lbO4wK6vRq",
@@ -3313,7 +3313,7 @@
       "comic_id": "p9ZazJMeV9lbO4wK6vRq",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 869,
+      "days_inactive": 873,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1.6,
@@ -3337,12 +3337,12 @@
       "subject": "ที่แท้ข้าก็ไร้เทียมทานมาตั้งนานแล้วนี่เอง",
       "chapters_count": 324,
       "total_views": 1700000,
-      "total_sales": 426200,
+      "total_sales": 426262.6,
       "comic_id": "jnGrQvMpVQQ2V5J8l2Ez",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 651,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 3128.4,
         "กุมภาพันธ์": 3627.0,
@@ -3354,22 +3354,22 @@
         "สิงหาคม": 1783.8,
         "กันยายน": 1116.0,
         "ตุลาคม": 682.2,
-        "พฤศจิกายน": 520.2
+        "พฤศจิกายน": 572.4
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 7,
+      "views_7_chapters": 71300,
+      "last_chapter_updated_at": "2025-02-02T00:00:00"
     },
     {
       "cid": "5qDAm32WxX9XOogPnaGe",
       "subject": "เจ้าแห่งกงล้อโชคชะตา",
       "chapters_count": 275,
       "total_views": 1800000,
-      "total_sales": 328800,
+      "total_sales": 328862,
       "comic_id": "5qDAm32WxX9XOogPnaGe",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
+      "days_inactive": 20,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 4440.6,
@@ -3382,22 +3382,22 @@
         "สิงหาคม": 2377.8,
         "กันยายน": 964.8,
         "ตุลาคม": 3418.2,
-        "พฤศจิกายน": 385.2
+        "พฤศจิกายน": 426.6
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 901.8,
+      "views_7_chapters": 733,
+      "last_chapter_updated_at": "2026-10-26T00:00:00"
     },
     {
       "cid": "ERr1aN5Wx3gexk4oPDQd",
       "subject": "จบกัน ข้าดันไปทำสัญญากับเทพสังหารสุดสวยเข้าซะแล้ว",
       "chapters_count": 31,
       "total_views": 13600,
-      "total_sales": 2600,
+      "total_sales": 2625.6,
       "comic_id": "ERr1aN5Wx3gexk4oPDQd",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 823,
+      "days_inactive": 827,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1.6,
@@ -3413,7 +3413,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 724.8,
-      "views_7_chapters": 723,
+      "views_7_chapters": 724,
       "last_chapter_updated_at": "2024-08-10T00:00:00"
     },
     {
@@ -3425,7 +3425,7 @@
       "comic_id": "KenEj08zOqZBV6W34lpa",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 924,
+      "days_inactive": 928,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3453,7 +3453,7 @@
       "comic_id": "lkJy7ZdeYZAoVX5PAwB6",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 971,
+      "days_inactive": 975,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3477,11 +3477,11 @@
       "subject": "สยบฟ้าวิญญาณอสูร",
       "chapters_count": 37,
       "total_views": 12100,
-      "total_sales": 2100,
+      "total_sales": 2139.2,
       "comic_id": "Q0AplLrbONGNVZ15okX2",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 854,
+      "days_inactive": 858,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 76.8,
@@ -3505,11 +3505,11 @@
       "subject": "ฮีลเลอร์ผู้ร่ายคำสาป ข้าจะสาปแช่งคนทั้งโลก",
       "chapters_count": 24,
       "total_views": 19900,
-      "total_sales": 5900,
+      "total_sales": 5948.8,
       "comic_id": "GpeQDXZlx22vx5n0JWoR",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 827,
+      "days_inactive": 831,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 134.4,
@@ -3522,7 +3522,7 @@
         "สิงหาคม": 22.4,
         "กันยายน": 30.4,
         "ตุลาคม": 33.6,
-        "พฤศจิกายน": 24
+        "พฤศจิกายน": 24.0
       },
       "sales_7_chapters": 2608,
       "views_7_chapters": 2340,
@@ -3537,7 +3537,7 @@
       "comic_id": "6XrDoGdyOrj7O8pbqz1a",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 984,
+      "days_inactive": 988,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3559,13 +3559,13 @@
     {
       "cid": "qzkJdZa0Y6kgxrv4KR5n",
       "subject": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
-      "chapters_count": 143,
-      "total_views": 962600,
-      "total_sales": 224400,
+      "chapters_count": 144,
+      "total_views": 964100,
+      "total_sales": 224740,
       "comic_id": "qzkJdZa0Y6kgxrv4KR5n",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
+      "days_inactive": 3,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 3393.0,
@@ -3578,11 +3578,11 @@
         "สิงหาคม": 3195.0,
         "กันยายน": 2143.8,
         "ตุลาคม": 1836.0,
-        "พฤศจิกายน": 520.2
+        "พฤศจิกายน": 792.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1434.6,
+      "views_7_chapters": 1139,
+      "last_chapter_updated_at": "2026-11-12T00:00:00"
     },
     {
       "cid": "4n6r39MJVwbBONAB81yk",
@@ -3593,7 +3593,7 @@
       "comic_id": "4n6r39MJVwbBONAB81yk",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 948,
+      "days_inactive": 952,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 3.2,
@@ -3621,7 +3621,7 @@
       "comic_id": "nJvApmMXVJeMOg1re8Pa",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 994,
+      "days_inactive": 998,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 3.2,
@@ -3645,11 +3645,11 @@
       "subject": "จักรพรรดิเทพสวรรค์",
       "chapters_count": 39,
       "total_views": 15300,
-      "total_sales": 3600,
+      "total_sales": 3619.2,
       "comic_id": "aL9EPNkRVdQ0Ymn3Agyq",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 819,
+      "days_inactive": 823,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 32.0,
@@ -3673,12 +3673,12 @@
       "subject": "ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย",
       "chapters_count": 158,
       "total_views": 219800,
-      "total_sales": 39000,
+      "total_sales": 39001.8,
       "comic_id": "GpeQDXZlx2jvx5n0JWoR",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 484,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 271.0,
         "กุมภาพันธ์": 752.8,
@@ -3692,9 +3692,9 @@
         "ตุลาคม": 79.0,
         "พฤศจิกายน": 80.8
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 793.8,
+      "views_7_chapters": 687,
+      "last_chapter_updated_at": "2025-07-19T00:00:00"
     },
     {
       "cid": "6XrDoGdyOre7x8pbqz1a",
@@ -3705,7 +3705,7 @@
       "comic_id": "6XrDoGdyOre7x8pbqz1a",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 988,
+      "days_inactive": 992,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3728,13 +3728,13 @@
       "cid": "ovGkNElzYlMGxq27mKdM",
       "subject": "ยอดหมอเหนือภพ",
       "chapters_count": 80,
-      "total_views": 227700,
-      "total_sales": 74900,
+      "total_views": 227800,
+      "total_sales": 74937.6,
       "comic_id": "ovGkNElzYlMGxq27mKdM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 774,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 123.2,
         "กุมภาพันธ์": 1051.2,
@@ -3748,9 +3748,9 @@
         "ตุลาคม": 110.4,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2998.4,
+      "views_7_chapters": 2680,
+      "last_chapter_updated_at": "2024-10-02T00:00:00"
     },
     {
       "cid": "KenEj08zOqJgV6W34lpa",
@@ -3789,7 +3789,7 @@
       "comic_id": "pRbKaMELO792YglzP41q",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1011,
+      "days_inactive": 1015,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 3.2,
@@ -3812,12 +3812,12 @@
       "cid": "Xm5MEjRdOnA3xg6Ay8ZW",
       "subject": "ผู้ฝึกตนผู้รอบรู้",
       "chapters_count": 51,
-      "total_views": 43900,
-      "total_sales": 26878.3,
+      "total_views": 44100,
+      "total_sales": 27042.3,
       "comic_id": "Xm5MEjRdOnA3xg6Ay8ZW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 862,
+      "days_inactive": 866,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 26.8,
@@ -3830,10 +3830,10 @@
         "สิงหาคม": 0.0,
         "กันยายน": 68.4,
         "ตุลาคม": 171.6,
-        "พฤศจิกายน": 23.2
+        "พฤศจิกายน": 187.2
       },
-      "sales_7_chapters": 2528,
-      "views_7_chapters": 1926,
+      "sales_7_chapters": 2544,
+      "views_7_chapters": 1937,
       "last_chapter_updated_at": "2024-07-02T00:00:00"
     },
     {
@@ -3845,7 +3845,7 @@
       "comic_id": "3a7qNk8mOKgOXyvogDn5",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1042,
+      "days_inactive": 1046,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -3869,11 +3869,11 @@
       "subject": "จอมทรราชท้าชะตาข้ามมิติ",
       "chapters_count": 31,
       "total_views": 21700,
-      "total_sales": 1700,
+      "total_sales": 1736.15,
       "comic_id": "4EQwLk1zYRvY50y2Wedn",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1002,
+      "days_inactive": 1006,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 43.6,
@@ -3897,11 +3897,11 @@
       "subject": "ผู้เล่นโคลสเบต้าไร้พ่ายในวันสิ้นโลก",
       "chapters_count": 22,
       "total_views": 19600,
-      "total_sales": 6900,
+      "total_sales": 6923.3,
       "comic_id": "D7vgQpJ2VjGY6Zr5GmXy",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 989,
+      "days_inactive": 993,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 93.7,
@@ -3925,11 +3925,11 @@
       "subject": "ผู้เล่นที่แข็งแกร่งที่สุดได้กลับมาอีกครั้งในรอบ 1000 ปี",
       "chapters_count": 17,
       "total_views": 9800,
-      "total_sales": 1300,
+      "total_sales": 1308.95,
       "comic_id": "dPDM46rGYm0VZlomvzLb",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1030,
+      "days_inactive": 1034,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 39.25,
@@ -3953,11 +3953,11 @@
       "subject": "ท้าทายดินแดนพระเจ้า - จบซีซั่น 1",
       "chapters_count": 61,
       "total_views": 72500,
-      "total_sales": 6600,
+      "total_sales": 6646,
       "comic_id": "3lewv7z5O4QVpqBnAQXd",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1055,
+      "days_inactive": 1059,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 19.25,
@@ -3980,12 +3980,12 @@
       "cid": "KenEj08zOqoY6W34lpar",
       "subject": "เปลี่ยนอาชีพเหมือนกัน แต่สกิลของผมดันเป็นเวทย์ต้องห้ามทั้งหมด",
       "chapters_count": 64,
-      "total_views": 83100,
-      "total_sales": 24900,
+      "total_views": 83200,
+      "total_sales": 24940.95,
       "comic_id": "KenEj08zOqoY6W34lpar",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 803,
+      "days_inactive": 807,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 115.2,
@@ -4008,12 +4008,12 @@
       "cid": "onvEqQwJYPJOedr65l29",
       "subject": "หลับข้ามยุคสมัย:กำเนิดฝ่าพิภพสวรรค์",
       "chapters_count": 45,
-      "total_views": 37000,
+      "total_views": 37100,
       "total_sales": 5400,
       "comic_id": "onvEqQwJYPJOedr65l29",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 759,
+      "days_inactive": 763,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -4029,20 +4029,20 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 656,
-      "views_7_chapters": 3266,
+      "views_7_chapters": 3274,
       "last_chapter_updated_at": "2024-10-13T00:00:00"
     },
     {
       "cid": "awPZAJq7Ok2xW8Dozkm3",
       "subject": "บ่มเพาะด้วยความเร็วหนึ่งล้านเท่า",
       "chapters_count": 103,
-      "total_views": 237900,
-      "total_sales": 104200,
+      "total_views": 238100,
+      "total_sales": 104214.65,
       "comic_id": "awPZAJq7Ok2xW8Dozkm3",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 644,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 891.0,
         "กุมภาพันธ์": 1508.4,
@@ -4056,20 +4056,20 @@
         "ตุลาคม": 586.8,
         "พฤศจิกายน": 190.8
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1925.9,
+      "views_7_chapters": 6257,
+      "last_chapter_updated_at": "2025-02-09T00:00:00"
     },
     {
       "cid": "qzkJdZa0Y6bYrv4KR5nm",
       "subject": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
-      "chapters_count": 240,
-      "total_views": 639600,
-      "total_sales": 127804,
+      "chapters_count": 241,
+      "total_views": 640900,
+      "total_sales": 127949.8,
       "comic_id": "qzkJdZa0Y6bYrv4KR5nm",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
+      "days_inactive": 4,
       "is_inactive_30d": false,
       "monthly_sales": {
         "มกราคม": 2138.4,
@@ -4082,22 +4082,22 @@
         "สิงหาคม": 1270.8,
         "กันยายน": 1063.8,
         "ตุลาคม": 556.2,
-        "พฤศจิกายน": 324
+        "พฤศจิกายน": 473.4
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 669.6,
+      "views_7_chapters": 556,
+      "last_chapter_updated_at": "2026-11-11T00:00:00"
     },
     {
       "cid": "WrwEvg7LY81x20blNPpM",
       "subject": "ช่วงชิงพรสวรรค์ ฉันขอเป็นพระเจ้า!",
       "chapters_count": 94,
-      "total_views": 200700,
+      "total_views": 200800,
       "total_sales": 66167.4,
       "comic_id": "WrwEvg7LY81x20blNPpM",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 647,
+      "days_inactive": 651,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 466.2,
@@ -4113,7 +4113,7 @@
         "พฤศจิกายน": 32.4
       },
       "sales_7_chapters": 2671.2,
-      "views_7_chapters": 2241,
+      "views_7_chapters": 2244,
       "last_chapter_updated_at": "2025-02-02T00:00:00"
     },
     {
@@ -4121,11 +4121,11 @@
       "subject": "ข้าเลี้ยงสาวน้อยขี้โรคให้เป็นจักรพรรดินี",
       "chapters_count": 18,
       "total_views": 7700,
-      "total_sales": 3600,
+      "total_sales": 3622.25,
       "comic_id": "Wng5GbmNxB8V9AlMyk0w",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1058,
+      "days_inactive": 1062,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 0.0,
@@ -4141,7 +4141,7 @@
         "พฤศจิกายน": 0.0
       },
       "sales_7_chapters": 1386.25,
-      "views_7_chapters": 916,
+      "views_7_chapters": 917,
       "last_chapter_updated_at": "2023-12-19T00:00:00"
     },
     {
@@ -4149,12 +4149,12 @@
       "subject": "แฟนของผมทั้งสวยและรวยมาก",
       "chapters_count": 70,
       "total_views": 60200,
-      "total_sales": 11800,
+      "total_sales": 11898.25,
       "comic_id": "G3E8jmDbO0rYZwR5qpa4",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 976,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 43.5,
         "กุมภาพันธ์": 124.1,
@@ -4168,21 +4168,21 @@
         "ตุลาคม": 0.0,
         "พฤศจิกายน": 31.15
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1348.8,
+      "views_7_chapters": 930,
+      "last_chapter_updated_at": "2024-03-14T00:00:00"
     },
     {
       "cid": "NazlwDvqOAvVbkJoedBW",
       "subject": "มาถึงก็ขายโอสถเซียนโบราณ แม้แต่จอมเทพยังหวาดผวา",
       "chapters_count": 89,
       "total_views": 349600,
-      "total_sales": 120800,
+      "total_sales": 120824.35,
       "comic_id": "NazlwDvqOAvVbkJoedBW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 619,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 813.6,
         "กุมภาพันธ์": 532.8,
@@ -4196,20 +4196,20 @@
         "ตุลาคม": 113.4,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 2306.5,
+      "views_7_chapters": 5612,
+      "last_chapter_updated_at": "2025-03-06T00:00:00"
     },
     {
       "cid": "orKk19EexydYWAyR3qLl",
       "subject": "ระบบอัพเกรดสรรพสิ่งในวันสิ้นโลก",
       "chapters_count": 32,
       "total_views": 37100,
-      "total_sales": 5100,
+      "total_sales": 5137,
       "comic_id": "orKk19EexydYWAyR3qLl",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1031,
+      "days_inactive": 1035,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 60.0,
@@ -4233,7 +4233,7 @@
       "subject": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain",
       "chapters_count": 369,
       "total_views": 1200000,
-      "total_sales": 462360.9,
+      "total_sales": 462603.9,
       "comic_id": "EZ41KDdWY1Nxw7MA5PkN",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
@@ -4250,7 +4250,7 @@
         "สิงหาคม": 6768.0,
         "กันยายน": 6642.0,
         "ตุลาคม": 5734.8,
-        "พฤศจิกายน": 2588.4
+        "พฤศจิกายน": 2831.4
       },
       "sales_7_chapters": 0,
       "views_7_chapters": 0,
@@ -4259,14 +4259,14 @@
     {
       "cid": "pRbKaMELO72xglzP41qW",
       "subject": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
-      "chapters_count": 213,
+      "chapters_count": 215,
       "total_views": 1300000,
-      "total_sales": 497200,
+      "total_sales": 497769.2,
       "comic_id": "pRbKaMELO72xglzP41qW",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 544,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 3970.8,
         "กุมภาพันธ์": 3052.8,
@@ -4278,11 +4278,11 @@
         "สิงหาคม": 3096.0,
         "กันยายน": 3582.0,
         "ตุลาคม": 2514.6,
-        "พฤศจิกายน": 1533.6
+        "พฤศจิกายน": 2010.6
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 36.6,
+      "views_7_chapters": 61500,
+      "last_chapter_updated_at": "2025-05-20T00:00:00"
     },
     {
       "cid": "4n6r39MJVw7VNAB81yk7",
@@ -4293,7 +4293,7 @@
       "comic_id": "4n6r39MJVw7VNAB81yk7",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 1082,
+      "days_inactive": 1086,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 1.2,
@@ -4321,8 +4321,8 @@
       "comic_id": "0NRm4EX9VEZY63qZJ2Wz",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 0,
-      "is_inactive_30d": false,
+      "days_inactive": 1052,
+      "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 17.25,
         "กุมภาพันธ์": 33.3,
@@ -4336,20 +4336,20 @@
         "ตุลาคม": 11.1,
         "พฤศจิกายน": 0.0
       },
-      "sales_7_chapters": 0,
-      "views_7_chapters": 0,
-      "last_chapter_updated_at": ""
+      "sales_7_chapters": 1352.05,
+      "views_7_chapters": 1345,
+      "last_chapter_updated_at": "2023-12-29T00:00:00"
     },
     {
       "cid": "GaDZ1qlAOezV5k7gmeMn",
       "subject": "เนโครแมนเซอร์! ฉันคือภัยพิบัติล้างโลก!",
       "chapters_count": 161,
       "total_views": 110700,
-      "total_sales": 33200,
+      "total_sales": 33268.15,
       "comic_id": "GaDZ1qlAOezV5k7gmeMn",
       "account": "แปลจนเมื่อย",
       "account_id": "lionking",
-      "days_inactive": 480,
+      "days_inactive": 484,
       "is_inactive_30d": true,
       "monthly_sales": {
         "มกราคม": 9.0,
@@ -4369,5 +4369,5 @@
       "last_chapter_updated_at": "2025-07-19T00:00:00"
     }
   ],
-  "updated_at": "2026-11-11T18:58:37.763616"
+  "updated_at": "2026-11-15T20:56:16.898329"
 }
