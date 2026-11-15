@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SearchableSelect } from "@/components/ui/searchable-select"
-import { RELEASE_DAYS, isUrgentManga } from "@/lib/utils"
+import { RELEASE_DAYS, isUrgentManga, isTranslatePayoutExcluded } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
 import {
@@ -25,6 +25,8 @@ import {
   Users,
   RefreshCw,
   Search,
+  Coins,
+  CheckCircle2,
 } from "lucide-react"
 import { ComixUrlSearchDialog } from "@/components/modals/ComixUrlSearchDialog"
 
@@ -45,6 +47,7 @@ const mangaSchema = z.object({
   needsextract: z.boolean().default(true),
   notifyonadd: z.boolean().default(false),
   isurgent: z.boolean().default(false),
+  excludetranslatepayout: z.boolean().default(false),
 })
 
 type MangaFormValues = z.infer<typeof mangaSchema>
@@ -95,6 +98,7 @@ export function MangaModal({
       needsextract: true,
       notifyonadd: false,
       isurgent: false,
+      excludetranslatepayout: false,
     },
   })
 
@@ -203,6 +207,7 @@ export function MangaModal({
             editItem.notifyonadd === true ||
             String(editItem.notifyonadd).toLowerCase() === "true",
           isurgent: isUrgentManga(editItem),
+          excludetranslatepayout: isTranslatePayoutExcluded(editItem),
         })
         if (editItem.releaseday && editItem.releaseday !== "None") {
           setSelectedDays(
@@ -232,6 +237,7 @@ export function MangaModal({
           needsextract: true,
           notifyonadd: false,
           isurgent: false,
+          excludetranslatepayout: false,
         })
         setSelectedDays([])
       }
@@ -325,15 +331,27 @@ export function MangaModal({
   const needsExtract = watch("needsextract")
   const notifyOnAdd = watch("notifyonadd")
   const isUrgent = watch("isurgent")
+  const excludeTranslatePayout = watch("excludetranslatepayout")
 
   return (
     <>
       <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">
-            {editItem ? "แก้ไขข้อมูลมังงะ" : "เปิดโปรเจคใหม่ / เพิ่มมังงะใหม่"}
-          </DialogTitle>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pr-6">
+            <DialogTitle className="text-xl">
+              {editItem ? "แก้ไขข้อมูลมังงะ" : "เปิดโปรเจคใหม่ / เพิ่มมังงะใหม่"}
+            </DialogTitle>
+            <span
+              className={`text-xs px-2.5 py-0.5 rounded-full border font-medium self-start sm:self-auto ${
+                excludeTranslatePayout
+                  ? "bg-amber-500/20 border-amber-500/60 text-amber-300"
+                  : "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
+              }`}
+            >
+              {excludeTranslatePayout ? "🚫 ไม่นับยอดเบิกจ่าย" : "✅ นับยอดเบิกจ่ายปกติ"}
+            </span>
+          </div>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
@@ -395,7 +413,7 @@ export function MangaModal({
             </div>
           </div>
 
-          {/* GROUP SCANNER FIELD (พิมพ์เอง หรือ กดดึงชื่อค่ายมาใส่ Dropdown แบบรายครั้ง) */}
+          {/* GROUP SCANNER FIELD */}
           <div className="rounded-lg border border-purple-500/30 bg-purple-500/5 p-3.5 space-y-2.5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <Label className="flex items-center gap-1.5 text-purple-300 font-medium">
@@ -513,6 +531,65 @@ export function MangaModal({
               <Label>ต้นทุนต่อตอน (บาท)</Label>
               <Input type="number" step="0.01" {...register("costperchapter")} />
             </div>
+          </div>
+
+          {/* CRITICAL FINANCIAL & PAYOUT EXCLUSION CARD (วางติดกับต้นทุนต่อตอน เพื่อให้เห็นชัดเจนไม่จม) */}
+          <div
+            className={`rounded-xl border-2 p-4 transition-all space-y-3 ${
+              excludeTranslatePayout
+                ? "border-amber-500/80 bg-gradient-to-r from-amber-950/60 via-amber-900/30 to-[#0b1120] shadow-lg shadow-amber-950/30"
+                : "border-amber-500/40 bg-amber-500/5"
+            }`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <Label className="flex items-center gap-2 text-base font-bold text-amber-300">
+                <Coins className="h-5 w-5 text-amber-400" />
+                เกณฑ์การคำนวณเงินเบิกจ่าย (Payout Settings)
+              </Label>
+              <span
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                  excludeTranslatePayout
+                    ? "bg-amber-500/20 border-amber-500/60 text-amber-300"
+                    : "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
+                }`}
+              >
+                {excludeTranslatePayout ? (
+                  <>🚫 ไม่นับยอดเบิกจ่าย</>
+                ) : (
+                  <>
+                    <CheckCircle2 className="h-3 w-3" /> นับยอดตามปกติ
+                  </>
+                )}
+              </span>
+            </div>
+
+            <label
+              className={`flex items-start gap-3 rounded-lg border p-3.5 cursor-pointer transition-all ${
+                excludeTranslatePayout
+                  ? "border-amber-500/70 bg-amber-500/15 shadow-sm ring-1 ring-amber-500/50"
+                  : "border-amber-500/30 bg-[#0b1120] hover:border-amber-500/60"
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={excludeTranslatePayout}
+                onChange={(e) => setValue("excludetranslatepayout", e.target.checked)}
+                className="mt-0.5 h-5 w-5 accent-amber-500 rounded cursor-pointer shrink-0"
+              />
+              <div className="space-y-1">
+                <span className="text-sm font-bold text-amber-200 flex items-center gap-2">
+                  <span>ไม่เข้าเกณฑ์นับยอดเบิกจ่าย (การแปล)</span>
+                  {excludeTranslatePayout && (
+                    <span className="text-[10px] bg-amber-500/30 text-amber-300 border border-amber-500/50 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                      ยกเว้นอยู่
+                    </span>
+                  )}
+                </span>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  ⚠️ หากติ๊กเลือก: ตอนที่แปลของเรื่องนี้จะไม่ถูกนำไปคิดเงินและไม่นับยอดเบิกจ่ายให้ผู้แปลในหน้ารายรับ-รายจ่าย
+                </p>
+              </div>
+            </label>
           </div>
 
           <div className="space-y-1.5">

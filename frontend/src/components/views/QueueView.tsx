@@ -26,6 +26,7 @@ import {
   isStepDone,
   isUrgentManga,
   matchesStepFilter,
+  resolveTypesetterName,
   parseQueueDate,
   resolveMangaName,
 } from "@/lib/utils"
@@ -248,7 +249,7 @@ export function QueueView({
 
       // Assignee filter
       if (assigneeFilter !== "all") {
-        const resolvedTypesetter = q.typesettername || defaultTypesetterName
+        const resolvedTypesetter = resolveTypesetterName(q.typesettername, defaultTypesetterName)
         const matchesAssignee =
           q.uploadername === assigneeFilter ||
           q.extractorname === assigneeFilter ||
@@ -1068,7 +1069,7 @@ export function QueueView({
                       {renderStatusBadge(q, "typeset", q.typesetstatus)}
                       <div className="text-xs text-slate-400 mt-1">
                         <div className="flex items-center gap-1 whitespace-nowrap">
-                          <span className="truncate max-w-[80px]">{q.typesettername || (manga && manga.lockedtypesetter) || defaultTypesetterName}</span>
+                          <span className="truncate max-w-[80px]">{resolveTypesetterName(q.typesettername, (manga && manga.lockedtypesetter) || defaultTypesetterName)}</span>
                           {(q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี") && (
                             <span className="inline-block text-[10px] text-sky-400 font-bold bg-sky-500/10 px-1 py-0.2 rounded border border-sky-500/30 shrink-0">
                               เกาหลี

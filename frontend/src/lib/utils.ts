@@ -36,6 +36,12 @@ export function isUrgentManga(manga: any): boolean {
   return v === true || String(v).toLowerCase() === 'true'
 }
 
+export function isTranslatePayoutExcluded(manga: any): boolean {
+  if (!manga) return false
+  const v = manga.excludetranslatepayout ?? manga.ExcludeTranslatePayout
+  return v === true || String(v).toLowerCase() === 'true' || v === 1 || String(v) === '1'
+}
+
 /**
  * Global Fallback Dictionary for unlisted/historical Manga IDs
  * Ensures that whenever a manga ID is not in live MangaList, the system can still resolve its true name.
@@ -514,4 +520,14 @@ export function getInactivityRecency(
   }
 
   return { days: daysDiff, label, badgeClass }
+}
+
+export function isDashOrEmpty(val?: string | null): boolean {
+  if (val === undefined || val === null) return true;
+  const s = String(val).trim();
+  return !s || s === '-' || s === '–' || s === '—' || s === '−' || s === '‑' || s === '_';
+}
+
+export function resolveTypesetterName(rawName?: string | null, defaultName = "Tilly"): string {
+  return isDashOrEmpty(rawName) ? defaultName : String(rawName).trim();
 }

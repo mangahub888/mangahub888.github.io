@@ -14,6 +14,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
 import { Plus } from "lucide-react"
+import { resolveTypesetterName } from "@/lib/utils"
 
 // ==========================================
 // 1. ADD QUEUE MODAL
@@ -456,7 +457,7 @@ export function UpdateQueueModal({
       setTranslatorName(item.translatorname || defaultTrans)
 
       setTypesetStatus(item.typesetstatus || "รอเริ่ม")
-      setTypesetterName(item.typesettername || (manga?.lockedtypesetter || "").trim() || defaultTypesetter)
+      setTypesetterName(resolveTypesetterName(item.typesettername, (manga?.lockedtypesetter || "").trim() || defaultTypesetter))
       setTypesetType(item.typesettype === "เกาหลี" || item.typesetratetype === "เกาหลี" ? "เกาหลี" : "จีน")
 
       setPublishStatus(item.publishstatus || "รอเริ่ม")
@@ -885,8 +886,8 @@ export function StepUpdateModal({
       if (!currentAssignee && step.toLowerCase() === "translate") {
         const isPratchaya = String(queueItem.translatorname || "").toLowerCase().includes("pratchaya")
         setAssignee(isPratchaya ? "Pratchaya" : "เร")
-      } else if (!currentAssignee && step.toLowerCase() === "typeset") {
-        setAssignee(defaultTypesetter)
+      } else if (step.toLowerCase() === "typeset") {
+        setAssignee(resolveTypesetterName(currentAssignee, defaultTypesetter))
       } else {
         setAssignee(currentAssignee)
       }

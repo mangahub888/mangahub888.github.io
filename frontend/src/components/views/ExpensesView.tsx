@@ -37,6 +37,8 @@ import {
   isStepDone,
   parseQueueDate,
   resolveMangaName,
+  resolveTypesetterName,
+  isTranslatePayoutExcluded,
 } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
@@ -632,11 +634,13 @@ export function ExpensesView({
       }
 
       // 3. Translate
+      const isMangaTranslateExcluded = isTranslatePayoutExcluded(manga)
       if (
         q.translatorname &&
         isStepDone(q.translatestatus) &&
         q.translatestatus !== "Skipped" &&
-        q.translatestatus !== "ข้าม"
+        q.translatestatus !== "ข้าม" &&
+        !isMangaTranslateExcluded
       ) {
         const taskDate = q.translatetime || q.createdat || ""
         if (isDateInRange(taskDate)) {
@@ -667,8 +671,9 @@ export function ExpensesView({
       }
 
       // 4. Typeset
+      const effTypesetter = resolveTypesetterName(q.typesettername, "Tilly")
       if (
-        q.typesettername &&
+        effTypesetter &&
         isStepDone(q.typesetstatus) &&
         q.typesetstatus !== "Skipped" &&
         q.typesetstatus !== "ข้าม"
@@ -677,7 +682,7 @@ export function ExpensesView({
         if (isDateInRange(taskDate)) {
           const key = `${q.queueid}_typeset`.toLowerCase()
           if (!claimedTaskKeys.has(key)) {
-            const cleanName = (q.typesettername || "").trim().toLowerCase()
+            const cleanName = effTypesetter.trim().toLowerCase()
             const isSpecial = cleanName.includes(rates.typesetSpecialName.toLowerCase())
             const parsedDate = parseQueueDate(taskDate)
             const isNov2026OrLater = parsedDate ? parsedDate.getTime() >= new Date("2026-11-01T00:00:00").getTime() : false
@@ -693,7 +698,7 @@ export function ExpensesView({
             }
 
             const cost = count * rate
-            const s = getOrCreateStaff(q.typesettername)
+            const s = getOrCreateStaff(effTypesetter)
             s.typesetCount += count
             s.typesetCost += cost
             if (isKorean) {
@@ -1046,13 +1051,15 @@ export function ExpensesView({
         selectedYear
       )
       const translatorExcluded = isNameExcluded(q.translatorname)
+      const isMangaTranslateExcluded = isTranslatePayoutExcluded(manga)
       if (
         isStepDone(q.translatestatus) &&
         q.translatorname &&
         q.translatestatus !== "Skipped" &&
         q.translatestatus !== "ข้าม" &&
         isTranslateInPeriod &&
-        !translatorExcluded
+        !translatorExcluded &&
+        !isMangaTranslateExcluded
       ) {
         const member = getOrCreateMember(q.translatorname)
         const isSpecial = member.name
@@ -1075,16 +1082,17 @@ export function ExpensesView({
         selectedMonth,
         selectedYear
       )
-      const typesetterExcluded = isNameExcluded(q.typesettername)
+      const effRowTypesetter = resolveTypesetterName(q.typesettername, "Tilly")
+      const typesetterExcluded = isNameExcluded(effRowTypesetter)
       if (
         isStepDone(q.typesetstatus) &&
-        q.typesettername &&
+        effRowTypesetter &&
         q.typesetstatus !== "Skipped" &&
         q.typesetstatus !== "ข้าม" &&
         isTypesetInPeriod &&
         !typesetterExcluded
       ) {
-        const member = getOrCreateMember(q.typesettername)
+        const member = getOrCreateMember(effRowTypesetter)
         const isSpecial = member.name
           .toLowerCase()
           .includes(rates.typesetSpecialName.toLowerCase())
@@ -1140,15 +1148,17 @@ export function ExpensesView({
           translator:
             rowTranslateCost > 0
               ? q.translatorname || "-"
+              : isMangaTranslateExcluded && isStepDone(q.translatestatus)
+              ? `${q.translatorname || "-"} (ยกเว้นยอดแปล)`
               : translatorExcluded && isStepDone(q.translatestatus)
               ? `${q.translatorname} (ยกเว้น)`
               : "-",
           translateCost: rowTranslateCost,
           typesetter:
             rowTypesetCost > 0
-              ? q.typesettername || "-"
+              ? effRowTypesetter || "-"
               : typesetterExcluded && isStepDone(q.typesetstatus)
-              ? `${q.typesettername} (ยกเว้น)`
+              ? `${effRowTypesetter} (ยกเว้น)`
               : "-",
           typesetCost: rowTypesetCost,
           totalCost: rowTotal,

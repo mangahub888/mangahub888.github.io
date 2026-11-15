@@ -844,6 +844,7 @@ function ensureSheetHeaders(sheet, name) {
       ensureCol('TranslationDocUrl', '');
 
       ensureCol('ScanGroup', '');
+      ensureCol('ExcludeTranslatePayout', false);
     }
   }
 
@@ -914,7 +915,7 @@ function getSheet(name = SHEET_NAME) {
       sheet.appendRow([
         'MangaID', 'MangaName', 'OriginalName', 'OriginalUrl', 'Status',
         'LastChapter', 'LastUpdated', 'NeedsExtract', 'ReleaseDay',
-        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup', 'LockedTypesetter', 'LockedPublisher', 'LockedPoster'
+        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup', 'LockedTypesetter', 'LockedPublisher', 'LockedPoster', 'ExcludeTranslatePayout'
       ]);
       sheet.getRange(1, 1, 1, 15).setFontWeight('bold').setBackground('#4f46e5').setFontColor('#ffffff');
     } else if (name === QUEUE_SHEET_NAME) {
@@ -1126,6 +1127,7 @@ function addManga(manga) {
       if (header === 'translationdocurl') return manga.translationdocurl || '';
 
       if (header === 'scangroup') return manga.scangroup || manga.scanGroup || '';
+      if (header === 'excludetranslatepayout') return manga.excludetranslatepayout !== undefined ? Boolean(manga.excludetranslatepayout) : false;
       return '';
     });
 
@@ -1244,6 +1246,7 @@ function updateManga(id, updatedManga) {
           if (header === 'translationdocurl') sheet.getRange(rowNum, colNum).setValue(updatedManga.translationdocurl !== undefined ? updatedManga.translationdocurl : '');
 
           if (header === 'scangroup') sheet.getRange(rowNum, colNum).setValue(updatedManga.scangroup !== undefined ? updatedManga.scangroup : (updatedManga.scanGroup !== undefined ? updatedManga.scanGroup : ''));
+          if (header === 'excludetranslatepayout') sheet.getRange(rowNum, colNum).setValue(updatedManga.excludetranslatepayout !== undefined ? Boolean(updatedManga.excludetranslatepayout) : false);
         });
         invalidateCache('mangaList');
         
@@ -1345,6 +1348,12 @@ function deleteManga(id) {
 /**
  * QUEUE OPERATIONS (Direct Dynamic Query)
  */
+function isDashOrEmptyTypesetter(val) {
+  if (val === undefined || val === null) return true;
+  const s = String(val).trim();
+  return !s || s === '-' || s === '–' || s === '—' || s === '−' || s === '‑' || s === '_';
+}
+
 function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', includeIncomplete = false) {
   try {
     const sheet = getSheet(QUEUE_SHEET_NAME);
@@ -1389,7 +1398,7 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
         }
       }
 
-      if (!obj.typesettername || String(obj.typesettername).trim() === '') {
+      if (isDashOrEmptyTypesetter(obj.typesettername)) {
         const mt = mangaMap[String(obj.mangaid)];
         const lockedTs = mt && mt.lockedtypesetter ? String(mt.lockedtypesetter).trim() : '';
         obj.typesettername = lockedTs || defaultTypesetter;
@@ -1509,8 +1518,9 @@ function addQueue(queueData) {
         return 'เร';
       }
       if (header === 'typesettername') {
-        if (queueData.typesettername && String(queueData.typesettername).trim() !== '') {
-          return queueData.typesettername;
+        const val = queueData.typesettername ? String(queueData.typesettername).trim() : '';
+        if (val && !isDashOrEmptyTypesetter(val)) {
+          return val;
         }
         if (manga && manga.lockedtypesetter && String(manga.lockedtypesetter).trim() !== '') {
           return manga.lockedtypesetter;
@@ -1621,7 +1631,16 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
         }
         
         if (nameCol > 0 && assignee !== undefined) {
-          sheet.getRange(rowNum, nameCol).setValue(assignee);
+          let assignedName = assignee;
+          if (step.toLowerCase() === 'typeset') {
+            const teamMembers = getTeamMembers();
+            const tillyMember = (teamMembers || []).find(m => String(m.name || '').trim().toLowerCase() === 'tilly');
+            const defaultTypesetter = tillyMember ? tillyMember.name : 'Tilly';
+            if (isDashOrEmptyTypesetter(assignedName)) {
+              assignedName = defaultTypesetter;
+            }
+          }
+          sheet.getRange(rowNum, nameCol).setValue(assignedName);
         }
         
         if (typesetType) {
@@ -1790,7 +1809,13 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
         }
 
         if (shouldUpdateAssignee && nameColIndex !== -1) {
-          data[i][nameColIndex] = assignee;
+          let effectiveAssignee = assignee;
+          if (stepLower === 'typeset' && isDashOrEmptyTypesetter(effectiveAssignee)) {
+            const teamMembers = getTeamMembers();
+            const tillyMember = (teamMembers || []).find(m => String(m.name || '').trim().toLowerCase() === 'tilly');
+            effectiveAssignee = tillyMember ? tillyMember.name : 'Tilly';
+          }
+          data[i][nameColIndex] = effectiveAssignee;
         }
 
         if (status === 'เสร็จแล้ว' && oldStatus !== 'เสร็จแล้ว') {
@@ -2067,7 +2092,14 @@ function updateFullQueueItem(queueId, updateData) {
         updateCell('uploadername', updateData.uploadername);
         updateCell('extractorname', updateData.extractorname);
         updateCell('translatorname', updateData.translatorname);
-        updateCell('typesettername', updateData.typesettername);
+        if (updateData.typesettername !== undefined) {
+          const val = String(updateData.typesettername || '').trim();
+          const teamMembers = getTeamMembers();
+          const tillyMember = (teamMembers || []).find(m => String(m.name || '').trim().toLowerCase() === 'tilly');
+          const defaultTypesetter = tillyMember ? tillyMember.name : 'Tilly';
+          const finalTypesetter = isDashOrEmptyTypesetter(val) ? defaultTypesetter : val;
+          updateCell('typesettername', finalTypesetter);
+        }
         if (updateData.typesettype !== undefined || updateData.typesetratetype !== undefined) {
           updateCell('typesettype', updateData.typesettype || updateData.typesetratetype || 'จีน');
         }
@@ -10020,7 +10052,7 @@ function batchSetDefaultTypesetterTilly() {
     for (let i = 1; i < data.length; i++) {
       const currentVal = String(data[i][typesetterCol - 1] || '').trim();
       let newVal = currentVal;
-      if (!currentVal) {
+      if (isDashOrEmptyTypesetter(currentVal)) {
         newVal = defaultTypesetter;
         updatedCount++;
       }
