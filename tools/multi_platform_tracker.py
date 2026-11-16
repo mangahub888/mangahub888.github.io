@@ -83,11 +83,22 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
     total_inactive_30d = 0
     total_active_30d = 0
 
+    sys.path.append(BASE_DIR)
+    from manga_matcher import get_manga_setting, match_manga_setting, normalize_title
+    manga_setting_list = get_manga_setting()
+
     mappings = load_cross_platform_mappings()
 
     def apply_cross_platform_canonical(c: Dict[str, Any], platform_name: str):
-        sub = c.get("subject", "")
-        cid = str(c.get("comic_id") or "")
+        sub = c.get("subject") or c.get("name") or c.get("title") or ""
+        matched_m, score = match_manga_setting(sub, manga_setting_list, threshold=0.85)
+        if matched_m:
+            c["canonical_title"] = matched_m.get("manganame") or matched_m.get("MangaName")
+            c["cross_platform_key"] = normalize_title(c["canonical_title"])
+            c["matched_manga_id"] = matched_m.get("mangaid") or matched_m.get("MangaID")
+            return
+
+        cid = str(c.get("comic_id") or c.get("id") or "")
         for m in mappings:
             plat_info = m.get("platforms", {}).get(platform_name, {})
             if plat_info.get("comic_id") and str(plat_info.get("comic_id")) == cid:
@@ -99,13 +110,15 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
                     c["canonical_title"] = m.get("canonical_title")
                     c["cross_platform_key"] = m.get("canonical_key")
                     return
+        c["canonical_title"] = sub.split('|')[0].strip()
+        c["cross_platform_key"] = normalize_title(sub)
 
     # 1. ReadRealm
     if os.path.exists(READREALM_LATEST):
         try:
             with open(READREALM_LATEST, "r", encoding="utf-8") as f:
                 rr_data = json.load(f)
-            rr_comics = rr_data.get("comics", [])
+            rr_comics = [c for c in rr_data.get("comics", []) if match_manga_setting(c.get("subject", ""), manga_setting_list, threshold=0.85)[0] is not None]
             for c in rr_comics:
                 c["platform"] = "readrealm"
                 apply_cross_platform_canonical(c, "readrealm")
@@ -137,7 +150,7 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
         try:
             with open(KAIREW_LATEST, "r", encoding="utf-8") as f:
                 kr_data = json.load(f)
-            kr_comics = kr_data.get("comics", [])
+            kr_comics = [c for c in kr_data.get("comics", []) if match_manga_setting(c.get("name") or c.get("subject") or "", manga_setting_list, threshold=0.85)[0] is not None]
             for c in kr_comics:
                 c["platform"] = "kairew"
                 apply_cross_platform_canonical(c, "kairew")
@@ -169,7 +182,7 @@ def consolidate_multi_platform_data() -> Dict[str, Any]:
         try:
             with open(CHAPLY_LATEST, "r", encoding="utf-8") as f:
                 ch_data = json.load(f)
-            ch_comics = ch_data.get("comics", [])
+            ch_comics = [c for c in ch_data.get("comics", []) if match_manga_setting(c.get("subject") or c.get("title") or "", manga_setting_list, threshold=0.85)[0] is not None]
             for c in ch_comics:
                 c["platform"] = "chaply"
                 apply_cross_platform_canonical(c, "chaply")

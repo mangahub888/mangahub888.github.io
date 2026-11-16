@@ -486,6 +486,13 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     except Exception as e:
         print(f"⚠️ ไม่สามารถบันทึก {ALL_COMICS_FILE}: {e}")
 
+    # กรองเฉพาะเรื่องที่มีอยู่ใน MangaSetting เท่านั้น (ข้ามโปรเจกต์ที่ลบไปแล้ว)
+    try:
+        from manga_matcher import filter_comics_by_manga_setting
+        raw_comics = filter_comics_by_manga_setting(raw_comics, title_key="title", threshold=0.85, platform_name="Chaply")
+    except Exception as e_f:
+        print(f"⚠️ [MangaFilter] Error: {e_f}")
+
     # 3. Build current snapshot dict
     current_snap_dict = {}
     now_ts = now.timestamp()

@@ -10,6 +10,9 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 FRONTEND_SRC_DIR = os.path.join(BASE_DIR, "..", "frontend", "src", "data")
 FRONTEND_PUB_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "data")
 
+sys.path.append(BASE_DIR)
+from manga_matcher import get_manga_setting, match_manga_setting, normalize_title
+
 # Standard Thai Month List for Multi-Platform Monthly Sales
 THAI_MONTHS = [
     'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -21,7 +24,7 @@ def sanitize_monthly_sales(raw_m):
         return {}
     res = {}
     items = list(raw_m.items())
-    has_mojibake = any('�' in str(k) or str(k) not in THAI_MONTHS for k in raw_m.keys())
+    has_mojibake = any('' in str(k) or str(k) not in THAI_MONTHS for k in raw_m.keys())
     if has_mojibake and len(items) in (11, 12):
         for idx, (_, v) in enumerate(items):
             if idx < len(THAI_MONTHS):
@@ -84,181 +87,114 @@ if not chaply and os.path.exists(chaply_all_path):
     with open(chaply_all_path, 'r', encoding='utf-8') as f:
         chaply = json.load(f)
 
-# Load cross-platform mapping if present
-mapping_path = os.path.join(DATA_DIR, 'comic_cross_platform_mapping.json')
-mappings_data = []
-if os.path.exists(mapping_path):
-    with open(mapping_path, 'r', encoding='utf-8') as f:
-        mappings_data = json.load(f).get('mappings', [])
+# Load MangaSetting projects
+manga_setting = get_manga_setting()
+print(f"📊 เริ่มต้นจัดกลุ่มข้อมูลตาม MangaSetting ({len(manga_setting)} เรื่อง)...")
 
-def normalize_title(t: str) -> str:
-    if not t:
-        return ''
-    
-    # Check manual mappings first
-    for m in mappings_data:
-        for alias in m.get('aliases', []):
-            if alias.lower() in t.lower():
-                return re.sub(r'[^\u0E00-\u0E7F]', '', m.get('canonical_title'))
-    
-    # Built-in manual aliases
-    if 'เจ้าแห่งกงล้อหมุนฝืนโชคชะตา' in t or 'เจ้าแห่งกงล้อโชคชะตา' in t:
-        return re.sub(r'[^\u0E00-\u0E7F]', '', 'เจ้าแห่งกงล้อโชคชะตา')
-    if 'เกิดใหม่เป็นกบฏแห่งตระกูลขุนนางทรราช' in t or 'กบฏแห่งตระกูลขุนนางทรราช' in t:
-        return re.sub(r'[^\u0E00-\u0E7F]', '', 'กบฏแห่งตระกูลขุนนางทรราช')
-    if any(k in t for k in ['จอมมารแสนดีขนาดนี้', 'จอมมารแสนดีเช่นข้า', 'ผู้ชายแสนดีเช่นข้า', 'The Disciple Wants to Kill Me']):
-        return re.sub(r'[^\u0E00-\u0E7F]', '', 'จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต')
-    
-    return re.sub(r'[^\u0E00-\u0E7F]', '', t)
-
-def get_canonical_display(t: str, key: str) -> str:
-    for m in mappings_data:
-        canonical_clean = re.sub(r'[^\u0E00-\u0E7F]', '', m.get('canonical_title'))
-        if key == canonical_clean:
-            return m.get('canonical_title')
-    
-    if any(k in t for k in ['จอมมารแสนดีขนาดนี้', 'จอมมารแสนดีเช่นข้า', 'ผู้ชายแสนดีเช่นข้า', 'The Disciple Wants to Kill Me']):
-        return 'จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต'
-    
-    return t.split('|')[0].strip()
-
-groups = {}
-
-# ReadRealm
-for c in rr_list:
-    t = c.get('subject', '').strip()
-    k = normalize_title(t)
-    if not k:
-        continue
-    clean_display = get_canonical_display(t, k)
-    clean_display = get_canonical_display(t, k)
-    c_monthly = sanitize_monthly_sales(c.get('monthly_sales', {}))
-    if k not in groups:
-        groups[k] = {
-            'key': k,
-            'title': clean_display,
-            'readrealm': {
-                'exists': True,
-                'title': t,
-                'id': c.get('comic_id', ''),
-                'sales': float(c.get('total_sales') or 0),
-                'views': int(c.get('total_views') or 0),
-                'eps': int(c.get('chapters_count') or 0),
-                'monthly_sales': c_monthly
-            },
-            'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0},
-            'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0}
-        }
-    else:
-        groups[k]['readrealm']['sales'] += float(c.get('total_sales') or 0)
-        groups[k]['readrealm']['views'] += int(c.get('total_views') or 0)
-        groups[k]['readrealm']['eps'] = max(groups[k]['readrealm']['eps'], int(c.get('chapters_count') or 0))
-        if not groups[k]['readrealm'].get('id'):
-            groups[k]['readrealm']['id'] = c.get('comic_id', '')
-        if c_monthly:
-            if 'monthly_sales' not in groups[k]['readrealm']:
-                groups[k]['readrealm']['monthly_sales'] = {}
-            for m_k, m_v in c_monthly.items():
-                groups[k]['readrealm']['monthly_sales'][m_k] = round(
-                    groups[k]['readrealm']['monthly_sales'].get(m_k, 0.0) + m_v, 2
-                )
-# Standard Thai Month List for Multi-Platform Monthly Sales
-THAI_MONTHS = [
-    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-]
-
-def init_empty_monthly_sales():
-    return {m: 0.0 for m in THAI_MONTHS}
-
-# Kairew
-for c in kairew:
-    t = (c.get('name') or c.get('subject') or '').strip()
-    k = normalize_title(t)
-    if not k:
-        continue
-    clean_display = get_canonical_display(t, k)
-    kw_monthly = sanitize_monthly_sales(c.get('monthly_sales', {}))
-    kw_obj = {
-        'exists': True,
-        'title': t,
-        'id': str(c.get('comic_id') or c.get('id', '')),
-        'sales': float(c.get('total_sales') or c.get('sales') or 0),
-        'views': int(c.get('total_views') or c.get('view_count') or 0),
-        'eps': int(c.get('chapters_count') or c.get('episode_count') or 0),
-        'monthly_sales': kw_monthly
-    }
-    if k not in groups:
-        groups[k] = {
-            'key': k,
-            'title': clean_display,
-            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': {}},
-            'kairew': kw_obj,
-            'chaply': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'fav': 0, 'monthly_sales': {}}
-        }
-    else:
-        groups[k]['title'] = clean_display
-        groups[k]['kairew'] = kw_obj
-
-# Chaply
-for c in chaply:
-    t = (c.get('subject') or c.get('title') or '').strip()
-    k = normalize_title(t)
-    if not k:
-        continue
-    clean_display = get_canonical_display(t, k)
-    c_id = str(c.get('comic_id') or c.get('id') or '')
-    c_sales = float(c.get('total_sales') or c.get('sales') or 0.0)
-    c_views = int(c.get('total_views') or c.get('totalView') or 0)
-    c_eps = int(c.get('chapters_count') or c.get('totalEpisode') or 0)
-    c_fav = int(c.get('totalFavorite') or 0)
-    ch_monthly = sanitize_monthly_sales(c.get('monthly_sales', {}))
-
-    chaply_obj = {
-        'exists': True,
-        'title': t,
-        'id': c_id,
-        'sales': c_sales,
-        'views': c_views,
-        'eps': c_eps,
-        'fav': c_fav,
-        'monthly_sales': ch_monthly
-    }
-
-    if k not in groups:
-        groups[k] = {
-            'key': k,
-            'title': clean_display,
-            'readrealm': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': {}},
-            'kairew': {'exists': False, 'title': '', 'id': '', 'sales': 0.0, 'views': 0, 'eps': 0, 'monthly_sales': {}},
-            'chaply': chaply_obj
-        }
-    else:
-        groups[k]['chaply'] = chaply_obj
-
-# Filter matching only (exists in >= 2 platforms)
 matched_groups = []
-for k, g in groups.items():
-    plat_count = (1 if g['readrealm']['exists'] else 0) + (1 if g['kairew']['exists'] else 0) + (1 if g['chaply']['exists'] else 0)
-    if plat_count >= 2:
-        g['platform_count'] = plat_count
-        g['platforms'] = []
-        if g['readrealm']['exists']:
-            g['platforms'].append('ReadRealm')
-        if g['kairew']['exists']:
-            g['platforms'].append('Kairew')
-        if g['chaply']['exists']:
-            g['platforms'].append('Chaply')
-        g['total_sales'] = round(g['readrealm']['sales'] + g['kairew']['sales'] + g['chaply']['sales'], 2)
-        g['total_views'] = g['readrealm']['views'] + g['kairew']['views'] + g['chaply']['views']
-        g['max_eps'] = max(g['readrealm']['eps'], g['kairew']['eps'], g['chaply']['eps'])
-        matched_groups.append(g)
 
-print(f"Total matched groups across >= 2 platforms: {len(matched_groups)}")
+for m in manga_setting:
+    mid = m.get('mangaid') or m.get('MangaID')
+    mname = (m.get('manganame') or m.get('MangaName') or '').strip()
+    norm_k = normalize_title(mname)
+    
+    # Best Match on ReadRealm
+    rr_c = None
+    best_rr_s = 0.0
+    for c in rr_list:
+        mat, s = match_manga_setting(c.get('subject', ''), [m], threshold=0.85)
+        if mat and s > best_rr_s:
+            best_rr_s = s
+            rr_c = c
+            
+    # Best Match on Kairew
+    kw_c = None
+    best_kw_s = 0.0
+    for c in kairew:
+        t = (c.get('name') or c.get('subject') or '').strip()
+        mat, s = match_manga_setting(t, [m], threshold=0.85)
+        if mat and s > best_kw_s:
+            best_kw_s = s
+            kw_c = c
+
+    # Best Match on Chaply
+    ch_c = None
+    best_ch_s = 0.0
+    for c in chaply:
+        t = (c.get('subject') or c.get('title') or '').strip()
+        mat, s = match_manga_setting(t, [m], threshold=0.85)
+        if mat and s > best_ch_s:
+            best_ch_s = s
+            ch_c = c
+            
+    has_rr = rr_c is not None
+    has_kw = kw_c is not None
+    has_ch = ch_c is not None
+    plat_count = (1 if has_rr else 0) + (1 if has_kw else 0) + (1 if has_ch else 0)
+    
+    # We include any story that matches at least 1 platform in MangaSetting
+    if plat_count >= 1:
+        rr_obj = {
+            'exists': has_rr,
+            'title': rr_c.get('subject', '') if has_rr else '',
+            'id': str(rr_c.get('comic_id', '')) if has_rr else '',
+            'sales': float(rr_c.get('total_sales') or 0.0) if has_rr else 0.0,
+            'views': int(rr_c.get('total_views') or 0) if has_rr else 0,
+            'eps': int(rr_c.get('chapters_count') or 0) if has_rr else 0,
+            'monthly_sales': sanitize_monthly_sales(rr_c.get('monthly_sales', {})) if has_rr else {}
+        }
+        
+        kw_obj = {
+            'exists': has_kw,
+            'title': (kw_c.get('name') or kw_c.get('subject') or '') if has_kw else '',
+            'id': str(kw_c.get('comic_id') or kw_c.get('id', '')) if has_kw else '',
+            'sales': float(kw_c.get('total_sales') or kw_c.get('sales') or 0.0) if has_kw else 0.0,
+            'views': int(kw_c.get('total_views') or kw_c.get('view_count') or 0) if has_kw else 0,
+            'eps': int(kw_c.get('chapters_count') or kw_c.get('episode_count') or 0) if has_kw else 0,
+            'monthly_sales': sanitize_monthly_sales(kw_c.get('monthly_sales', {})) if has_kw else {}
+        }
+        
+        ch_obj = {
+            'exists': has_ch,
+            'title': (ch_c.get('subject') or ch_c.get('title') or '') if has_ch else '',
+            'id': str(ch_c.get('comic_id') or ch_c.get('id', '')) if has_ch else '',
+            'sales': float(ch_c.get('total_sales') or ch_c.get('sales') or 0.0) if has_ch else 0.0,
+            'views': int(ch_c.get('total_views') or ch_c.get('totalView') or 0) if has_ch else 0,
+            'eps': int(ch_c.get('chapters_count') or ch_c.get('totalEpisode') or 0) if has_ch else 0,
+            'fav': int(ch_c.get('totalFavorite') or 0) if has_ch else 0,
+            'monthly_sales': sanitize_monthly_sales(ch_c.get('monthly_sales', {})) if has_ch else {}
+        }
+        
+        platforms = []
+        if has_rr: platforms.append('ReadRealm')
+        if has_kw: platforms.append('Kairew')
+        if has_ch: platforms.append('Chaply')
+        
+        total_s = round(rr_obj['sales'] + kw_obj['sales'] + ch_obj['sales'], 2)
+        total_v = rr_obj['views'] + kw_obj['views'] + ch_obj['views']
+        max_e = max(rr_obj['eps'], kw_obj['eps'], ch_obj['eps'])
+        
+        matched_groups.append({
+            'key': norm_k,
+            'title': mname,
+            'manga_id': mid,
+            'platform_count': plat_count,
+            'platforms': platforms,
+            'readrealm': rr_obj,
+            'kairew': kw_obj,
+            'chaply': ch_obj,
+            'total_sales': total_s,
+            'total_views': total_v,
+            'max_eps': max_e
+        })
+
+print(f"Total matched groups from MangaSetting: {len(matched_groups)}")
 all_3 = [g for g in matched_groups if g['platform_count'] == 3]
 print(f"Matching all 3 platforms (ReadRealm + Kairew + Chaply): {len(all_3)}")
 only_2 = [g for g in matched_groups if g['platform_count'] == 2]
-print(f"Matching exactly 2 platforms: {len(only_2)}")
+print(f"Matching 2 platforms: {len(only_2)}")
+only_1 = [g for g in matched_groups if g['platform_count'] == 1]
+print(f"Matching 1 platform: {len(only_1)}")
 
 # Save to data file
 output_path = os.path.join(DATA_DIR, 'grouped_matched_comics.json')

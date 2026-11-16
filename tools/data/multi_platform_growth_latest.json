@@ -1,31 +1,40 @@
 {
-  "platform": "all",
-  "pipeline_recorded_at": "2026-11-15T00:00:00",
-  "date_reference": "2026-11-15",
-  "total_comics": 0,
+  "pipeline_recorded_at": "2026-11-16T02:28:40.443497+00:00",
+  "date_reference": "2026-11-16",
   "total_sales_portfolio": 0.0,
   "total_views_portfolio": 0,
-  "top_sales_comic": "-",
+  "total_comics": 0,
   "total_inactive_30d": 0,
   "total_active_30d": 0,
-  "has_7d_baseline": false,
-  "has_30d_baseline": false,
-  "breakdown": {
+  "platforms_breakdown": {
     "readrealm": {
-      "total_comics": 0,
-      "total_sales": 0.0,
-      "total_views": 0
+      "name": "ReadRealm",
+      "sales": 0.0,
+      "views": 0,
+      "comics_count": 0,
+      "inactive_30d": 0,
+      "active_30d": 0,
+      "last_recorded": "2026-11-15T00:00:00"
     },
     "kairew": {
-      "total_comics": 0,
-      "total_sales": 0.0,
-      "total_views": 0
+      "name": "Kairew",
+      "sales": 0.0,
+      "views": 0,
+      "comics_count": 0,
+      "inactive_30d": 0,
+      "active_30d": 0,
+      "last_recorded": "2026-11-15T00:00:00"
     },
     "chaply": {
-      "total_comics": 0,
-      "total_sales": 0.0,
-      "total_views": 0
+      "name": "Chaply",
+      "sales": 0.0,
+      "views": 0,
+      "comics_count": 0,
+      "inactive_30d": 0,
+      "active_30d": 0,
+      "last_recorded": "2026-11-15T00:00:00"
     }
   },
+  "top_sales_comic": "",
   "comics": []
 }

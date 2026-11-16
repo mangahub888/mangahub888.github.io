@@ -314,6 +314,15 @@ def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = Fal
         # In-browser deep-dive per-comic sales & chapters extraction (No-Headless Real Chrome)
         try:
             cartoon_list = (props_data.get("props") or {}).get("cartoon_list", [])
+            # กรองเฉพาะเรื่องที่อยู่ใน MangaSetting ก่อนดึงสถิติรายเรื่อง
+            try:
+                from manga_matcher import filter_comics_by_manga_setting
+                cartoon_list = filter_comics_by_manga_setting(cartoon_list, title_key="name", threshold=0.85, platform_name="Kairew")
+                if "props" in props_data:
+                    props_data["props"]["cartoon_list"] = cartoon_list
+            except Exception as e_f:
+                print(f"⚠️ [MangaFilter] Error: {e_f}")
+
             if cartoon_list:
                 cids = [str(c.get("id")) for c in cartoon_list if c.get("id")]
                 cur_year = datetime.now().year
@@ -595,6 +604,13 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     props = page_data.get("props", {})
 
     cartoon_list = props.get("cartoon_list", [])
+
+    # กรองเฉพาะเรื่องที่มีอยู่ใน MangaSetting
+    try:
+        from manga_matcher import filter_comics_by_manga_setting
+        cartoon_list = filter_comics_by_manga_setting(cartoon_list, title_key="name", threshold=0.85, platform_name="Kairew Pipeline")
+    except Exception:
+        pass
 
     writer_info = props.get("writer", {})
 

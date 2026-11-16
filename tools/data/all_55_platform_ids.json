@@ -1,0 +1,552 @@
+[
+  {
+    "manga_id": 4,
+    "manga_name": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+    "rr_id": "EZ41KDdWY1Nxw7MA5PkN",
+    "rr_title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain",
+    "kw_id": 335,
+    "kw_title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+    "ch_id": null,
+    "ch_title": null
+  },
+  {
+    "manga_id": 7,
+    "manga_name": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+    "rr_id": "pRbKaMELO72xglzP41qW",
+    "rr_title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+    "kw_id": 390,
+    "kw_title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+    "ch_id": null,
+    "ch_title": null
+  },
+  {
+    "manga_id": 8,
+    "manga_name": "อิสระทางทรัพย์ พันธะทางใจ",
+    "rr_id": "ng5GbmNxBA34Y9AlMyk0",
+    "rr_title": "อิสระทางทรัพย์ พันธะทางใจ",
+    "kw_id": 348,
+    "kw_title": "อิสระทางทรัพย์ พันธะทางใจ",
+    "ch_id": "cmvezsehy25w0t5eupwauchpa",
+    "ch_title": "อิสระทางทรัพย์ พันธะทางใจ"
+  },
+  {
+    "manga_id": 9,
+    "manga_name": "นักฆ่าระดับเทพ ข้าคือเงามืด",
+    "rr_id": "XrDoGdyOrN17O8pbqz1a",
+    "rr_title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+    "kw_id": 334,
+    "kw_title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+    "ch_id": "cmvscqbse140ot5i8vfzbibtm",
+    "ch_title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow"
+  },
+  {
+    "manga_id": 10,
+    "manga_name": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+    "rr_id": "qzkJdZa0Y6bYrv4KR5nm",
+    "rr_title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+    "kw_id": 588,
+    "kw_title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+    "ch_id": null,
+    "ch_title": null
+  },
+  {
+    "manga_id": 12,
+    "manga_name": "ผู้ฝึกกระบี่เต็มเวลา",
+    "rr_id": "lkJy7ZdeYZvMYX5PAwB6",
+    "rr_title": "ผู้ฝึกกระบี่เต็มเวลา",
+    "kw_id": 768,
+    "kw_title": "ผู้ฝึกกระบี่เต็มเวลา | Full-Time Swordsman",
+    "ch_id": "cmw4jffvx2x4vt5i7sjfydn7d",
+    "ch_title": "ผู้ฝึกกระบี่เต็มเวลา | Full-Time Swordsman"
+  },
+  {
+    "manga_id": 13,
+    "manga_name": "จอมมารแสนดีขนาดนี้ แต่ศิษย์สตรีทั้งหลายกลับต้องการชีวิตข้า",
+    "rr_id": "GpeQDXZlx2jvx5n0JWoR",
+    "rr_title": "ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย",
+    "kw_id": 389,
+    "kw_title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+    "ch_id": "cmu8mjor52dc36kdg6vlj2zw2",
+    "ch_title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต | The Disciple Wants to Kill Me"
+  },
+  {
+    "manga_id": 14,
+    "manga_name": "เจ้ากงล้อแห่งโชคชะตา",
+    "rr_id": "5qDAm32WxX9XOogPnaGe",
+    "rr_title": "เจ้าแห่งกงล้อโชคชะตา",
+    "kw_id": 341,
+    "kw_title": "เจ้าแห่งกงล้อหมุนฝืนโชคชะตา",
+    "ch_id": "cmw69pgg5001ct5o7y6pqze0r",
+    "ch_title": "เจ้าแห่งกงล้อโชคชะตา | The Lord of Wheel of Destiny"
+  },
+  {
+    "manga_id": 16,
+    "manga_name": "Mr.Zombie",
+    "rr_id": null,
+    "rr_title": null,
+    "kw_id": 388,
+    "kw_title": "นายท่านซอมบี้ | Mr.Zombie",
+    "ch_id": null,
+    "ch_title": null
+  },
+  {
+    "manga_id": 17,
+    "manga_name": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+    "rr_id": "qzkJdZa0Y6kgxrv4KR5n",
+    "rr_title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+    "kw_id": 391,
+    "kw_title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+    "ch_id": null,
+    "ch_title": null
+  },
+  {
+    "manga_id": 19,
+    "manga_name": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
+    "rr_id": "NG8Qg2kxDpAjxz7Kdeo9",
+    "rr_title": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
+    "kw_id": 365,
+    "kw_title": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
+    "ch_id": null,
+    "ch_title": null
+  },
+  {
+    "manga_id": 21,
+    "manga_name": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ",
+    "rr_id": "NG8Qg2kxDpNKxz7Kdeo9",
+    "rr_title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+    "kw_id": 421,
+    "kw_title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+    "ch_id": "cmw34uhdn2l07t5i45r53h94c",
+    "ch_title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals"
+  },
+  {
+    "manga_id": 24,
+    "manga_name": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ",
+    "rr_id": "n6r39MJVwy58xNAB81yk",
+    "rr_title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely",
+    "kw_id": 346,
+    "kw_title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ",
+    "ch_id": "cmuzqktr60f70t5kkpqz1btwu",
+    "ch_title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely"
+  },
+  {
+    "manga_id": 27,
+    "manga_name": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+    "rr_id": "n6r39MJVwynpxNAB81yk",
+    "rr_title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+    "kw_id": 328,
+    "kw_title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+    "ch_id": "cmuua0knr0dggt5h971a8fsib",
+    "ch_title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์"
+  },
+  {
+    "manga_id": 28,
+    "manga_name": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+    "rr_id": "NG8Qg2kxDk7gYz7Kdeo9",
+    "rr_title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+    "kw_id": 345,
+    "kw_title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+    "ch_id": "cmuu97eqw0d44t5hg6zfwvyf8",
+    "ch_title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God"
+  },
+  {
+    "manga_id": 29,
+    "manga_name": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก",
+    "rr_id": "le0bk9XVGdJ0Yj34oaQw",
+    "rr_title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+    "kw_id": 344,
+    "kw_title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+    "ch_id": "cmun1mjxm0yu7t5ioj5wa6031",
+    "ch_title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror"
+  },
+  {
+    "manga_id": 30,
+    "manga_name": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+    "rr_id": "zkJdZa0Y6gBoxrv4KR5n",
+    "rr_title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+    "kw_id": 343,
+    "kw_title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+    "ch_id": "cmumgpiis0tmst5itwxnwtwt7",
+    "ch_title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่ | I’m a Rich Tycoon, So Being a Scumbag Makes Perfect Sense!"
+  },
+  {
+    "manga_id": 34,
+    "manga_name": "ข้าขอท้าผนึกสวรรค์",
+    "rr_id": "EQwLk1zYR9RXV50y2Wed",
+    "rr_title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
+    "kw_id": 431,
+    "kw_title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ I Shall Seal the Heavens",
+    "ch_id": "cmuk7y4dr0gcpt5im40yny60d",
+    "ch_title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens"
+  },
+  {
+    "manga_id": 35,
+    "manga_name": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+    "rr_id": "ng5GbmNxB4r5V9AlMyk0",
+    "rr_title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+    "kw_id": 443,
+    "kw_title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+    "ch_id": "cmuk6ni1y0g4gt5imnxxmob4z",
+    "ch_title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา"
+  },
+  {
+    "manga_id": 39,
+    "manga_name": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ!",
+    "rr_id": "GmA4egMxWR5KYB8PWbyp",
+    "rr_title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+    "kw_id": 486,
+    "kw_title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+    "ch_id": "cmuk2isn40ff1t5imkxirfqoc",
+    "ch_title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!"
+  },
+  {
+    "manga_id": 44,
+    "manga_name": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ",
+    "rr_id": "azlwDvqOA7BpYbkJoedB",
+    "rr_title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign",
+    "kw_id": 543,
+    "kw_title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ",
+    "ch_id": "cmujtou700ea2t5iqi3fhllox",
+    "ch_title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign"
+  },
+  {
+    "manga_id": 45,
+    "manga_name": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+    "rr_id": "ng5GbmNxB4zEV9AlMyk0",
+    "rr_title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+    "kw_id": 578,
+    "kw_title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+    "ch_id": "cmujt3jjs0ebkt5iohzuzr2fq",
+    "ch_title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด! | Rebirth of the Water Margin World: The Strongest Wu Dalang"
+  },
+  {
+    "manga_id": 51,
+    "manga_name": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์",
+    "rr_id": "NG8Qg2kxDy5KOz7Kdeo9",
+    "rr_title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+    "kw_id": 661,
+    "kw_title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+    "ch_id": "cmubpx26j2u1v6kdgil3fq5o8",
+    "ch_title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer"
+  },
+  {
+    "manga_id": 59,
+    "manga_name": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล",
+    "rr_id": "RbKaMELO7p6PVglzP41q",
+    "rr_title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+    "kw_id": 766,
+    "kw_title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+    "ch_id": "cmub9scyd2qzl6kdax0weqtow",
+    "ch_title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion"
+  },
+  {
+    "manga_id": 60,
+    "manga_name": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง",
+    "rr_id": "peQDXZlx2laqV5n0JWoR",
+    "rr_title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+    "kw_id": 784,
+    "kw_title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+    "ch_id": "cmua459q82p666kdcoll0jcwa",
+    "ch_title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave"
+  },
+  {
+    "manga_id": 69,
+    "manga_name": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ!",
+    "rr_id": "m5MEjRdOnz8dOg6Ay8ZW",
+    "rr_title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+    "kw_id": 2607,
+    "kw_title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+    "ch_id": "cmu9exmzu2nlr6kdbjz8f4p62",
+    "ch_title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!"
+  },
+  {
+    "manga_id": 72,
+    "manga_name": "เทพสงครามคืนบัลลังก์",
+    "rr_id": "zkJdZa0Y69dkVrv4KR5n",
+    "rr_title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+    "kw_id": 3379,
+    "kw_title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+    "ch_id": "cmu6fncvn25g56kdcsltke4aa",
+    "ch_title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God"
+  },
+  {
+    "manga_id": 73,
+    "manga_name": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย",
+    "rr_id": "Z41KDdWY19goYw7MA5Pk",
+    "rr_title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+    "kw_id": 3569,
+    "kw_title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+    "ch_id": "cmu5rxd0p25jk6kdbt4wnhweh",
+    "ch_title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law"
+  },
+  {
+    "manga_id": 75,
+    "manga_name": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์",
+    "rr_id": "rKk19Eexy8ZpYWAyR3qL",
+    "rr_title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
+    "kw_id": 4675,
+    "kw_title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
+    "ch_id": "cmu5mmr5j1zvl6kdejn4p80l8",
+    "ch_title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ | I Became the Supreme Martial God Through Dream Reincarnation"
+  },
+  {
+    "manga_id": 76,
+    "manga_name": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์",
+    "rr_id": "Z41KDdWY1989Yw7MA5Pk",
+    "rr_title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+    "kw_id": 4674,
+    "kw_title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+    "ch_id": "cmu5mrfj01zyt6kden87j1ch7",
+    "ch_title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ | Cataclysm Hunter: I Have an XP System"
+  },
+  {
+    "manga_id": 77,
+    "manga_name": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า",
+    "rr_id": "GmA4egMxWRADYB8PWbyp",
+    "rr_title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+    "kw_id": 4673,
+    "kw_title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+    "ch_id": "cmu5ofcn422d36kdd9ox2ccvd",
+    "ch_title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone"
+  },
+  {
+    "manga_id": 78,
+    "manga_name": "มหาปรจารย์ระดับเทพแห่งนคร",
+    "rr_id": "NG8Qg2kxDyqvOz7Kdeo9",
+    "rr_title": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+    "kw_id": 5076,
+    "kw_title": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+    "ch_id": "cmu5lttk91ygj6kdgu18gt0i5",
+    "ch_title": "มหาปรมาจารย์ระดับเทพแห่งนคร | City God Level Grandmaster"
+  },
+  {
+    "manga_id": 79,
+    "manga_name": "พลิกอักษรเปลี่ยนสกิลบงการโลกจนยับเยิน",
+    "rr_id": "kJy7ZdeYZRJJYX5PAwB6",
+    "rr_title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+    "kw_id": 5077,
+    "kw_title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+    "ch_id": "cmu5lkq6z1zi36kdeaw12cfwi",
+    "ch_title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word"
+  },
+  {
+    "manga_id": 80,
+    "manga_name": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา",
+    "rr_id": "RbKaMELO7plPVglzP41q",
+    "rr_title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+    "kw_id": 5079,
+    "kw_title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+    "ch_id": "cmu5kkh7v23fn6kdb2ccmv103",
+    "ch_title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King"
+  },
+  {
+    "manga_id": 81,
+    "manga_name": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย",
+    "rr_id": "ng5GbmNxBrg8x9AlMyk0",
+    "rr_title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+    "kw_id": 5356,
+    "kw_title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+    "ch_id": "cmu5jxqqr20ss6kddg7es62wu",
+    "ch_title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job"
+  },
+  {
+    "manga_id": 82,
+    "manga_name": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน!",
+    "rr_id": "BAyoRlNxvJpaxdqp18wL",
+    "rr_title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+    "kw_id": 6059,
+    "kw_title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+    "ch_id": "cmu5jqil320rv6kddszeia5iz",
+    "ch_title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch"
+  },
+  {
+    "manga_id": 83,
+    "manga_name": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก!",
+    "rr_id": "DBQ4k6PYpQr5x8qrm0J5",
+    "rr_title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+    "kw_id": 6060,
+    "kw_title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+    "ch_id": "cmu5jkndf1z9l6kdfzd09qnhi",
+    "ch_title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge"
+  },
+  {
+    "manga_id": 84,
+    "manga_name": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด!",
+    "rr_id": "EQwLk1zYRR9KY50y2Wed",
+    "rr_title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+    "kw_id": 6062,
+    "kw_title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upgrades",
+    "ch_id": "cmu5hk40d1xsh6kdh2y1fw76m",
+    "ch_title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg"
+  },
+  {
+    "manga_id": 85,
+    "manga_name": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ!",
+    "rr_id": "a7qNk8mOK95RYXyvogDn",
+    "rr_title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+    "kw_id": 6063,
+    "kw_title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+    "ch_id": "cmu5aojjy21k26kdbtrqxx43l",
+    "ch_title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World"
+  },
+  {
+    "manga_id": 86,
+    "manga_name": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า",
+    "rr_id": "m5MEjRdOnnzbOg6Ay8ZW",
+    "rr_title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack S",
+    "kw_id": 6064,
+    "kw_title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack Speed",
+    "ch_id": "cmu5akdig1xmj6kdfkhi81lpw",
+    "ch_title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack S"
+  },
+  {
+    "manga_id": 87,
+    "manga_name": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด!",
+    "rr_id": "aDZ1qlAOewl3Y5k7gmeM",
+    "rr_title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
+    "kw_id": 6065,
+    "kw_title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark Creatures",
+    "ch_id": "cmu599yt01yj56kddr5yp4zaz",
+    "ch_title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark"
+  },
+  {
+    "manga_id": 88,
+    "manga_name": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ!",
+    "rr_id": "7vgQpJ2VjRM9V6Zr5GmX",
+    "rr_title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+    "kw_id": 6061,
+    "kw_title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+    "ch_id": "cmu5jeo6p238k6kdbhw868cqm",
+    "ch_title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a"
+  },
+  {
+    "manga_id": 89,
+    "manga_name": "พี่ชายของผมคือหมาบ้า",
+    "rr_id": "n6r39MJVwpqjYNAB81yk",
+    "rr_title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+    "kw_id": 6682,
+    "kw_title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+    "ch_id": "cmu57f4i51wi96kdepjdx8u96",
+    "ch_title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog"
+  },
+  {
+    "manga_id": 90,
+    "manga_name": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด!",
+    "rr_id": "rwEvg7LY8QnJx20blNPp",
+    "rr_title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+    "kw_id": 7300,
+    "kw_title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead Army",
+    "ch_id": "cmu55krov20aa6kdb4kzmjpr9",
+    "ch_title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead"
+  },
+  {
+    "manga_id": 91,
+    "manga_name": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด!",
+    "rr_id": "3MjZ0qWYgw1oYJLAreG1",
+    "rr_title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+    "kw_id": 7301,
+    "kw_title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+    "ch_id": "cmu55dp6m1xyq6kdc3hxp43hz",
+    "ch_title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!"
+  },
+  {
+    "manga_id": 92,
+    "manga_name": "ยอดอัจฉริยะอหังการ์",
+    "rr_id": "nvEqQwJYPz8NOedr65l2",
+    "rr_title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+    "kw_id": 7304,
+    "kw_title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+    "ch_id": "cmu53j7bu1urc6kdgjv42ackr",
+    "ch_title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy"
+  },
+  {
+    "manga_id": 93,
+    "manga_name": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี!",
+    "rr_id": "zkJdZa0Y6n5NYrv4KR5n",
+    "rr_title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+    "kw_id": 7302,
+    "kw_title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+    "ch_id": "cmu54x6jl1xul6kdc7qbb0we0",
+    "ch_title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss"
+  },
+  {
+    "manga_id": 94,
+    "manga_name": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน!",
+    "rr_id": "wPZAJq7OkDryVW8Dozkm",
+    "rr_title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+    "kw_id": 7303,
+    "kw_title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+    "ch_id": "cmu54cw331xcm6kddlj7skzbf",
+    "ch_title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West"
+  },
+  {
+    "manga_id": 95,
+    "manga_name": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+    "rr_id": "9ZazJMeV9LJwO4wK6vRq",
+    "rr_title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+    "kw_id": 8124,
+    "kw_title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+    "ch_id": "cmuob7ddh15eft5ip2uz7v3i7",
+    "ch_title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!"
+  },
+  {
+    "manga_id": 96,
+    "manga_name": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+    "rr_id": "DBQ4k6PYpQnnx8qrm0J5",
+    "rr_title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+    "kw_id": 8127,
+    "kw_title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+    "ch_id": "cmuobh13c158at5ive3im4waa",
+    "ch_title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!"
+  },
+  {
+    "manga_id": 97,
+    "manga_name": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+    "rr_id": "BAyoRlNxvJEbxdqp18wL",
+    "rr_title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+    "kw_id": 8126,
+    "kw_title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+    "ch_id": "cmuobbvll17smt5invj3xzl8e",
+    "ch_title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!"
+  },
+  {
+    "manga_id": 98,
+    "manga_name": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+    "rr_id": "7vgQpJ2VjRK3V6Zr5GmX",
+    "rr_title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+    "kw_id": 8128,
+    "kw_title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+    "ch_id": "cmuobknyt1597t5ivrj12kch2",
+    "ch_title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!"
+  },
+  {
+    "manga_id": 99,
+    "manga_name": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด!",
+    "rr_id": "jamDek8YoebyO0Pz1JNw",
+    "rr_title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+    "kw_id": 8123,
+    "kw_title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+    "ch_id": "cmuob2q0t15rht5iwh2m2w0rw",
+    "ch_title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving"
+  },
+  {
+    "manga_id": 101,
+    "manga_name": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด!",
+    "rr_id": "L9EPNkRVdzvLxmn3Agyq",
+    "rr_title": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด!",
+    "kw_id": 9282,
+    "kw_title": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด!",
+    "ch_id": "cmw81qoru0as0t5o8cho1r2ew",
+    "ch_title": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด! "
+  },
+  {
+    "manga_id": 102,
+    "manga_name": "Munou to iware tsuzuketa madoushi, jitsu wa sekai saikyou na no ni yuuhei sareteita node jikaku nash",
+    "rr_id": null,
+    "rr_title": null,
+    "kw_id": null,
+    "kw_title": null,
+    "ch_id": null,
+    "ch_title": null
+  }
+]

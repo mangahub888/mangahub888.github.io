@@ -1542,6 +1542,18 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, li
 
         print(f"✓ [{acc['name']}] กวาดรายชื่อหน้าเว็บสำเร็จ: รวมทั้งสิ้น {len(comics_list)} เรื่อง\n")
 
+        # กรองเฉพาะเรื่องที่ยังมีอยู่ใน MangaSetting เท่านั้น (ข้ามเรื่องเก่าที่ลบโปรเจกต์ไปแล้ว)
+        try:
+            from manga_matcher import filter_comics_by_manga_setting
+            comics_list = filter_comics_by_manga_setting(
+                comics_list,
+                title_key="subject",
+                threshold=0.85,
+                platform_name=f"ReadRealm ({acc['name']})"
+            )
+        except Exception as e_filter:
+            print(f"⚠️ [MangaFilter] เกิดข้อผิดพลาดในการกรอง: {e_filter}")
+
         print(f"🔍 [{acc['name']}] กำลังกดเข้าไปดูทีละเรื่อง เพื่อดึงยอดรายตอน, ยอดรายเดือน, ยอดรวมตลอดกาล...", flush=True)
 
         for idx, c in enumerate(comics_list, 1):
@@ -2082,6 +2094,13 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                     print(f"Error loading cache {path}: {e}")
 
 
+
+    # กรองเฉพาะเรื่องที่ยังเปิดใช้งานใน MangaSetting
+    try:
+        from manga_matcher import filter_comics_by_manga_setting
+        all_current_comics = filter_comics_by_manga_setting(all_current_comics, title_key="subject", threshold=0.85, platform_name="ReadRealm Snapshot")
+    except Exception:
+        pass
 
     print(f"\n🎯 รวมการ์ตูนที่ดึงได้ทั้งหมด: {len(all_current_comics)} เรื่อง (2 บัญชี)")
 

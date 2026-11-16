@@ -16,6 +16,7 @@ echo   [1] รันติดตามการเติบโตประจำ
 echo       - ดึง Git ล่าสุด [git pull origin main]
 echo       - รัน Google Chrome จริง [เปิดอยู่ด้านหลังสุด HWND_BOTTOM ไม่แย่งโฟกัส]
 echo       - ระบบ Adaptive Anti-Bot Window: หากพบ Turnstile/Captcha จะเด้งขึ้นมาเตือนอัตโนมัติ
+echo       - กรองดึงข้อมูลเฉพาะเรื่องใน MangaSetting [Matching >= 85% ข้ามโปรเจกต์ที่ลบแล้ว]
 echo       - สกัดข้อมูลสดจาก Live DOM 3 แพลตฟอร์ม [ReadRealm + Kairew + Chaply]
 echo       - ซิงค์ 'สมุดบันทึกต้นทุน and PnL' สองเดือนล่าสุด [เดือนก่อนหน้า + เดือนปัจจุบัน]
 echo       - สรุปภาพรวมและ Build Frontend Production
