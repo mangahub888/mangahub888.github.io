@@ -180,7 +180,7 @@ async function main() {
         const lines = rawText.split(/\r?\n/);
         const lineCount = Math.max(1, lines.length);
 
-        const lineHeightMul = 1.25;
+        const lineHeightMul = 1.2;
         const lineHeight = fontSize * lineHeightMul;
         const totalTextHeight = Math.max(fontSize, lineCount * lineHeight);
 
@@ -208,8 +208,7 @@ async function main() {
                     font: { name: postScriptName },
                     fontSize: fontSize,
                     fillColor: { r: color.r, g: color.g, b: color.b },
-                    leading: Math.round(lineHeight),
-                    autoLeading: false,
+                    autoLeading: true,
                     fauxBold: isBold && !hasNativeBold,
                     fauxItalic: isItalic && !hasNativeItalic
                 },
