@@ -46,6 +46,7 @@ import {
   EyeOff,
   RefreshCw,
   FileText,
+  Play,
 } from "lucide-react"
 
 interface QueueViewProps {
@@ -114,6 +115,80 @@ export function QueueView({
   const [activeStepItem, setActiveStepItem] = React.useState<any | null>(null)
   const [activeStepKey, setActiveStepKey] = React.useState("")
   const [backupQueue, setBackupQueue] = React.useState<any[]>([])
+
+  // GitHub Actions Trigger state
+  const [triggeringOcrId, setTriggeringOcrId] = React.useState<string | null>(null)
+  const [triggeringPsdId, setTriggeringPsdId] = React.useState<string | null>(null)
+
+  const handleTriggerSingleOcr = async (item: any, manga?: any) => {
+    const qid = String(item.queueid || "")
+    if (triggeringOcrId === qid) return
+    setTriggeringOcrId(qid)
+    const mangaTitle = resolveMangaName(item.mangaid, manga?.manganame, mangaList)
+    const toastId = toast.loading(`กำลังส่งตอนที่ ${item.chapter} (${mangaTitle}) ไปรัน OCR บน GitHub Actions...`)
+
+    try {
+      const res: any = await callGasApi("TRIGGER_MANGA_OCR", {
+        queueId: qid,
+        mangaName: mangaTitle,
+        chapterNum: item.chapter,
+        workLink: item.worklink,
+        mangaId: item.mangaid,
+        docUrl: manga?.translationdocurl || ""
+      })
+
+      if (res?.success) {
+        toast.success(`ส่งตอนที่ ${item.chapter} (${mangaTitle}) เข้า GitHub Actions OCR สำเร็จ!`, { id: toastId })
+        onQueueChange(
+          queueList.map((q) =>
+            String(q.queueid) === qid ? { ...q, ocrstatus: "กำลังทำ" } : q
+          )
+        )
+      } else {
+        toast.error(res?.error || "ส่งเข้า GitHub Actions ไม่สำเร็จ", { id: toastId })
+      }
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการสั่งรัน OCR", { id: toastId })
+    } finally {
+      setTriggeringOcrId(null)
+    }
+  }
+
+  const handleTriggerSinglePsd = async (item: any, manga?: any) => {
+    const qid = String(item.queueid || "")
+    if (triggeringPsdId === qid) return
+    setTriggeringPsdId(qid)
+    const mangaTitle = resolveMangaName(item.mangaid, manga?.manganame, mangaList)
+    const toastId = toast.loading(`กำลังส่งตอนที่ ${item.chapter} (${mangaTitle}) ไปรัน Export PSD บน GitHub Actions...`)
+
+    try {
+      const res: any = await callGasApi("TRIGGER_EXPORT_PSD", {
+        queueId: qid,
+        mangaName: mangaTitle,
+        chapterNum: item.chapter,
+        workLink: item.worklink,
+        mangaId: item.mangaid,
+        docUrl: manga?.translationdocurl || "",
+        font: "TF LANNA Bold",
+        full_run: "true"
+      })
+
+      if (res?.success) {
+        toast.success(`ส่งตอนที่ ${item.chapter} (${mangaTitle}) เข้า Export PSD สำเร็จ!`, { id: toastId })
+        onQueueChange(
+          queueList.map((q) =>
+            String(q.queueid) === qid ? { ...q, psdstatus: "กำลังทำ" } : q
+          )
+        )
+      } else {
+        toast.error(res?.error || "ส่งเข้า GitHub Actions ไม่สำเร็จ", { id: toastId })
+      }
+    } catch (err: any) {
+      toast.error(err.message || "เกิดข้อผิดพลาดในการสั่งรัน Export PSD", { id: toastId })
+    } finally {
+      setTriggeringPsdId(null)
+    }
+  }
 
   React.useEffect(() => {
     if (initialSearch !== undefined && initialSearch !== "") {
@@ -1170,13 +1245,34 @@ export function QueueView({
                         const ocrSubLabel = effectiveOcrStatus === "skip"
                           ? (isPratchaya ? "Pratchaya แปล" : (isKikExtractDone ? "Kikkuk ดึงแล้ว" : "ข้ามการดึงคำ"))
                           : (q.ocrtime ? parseQueueDate(q.ocrtime)?.toLocaleDateString("th-TH") : "GitHub Actions");
+                        const isOcrRunning = triggeringOcrId === qid || isOcrDoing;
+
                         return (
-                          <>
-                            {renderStatusBadge(q, "ocr", effectiveOcrStatus)}
-                            <div className="text-xs text-slate-400 mt-1 truncate max-w-[115px]" title={String(ocrSubLabel || "")}>
+                          <div className="flex flex-col items-start gap-1">
+                            <div className="flex items-center gap-1.5">
+                              {renderStatusBadge(q, "ocr", effectiveOcrStatus)}
+                              <button
+                                type="button"
+                                disabled={isOcrRunning}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleTriggerSingleOcr(q, manga);
+                                }}
+                                className="inline-flex items-center justify-center h-5 px-1.5 text-[10px] font-semibold rounded bg-cyan-950/70 hover:bg-cyan-900 text-cyan-300 border border-cyan-700/60 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"
+                                title="กดเพื่อสั่งรัน OCR ดึงคำออโต้ บน GitHub Actions ทันที"
+                              >
+                                {isOcrRunning ? (
+                                  <RefreshCw className="h-2.5 w-2.5 animate-spin mr-0.5" />
+                                ) : (
+                                  <Play className="h-2.5 w-2.5 fill-current mr-0.5 text-cyan-400" />
+                                )}
+                                รัน OCR
+                              </button>
+                            </div>
+                            <div className="text-xs text-slate-400 truncate max-w-[125px]" title={String(ocrSubLabel || "")}>
                               {ocrSubLabel}
                             </div>
-                          </>
+                          </div>
                         );
                       })()}
                     </TableCell>
@@ -1229,11 +1325,31 @@ export function QueueView({
                           ? "Pratchaya แปล"
                           : (q.psdtime ? (parseQueueDate(q.psdtime)?.toLocaleDateString("th-TH") || "เสร็จแล้ว") : "GitHub Actions");
                         const psdDur = formatDuration(q.translatetime, q.psdtime);
+                        const isPsdRunning = triggeringPsdId === qid || String(q.psdstatus || "").trim() === "กำลังทำ";
 
                         return (
-                          <>
-                            {renderStatusBadge(q, "psd", effectivePsdStatus)}
-                            <div className="text-xs text-slate-400 mt-1 truncate max-w-[110px]" title={psdSubLabel}>
+                          <div className="flex flex-col items-start gap-1">
+                            <div className="flex items-center gap-1.5">
+                              {renderStatusBadge(q, "psd", effectivePsdStatus)}
+                              <button
+                                type="button"
+                                disabled={isPsdRunning}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleTriggerSinglePsd(q, manga);
+                                }}
+                                className="inline-flex items-center justify-center h-5 px-1.5 text-[10px] font-semibold rounded bg-purple-950/70 hover:bg-purple-900 text-purple-300 border border-purple-700/60 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"
+                                title="กดเพื่อสั่งรัน Inpaint ลบคำ & วางคำแปล Export PSD บน GitHub Actions ทันที"
+                              >
+                                {isPsdRunning ? (
+                                  <RefreshCw className="h-2.5 w-2.5 animate-spin mr-0.5" />
+                                ) : (
+                                  <Play className="h-2.5 w-2.5 fill-current mr-0.5 text-purple-400" />
+                                )}
+                                รัน PSD
+                              </button>
+                            </div>
+                            <div className="text-xs text-slate-400 truncate max-w-[125px]" title={psdSubLabel}>
                               {psdSubLabel}
                               {psdDur && (
                                 <div className="text-[11px] text-slate-500">
@@ -1242,7 +1358,7 @@ export function QueueView({
                               )}
                             </div>
                             {renderStepLinks(q.worklink, "Export PSD")}
-                          </>
+                          </div>
                         );
                       })()}
                     </TableCell>
@@ -1341,6 +1457,7 @@ export function QueueView({
         queueItem={activeStepItem}
         step={activeStepKey}
         teamList={teamList}
+        mangaList={mangaList}
         onOptimisticUpdate={(updated) => {
           onQueueChange(
             queueList.map((q) =>

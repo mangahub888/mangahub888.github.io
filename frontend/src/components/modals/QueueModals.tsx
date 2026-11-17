@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
-import { Plus } from "lucide-react"
+import { Plus, Bot, Sparkles, Play, RefreshCw } from "lucide-react"
 import { resolveTypesetterName } from "@/lib/utils"
 
 // ==========================================
@@ -819,6 +819,7 @@ interface StepUpdateModalProps {
   queueItem: any | null
   step: string
   teamList: any[]
+  mangaList?: any[]
   onOptimisticUpdate: (updatedItem: any) => void
   onSuccess: (serverQueue: any[]) => void
   onRollback: () => void
@@ -830,6 +831,7 @@ export function StepUpdateModal({
   queueItem,
   step,
   teamList,
+  mangaList,
   onOptimisticUpdate,
   onSuccess,
   onRollback,
@@ -839,6 +841,7 @@ export function StepUpdateModal({
   const [link, setLink] = React.useState("")
   const [note, setNote] = React.useState("")
   const [typesetType, setTypesetType] = React.useState<"จีน" | "เกาหลี">("จีน")
+  const [isActionRunning, setIsActionRunning] = React.useState(false)
 
   const defaultTypesetter = React.useMemo(() => {
     const tillyMember = (teamList || []).find(
@@ -1036,6 +1039,120 @@ export function StepUpdateModal({
               <p className="text-xs text-slate-400">
                 ลิงก์จะแสดงในคอลัมน์ของขั้นตอนนี้โดยอัตโนมัติ
               </p>
+            </div>
+          )}
+
+          {step.toLowerCase() === "ocr" && (
+            <div className="rounded-lg border border-cyan-500/30 bg-cyan-950/20 p-3 flex items-center justify-between gap-3">
+              <div className="text-xs text-cyan-200">
+                <div className="font-semibold flex items-center gap-1.5">
+                  <Bot className="h-4 w-4 text-cyan-400" /> รัน OCR ด้วย GitHub Actions
+                </div>
+                <div className="text-slate-400 mt-0.5">
+                  ส่งคำสั่งรันโมเดล OCR และสร้างไฟล์ .mtp กลับมาที่ Google Drive
+                </div>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                disabled={isActionRunning}
+                onClick={async () => {
+                  if (!queueItem) return
+                  setIsActionRunning(true)
+                  const toastId = toast.loading(`กำลังส่งตอนที่ ${queueItem.chapter} ไปรัน OCR...`)
+                  try {
+                    const matchedManga = (mangaList || []).find(
+                      (m) => String(m.mangaid) === String(queueItem.mangaid)
+                    )
+                    const mTitle = matchedManga?.manganame || queueItem.manganame || ""
+                    const res: any = await callGasApi("TRIGGER_MANGA_OCR", {
+                      queueId: queueItem.queueid,
+                      mangaName: mTitle,
+                      chapterNum: queueItem.chapter,
+                      workLink: queueItem.worklink,
+                      mangaId: queueItem.mangaid,
+                      docUrl: matchedManga?.translationdocurl || "",
+                    })
+                    if (res?.success) {
+                      toast.success(`ส่งตอนที่ ${queueItem.chapter} เข้า GitHub Actions OCR สำเร็จ!`, { id: toastId })
+                      setStatus("กำลังทำ")
+                      onOptimisticUpdate({ ...queueItem, ocrstatus: "กำลังทำ" })
+                    } else {
+                      toast.error(res?.error || "ส่งคำสั่งไม่สำเร็จ", { id: toastId })
+                    }
+                  } catch (e: any) {
+                    toast.error(e.message || "เกิดข้อผิดพลาดในการสั่งรัน OCR", { id: toastId })
+                  } finally {
+                    setIsActionRunning(false)
+                  }
+                }}
+                className="bg-cyan-600 hover:bg-cyan-500 text-white shrink-0 font-medium text-xs cursor-pointer shadow-sm"
+              >
+                {isActionRunning ? (
+                  <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                ) : (
+                  <Play className="h-3 w-3 fill-current mr-1" />
+                )}
+                สั่งรัน OCR
+              </Button>
+            </div>
+          )}
+
+          {step.toLowerCase() === "psd" && (
+            <div className="rounded-lg border border-purple-500/30 bg-purple-950/20 p-3 flex items-center justify-between gap-3">
+              <div className="text-xs text-purple-200">
+                <div className="font-semibold flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-purple-400" /> รัน Export PSD ด้วย GitHub Actions
+                </div>
+                <div className="text-slate-400 mt-0.5">
+                  ลบคำด้วย LaMa AI + วางฟอนต์ TF LANNA Bold + อัปโหลด PSD เข้า Drive
+                </div>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                disabled={isActionRunning}
+                onClick={async () => {
+                  if (!queueItem) return
+                  setIsActionRunning(true)
+                  const toastId = toast.loading(`กำลังส่งตอนที่ ${queueItem.chapter} ไปรัน Export PSD...`)
+                  try {
+                    const matchedManga = (mangaList || []).find(
+                      (m) => String(m.mangaid) === String(queueItem.mangaid)
+                    )
+                    const mTitle = matchedManga?.manganame || queueItem.manganame || ""
+                    const res: any = await callGasApi("TRIGGER_EXPORT_PSD", {
+                      queueId: queueItem.queueid,
+                      mangaName: mTitle,
+                      chapterNum: queueItem.chapter,
+                      workLink: queueItem.worklink,
+                      mangaId: queueItem.mangaid,
+                      docUrl: matchedManga?.translationdocurl || "",
+                      font: "TF LANNA Bold",
+                      full_run: "true",
+                    })
+                    if (res?.success) {
+                      toast.success(`ส่งตอนที่ ${queueItem.chapter} เข้า Export PSD สำเร็จ!`, { id: toastId })
+                      setStatus("กำลังทำ")
+                      onOptimisticUpdate({ ...queueItem, psdstatus: "กำลังทำ" })
+                    } else {
+                      toast.error(res?.error || "ส่งคำสั่งไม่สำเร็จ", { id: toastId })
+                    }
+                  } catch (e: any) {
+                    toast.error(e.message || "เกิดข้อผิดพลาดในการสั่งรัน Export PSD", { id: toastId })
+                  } finally {
+                    setIsActionRunning(false)
+                  }
+                }}
+                className="bg-purple-600 hover:bg-purple-500 text-white shrink-0 font-medium text-xs cursor-pointer shadow-sm"
+              >
+                {isActionRunning ? (
+                  <RefreshCw className="h-3 w-3 animate-spin mr-1" />
+                ) : (
+                  <Play className="h-3 w-3 fill-current mr-1" />
+                )}
+                สั่งรัน PSD
+              </Button>
             </div>
           )}
 
