@@ -145,6 +145,16 @@ def extract_doc_id(url_or_id):
     return str(url_or_id).strip()
 
 
+def extract_tab_id_from_url(url: str) -> str:
+    """Extracts tab ID (tab=t.xxx) from Google Docs URL if present."""
+    if not url:
+        return ""
+    m = re.search(r"[?&]tab=(t\.[a-zA-Z0-9_-]+)", str(url))
+    if m:
+        return m.group(1)
+    return ""
+
+
 def download_images_from_gdrive(folder_url_or_id, output_dir):
     """Downloads images from Google Drive folder."""
     import gdown
@@ -204,50 +214,173 @@ def find_matching_tab_id(doc_id: str, chapter_num: str, access_token: str = None
 
 
 def fetch_doc_translation_text(doc_id: str, tab_id: str = "", chapter_num: str = "", access_token: str = None) -> str:
-    """Fetches text content from the specified Google Docs tab."""
-    if not tab_id and chapter_num:
-        tab_id = find_matching_tab_id(doc_id, chapter_num, access_token)
-
-    url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt"
+    """Fetches text content from the specified Google Docs tab, with fallback to full doc."""
+    text = ""
+    # 1. Try specified tab_id first
     if tab_id:
-        url += f"&tab={tab_id}"
+        url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt&tab={tab_id}"
+        print(f"📄 Fetching translation from Google Docs tab ({tab_id}): {url}")
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        if access_token:
+            req.add_header("Authorization", f"Bearer {access_token}")
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                text = resp.read().decode("utf-8", errors="replace")
+        except Exception as e:
+            print(f"   ⚠️ Tab {tab_id} fetch failed: {e}")
 
-    print(f"📄 Fetching translation from Google Docs: {url}")
+    # Verify if tab content contains actual dialogue items [#N]
+    test_d = parse_dialogue_map(text, quiet=True) if text else {}
+    if len(test_d) > 0:
+        return text
+
+    if tab_id:
+        print(f"   ⚠️ Tab '{tab_id}' returned 0 dialogue items (likely glossary or wrong tab). Trying auto-detect / full document fallback...")
+
+    # 2. Try auto-detecting tab if chapter_num provided
+    if chapter_num:
+        detected_tab = find_matching_tab_id(doc_id, chapter_num, access_token)
+        if detected_tab and detected_tab != tab_id:
+            url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt&tab={detected_tab}"
+            print(f"📄 Fetching translation from auto-detected tab ({detected_tab}): {url}")
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            if access_token:
+                req.add_header("Authorization", f"Bearer {access_token}")
+            try:
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    cand_text = resp.read().decode("utf-8", errors="replace")
+                if len(parse_dialogue_map(cand_text, quiet=True)) > 0:
+                    return cand_text
+            except Exception as e:
+                print(f"   ⚠️ Auto-detected tab fetch failed: {e}")
+
+    # 3. Fallback to full doc export without tab parameter
+    url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt"
+    print(f"📄 Fetching full document translation (no tab): {url}")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     if access_token:
         req.add_header("Authorization", f"Bearer {access_token}")
 
     with urllib.request.urlopen(req, timeout=30) as resp:
         text = resp.read().decode("utf-8", errors="replace")
+
     return text
 
 
-def parse_dialogue_map(raw_text: str) -> dict:
-    """Parses [#N] dialogue lines into a dictionary {num: text}."""
+def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
+    """Extracts the specific chapter section from text containing multiple chapters."""
+    if not raw_text or not chapter_num:
+        return raw_text
+
+    target = str(chapter_num).strip().lstrip("0") or "0"
+    lines = raw_text.splitlines()
+
+    # Find candidate chapter start line indices
+    # A true chapter header is followed closely by a dialogue item [#N]
+    chap_starts = []
+    header_pattern = re.compile(r"^\s*(?:Chapter|ตอนที่|ตอน|Ch\.|EP\.)\s*(\d+)\s*$", re.IGNORECASE)
+
+    for i, line in enumerate(lines):
+        m = header_pattern.match(line.strip())
+        if m:
+            num = m.group(1).lstrip("0") or "0"
+            # Verify it's not a table row by checking if next non-empty lines contain [#
+            is_real_header = False
+            for j in range(i + 1, min(i + 8, len(lines))):
+                sub = lines[j].strip()
+                if sub.startswith("[#") or sub.startswith("["):
+                    is_real_header = True
+                    break
+            if is_real_header:
+                chap_starts.append((i, num))
+
+    if not chap_starts:
+        return raw_text
+
+    # Locate target chapter
+    start_line = None
+    end_line = len(lines)
+    for idx, (line_idx, c_num) in enumerate(chap_starts):
+        if c_num == target:
+            start_line = line_idx
+            if idx + 1 < len(chap_starts):
+                end_line = chap_starts[idx + 1][0]
+            break
+
+    if start_line is not None:
+        print(f"   ✓ Sliced Chapter {chapter_num} section (lines {start_line+1} to {end_line})")
+        return "\n".join(lines[start_line:end_line])
+    else:
+        print(f"   ℹ️ Chapter {chapter_num} header not explicitly separated; using full document")
+        return raw_text
+
+
+def parse_dialogue_map(raw_text: str, quiet: bool = False) -> dict:
+    """
+    Parses [#N] dialogue lines into a dictionary {num: text}.
+    When both original OCR text and translated text exist under [#N],
+    prefers the Thai translated line(s).
+    """
+    if not raw_text:
+        return {}
+
     lines = raw_text.splitlines()
     dialogues = {}
     current_num = None
-    current_lines = []
+    items_for_num = []
 
     pattern = re.compile(r"^\s*\[#?(\d+)\]\s*(.*)$")
+
+    def has_thai(text: str) -> bool:
+        return any('\u0e00' <= ch <= '\u0e7f' for ch in text)
+
+    def finalize_num(num, blocks):
+        if num is None or not blocks:
+            return
+        # Prefer block with Thai characters
+        thai_blocks = [b for b in blocks if has_thai(b)]
+        if thai_blocks:
+            dialogues[num] = "\n".join(thai_blocks).strip()
+        else:
+            # Fallback to the last non-empty block
+            non_empty = [b for b in blocks if b.strip()]
+            if non_empty:
+                dialogues[num] = non_empty[-1].strip()
+
+    current_block_lines = []
 
     for line in lines:
         stripped = line.strip()
         m = pattern.match(stripped)
         if m:
-            if current_num is not None:
-                dialogues[current_num] = "\n".join(current_lines).strip()
-            current_num = int(m.group(1))
+            new_num = int(m.group(1))
             first_text = m.group(2).strip()
-            current_lines = [first_text] if first_text else []
+
+            if current_num is not None:
+                if current_block_lines:
+                    items_for_num.append("\n".join(current_block_lines).strip())
+                    current_block_lines = []
+
+                if new_num != current_num:
+                    finalize_num(current_num, items_for_num)
+                    items_for_num = []
+                    current_num = new_num
+            else:
+                current_num = new_num
+
+            if first_text:
+                current_block_lines.append(first_text)
         elif current_num is not None:
             if stripped:
-                current_lines.append(stripped)
+                current_block_lines.append(stripped)
 
     if current_num is not None:
-        dialogues[current_num] = "\n".join(current_lines).strip()
+        if current_block_lines:
+            items_for_num.append("\n".join(current_block_lines).strip())
+        finalize_num(current_num, items_for_num)
 
-    print(f"   ✓ Parsed {len(dialogues)} dialogue items from Docs (dialogue #{min(dialogues.keys(), default=0)} to #{max(dialogues.keys(), default=0)})")
+    if not quiet:
+        print(f"   ✓ Parsed {len(dialogues)} dialogue items from Docs (dialogue #{min(dialogues.keys(), default=0)} to #{max(dialogues.keys(), default=0)})")
     return dialogues
 
 
@@ -402,27 +535,33 @@ def run_export_psd_pipeline(args):
         print("❌ No images found in folder!")
         sys.exit(1)
 
-    # Find .mtp file in folder if available
-    mtp_files = list(work_dir.glob("*.mtp"))
+    # Find .mtp file in folder if available (pick the best one with valid pages)
+    mtp_files = sorted(work_dir.glob("*.mtp"), key=lambda f: f.stat().st_size, reverse=True)
     mtp_data = None
-    if mtp_files:
-        print(f"📦 Found project file: {mtp_files[0].name}")
+    for mf in mtp_files:
         try:
-            with open(mtp_files[0], "r", encoding="utf-8") as f:
-                mtp_data = json.load(f)
+            with open(mf, "r", encoding="utf-8") as f:
+                cand = json.load(f)
+            if cand and isinstance(cand, dict) and cand.get("pages"):
+                mtp_data = cand
+                print(f"📦 Loaded project file: {mf.name} ({len(cand['pages'])} pages)")
+                break
         except Exception as e:
-            print(f"⚠️ Could not load mtp: {e}")
+            print(f"⚠️ Could not load {mf.name}: {e}")
 
     # 3. Fetch Google Docs Translation
     doc_text = ""
     if doc_id:
         try:
+            target_tab = args.tab_id or extract_tab_id_from_url(args.doc_url)
             doc_text = fetch_doc_translation_text(
                 doc_id=doc_id,
-                tab_id=args.tab_id,
+                tab_id=target_tab,
                 chapter_num=chapter_num,
                 access_token=args.google_access_token
             )
+            # Slices the requested chapter section if the document holds multiple chapters
+            doc_text = extract_chapter_section(doc_text, chapter_num)
         except Exception as e:
             print(f"⚠️ Failed to fetch doc text: {e}")
 
@@ -436,12 +575,16 @@ def run_export_psd_pipeline(args):
         Path("D:/MangaToolPlus_TEST/models/big-lama.pt")
     ]
     for mp in model_paths:
-        if mp.exists():
+        # big-lama.pt is ~200MB; skip 404 error strings or incomplete downloads
+        if mp.exists() and mp.stat().st_size > 50_000_000:
             try:
                 lama_service = StandaloneLama(mp)
                 break
             except Exception as e:
                 print(f"⚠️ Failed to init LaMa from {mp}: {e}")
+
+    if not lama_service:
+        print("ℹ️ LaMa model not available or offline. Fallback to OpenCV bubble inpainting.")
 
     # 5. Process each page
     pages_to_process = image_files if args.full else image_files[:args.limit]
@@ -485,8 +628,8 @@ def run_export_psd_pipeline(args):
         inpaint_patches = []
         temp_patch_files = []
 
-        # Run LaMa inpainting on each bubble individually
-        if lama_service and matched_layers:
+        # Run inpainting on each bubble individually (LaMa or OpenCV fallback)
+        if matched_layers:
             pad = 12
             for num, l in matched_layers:
                 box = l.get("box", [])
@@ -513,7 +656,11 @@ def run_export_psd_pipeline(args):
                 patch_mask = cv2.dilate(patch_mask, kernel)
 
                 try:
-                    cleaned_patch = lama_service.inpaint(patch_crop, patch_mask)
+                    if lama_service:
+                        cleaned_patch = lama_service.inpaint(patch_crop, patch_mask)
+                    else:
+                        cleaned_patch = cv2.inpaint(patch_crop, patch_mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
+
                     patch_rgba = cv2.cvtColor(cleaned_patch, cv2.COLOR_BGR2RGBA)
                     patch_bin_path = work_dir / f"{img_path.stem}_patch_{num}.bin"
                     with open(patch_bin_path, "wb") as f_p:

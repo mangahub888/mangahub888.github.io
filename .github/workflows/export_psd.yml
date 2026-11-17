@@ -22,11 +22,11 @@ on:
       doc_url:
         description: 'Google Docs Reference URL'
         required: false
-        default: 'https://docs.google.com/document/d/1l2aF-cyk39Xiaz7e1ejBMJMKFv77Ur7hieuvI_CsFh0/edit?tab=t.bdbfibdpplpv'
+        default: ''
       tab_id:
         description: 'Google Docs Tab ID'
         required: false
-        default: 't.bdbfibdpplpv'
+        default: ''
       font_family:
         description: 'Font Family for Typesetting'
         required: false
@@ -72,9 +72,10 @@ jobs:
       - name: Download Offline LaMa Model if Missing
         run: |
           mkdir -p models
-          if [ ! -f "models/big-lama.pt" ]; then
-            echo "📥 Downloading big-lama.pt model..."
-            curl -L -o "models/big-lama.pt" "https://github.com/advimman/lama/releases/download/v0.1/big-lama.pt" || true
+          if [ ! -s "models/big-lama.pt" ] || [ $(stat -c%s "models/big-lama.pt" 2>/dev/null || echo 0) -lt 50000000 ]; then
+            echo "📥 Downloading big-lama.pt model (Sanster release)..."
+            curl -fL -o "models/big-lama.pt" "https://github.com/Sanster/models/releases/download/add_big_lama/big-lama.pt" || \
+            curl -fL -o "models/big-lama.pt" "https://huggingface.co/fashn-ai/LaMa/resolve/main/big-lama.pt" || true
           fi
 
       - name: Run Export PSD & Upload directly to Google Drive Folder

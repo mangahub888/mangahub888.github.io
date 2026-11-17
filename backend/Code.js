@@ -8859,7 +8859,7 @@ function triggerExportPsdWorkflow(params) {
         chapter_num: String(chapterNum || ''),
         queue_id: String(params.queueId || params.queue_id || ''),
         doc_url: String(docUrl || ''),
-        tab_id: String(params.tabId || params.tab_id || ''),
+        tab_id: String(params.tabId || params.tab_id || (docUrl.match(/[?&]tab=(t\.[a-zA-Z0-9_-]+)/) ? docUrl.match(/[?&]tab=(t\.[a-zA-Z0-9_-]+)/)[1] : '')),
         font_family: String(params.font || 'TF LANNA Bold'),
         google_access_token: googleAccessToken,
         full_run: 'true'
