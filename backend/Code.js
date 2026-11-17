@@ -8855,6 +8855,7 @@ function triggerExportPsdWorkflow(params) {
       ref: 'main',
       inputs: {
         folder_id: String(folderId || ''),
+        subfolder_name: String(params.subfolder_name || params.subfolder || 'PSD'),
         manga_name: String(mangaName || ''),
         chapter_num: String(chapterNum || ''),
         queue_id: String(params.queueId || params.queue_id || ''),
@@ -9035,6 +9036,16 @@ function completeExportPsd(payload) {
         if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(new Date());
         if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions');
 
+        const workLinkCol = headers.indexOf('worklink') + 1;
+        const psdFolderUrl = String(payload.psdFolderUrl || payload.psd_folder_url || '').trim();
+        if (workLinkCol > 0 && psdFolderUrl) {
+          const currentLink = String(data[r][headers.indexOf('worklink')] || '').trim();
+          if (!currentLink.includes(psdFolderUrl) && !currentLink.includes('[Export PSD]')) {
+            const updatedLink = currentLink ? (currentLink + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
+            sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
+          }
+        }
+
         updatedRow = {
           queueId: qid,
           mangaId: data[r][headers.indexOf('mangaid')],
@@ -9044,7 +9055,7 @@ function completeExportPsd(payload) {
 
         try {
           const mangaName = getMangaNameById(updatedRow.mangaId);
-          sendTelegramNotification(`🎨 <b>Export PSD เสร็จแล้ว!</b>\nเรื่อง: <b>${mangaName}</b>\nตอนที่: ${updatedRow.chapter}\nไฟล์ถูกอัปโหลดไปยังโฟลเดอร์ Google Drive เรียบร้อยแล้ว`);
+          sendTelegramNotification(`🎨 <b>Export PSD เสร็จแล้ว!</b>\nเรื่อง: <b>${mangaName}</b>\nตอนที่: ${updatedRow.chapter}\nไฟล์ PSD ถูกจัดเก็บในโฟลเดอร์ย่อย <b>PSD</b> บน Google Drive เรียบร้อยแล้ว`);
         } catch (te) {}
 
         break;

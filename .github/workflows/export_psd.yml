@@ -31,6 +31,10 @@ on:
         description: 'Font Family for Typesetting'
         required: false
         default: 'TF LANNA Bold'
+      subfolder_name:
+        description: 'PSD Subfolder Name in Drive & Local'
+        required: false
+        default: 'PSD'
       google_access_token:
         description: 'Google OAuth Access Token (passed from GAS)'
         required: false
@@ -90,6 +94,7 @@ jobs:
 
           python tools/export_psd_job.py \
             --folder-id "${{ github.event.inputs.folder_id }}" \
+            --subfolder-name "${{ github.event.inputs.subfolder_name || 'PSD' }}" \
             --manga-name "${{ github.event.inputs.manga_name }}" \
             --chapter-num "${{ github.event.inputs.chapter_num }}" \
             --queue-id "${{ github.event.inputs.queue_id }}" \
@@ -107,7 +112,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: manga-psd-${{ github.event.inputs.chapter_num || 'psd' }}
-          path: psd_work/psd_output/*.psd
+          path: |
+            psd_work/PSD/*.psd
+            psd_work/**/*.psd
           retention-days: 7
 
       - name: Clean Up Runner Workspace

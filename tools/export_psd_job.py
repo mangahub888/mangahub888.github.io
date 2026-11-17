@@ -88,6 +88,48 @@ def get_drive_service(google_access_token=None, service_account_json=None):
     return None
 
 
+def get_or_create_subfolder(drive_service, parent_folder_id, folder_name="PSD"):
+    """
+    Finds or creates a subfolder named `folder_name` under `parent_folder_id` in Google Drive.
+    Returns the subfolder ID, or parent_folder_id on failure.
+    """
+    if not drive_service or not parent_folder_id:
+        return parent_folder_id
+
+    clean_parent_id = extract_folder_id(parent_folder_id)
+    try:
+        query = (
+            f"'{clean_parent_id}' in parents and "
+            f"name='{folder_name}' and "
+            f"mimeType='application/vnd.google-apps.folder' and "
+            f"trashed=false"
+        )
+        res = drive_service.files().list(
+            q=query,
+            spaces="drive",
+            fields="files(id, name)"
+        ).execute()
+        files = res.get("files", [])
+        if files:
+            subfolder_id = files[0]["id"]
+            print(f"📁 [Drive] Found existing '{folder_name}' subfolder (ID: {subfolder_id})")
+            return subfolder_id
+
+        # Subfolder does not exist, create it
+        meta = {
+            "name": folder_name,
+            "mimeType": "application/vnd.google-apps.folder",
+            "parents": [clean_parent_id]
+        }
+        created = drive_service.files().create(body=meta, fields="id").execute()
+        subfolder_id = created.get("id")
+        print(f"📁 [Drive] Created new '{folder_name}' subfolder under parent ({clean_parent_id}) -> (ID: {subfolder_id})")
+        return subfolder_id
+    except Exception as e:
+        print(f"⚠️ [Drive] Could not get or create subfolder '{folder_name}': {e}. Falling back to parent folder ({clean_parent_id}).")
+        return clean_parent_id
+
+
 def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
     """Uploads a local file directly into target_folder_id, updating if already exists."""
     if not drive_service:
@@ -470,9 +512,10 @@ def thai_word_wrap(text: str, max_chars_per_line: int) -> str:
 # ==============================================================================
 # 5. GAS Notification
 # ==============================================================================
-def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_name="", psd_count=0, gas_url=None, passcode="10211032"):
+def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_name="", psd_count=0, psd_folder_id="", subfolder_name="PSD", gas_url=None, passcode="10211032"):
     """Notifies Google Apps Script to mark Export PSD as 'เสร็จแล้ว'."""
     gas_api_url = gas_url or "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
+    psd_folder_url = f"https://drive.google.com/drive/folders/{psd_folder_id}" if psd_folder_id else ""
     payload = {
         "action": "COMPLETE_EXPORT_PSD",
         "passcode": passcode,
@@ -482,6 +525,9 @@ def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_na
             "chapter": str(chapter),
             "mangaName": manga_name,
             "psdCount": psd_count,
+            "subfolder": subfolder_name,
+            "psdFolderId": psd_folder_id,
+            "psdFolderUrl": psd_folder_url,
             "completedAt": time.strftime("%Y-%m-%dT%H:%M:%S+07:00")
         }
     }
@@ -509,7 +555,9 @@ def run_export_psd_pipeline(args):
     start_time = time.time()
     work_dir = Path(args.output_dir).resolve()
     work_dir.mkdir(parents=True, exist_ok=True)
-    psd_out_dir = work_dir / "psd_output"
+
+    subfolder_name = getattr(args, "subfolder_name", None) or getattr(args, "psd_subfolder", "PSD") or "PSD"
+    psd_out_dir = work_dir / subfolder_name
     psd_out_dir.mkdir(parents=True, exist_ok=True)
 
     folder_id = extract_folder_id(args.folder_id)
@@ -520,6 +568,7 @@ def run_export_psd_pipeline(args):
     print("=================================================================")
     print("🚀 Manga PSD Export Pipeline")
     print(f"📁 Folder ID:     {folder_id}")
+    print(f"📂 Subfolder:     {subfolder_name}")
     print(f"📖 Manga Name:    {manga_name}")
     print(f"🔢 Chapter:       {chapter_num}")
     print(f"📄 Doc ID:        {doc_id}")
@@ -745,7 +794,7 @@ def run_export_psd_pipeline(args):
         node_script = Path(__file__).resolve().parent / "export_psd_node.js"
         node_cmd = ["node", str(node_script), "--manifest", str(manifest_path)]
         try:
-            res = subprocess.run(node_cmd, check=True, capture_output=True, text=True)
+            res = subprocess.run(node_cmd, check=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
             if out_psd_path.exists():
                 generated_psds.append(out_psd_path)
                 print(f"[{idx}/{total_pages}] ✓ Created {psd_filename} ({time.time() - page_start:.2f}s, {len(inpaint_patches)} patches, {len(text_layers)} texts)")
@@ -764,15 +813,17 @@ def run_export_psd_pipeline(args):
 
     print(f"\n🎉 Successfully created {len(generated_psds)} PSD files in {time.time() - start_time:.2f}s!")
 
-    # 6. Upload PSD files directly to Google Drive Folder
+    # 6. Upload PSD files directly to Google Drive Subfolder
+    target_upload_folder_id = folder_id
     if args.upload_to_source and drive_service and generated_psds:
-        print(f"\n☁️ [Google Drive Upload] Uploading {len(generated_psds)} PSD files to Drive folder ({folder_id})...")
+        target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
+        print(f"\n☁️ [Google Drive Upload] Uploading {len(generated_psds)} PSD files to Drive folder '{subfolder_name}' ({target_upload_folder_id})...")
         up_count = 0
         for psd_file in generated_psds:
-            up_id = upload_file_to_source_folder(drive_service, folder_id, psd_file)
+            up_id = upload_file_to_source_folder(drive_service, target_upload_folder_id, psd_file)
             if up_id:
                 up_count += 1
-        print(f"   ✓ Uploaded {up_count}/{len(generated_psds)} PSD files to Google Drive!")
+        print(f"   ✓ Uploaded {up_count}/{len(generated_psds)} PSD files to Google Drive subfolder '{subfolder_name}'!")
 
     # 7. Notify GAS that Export PSD is complete
     notify_gas_export_psd_completed(
@@ -781,6 +832,8 @@ def run_export_psd_pipeline(args):
         chapter=chapter_num,
         manga_name=manga_name,
         psd_count=len(generated_psds),
+        psd_folder_id=target_upload_folder_id if target_upload_folder_id != folder_id else "",
+        subfolder_name=subfolder_name,
         gas_url=args.gas_url,
         passcode=args.gas_passcode
     )
@@ -797,6 +850,7 @@ def run_export_psd_pipeline(args):
 def main():
     parser = argparse.ArgumentParser(description="MangaToolPlus PSD Export & Upload Job")
     parser.add_argument("--folder-id", required=True, help="Google Drive Source Folder ID or URL")
+    parser.add_argument("--subfolder-name", "--psd-subfolder", dest="subfolder_name", default="PSD", help="Subfolder name for storing PSD files (default: PSD)")
     parser.add_argument("--manga-name", default="", help="Manga Title")
     parser.add_argument("--chapter-num", default="", help="Chapter Number")
     parser.add_argument("--queue-id", default="", help="WorkQueue item ID")
