@@ -366,6 +366,7 @@ def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int,
     """
     Parses numbered translation blocks [#N] matching MangaToolPlus sequential OCR layers.
     Selects Thai translated text if present, otherwise uses last available line.
+    Prevents concatenating multiple chapters if the document contains repetitive [#1] blocks.
     """
     if not doc_text:
         return {}
@@ -381,8 +382,14 @@ def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int,
     for line in lines:
         m = marker_re.match(line)
         if m:
-            current_num = int(m.group(1))
+            num = int(m.group(1))
             content = m.group(2).strip()
+
+            # If the index drops significantly (e.g. from 20+ down to 1), a new chapter started in the doc
+            if current_num is not None and num < current_num and current_num > 5:
+                break
+
+            current_num = num
             if current_num not in by_number:
                 by_number[current_num] = []
             if content:
@@ -394,6 +401,7 @@ def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int,
     for num, parts in by_number.items():
         thai_parts = [p for p in parts if thai_char_re.search(p)]
         if thai_parts:
+            # If translator wrote lines with multiple Thai sentences, combine them cleanly
             translations[num] = "\n".join(thai_parts)
         elif parts:
             translations[num] = parts[-1]
@@ -462,40 +470,103 @@ class StandaloneLama:
 # ==============================================================================
 def wrap_thai_text_for_bubble(text: str, box_w: float, box_h: float) -> tuple[str, int]:
     """
-    Calculates Thai word wrap (PyThaiNLP) and fits font size dynamically to speech bubble area.
-    100% matched with MangaToolPlus typesetting engine.
+    คำนวณการตัดคำภาษาไทย (PyThaiNLP) และปรับขนาดฟอนต์ให้พอดีกับบอลลูนรูปทรงวงรี (Ellipse Bubble Fitting)
     """
-    raw_ratio = box_w / max(1.0, box_h)
-    clamped_ratio = max(0.8, min(3.5, raw_ratio))
     raw_text = text.strip()
+    if not raw_text:
+        return "", 24
+
     visual_text = re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", raw_text)
     visual_len = max(1, len(visual_text))
 
-    shape_mult = 3.5 if raw_ratio >= 1.0 else 1.8
-    est_chars = max(6, int(math.sqrt(clamped_ratio * visual_len * shape_mult)))
+    aspect = box_w / max(1.0, box_h)
+    bubble_area = box_w * box_h * 0.785
 
-    font_size = max(16, min(56, int(box_w / (est_chars * 0.55))))
-    if visual_len <= 8:
-        font_size = int(font_size * 1.15)
+    est_font_size = int(math.sqrt((bubble_area * 0.55) / (visual_len * 0.65)))
 
-    if pythainlp:
-        tokens = pythainlp.word_tokenize(raw_text, engine="newmm")
+    if visual_len <= 4:
+        font_size = max(24, min(56, int(box_h * 0.45)))
+    elif visual_len <= 10:
+        font_size = max(20, min(50, int(box_h * 0.35)))
     else:
-        tokens = list(raw_text)
+        font_size = max(16, min(48, est_font_size))
+
+    max_line_width_chars = max(4, int(box_w / (font_size * 0.55)))
+    est_lines = max(1, int(math.ceil(visual_len / max(1, max_line_width_chars))))
+
+    raw_tokens = pythainlp.word_tokenize(raw_text, engine="newmm")
+
+    # Merge broken tokens (e.g. 'เห' + 'รอ' -> 'เหรอ', numbers attached to previous word)
+    merged = []
+    i = 0
+    while i < len(raw_tokens):
+        tok = raw_tokens[i]
+        # Common Thai split fixes
+        if i + 1 < len(raw_tokens) and tok == "เห" and raw_tokens[i+1].startswith("รอ"):
+            merged.append(tok + raw_tokens[i+1])
+            i += 2
+            continue
+        # Attach standalone numbers to previous token (e.g. 'ที่' + '4' -> 'ที่ 4')
+        if merged and re.match(r"^\d+$", tok):
+            merged[-1] += " " + tok if not merged[-1].endswith(" ") else tok
+            i += 1
+            continue
+        merged.append(tok)
+        i += 1
+
+    # Attach sticky punctuation (without space) & particles (with space if needed)
+    sticky_punct = {"!", "?", ".", ",", "...", "ๆ", "ฯ", "”", "’", ")", "]", "}"}
+    sticky_words = {"นะ", "คะ", "ครับ", "ล่ะ", "สิ", "วะ"}
+    tokens = []
+    for tok in merged:
+        if tokens and (tok in sticky_punct or tok.startswith(("!", "?", ".", "ๆ"))):
+            tokens[-1] = tokens[-1].rstrip() + tok
+        elif tokens and tok in sticky_words:
+            tokens[-1] = tokens[-1].rstrip() + (" " if not tokens[-1].endswith(" ") else "") + tok
+        else:
+            tokens.append(tok)
+
+    bad_start_words = {"ที่", "ของ", "ใน", "จะ", "ให้", "ได้", "ก็", "ต้อง", "นะ", "ครับ", "ค่ะ", "ยัง", "แล้ว", "คง", "ด้วย", "ไว้", "มา", "ไป", "อยู่", "คือ", "นั้น", "นี่", "นี้", "เหรอ", "ล่ะ", "สิ", "วะ", "เว้ย", "น่ะ", "เลย", "กัน"}
 
     lines = []
     curr = ""
     for tok in tokens:
-        if len(curr) + len(tok) > est_chars and curr:
-            lines.append(curr)
+        tok_vis = len(re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", tok))
+        curr_vis = len(re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", curr))
+
+        line_idx = len(lines)
+        if est_lines > 1:
+            norm_y = abs((line_idx + 0.5) - (est_lines / 2.0)) / (est_lines / 2.0)
+            norm_y = min(0.9, norm_y)
+            width_factor = math.sqrt(max(0.35, 1.0 - norm_y ** 2))
+        else:
+            width_factor = 1.0
+
+        allowed_chars = max(4, int(max_line_width_chars * width_factor))
+
+        is_bad_start = (tok in bad_start_words and curr_vis + tok_vis <= allowed_chars + 3)
+
+        if (curr_vis + tok_vis > allowed_chars and not is_bad_start) and curr:
+            lines.append(curr.strip())
             curr = tok
         else:
             curr += tok
-    if curr:
-        lines.append(curr)
+    if curr.strip():
+        lines.append(curr.strip())
 
-    wrapped_text = "\n".join(lines)
-    return wrapped_text, font_size
+    # Fix orphan line (single short word at end): merge with previous line if fits
+    if len(lines) >= 2:
+        last_vis = len(re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", lines[-1]))
+        if last_vis <= 4:
+            lines[-2] += " " + lines[-1]
+            lines.pop()
+
+    # Ensure vertical fit
+    line_count = len(lines)
+    while line_count * (font_size * 1.25) > box_h * 0.95 and font_size > 14:
+        font_size = int(font_size * 0.9)
+
+    return "\n".join(lines), font_size
 
 
 # ==============================================================================

@@ -43,6 +43,50 @@ function hexToRgb(hex) {
     };
 }
 
+/**
+ * Resolves font display/family name to the exact PostScript name recognized by Adobe Photoshop.
+ * This prevents the missing font warning ([Font Name] with ⚠️ icon) in Photoshop.
+ */
+function resolvePostScriptName(fontName, isBold, isItalic) {
+    if (!fontName) {
+        return isBold ? 'TFLanna-Bold' : (isItalic ? 'TFLanna-Italic' : 'TFLanna');
+    }
+    const clean = fontName.trim();
+    const lower = clean.toLowerCase();
+
+    // TF Lanna font family variants (installed as TFLanna-Bold, TFLanna, TFLanna-Italic)
+    if (lower.includes('lanna') || lower.includes('tf')) {
+        if (lower.includes('ita') || isItalic) return 'TFLanna-Italic';
+        if (lower.includes('bol') || isBold) return 'TFLanna-Bold';
+        return 'TFLanna';
+    }
+
+    // Prompt font family variants
+    if (lower.includes('prompt')) {
+        if (lower.includes('ita') || isItalic) return isBold ? 'Prompt-BoldItalic' : 'Prompt-Italic';
+        if (lower.includes('bol') || isBold) return 'Prompt-Bold';
+        if (lower.includes('med')) return 'Prompt-Medium';
+        if (lower.includes('sem')) return 'Prompt-SemiBold';
+        return 'Prompt-Regular';
+    }
+
+    // Tahoma
+    if (lower.includes('tahoma')) {
+        if (lower.includes('bol') || isBold) return 'Tahoma-Bold';
+        return 'Tahoma';
+    }
+
+    // Arial
+    if (lower.includes('arial')) {
+        if (lower.includes('bol') || isBold) return 'Arial-BoldMT';
+        if (lower.includes('ita') || isItalic) return 'Arial-ItalicMT';
+        return 'ArialMT';
+    }
+
+    // Already a specific PostScript name or unknown font
+    return clean;
+}
+
 async function main() {
     const args = parseArgs();
     const manifestPath = args.manifest;
@@ -118,35 +162,63 @@ async function main() {
         }
     }
 
-    // 3. Text layers group: Font TF LANNA Bold
+    // 3. Text layers group: Font TF LANNA Bold (PostScript: TFLanna-Bold)
     const textGroupChildren = [];
     for (const l of textLayers || []) {
         const color = hexToRgb(l.color || "#000000");
-        const fontSize = l.fontSize || 24;
+        const fontSize = Math.max(12, Math.round(l.fontSize || 24));
         const fontName = l.fontFamily || "TF LANNA Bold";
         const isBold = l.weight === 'bold' || l.weight === '700' || /bold/i.test(fontName);
+        const isItalic = l.style === 'italic' || /italic|ita/i.test(fontName);
 
-        const lines = (l.text || "").split('\n');
-        const totalTextHeight = fontSize * 1.2 * lines.length;
+        // Resolve exact PostScript Name for Photoshop
+        const postScriptName = resolvePostScriptName(fontName, isBold, isItalic);
+        const hasNativeBold = /bold/i.test(postScriptName);
+        const hasNativeItalic = /italic/i.test(postScriptName);
+
+        const rawText = (l.text || "").trim();
+        const lines = rawText.split(/\r?\n/);
+        const lineCount = Math.max(1, lines.length);
+
+        const lineHeightMul = 1.25;
+        const lineHeight = fontSize * lineHeightMul;
+        const totalTextHeight = Math.max(fontSize, lineCount * lineHeight);
+
+        // Vertical centering offset for Photoshop point text:
+        // Point text anchor Y corresponds to the baseline of the first line.
+        // To center the multi-line block at l.y, shift baseline upwards by half of total lines height.
+        const verticalShift = -((lineCount - 1) * lineHeight) / 2.0 + (fontSize * 0.30);
+        const tx = Math.round(l.x);
+        const ty = Math.round(l.y + verticalShift);
+
+        const boxW = Math.max(40, Math.round(l.boxWidth || (fontSize * 5)));
+        const halfW = Math.round(boxW / 2.0);
+        const halfH = Math.round(totalTextHeight / 2.0);
 
         const textLayer = {
-            name: (l.text || "").replace(/\n/g, ' ').substring(0, 30) || "Text Layer",
+            name: rawText.replace(/\r?\n/g, ' ').substring(0, 30) || "Text Layer",
             text: {
-                text: (l.text || "").replace(/\n/g, '\r'),
-                transform: [1, 0, 0, 1, l.x, l.y],
+                text: rawText.replace(/\r?\n/g, '\r'),
+                transform: [1, 0, 0, 1, tx, ty],
+                left: Math.round(tx - halfW),
+                top: Math.round(l.y - halfH),
+                right: Math.round(tx + halfW),
+                bottom: Math.round(l.y + halfH),
                 style: {
-                    font: { name: fontName },
+                    font: { name: postScriptName },
                     fontSize: fontSize,
                     fillColor: { r: color.r, g: color.g, b: color.b },
-                    autoLeading: true,
-                    fauxBold: isBold
+                    leading: Math.round(lineHeight),
+                    autoLeading: false,
+                    fauxBold: isBold && !hasNativeBold,
+                    fauxItalic: isItalic && !hasNativeItalic
                 },
                 paragraphStyle: { justification: 'center' }
             },
-            left: Math.round(l.x - (l.boxWidth / 2) - 20),
-            top: Math.round(l.y - (totalTextHeight / 2) - 20),
-            right: Math.round(l.x + (l.boxWidth / 2) + 20),
-            bottom: Math.round(l.y + (totalTextHeight / 2) + 20)
+            left: Math.round(tx - halfW - 20),
+            top: Math.round(l.y - halfH - 20),
+            right: Math.round(tx + halfW + 20),
+            bottom: Math.round(l.y + halfH + 20)
         };
 
         // White stroke effect for readability

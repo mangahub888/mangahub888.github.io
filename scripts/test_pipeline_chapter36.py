@@ -43,7 +43,54 @@ if sys.stdout is not None:
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.services.lama_service import LamaService
+# Standalone LaMa Runner (Zero dependency on app.services)
+class StandaloneLama:
+    """Lightweight standalone LaMa TorchScript runner."""
+    def __init__(self, model_path, device=None):
+        import torch
+        if device is None:
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = device
+        print(f"🧠 Loading offline LaMa model from {model_path} onto {self.device}...")
+        self.model = torch.jit.load(str(model_path), map_location=self.device)
+        self.model.eval()
+        self.model.to(self.device)
+        print("   ✓ LaMa model ready!")
+
+    def inpaint(self, image_np, mask_np):
+        import torch
+        h, w = image_np.shape[:2]
+        div = 8
+        new_h = int(np.ceil(h / div) * div)
+        new_w = int(np.ceil(w / div) * div)
+
+        pad_bottom = new_h - h
+        pad_right = new_w - w
+
+        img_pad = cv2.copyMakeBorder(image_np, 0, pad_bottom, 0, pad_right, cv2.BORDER_REFLECT)
+        mask_pad = cv2.copyMakeBorder(mask_np, 0, pad_bottom, 0, pad_right, cv2.BORDER_CONSTANT, value=0)
+
+        img_rgb = cv2.cvtColor(img_pad, cv2.COLOR_BGR2RGB)
+        img_t = torch.from_numpy(img_rgb).float().permute(2, 0, 1).unsqueeze(0) / 255.0
+        mask_t = torch.from_numpy(mask_pad).float().unsqueeze(0).unsqueeze(0)
+        mask_t = (mask_t > 0).float()
+
+        img_t = img_t.to(self.device)
+        mask_t = mask_t.to(self.device)
+
+        with torch.no_grad():
+            output = self.model(img_t, mask_t)
+
+        out_np = output[0].permute(1, 2, 0).detach().cpu().numpy()
+        out_np = np.clip(out_np * 255.0, 0, 255).astype(np.uint8)
+        out_bgr = cv2.cvtColor(out_np, cv2.COLOR_RGB2BGR)
+
+        res = out_bgr[:h, :w]
+        mask_binary = (mask_np > 0)[:, :, None]
+        cleaned = np.where(mask_binary, res, image_np)
+        return cleaned
+
 
 DOC_ID = "1l2aF-cyk39Xiaz7e1ejBMJMKFv77Ur7hieuvI_CsFh0"
 TAB_ID = "t.bdbfibdpplpv"
@@ -106,35 +153,103 @@ def parse_numbered_translations(doc_text: str) -> dict[int, str]:
 # ==============================================================================
 def wrap_thai_text_for_bubble(text: str, box_w: float, box_h: float) -> tuple[str, int]:
     """
-    คำนวณการตัดคำภาษาไทย (PyThaiNLP) และปรับขนาดฟอนต์ให้พอดีกับบอลลูน
+    คำนวณการตัดคำภาษาไทย (PyThaiNLP) และปรับขนาดฟอนต์ให้พอดีกับบอลลูนรูปทรงวงรี (Ellipse Bubble Fitting)
     """
-    raw_ratio = box_w / max(1.0, box_h)
-    clamped_ratio = max(0.8, min(3.5, raw_ratio))
     raw_text = text.strip()
+    if not raw_text:
+        return "", 24
+
     visual_text = re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", raw_text)
     visual_len = max(1, len(visual_text))
 
-    shape_mult = 3.5 if raw_ratio >= 1.0 else 1.8
-    est_chars = max(6, int(math.sqrt(clamped_ratio * visual_len * shape_mult)))
+    aspect = box_w / max(1.0, box_h)
+    bubble_area = box_w * box_h * 0.785
 
-    font_size = max(16, min(56, int(box_w / (est_chars * 0.55))))
-    if visual_len <= 8:
-        font_size = int(font_size * 1.15)
+    est_font_size = int(math.sqrt((bubble_area * 0.55) / (visual_len * 0.65)))
 
-    tokens = pythainlp.word_tokenize(raw_text, engine="newmm")
+    if visual_len <= 4:
+        font_size = max(24, min(56, int(box_h * 0.45)))
+    elif visual_len <= 10:
+        font_size = max(20, min(50, int(box_h * 0.35)))
+    else:
+        font_size = max(16, min(48, est_font_size))
+
+    max_line_width_chars = max(4, int(box_w / (font_size * 0.55)))
+    est_lines = max(1, int(math.ceil(visual_len / max(1, max_line_width_chars))))
+
+    raw_tokens = pythainlp.word_tokenize(raw_text, engine="newmm")
+
+    # Merge broken tokens (e.g. 'เห' + 'รอ' -> 'เหรอ', numbers attached to previous word)
+    merged = []
+    i = 0
+    while i < len(raw_tokens):
+        tok = raw_tokens[i]
+        # Common Thai split fixes
+        if i + 1 < len(raw_tokens) and tok == "เห" and raw_tokens[i+1].startswith("รอ"):
+            merged.append(tok + raw_tokens[i+1])
+            i += 2
+            continue
+        # Attach standalone numbers to previous token (e.g. 'ที่' + '4' -> 'ที่ 4')
+        if merged and re.match(r"^\d+$", tok):
+            merged[-1] += " " + tok if not merged[-1].endswith(" ") else tok
+            i += 1
+            continue
+        merged.append(tok)
+        i += 1
+
+    # Attach sticky punctuation (without space) & particles (with space if needed)
+    sticky_punct = {"!", "?", ".", ",", "...", "ๆ", "ฯ", "”", "’", ")", "]", "}"}
+    sticky_words = {"นะ", "คะ", "ครับ", "ล่ะ", "สิ", "วะ"}
+    tokens = []
+    for tok in merged:
+        if tokens and (tok in sticky_punct or tok.startswith(("!", "?", ".", "ๆ"))):
+            tokens[-1] = tokens[-1].rstrip() + tok
+        elif tokens and tok in sticky_words:
+            tokens[-1] = tokens[-1].rstrip() + (" " if not tokens[-1].endswith(" ") else "") + tok
+        else:
+            tokens.append(tok)
+
+    bad_start_words = {"ที่", "ของ", "ใน", "จะ", "ให้", "ได้", "ก็", "ต้อง", "นะ", "ครับ", "ค่ะ", "ยัง", "แล้ว", "คง", "ด้วย", "ไว้", "มา", "ไป", "อยู่", "คือ", "นั้น", "นี่", "นี้", "เหรอ", "ล่ะ", "สิ", "วะ", "เว้ย", "น่ะ", "เลย", "กัน"}
+
     lines = []
     curr = ""
     for tok in tokens:
-        if len(curr) + len(tok) > est_chars and curr:
-            lines.append(curr)
+        tok_vis = len(re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", tok))
+        curr_vis = len(re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", curr))
+
+        line_idx = len(lines)
+        if est_lines > 1:
+            norm_y = abs((line_idx + 0.5) - (est_lines / 2.0)) / (est_lines / 2.0)
+            norm_y = min(0.9, norm_y)
+            width_factor = math.sqrt(max(0.35, 1.0 - norm_y ** 2))
+        else:
+            width_factor = 1.0
+
+        allowed_chars = max(4, int(max_line_width_chars * width_factor))
+
+        is_bad_start = (tok in bad_start_words and curr_vis + tok_vis <= allowed_chars + 3)
+
+        if (curr_vis + tok_vis > allowed_chars and not is_bad_start) and curr:
+            lines.append(curr.strip())
             curr = tok
         else:
             curr += tok
-    if curr:
-        lines.append(curr)
+    if curr.strip():
+        lines.append(curr.strip())
 
-    wrapped_text = "\n".join(lines)
-    return wrapped_text, font_size
+    # Fix orphan line (single short word at end): merge with previous line if fits
+    if len(lines) >= 2:
+        last_vis = len(re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", lines[-1]))
+        if last_vis <= 4:
+            lines[-2] += " " + lines[-1]
+            lines.pop()
+
+    # Ensure vertical fit
+    line_count = len(lines)
+    while line_count * (font_size * 1.25) > box_h * 0.95 and font_size > 14:
+        font_size = int(font_size * 0.9)
+
+    return "\n".join(lines), font_size
 
 
 # ==============================================================================
@@ -195,7 +310,7 @@ def run_pipeline(
         lama_model_file = PROJECT_ROOT / "models" / "big-lama.pt"
         if lama_model_file.exists():
             print(f"\n🧠 [Step 4] Loading offline LaMa model: {lama_model_file.name} ...")
-            lama_service = LamaService(model_path=str(lama_model_file))
+            lama_service = StandaloneLama(model_path=str(lama_model_file))
             print("   -> LaMa model ready!")
         else:
             print(f"⚠️ [Step 4] LaMa model not found at {lama_model_file}. Skipping inpaint.")
@@ -353,11 +468,13 @@ def run_pipeline(
 
             node_script = PROJECT_ROOT / "scripts" / "export_psd_node.js"
             cmd = ["node", str(node_script), "--manifest", str(manifest_file)]
-            res = subprocess.run(cmd, capture_output=True, text=True)
+            res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+            out_str = (res.stdout or "").strip()
+            err_str = (res.stderr or "").strip()
             if res.returncode == 0:
-                print(f"   💾 {res.stdout.strip()}")
+                print(f"   💾 {out_str}")
             else:
-                print(f"   ❌ PSD Export error: {res.stderr.strip()}")
+                print(f"   ❌ PSD Export error: {err_str}")
 
             # Clean up temp binaries
             if os.path.exists(raw_bg_bin):

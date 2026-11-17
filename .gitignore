@@ -62,3 +62,7 @@ tools/readrealm_comic_explorer.py
 /data/
 
 test.py
+test_ch31_local/
+test_local_psd_run/
+psd_work/
+
