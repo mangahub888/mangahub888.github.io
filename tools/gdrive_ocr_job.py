@@ -1040,7 +1040,7 @@ def main():
     if not model_path:
         candidates = [
             PROJECT_ROOT / "models" / "best.pt",
-            Path("D:/MangaToolPlus_TEST/models/best.pt"),
+            # Standalone repository model paths only
             Path("models/best.pt"),
         ]
         for c in candidates:

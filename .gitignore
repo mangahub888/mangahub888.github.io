@@ -65,4 +65,6 @@ test.py
 test_ch31_local/
 test_local_psd_run/
 psd_work/
+models/big-lama.pt
+
 

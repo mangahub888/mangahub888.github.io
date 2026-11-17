@@ -818,7 +818,19 @@ def run_export_psd_pipeline(args):
         model_paths = [
             Path("models/big-lama.pt"),
             Path(__file__).resolve().parent.parent / "models" / "big-lama.pt",
-            Path("D:/MangaToolPlus_TEST/models/big-lama.pt")
+            # Standalone repository model paths only
+        ]
+        repo_model = Path(__file__).resolve().parent.parent / "models" / "big-lama.pt"
+        if not any(mp.exists() and mp.stat().st_size > 50_000_000 for mp in model_paths):
+            try:
+                repo_model.parent.mkdir(parents=True, exist_ok=True)
+                lama_url = "https://github.com/Sanster/models/releases/download/add_big_lama/big-lama.pt"
+                print(f"📥 Downloading LaMa model to {repo_model}...")
+                urllib.request.urlretrieve(lama_url, str(repo_model))
+            except Exception as dl_err:
+                print(f"⚠️ Could not auto-download LaMa model: {dl_err}")
+        _unused_list = [
+            # end auto-download block
         ]
         for mp in model_paths:
             if mp.exists() and mp.stat().st_size > 50_000_000:

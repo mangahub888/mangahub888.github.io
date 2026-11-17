@@ -504,7 +504,7 @@ def run_pipeline(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="MangaToolPlus Pipeline Test")
-    parser.add_argument("--work-dir", default=r"D:\MangaToolPlus_TEST\test_chapter36", help="Chapter files directory")
+    parser.add_argument("--work-dir", default=str(PROJECT_ROOT / "psd_work" / "test_chapter36"), help="Chapter files directory")
     parser.add_argument("--limit", type=int, default=3, help="Limit number of pages to process for quick testing")
     parser.add_argument("--full", action="store_true", help="Process all pages in the chapter")
     parser.add_argument("--font", default="TF LANNA Bold", help="Font family name for typesetting (Default: TF LANNA Bold)")

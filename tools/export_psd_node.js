@@ -10,7 +10,7 @@ const candidatePaths = [
     path.resolve(__dirname, './ag-psd.bundle.js'),
     path.resolve(__dirname, '../tools/ag-psd.bundle.js'),
     path.resolve(__dirname, '../scripts/ag-psd.bundle.js'),
-    path.resolve(__dirname, '../app/static/js/vendor/ag-psd.bundle.js')
+    // Standalone repository paths only
 ];
 const agPsdPath = candidatePaths.find(p => fs.existsSync(p));
 if (!agPsdPath) {
