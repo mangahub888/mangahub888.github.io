@@ -232,45 +232,139 @@ def download_images_from_gdrive(folder_url_or_id, output_dir):
 # ==============================================================================
 # 2. Google Docs Tab Discovery & Text Extraction
 # ==============================================================================
-def find_matching_tab_id(doc_id: str, chapter_num: str, access_token: str = None) -> str:
-    """Discovers tab_id corresponding to chapter_num from Google Docs HTML export or API."""
-    url = f"https://docs.google.com/document/d/{doc_id}/export?format=html"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+def discover_all_tabs(doc_id: str, access_token: str = None) -> list[dict]:
+    """Discovers all document tabs [{id: tid, title: title}] from Docs API or preview/edit HTML."""
+    tabs = []
+
+    # 1. Google Docs API (if OAuth access token available)
     if access_token:
-        req.add_header("Authorization", f"Bearer {access_token}")
+        try:
+            api_url = f"https://docs.googleapis.com/v1/documents/{doc_id}?includeTabsContent=false"
+            req = urllib.request.Request(api_url, headers={
+                "Authorization": f"Bearer {access_token}",
+                "User-Agent": "Mozilla/5.0"
+            })
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                for t in data.get('tabs', []):
+                    props = t.get('tabProperties', {})
+                    tid = props.get('tabId')
+                    title = props.get('title')
+                    if tid and title:
+                        tabs.append({"id": tid, "title": title})
+            if tabs:
+                return tabs
+        except Exception:
+            pass
 
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            html = resp.read().decode("utf-8", errors="replace")
+    # 2. Preview & Edit HTML endpoints (works reliably without extra API scopes)
+    for endpoint in ['preview', 'edit']:
+        try:
+            url = f"https://docs.google.com/document/d/{doc_id}/{endpoint}"
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+            if access_token:
+                req.add_header("Authorization", f"Bearer {access_token}")
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                html = resp.read().decode('utf-8', errors='replace')
 
-        tab_matches = re.findall(r'tab=(t\.[a-zA-Z0-9_-]+)[^"]*[\'"]?[^>]*>([^<]+)<', html)
-        if not tab_matches:
-            tab_matches = re.findall(r'data-tab-id=[\'"](t\.[a-zA-Z0-9_-]+)[\'"][^>]*>([^<]+)<', html)
+            # Base/initial tab: {"ty":"mkch","d":[[1,"01"]]}
+            base_tab = re.search(r'\{"ty":"mkch","d":\[\[\d+,"([^"]+)"\]\]', html)
+            if base_tab:
+                base_title = base_tab.group(1)
+                tabs.append({"id": "t.0", "title": base_title})
 
-        clean_chap = str(chapter_num).strip().lstrip("0") or "0"
-        for tid, ttitle in tab_matches:
-            clean_title = ttitle.strip()
-            num_match = re.search(r"(\d+)", clean_title)
-            if num_match and (num_match.group(1).lstrip("0") or "0") == clean_chap:
-                print(f"   ✓ Auto-detected tab for Chapter {chapter_num}: {tid} ('{clean_title}')")
-                return tid
+            # Added tabs: ["t.xxx", [1, "title"]]
+            matches_ac = re.findall(r'\["(t\.[a-zA-Z0-9_-]+)"\s*,\s*\[\d+\s*,\s*"([^"]+)"\]', html)
+            for tid, ttitle in matches_ac:
+                if not any(t["id"] == tid for t in tabs):
+                    tabs.append({"id": tid, "title": ttitle})
 
-        if tab_matches:
-            print(f"   ℹ️ First tab fallback: {tab_matches[0][0]} ('{tab_matches[0][1]}')")
-            return tab_matches[0][0]
-    except Exception as e:
-        print(f"   ⚠️ Could not auto-detect tab list: {e}")
+            # Alternative tabProperties JSON
+            matches_prop = re.findall(r'"tabId":\s*"(t\.[^"]+)"[^}]+"title":\s*"([^"]+)"', html)
+            for tid, ttitle in matches_prop:
+                if not any(t["id"] == tid for t in tabs):
+                    tabs.append({"id": tid, "title": ttitle})
 
-    return ""
+            if tabs:
+                return tabs
+        except Exception:
+            pass
+
+    return tabs
+
+
+def resolve_tab_id(doc_id: str, tab_id: str = "", chapter_num: str = "", access_token: str = None) -> tuple[str, str]:
+    """
+    Intelligently resolves the correct tab_id for given chapter_num.
+    Translators typically name tabs as just '31', '32', '33' (without 'ch' prefix) or '01', '02', '03'.
+    Prevents mismatched tab selection (e.g. Chapter 1 tab sent for Chapter 31).
+    """
+    tabs = discover_all_tabs(doc_id, access_token)
+    if not tabs:
+        return tab_id, "direct tab_id or default document (no tabs found)"
+
+    clean_target = str(chapter_num).strip().lstrip("0") or "0" if chapter_num else ""
+
+    matched_tab = None
+    if clean_target:
+        # Match strategy 1: Exact title match or normalized title match (e.g. '31' == '31', '031' == '31')
+        for t in tabs:
+            tclean = t["title"].strip()
+            if tclean.lower() == str(chapter_num).strip().lower() or (tclean.lstrip("0") or "0") == clean_target:
+                matched_tab = t
+                break
+
+        # Match strategy 2: Title with prefix (Chapter 31, ตอน 31, ตอนที่ 31, Ch.31)
+        if not matched_tab:
+            for t in tabs:
+                tclean = t["title"].strip()
+                m = re.search(r'(?:chapter|ตอนที่|ตอน|ch\.?|ep\.?)\s*(\d+(?:\.\d+)?)', tclean, re.IGNORECASE)
+                if m and (m.group(1).lstrip("0") or "0") == clean_target:
+                    matched_tab = t
+                    break
+
+        # Match strategy 3: Isolated number in title (ignoring glossary)
+        if not matched_tab:
+            for t in tabs:
+                tclean = t["title"].strip()
+                if re.search(r'glossary|คำศัพท์', tclean, re.IGNORECASE):
+                    continue
+                m = re.search(r'\b0*(\d+(?:\.\d+)?)\b', tclean)
+                if m and (m.group(1).lstrip("0") or "0") == clean_target:
+                    matched_tab = t
+                    break
+
+    # If matching tab found for chapter
+    if matched_tab:
+        if tab_id and tab_id != matched_tab["id"]:
+            old_title = next((t["title"] for t in tabs if t["id"] == tab_id), "unknown")
+            print(f"   ⚠️ Specified tab '{tab_id}' ('{old_title}') mismatches Chapter {chapter_num}! Auto-switching to '{matched_tab['title']}' ({matched_tab['id']})")
+        else:
+            print(f"   ✓ Auto-detected tab for Chapter {chapter_num}: {matched_tab['id']} ('{matched_tab['title']}')")
+        return matched_tab["id"], f"tab '{matched_tab['title']}'"
+
+    # If no matching tab for chapter but tab_id was given
+    if tab_id:
+        return tab_id, f"specified tab '{tab_id}'"
+
+    return "", "full document fallback"
+
+
+def find_matching_tab_id(doc_id: str, chapter_num: str, access_token: str = None) -> str:
+    """Discovers tab_id corresponding to chapter_num (legacy wrapper)."""
+    tid, _ = resolve_tab_id(doc_id, tab_id="", chapter_num=chapter_num, access_token=access_token)
+    return tid
 
 
 def fetch_doc_translation_text(doc_id: str, tab_id: str = "", chapter_num: str = "", access_token: str = None) -> str:
-    """Fetches text content from the specified Google Docs tab, with fallback to full doc."""
+    """Fetches text content from the specified or auto-resolved Google Docs tab, with fallback to full doc."""
+    resolved_tab, tab_desc = resolve_tab_id(doc_id, tab_id, chapter_num, access_token)
+
     text = ""
-    # 1. Try specified tab_id first
-    if tab_id:
-        url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt&tab={tab_id}"
-        print(f"📄 Fetching translation from Google Docs tab ({tab_id}): {url}")
+    # 1. Try resolved tab_id first
+    if resolved_tab:
+        url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt&tab={resolved_tab}"
+        print(f"📄 Fetching translation from Google Docs tab ({resolved_tab} - {tab_desc}): {url}")
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         if access_token:
             req.add_header("Authorization", f"Bearer {access_token}")
@@ -278,42 +372,28 @@ def fetch_doc_translation_text(doc_id: str, tab_id: str = "", chapter_num: str =
             with urllib.request.urlopen(req, timeout=30) as resp:
                 text = resp.read().decode("utf-8", errors="replace")
         except Exception as e:
-            print(f"   ⚠️ Tab {tab_id} fetch failed: {e}")
+            print(f"   ⚠️ Tab {resolved_tab} fetch failed: {e}")
 
     # Verify if tab content contains dialogue items [#N]
     test_d = parse_numbered_translations(text, quiet=True) if text else {}
     if len(test_d) > 0:
         return text
 
-    if tab_id:
-        print(f"   ⚠️ Tab '{tab_id}' returned 0 dialogue items (likely glossary or wrong tab). Trying auto-detect / full document fallback...")
+    if resolved_tab:
+        print(f"   ⚠️ Tab '{resolved_tab}' returned 0 dialogue items (likely glossary or empty tab). Trying full document fallback...")
 
-    # 2. Try auto-detecting tab if chapter_num provided
-    if chapter_num:
-        detected_tab = find_matching_tab_id(doc_id, chapter_num, access_token)
-        if detected_tab and detected_tab != tab_id:
-            url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt&tab={detected_tab}"
-            print(f"📄 Fetching translation from auto-detected tab ({detected_tab}): {url}")
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            if access_token:
-                req.add_header("Authorization", f"Bearer {access_token}")
-            try:
-                with urllib.request.urlopen(req, timeout=30) as resp:
-                    cand_text = resp.read().decode("utf-8", errors="replace")
-                if len(parse_numbered_translations(cand_text, quiet=True)) > 0:
-                    return cand_text
-            except Exception as e:
-                print(f"   ⚠️ Auto-detected tab fetch failed: {e}")
-
-    # 3. Fallback to full doc export without tab parameter
+    # 2. Fallback to full doc export without tab parameter
     url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt"
     print(f"📄 Fetching full document translation (no tab): {url}")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     if access_token:
         req.add_header("Authorization", f"Bearer {access_token}")
 
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        text = resp.read().decode("utf-8", errors="replace")
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            text = resp.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"   ⚠️ Full doc export failed: {e}")
 
     return text
 
@@ -327,10 +407,24 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
     lines = raw_text.splitlines()
 
     chap_starts = []
-    header_pattern = re.compile(r"^\s*(?:Chapter|ตอนที่|ตอน|Ch\.|EP\.)\s*(\d+)\s*$", re.IGNORECASE)
+    header_pattern = re.compile(r"^\s*(?:Chapter|ตอนที่|ตอน|Ch\.|EP\.)\s*(\d+(?:\.\d+)?)\s*$", re.IGNORECASE)
 
+    in_glossary = False
     for i, line in enumerate(lines):
-        m = header_pattern.match(line.strip())
+        sline = line.strip()
+        if "glossary" in sline.lower() or "คำศัพท์" in sline:
+            in_glossary = True
+        if in_glossary:
+            if sline.startswith("[#") or sline.startswith("["):
+                in_glossary = False
+            else:
+                continue
+
+        # Skip table cells (indented with tab)
+        if line.startswith("\t"):
+            continue
+
+        m = header_pattern.match(sline)
         if m:
             num = m.group(1).lstrip("0") or "0"
             is_real_header = False
@@ -358,8 +452,14 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
         print(f"   ✓ Sliced Chapter {chapter_num} section (lines {start_line+1} to {end_line})")
         return "\n".join(lines[start_line:end_line])
     else:
+        if len(chap_starts) > 1:
+            found_nums = [c[1] for c in chap_starts]
+            print(f"   ⚠️ Chapter {chapter_num} was NOT found in multi-chapter document! Present chapters: {found_nums[:8]}")
+            print(f"   🛑 Blocking full document fallback to avoid corrupting Chapter {chapter_num} with Chapter {found_nums[0]} translations.")
+            return ""
         print(f"   ℹ️ Chapter {chapter_num} header not explicitly separated; using full document")
         return raw_text
+
 
 
 def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int, str]:
