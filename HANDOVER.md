@@ -23,6 +23,20 @@
   - ทดสอบรัน ActionDescriptor ตรวจจับ `textWarningLevel` ผ่าน JSX Script:
     * ไฟล์เดิม (`001.psd`): `textWarningLevel: 1` (ติด `T ⚠️`)
     * ไฟล์ใหม่ (`test_verified_final.psd`): **`Status: 0 (0 - NO WARNING)`** ทุกเลเยอร์ 100% ไม่มีไอคอนตกใจ ไม่มีการแจ้งเตือนฟอนต์หายอีกต่อไป
+  - **Local Test รันซ้ำรอบ 2 (ตอนที่ 31 จริง)**:
+    * คำสั่ง: `python tools/export_psd_job.py --folder-id 1NFwN8KxGkoFGM4KyLB535AjNN741rYFB --manga-name "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!" --chapter-num 31 --queue-id 1793600814789 --doc-url "https://docs.google.com/document/d/1l2aF-cyk39Xiaz7e1ejBMJMKFv77Ur7hieuvI_CsFh0/edit" --tab-id "t.s3636otvz9pc" --output-dir "D:\MangaToolPlus_TEST\test_chapter31" --limit 3 --no-notify`
+    * สถาปัตยกรรม Standalone Script 100% ตามข้อกำหนด 6 ข้อ:
+      1. รันร่วมกันระหว่าง Python (`tools/export_psd_job.py`) และ Node.js (`tools/export_psd_node.js`)
+      2. ดาวน์โหลดและ parse คำแปล Google Docs จากแท็บตรง Regex `^\[#(\d+)\]` กรองไทย `[\u0E00-\u0E7F]` (ได้ 56 รายการ #9 ถึง #75)
+      3. จับคู่ layers ตาม `global_index` ข้ามหน้า (หน้า 1 แมตช์ 3/11, หน้า 2 แมตช์ 3/4, หน้า 3 แมตช์ 5/5 รวม 11 เลเยอร์) ส่วน SFX/ลายน้ำที่ไม่แมตช์ถูกข้ามอย่างถูกต้อง
+      4. Inpaint ด้วย Standalone LaMa TorchScript (`models/big-lama.pt`) บน CUDA แยก patch ละ 1 เลเยอร์ (crop BBox + pad 12px, dilate 7x7)
+      5. ตัดคำไทยด้วย PyThaiNLP (`newmm`), auto-fit font size 16-56px ตามวงรีบอลลูน
+      6. สร้าง PSD มี Background, Inpaint Patches group, และ Translated Text group (ฟอนต์ TF LANNA Bold)
+    * ยืนยันผลตรวจสอบด้วย Photoshop 2026 (v27.6.0) ผ่าน COM Script:
+      - `Document: 001.psd (800 px x 10007 px)`
+      - `Group: Translated Text`: ทุกเลเยอร์ **`textWarningLevel = 0`** 100% ไม่มีไอคอน `T ⚠️`
+      - `Group: Inpaint Patches`: Inpaint #9, #10, #11 แยกเลเยอร์
+      - `Layer: Background`: ภาพดิบเดิมก่อน Inpaint
 
 
 ### 🏆 ตั้งค่าผู้ลงคำเริ่มต้น (Default Typesetter) เป็น Tilly ในทุกมังงะ โดยอิงชื่อจาก Team Member (11 พ.ย. 2569)
