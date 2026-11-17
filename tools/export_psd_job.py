@@ -6,15 +6,16 @@ Automated Manga PSD Export & Drive Upload Job
 Automates:
 1. Downloads manga raw images & .mtp project from Google Drive source folder.
 2. Fetches translation text directly from Google Docs tab (matching chapter number or tab ID).
-3. Parses numbered translation [#N] and matches with OCR layers.
-4. Cleans speech bubbles using LaMa model as individual cropped layers (Inpaint #N).
-5. Typesets translation text onto images using 'TF LANNA Bold' font.
+3. Parses numbered translation [#N] and matches with OCR layers sequentially across the chapter.
+4. Cleans speech bubbles using LaMa model (or OpenCV fallback) as individual cropped layers (Inpaint #N).
+5. Typesets translation text onto images using 'TF LANNA Bold' font with Thai word wrap & bubble auto-fit.
 6. Generates native editable PSD files via tools/export_psd_node.js:
    - Background: Raw uncleaned image before inpainting
    - Inpaint Patches Group: Individual box layer per bubble
    - Translated Text Group: Centered Thai text with TF LANNA Bold and white stroke
-7. Uploads all generated .psd files directly back into the Google Drive source folder (1. อัป Raw).
-8. Notifies Google Apps Script (COMPLETE_EXPORT_PSD) to update WorkQueue status to 'เสร็จแล้ว'.
+7. Updates and saves native MangaToolPlus project (*_updated.mtp).
+8. Uploads all generated .psd files directly back into the Google Drive source folder (PSD subfolder).
+9. Notifies Google Apps Script (COMPLETE_EXPORT_PSD) to update WorkQueue status to 'เสร็จแล้ว'.
 """
 
 import os
@@ -22,6 +23,7 @@ import sys
 import re
 import json
 import time
+import math
 import shutil
 import subprocess
 import argparse
@@ -32,7 +34,7 @@ from PIL import Image
 import numpy as np
 import cv2
 
-# Ensure UTF-8 on Windows
+# Ensure UTF-8 output on Windows
 if sys.stdout is not None:
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -198,7 +200,7 @@ def extract_tab_id_from_url(url: str) -> str:
 
 
 def download_images_from_gdrive(folder_url_or_id, output_dir):
-    """Downloads images from Google Drive folder."""
+    """Downloads images & files from Google Drive folder."""
     import gdown
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -223,7 +225,6 @@ def download_images_from_gdrive(folder_url_or_id, output_dir):
 # ==============================================================================
 def find_matching_tab_id(doc_id: str, chapter_num: str, access_token: str = None) -> str:
     """Discovers tab_id corresponding to chapter_num from Google Docs HTML export or API."""
-    # Attempt HTML export to find tabs
     url = f"https://docs.google.com/document/d/{doc_id}/export?format=html"
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     if access_token:
@@ -233,7 +234,6 @@ def find_matching_tab_id(doc_id: str, chapter_num: str, access_token: str = None
         with urllib.request.urlopen(req, timeout=30) as resp:
             html = resp.read().decode("utf-8", errors="replace")
 
-        # Search for tab elements or tab URLs: tab=t.xxx
         tab_matches = re.findall(r'tab=(t\.[a-zA-Z0-9_-]+)[^"]*[\'"]?[^>]*>([^<]+)<', html)
         if not tab_matches:
             tab_matches = re.findall(r'data-tab-id=[\'"](t\.[a-zA-Z0-9_-]+)[\'"][^>]*>([^<]+)<', html)
@@ -271,8 +271,8 @@ def fetch_doc_translation_text(doc_id: str, tab_id: str = "", chapter_num: str =
         except Exception as e:
             print(f"   ⚠️ Tab {tab_id} fetch failed: {e}")
 
-    # Verify if tab content contains actual dialogue items [#N]
-    test_d = parse_dialogue_map(text, quiet=True) if text else {}
+    # Verify if tab content contains dialogue items [#N]
+    test_d = parse_numbered_translations(text, quiet=True) if text else {}
     if len(test_d) > 0:
         return text
 
@@ -291,7 +291,7 @@ def fetch_doc_translation_text(doc_id: str, tab_id: str = "", chapter_num: str =
             try:
                 with urllib.request.urlopen(req, timeout=30) as resp:
                     cand_text = resp.read().decode("utf-8", errors="replace")
-                if len(parse_dialogue_map(cand_text, quiet=True)) > 0:
+                if len(parse_numbered_translations(cand_text, quiet=True)) > 0:
                     return cand_text
             except Exception as e:
                 print(f"   ⚠️ Auto-detected tab fetch failed: {e}")
@@ -317,8 +317,6 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
     target = str(chapter_num).strip().lstrip("0") or "0"
     lines = raw_text.splitlines()
 
-    # Find candidate chapter start line indices
-    # A true chapter header is followed closely by a dialogue item [#N]
     chap_starts = []
     header_pattern = re.compile(r"^\s*(?:Chapter|ตอนที่|ตอน|Ch\.|EP\.)\s*(\d+)\s*$", re.IGNORECASE)
 
@@ -326,7 +324,6 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
         m = header_pattern.match(line.strip())
         if m:
             num = m.group(1).lstrip("0") or "0"
-            # Verify it's not a table row by checking if next non-empty lines contain [#
             is_real_header = False
             for j in range(i + 1, min(i + 8, len(lines))):
                 sub = lines[j].strip()
@@ -339,7 +336,6 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
     if not chap_starts:
         return raw_text
 
-    # Locate target chapter
     start_line = None
     end_line = len(lines)
     for idx, (line_idx, c_num) in enumerate(chap_starts):
@@ -357,73 +353,48 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
         return raw_text
 
 
-def parse_dialogue_map(raw_text: str, quiet: bool = False) -> dict:
+def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int, str]:
     """
-    Parses [#N] dialogue lines into a dictionary {num: text}.
-    When both original OCR text and translated text exist under [#N],
-    prefers the Thai translated line(s).
+    Parses numbered translation blocks [#N] matching MangaToolPlus sequential OCR layers.
+    Selects Thai translated text if present, otherwise uses last available line.
     """
-    if not raw_text:
+    if not doc_text:
         return {}
 
-    lines = raw_text.splitlines()
-    dialogues = {}
+    lines = [line.strip() for line in doc_text.splitlines() if line.strip()]
+    by_number = {}
     current_num = None
-    items_for_num = []
 
-    pattern = re.compile(r"^\s*\[#?(\d+)\]\s*(.*)$")
-
-    def has_thai(text: str) -> bool:
-        return any('\u0e00' <= ch <= '\u0e7f' for ch in text)
-
-    def finalize_num(num, blocks):
-        if num is None or not blocks:
-            return
-        # Prefer block with Thai characters
-        thai_blocks = [b for b in blocks if has_thai(b)]
-        if thai_blocks:
-            dialogues[num] = "\n".join(thai_blocks).strip()
-        else:
-            # Fallback to the last non-empty block
-            non_empty = [b for b in blocks if b.strip()]
-            if non_empty:
-                dialogues[num] = non_empty[-1].strip()
-
-    current_block_lines = []
+    thai_char_re = re.compile(r"[\u0E00-\u0E7F]")
+    # Matches [#1], [#01], [# 1], or [1]
+    marker_re = re.compile(r"^\[#?\s*(\d+)\]\s*(.*)$")
 
     for line in lines:
-        stripped = line.strip()
-        m = pattern.match(stripped)
+        m = marker_re.match(line)
         if m:
-            new_num = int(m.group(1))
-            first_text = m.group(2).strip()
-
-            if current_num is not None:
-                if current_block_lines:
-                    items_for_num.append("\n".join(current_block_lines).strip())
-                    current_block_lines = []
-
-                if new_num != current_num:
-                    finalize_num(current_num, items_for_num)
-                    items_for_num = []
-                    current_num = new_num
-            else:
-                current_num = new_num
-
-            if first_text:
-                current_block_lines.append(first_text)
+            current_num = int(m.group(1))
+            content = m.group(2).strip()
+            if current_num not in by_number:
+                by_number[current_num] = []
+            if content:
+                by_number[current_num].append(content)
         elif current_num is not None:
-            if stripped:
-                current_block_lines.append(stripped)
+            by_number[current_num].append(line)
 
-    if current_num is not None:
-        if current_block_lines:
-            items_for_num.append("\n".join(current_block_lines).strip())
-        finalize_num(current_num, items_for_num)
+    translations = {}
+    for num, parts in by_number.items():
+        thai_parts = [p for p in parts if thai_char_re.search(p)]
+        if thai_parts:
+            translations[num] = "\n".join(thai_parts)
+        elif parts:
+            translations[num] = parts[-1]
 
     if not quiet:
-        print(f"   ✓ Parsed {len(dialogues)} dialogue items from Docs (dialogue #{min(dialogues.keys(), default=0)} to #{max(dialogues.keys(), default=0)})")
-    return dialogues
+        if translations:
+            print(f"📝 Parsed {len(translations)} translation blocks (indices #{min(translations.keys())} - #{max(translations.keys())})")
+        else:
+            print("⚠️ Parsed 0 translation blocks from document text")
+    return translations
 
 
 # ==============================================================================
@@ -441,7 +412,7 @@ class StandaloneLama:
         self.model = torch.jit.load(str(model_path), map_location=self.device)
         self.model.eval()
         self.model.to(self.device)
-        print("   ✓ LaMa model loaded successfully!")
+        print("   ✓ LaMa model ready!")
 
     def inpaint(self, image_np, mask_np):
         import torch
@@ -478,39 +449,48 @@ class StandaloneLama:
 
 
 # ==============================================================================
-# 4. Text Wrapping & Typesetting
+# 4. Text Wrapping & Typesetting (Aligned with test_pipeline_chapter36.py)
 # ==============================================================================
-def thai_word_wrap(text: str, max_chars_per_line: int) -> str:
-    """Wraps Thai text nicely at word boundaries."""
-    if not pythainlp:
-        return text
+def wrap_thai_text_for_bubble(text: str, box_w: float, box_h: float) -> tuple[str, int]:
+    """
+    Calculates Thai word wrap (PyThaiNLP) and fits font size dynamically to speech bubble area.
+    100% matched with MangaToolPlus typesetting engine.
+    """
+    raw_ratio = box_w / max(1.0, box_h)
+    clamped_ratio = max(0.8, min(3.5, raw_ratio))
+    raw_text = text.strip()
+    visual_text = re.sub(r"[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]", "", raw_text)
+    visual_len = max(1, len(visual_text))
 
-    words = pythainlp.word_tokenize(text, engine="newmm")
+    shape_mult = 3.5 if raw_ratio >= 1.0 else 1.8
+    est_chars = max(6, int(math.sqrt(clamped_ratio * visual_len * shape_mult)))
+
+    font_size = max(16, min(56, int(box_w / (est_chars * 0.55))))
+    if visual_len <= 8:
+        font_size = int(font_size * 1.15)
+
+    if pythainlp:
+        tokens = pythainlp.word_tokenize(raw_text, engine="newmm")
+    else:
+        tokens = list(raw_text)
+
     lines = []
-    current_line = ""
-
-    for w in words:
-        if w == "\n":
-            if current_line:
-                lines.append(current_line)
-                current_line = ""
-            continue
-
-        if len(current_line) + len(w) <= max_chars_per_line:
-            current_line += w
+    curr = ""
+    for tok in tokens:
+        if len(curr) + len(tok) > est_chars and curr:
+            lines.append(curr)
+            curr = tok
         else:
-            if current_line:
-                lines.append(current_line)
-            current_line = w
+            curr += tok
+    if curr:
+        lines.append(curr)
 
-    if current_line:
-        lines.append(current_line)
-
-    return "\n".join(lines)
+    wrapped_text = "\n".join(lines)
+    return wrapped_text, font_size
 
 
 # ==============================================================================
-# 5. GAS Notification
+# 5. GAS Notification Callback
 # ==============================================================================
 def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_name="", psd_count=0, psd_folder_id="", subfolder_name="PSD", gas_url=None, passcode="10211032"):
     """Notifies Google Apps Script to mark Export PSD as 'เสร็จแล้ว'."""
@@ -549,7 +529,7 @@ def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_na
 
 
 # ==============================================================================
-# Main Pipeline Function
+# 6. Main Pipeline Function
 # ==============================================================================
 def run_export_psd_pipeline(args):
     start_time = time.time()
@@ -564,41 +544,77 @@ def run_export_psd_pipeline(args):
     doc_id = extract_doc_id(args.doc_url)
     chapter_num = str(args.chapter_num).strip()
     manga_name = args.manga_name.strip()
+    font_family = args.font or "TF LANNA Bold"
 
-    print("=================================================================")
-    print("🚀 Manga PSD Export Pipeline")
+    print("=" * 65)
+    print("🚀 Manga PSD Export Pipeline (MangaToolPlus Native Logic)")
     print(f"📁 Folder ID:     {folder_id}")
     print(f"📂 Subfolder:     {subfolder_name}")
     print(f"📖 Manga Name:    {manga_name}")
     print(f"🔢 Chapter:       {chapter_num}")
     print(f"📄 Doc ID:        {doc_id}")
-    print(f"🔤 Font:          {args.font}")
-    print("=================================================================")
+    print(f"🔤 Font:          {font_family}")
+    print("=" * 65)
 
     # 1. Initialize Google Drive Service
     drive_service = get_drive_service(args.google_access_token)
 
-    # 2. Download Images & .mtp from Drive Folder
+    # 2. Download Images & Project Files from Drive Folder
     image_files = download_images_from_gdrive(folder_id, work_dir)
     if not image_files:
         print("❌ No images found in folder!")
         sys.exit(1)
 
-    # Find .mtp file in folder if available (pick the best one with valid pages)
-    mtp_files = sorted(work_dir.glob("*.mtp"), key=lambda f: f.stat().st_size, reverse=True)
-    mtp_data = None
-    for mf in mtp_files:
-        try:
-            with open(mf, "r", encoding="utf-8") as f:
-                cand = json.load(f)
-            if cand and isinstance(cand, dict) and cand.get("pages"):
-                mtp_data = cand
-                print(f"📦 Loaded project file: {mf.name} ({len(cand['pages'])} pages)")
-                break
-        except Exception as e:
-            print(f"⚠️ Could not load {mf.name}: {e}")
+    # 3. Load MangaToolPlus Project (.mtp)
+    # Prefer original downloaded .mtp file (not *_updated.mtp)
+    mtp_files = list(work_dir.glob("*.mtp"))
+    original_mtps = [f for f in mtp_files if not f.name.endswith("_updated.mtp")]
+    selected_mtp = original_mtps[0] if original_mtps else (mtp_files[0] if mtp_files else None)
 
-    # 3. Fetch Google Docs Translation
+    project_data = {}
+    if selected_mtp and selected_mtp.exists():
+        try:
+            print(f"📦 Loading MangaToolPlus Project: {selected_mtp.name}")
+            with open(selected_mtp, "r", encoding="utf-8") as f:
+                project_data = json.load(f)
+        except Exception as e:
+            print(f"⚠️ Could not load {selected_mtp.name}: {e}")
+
+    # Prepare files list and layer mappings from MTP
+    all_files_info = project_data.get("files", [])
+    ts_data = project_data.get("tsData", {})
+    ocr_data = project_data.get("ocrData", {})
+
+    # Helper: resolve layers for a given file name
+    def get_layers_for_page(filename: str):
+        # 1. Exact match in tsData
+        if filename in ts_data and ts_data[filename]:
+            return ts_data[filename]
+        # 2. Case-insensitive or stem match in tsData
+        stem = Path(filename).stem.lower()
+        for k, v in ts_data.items():
+            if Path(k).stem.lower() == stem and v:
+                return v
+        # 3. Fallback to ocrData
+        if filename in ocr_data and ocr_data[filename]:
+            return ocr_data[filename]
+        for k, v in ocr_data.items():
+            if Path(k).stem.lower() == stem and v:
+                return v
+        # 4. Check legacy 'pages' format if any
+        if "pages" in project_data:
+            for p in project_data.get("pages", []):
+                p_name = p.get("fileName", "") or p.get("name", "")
+                if Path(p_name).stem.lower() == stem:
+                    return p.get("layers", [])
+        return []
+
+    # If project_data["files"] is missing or empty, build from sorted image_files on disk
+    if not all_files_info:
+        for img_p in image_files:
+            all_files_info.append({"name": img_p.name})
+
+    # 4. Fetch Google Docs Translation
     doc_text = ""
     if doc_id:
         try:
@@ -609,101 +625,134 @@ def run_export_psd_pipeline(args):
                 chapter_num=chapter_num,
                 access_token=args.google_access_token
             )
-            # Slices the requested chapter section if the document holds multiple chapters
+            # Slices requested chapter section if the document holds multiple chapters
             doc_text = extract_chapter_section(doc_text, chapter_num)
         except Exception as e:
             print(f"⚠️ Failed to fetch doc text: {e}")
 
-    dialogues = parse_dialogue_map(doc_text) if doc_text else {}
+    translations = parse_numbered_translations(doc_text) if doc_text else {}
 
-    # 4. Initialize LaMa Inpainter
+    # 5. Initialize LaMa Inpainting Engine
     lama_service = None
-    model_paths = [
-        Path("models/big-lama.pt"),
-        Path(__file__).resolve().parent.parent / "models" / "big-lama.pt",
-        Path("D:/MangaToolPlus_TEST/models/big-lama.pt")
-    ]
-    for mp in model_paths:
-        # big-lama.pt is ~200MB; skip 404 error strings or incomplete downloads
-        if mp.exists() and mp.stat().st_size > 50_000_000:
-            try:
-                lama_service = StandaloneLama(mp)
-                break
-            except Exception as e:
-                print(f"⚠️ Failed to init LaMa from {mp}: {e}")
+    if not args.no_inpaint:
+        model_paths = [
+            Path("models/big-lama.pt"),
+            Path(__file__).resolve().parent.parent / "models" / "big-lama.pt",
+            Path("D:/MangaToolPlus_TEST/models/big-lama.pt")
+        ]
+        for mp in model_paths:
+            if mp.exists() and mp.stat().st_size > 50_000_000:
+                try:
+                    lama_service = StandaloneLama(mp)
+                    break
+                except Exception as e:
+                    print(f"⚠️ Failed to init LaMa from {mp}: {e}")
 
-    if not lama_service:
-        print("ℹ️ LaMa model not available or offline. Fallback to OpenCV bubble inpainting.")
+        if not lama_service:
+            print("ℹ️ LaMa model not available. Fallback to OpenCV bubble inpainting.")
 
-    # 5. Process each page
-    pages_to_process = image_files if args.full else image_files[:args.limit]
+    # 6. Process Pages Sequentially
+    pages_to_process = all_files_info if args.full else all_files_info[:args.limit]
     total_pages = len(pages_to_process)
     generated_psds = []
+    text_layers_data = {}
 
-    print(f"\n🎨 Processing {total_pages} pages...")
+    # Sequential global indexing across all pages in the chapter (MangaToolPlus logic)
+    global_index = 1
+    total_matched_count = 0
+    total_unmatched_count = 0
 
-    for idx, img_path in enumerate(pages_to_process, start=1):
+    print(f"\n🎨 Processing {total_pages} pages (matching translations [#1]..[#N])...")
+
+    for file_idx, f_info in enumerate(pages_to_process, start=1):
         page_start = time.time()
-        fname = img_path.name
-        img_bgr = cv2.imread(str(img_path))
-        if img_bgr is None:
+        fname = f_info.get("name", "")
+        img_path = work_dir / fname
+        if not img_path.exists():
+            # Try finding image with matching stem
+            cand = list(work_dir.glob(f"{Path(fname).stem}.*"))
+            cand = [c for c in cand if c.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]]
+            if cand:
+                img_path = cand[0]
+            else:
+                print(f"[{file_idx}/{total_pages}] ⚠️ Image {fname} not found on disk, skipping.")
+                continue
+
+        raw_img = cv2.imread(str(img_path))
+        if raw_img is None:
+            print(f"[{file_idx}/{total_pages}] ⚠️ Failed to decode {fname}, skipping.")
             continue
-        h, w = img_bgr.shape[:2]
+        h, w = raw_img.shape[:2]
 
-        # Find layers for this page in .mtp
-        page_layers = []
-        if mtp_data and "pages" in mtp_data:
-            # Match page by filename or index
-            for p in mtp_data["pages"]:
-                p_name = p.get("fileName", "") or p.get("name", "")
-                if p_name == fname or p_name.replace(" ", "") == fname.replace(" ", ""):
-                    page_layers = p.get("layers", [])
-                    break
-            if not page_layers and idx <= len(mtp_data["pages"]):
-                page_layers = mtp_data["pages"][idx - 1].get("layers", [])
+        # Retrieve layers for this page
+        layers = get_layers_for_page(fname)
+        page_matched_layers = []
 
-        # Match layers with dialogue
-        matched_layers = []
-        for l in page_layers:
-            num = l.get("number")
-            if num is None and "number" in l:
-                try:
-                    num = int(l["number"])
-                except Exception:
-                    pass
-            if num in dialogues:
-                matched_layers.append((num, l))
+        for l in layers:
+            current_num = global_index
+            global_index += 1
 
+            if current_num in translations:
+                thai_trans = translations[current_num]
+                l["translation"] = thai_trans
+                page_matched_layers.append((current_num, l))
+                total_matched_count += 1
+            else:
+                l["translation"] = ""
+                total_unmatched_count += 1
+
+        print(f"\n📄 [{file_idx}/{total_pages}] Processing {fname} ({w}x{h}): {len(page_matched_layers)} matched / {len(layers)} total layers")
+
+        # Inpainting speech bubbles as individual layers
         inpaint_patches = []
         temp_patch_files = []
+        pad = 12  # Padding around the bounding box
 
-        # Run inpainting on each bubble individually (LaMa or OpenCV fallback)
-        if matched_layers:
-            pad = 12
-            for num, l in matched_layers:
+        if not args.no_inpaint and page_matched_layers:
+            t_inp0 = time.time()
+            for num, l in page_matched_layers:
                 box = l.get("box", [])
                 if not box:
                     continue
-                xs = [p[0] for p in box]
-                ys = [p[1] for p in box]
-                min_x = max(0, int(min(xs)) - pad)
-                max_x = min(w, int(max(xs)) + pad)
-                min_y = max(0, int(min(ys)) - pad)
-                max_y = min(h, int(max(ys)) + pad)
 
-                box_w = max_x - min_x
-                box_h = max_y - min_y
-                if box_w <= 0 or box_h <= 0:
+                # Handle polygon / quad points [[x1, y1], [x2, y2], ...] or flat rect [x1, y1, x2, y2]
+                if isinstance(box[0], (list, tuple)):
+                    xs = [p[0] for p in box]
+                    ys = [p[1] for p in box]
+                    min_x = max(0, int(min(xs)) - pad)
+                    min_y = max(0, int(min(ys)) - pad)
+                    max_x = min(w, int(max(xs)) + pad)
+                    max_y = min(h, int(max(ys)) + pad)
+                    patch_w = max_x - min_x
+                    patch_h = max_y - min_y
+                    if patch_w <= 0 or patch_h <= 0:
+                        continue
+
+                    patch_crop = raw_img[min_y:max_y, min_x:max_x].copy()
+                    patch_mask = np.zeros((patch_h, patch_w), dtype=np.uint8)
+                    local_pts = np.array([[p[0] - min_x, p[1] - min_y] for p in box], dtype=np.int32)
+                    cv2.fillPoly(patch_mask, [local_pts], 255)
+                elif len(box) >= 4:
+                    min_x = max(0, int(box[0]) - pad)
+                    min_y = max(0, int(box[1]) - pad)
+                    max_x = min(w, int(box[2]) + pad)
+                    max_y = min(h, int(box[3]) + pad)
+                    patch_w = max_x - min_x
+                    patch_h = max_y - min_y
+                    if patch_w <= 0 or patch_h <= 0:
+                        continue
+
+                    patch_crop = raw_img[min_y:max_y, min_x:max_x].copy()
+                    patch_mask = np.zeros((patch_h, patch_w), dtype=np.uint8)
+                    cv2.rectangle(patch_mask, (pad, pad), (patch_w - pad, patch_h - pad), 255, -1)
+                else:
                     continue
 
-                patch_crop = img_bgr[min_y:max_y, min_x:max_x].copy()
-                patch_mask = np.zeros((box_h, box_w), dtype=np.uint8)
-                rel_box = np.array([[p[0] - min_x, p[1] - min_y] for p in box], dtype=np.int32)
-                cv2.fillPoly(patch_mask, [rel_box], 255)
-
+                # Dilate mask for smooth edge blending
                 kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
                 patch_mask = cv2.dilate(patch_mask, kernel)
 
+                # Inpaint bubble
                 try:
                     if lama_service:
                         cleaned_patch = lama_service.inpaint(patch_crop, patch_mask)
@@ -711,7 +760,7 @@ def run_export_psd_pipeline(args):
                         cleaned_patch = cv2.inpaint(patch_crop, patch_mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
 
                     patch_rgba = cv2.cvtColor(cleaned_patch, cv2.COLOR_BGR2RGBA)
-                    patch_bin_path = work_dir / f"{img_path.stem}_patch_{num}.bin"
+                    patch_bin_path = work_dir / f"{Path(fname).stem}_patch_{num}.bin"
                     with open(patch_bin_path, "wb") as f_p:
                         f_p.write(patch_rgba.tobytes())
                     temp_patch_files.append(patch_bin_path)
@@ -719,91 +768,112 @@ def run_export_psd_pipeline(args):
                     inpaint_patches.append({
                         "name": f"Inpaint #{num}",
                         "number": num,
-                        "rawPath": str(patch_bin_path).replace("\\", "/"),
                         "left": min_x,
                         "top": min_y,
                         "right": max_x,
                         "bottom": max_y,
-                        "width": box_w,
-                        "height": box_h
+                        "width": patch_w,
+                        "height": patch_h,
+                        "rawPath": str(patch_bin_path).replace("\\", "/")
                     })
-                except Exception as inp_err:
-                    print(f"⚠️ Inpaint error #{num}: {inp_err}")
 
-        # Build text layers
-        text_layers = []
-        for num, l in matched_layers:
+                    # Record in mtp layer structure
+                    l["patchRect"] = [min_x, min_y, max_x, max_y]
+                    l["inpaintVisible"] = True
+                    l["inpaintModel"] = "lama" if lama_service else "cv2"
+                except Exception as inp_err:
+                    print(f"   ⚠️ Inpaint error #{num}: {inp_err}")
+
+            if inpaint_patches:
+                print(f"   🎨 Inpainted {len(inpaint_patches)} patches in {time.time() - t_inp0:.2f}s")
+
+        # Typesetting text layers (Font 'TF LANNA Bold')
+        page_text_layers = []
+        for num, l in page_matched_layers:
             box = l.get("box", [])
             if not box:
                 continue
-            xs = [p[0] for p in box]
-            ys = [p[1] for p in box]
-            bw = max(xs) - min(xs)
-            bh = max(ys) - min(ys)
-            cx = (min(xs) + max(xs)) / 2.0
-            cy = (min(ys) + max(ys)) / 2.0
 
-            trans_text = dialogues.get(num, "")
+            if isinstance(box[0], (list, tuple)):
+                xs = [p[0] for p in box]
+                ys = [p[1] for p in box]
+                center_x = (min(xs) + max(xs)) / 2.0
+                center_y = (min(ys) + max(ys)) / 2.0
+                box_w = max(xs) - min(xs)
+                box_h = max(ys) - min(ys)
+            elif len(box) >= 4:
+                center_x = (box[0] + box[2]) / 2.0
+                center_y = (box[1] + box[3]) / 2.0
+                box_w = box[2] - box[0]
+                box_h = box[3] - box[1]
+            else:
+                continue
+
+            trans_text = l.get("translation", "")
             if not trans_text:
                 continue
 
-            font_size = max(18, min(36, int(bh / 3.2))) if bh > 40 else 24
-            max_chars = max(6, int(bw / (font_size * 0.75)))
-            wrapped_text = thai_word_wrap(trans_text, max_chars)
+            wrapped_text, font_size = wrap_thai_text_for_bubble(trans_text, box_w, box_h)
 
-            text_layers.append({
+            layer_obj = {
+                "id": f"ts_layer_{Path(fname).stem}_{num}",
                 "number": num,
                 "text": wrapped_text,
-                "x": round(cx),
-                "y": round(cy),
+                "x": round(center_x),
+                "y": round(center_y),
+                "boxWidth": round(box_w),
+                "boxHeight": round(box_h),
                 "fontSize": font_size,
-                "fontFamily": args.font,
+                "fontFamily": font_family,
                 "weight": "bold",
                 "color": "#000000",
-                "strokeColor": "#FFFFFF",
                 "strokeWidth": 3,
-                "boxWidth": round(bw),
-                "boxHeight": round(bh)
-            })
+                "strokeColor": "#FFFFFF"
+            }
+            page_text_layers.append(layer_obj)
 
-        # Save raw image buffer for Background layer
-        raw_rgba = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGBA)
-        raw_bin_path = work_dir / f"{img_path.stem}_bg.bin"
-        with open(raw_bin_path, "wb") as f_bg:
+        text_layers_data[fname] = page_text_layers
+
+        # Export to Native PSD via ag-psd
+        raw_bg_bin = work_dir / f"{Path(fname).stem}_raw_bg.bin"
+        raw_rgba = cv2.cvtColor(raw_img, cv2.COLOR_BGR2RGBA)
+        with open(raw_bg_bin, "wb") as f_bg:
             f_bg.write(raw_rgba.tobytes())
-        temp_patch_files.append(raw_bin_path)
+        temp_patch_files.append(raw_bg_bin)
 
-        # Build manifest for export_psd_node.js
-        psd_filename = f"{img_path.stem}.psd"
+        psd_filename = f"{Path(fname).stem}.psd"
         out_psd_path = psd_out_dir / psd_filename
-        manifest = {
+        psd_manifest = {
             "width": w,
             "height": h,
-            "rawImagePath": str(raw_bin_path).replace("\\", "/"),
+            "rawImagePath": str(raw_bg_bin).replace("\\", "/"),
             "outputPath": str(out_psd_path).replace("\\", "/"),
             "inpaintPatches": inpaint_patches,
-            "textLayers": text_layers
+            "textLayers": page_text_layers
         }
 
-        manifest_path = work_dir / f"{img_path.stem}_manifest.json"
-        with open(manifest_path, "w", encoding="utf-8") as f_m:
-            json.dump(manifest, f_m, ensure_ascii=False)
-        temp_patch_files.append(manifest_path)
+        manifest_file = work_dir / f"{Path(fname).stem}_manifest.json"
+        with open(manifest_file, "w", encoding="utf-8") as f_m:
+            json.dump(psd_manifest, f_m, ensure_ascii=False)
+        temp_patch_files.append(manifest_file)
 
-        # Call tools/export_psd_node.js
+        # Call export_psd_node.js
         node_script = Path(__file__).resolve().parent / "export_psd_node.js"
-        node_cmd = ["node", str(node_script), "--manifest", str(manifest_path)]
-        try:
-            res = subprocess.run(node_cmd, check=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
-            if out_psd_path.exists():
-                generated_psds.append(out_psd_path)
-                print(f"[{idx}/{total_pages}] ✓ Created {psd_filename} ({time.time() - page_start:.2f}s, {len(inpaint_patches)} patches, {len(text_layers)} texts)")
-            else:
-                print(f"[{idx}/{total_pages}] ⚠️ PSD not generated: {res.stderr}")
-        except Exception as e:
-            print(f"[{idx}/{total_pages}] ❌ Node export error: {e}")
+        if not node_script.exists():
+            node_script = Path(__file__).resolve().parent.parent / "scripts" / "export_psd_node.js"
 
-        # Clean up temporary page bin files
+        cmd = ["node", str(node_script), "--manifest", str(manifest_file)]
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+            if res.returncode == 0 and out_psd_path.exists():
+                generated_psds.append(out_psd_path)
+                print(f"   ✓ Created {psd_filename} ({time.time() - page_start:.2f}s, {len(inpaint_patches)} patches, {len(page_text_layers)} texts)")
+            else:
+                print(f"   ❌ PSD Export error: {res.stderr.strip() or res.stdout.strip()}")
+        except Exception as e:
+            print(f"   ❌ Node invocation error: {e}")
+
+        # Clean up temporary page binary files
         for tf in temp_patch_files:
             try:
                 if tf.exists():
@@ -811,9 +881,25 @@ def run_export_psd_pipeline(args):
             except Exception:
                 pass
 
-    print(f"\n🎉 Successfully created {len(generated_psds)} PSD files in {time.time() - start_time:.2f}s!")
+    # Update and Save Native MangaToolPlus Project
+    if project_data:
+        project_data["textLayersData"] = text_layers_data
+        base_name = selected_mtp.stem if selected_mtp else f"chapter_{chapter_num}"
+        out_mtp_file = work_dir / f"{base_name}_updated.mtp"
+        with open(out_mtp_file, "w", encoding="utf-8") as f:
+            json.dump(project_data, f, ensure_ascii=False)
+        print(f"\n📦 Saved updated project: {out_mtp_file.name}")
 
-    # 6. Upload PSD files directly to Google Drive Subfolder
+    print("\n" + "=" * 65)
+    print("🎉 PSD Generation Summary:")
+    print(f"   Total Pages Processed:     {len(pages_to_process)}")
+    print(f"   Total Matched Layers:      {total_matched_count}")
+    print(f"   Total Unmatched Layers:    {total_unmatched_count}")
+    print(f"   Generated PSD Files:       {len(generated_psds)}")
+    print(f"   Total Elapsed Time:        {time.time() - start_time:.2f}s")
+    print("=" * 65)
+
+    # 7. Upload PSD files directly to Google Drive Subfolder
     target_upload_folder_id = folder_id
     if args.upload_to_source and drive_service and generated_psds:
         target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
@@ -825,7 +911,7 @@ def run_export_psd_pipeline(args):
                 up_count += 1
         print(f"   ✓ Uploaded {up_count}/{len(generated_psds)} PSD files to Google Drive subfolder '{subfolder_name}'!")
 
-    # 7. Notify GAS that Export PSD is complete
+    # 8. Notify GAS that Export PSD is complete
     notify_gas_export_psd_completed(
         folder_id=folder_id,
         queue_id=args.queue_id,
@@ -838,7 +924,7 @@ def run_export_psd_pipeline(args):
         passcode=args.gas_passcode
     )
 
-    # 8. Clean up local files if requested
+    # 9. Clean up local files if requested
     if args.cleanup:
         try:
             shutil.rmtree(work_dir, ignore_errors=True)
@@ -856,7 +942,7 @@ def main():
     parser.add_argument("--queue-id", default="", help="WorkQueue item ID")
     parser.add_argument("--doc-url", default="", help="Google Docs Reference URL")
     parser.add_argument("--tab-id", default="", help="Google Docs Tab ID (optional)")
-    parser.add_argument("--font", default="TF LANNA Bold", help="Font family for typesetting")
+    parser.add_argument("--font", default="TF LANNA Bold", help="Font family for typesetting (default: TF LANNA Bold)")
     parser.add_argument("--google-access-token", default="", help="Google OAuth Access Token from GAS")
     parser.add_argument("--gas-url", default=None, help="GAS Web App exec URL")
     parser.add_argument("--gas-passcode", default="10211032", help="GAS Passcode")
@@ -865,6 +951,7 @@ def main():
     parser.add_argument("--cleanup", action="store_true", default=False, help="Clean up local files")
     parser.add_argument("--full", action="store_true", default=False, help="Process all chapter pages")
     parser.add_argument("--limit", type=int, default=3, help="Limit number of pages to process (for test)")
+    parser.add_argument("--no-inpaint", action="store_true", default=False, help="Skip inpainting step")
 
     args = parser.parse_args()
     run_export_psd_pipeline(args)

@@ -5,8 +5,19 @@
 const fs = require('fs');
 const path = require('path');
 
-const AG_PSD_PATH = path.resolve(__dirname, '../app/static/js/vendor/ag-psd.bundle.js');
-const agPsd = require(AG_PSD_PATH);
+// Resolve ag-psd bundle across tools, scripts, or vendor dir
+const candidatePaths = [
+    path.resolve(__dirname, './ag-psd.bundle.js'),
+    path.resolve(__dirname, '../tools/ag-psd.bundle.js'),
+    path.resolve(__dirname, '../scripts/ag-psd.bundle.js'),
+    path.resolve(__dirname, '../app/static/js/vendor/ag-psd.bundle.js')
+];
+const agPsdPath = candidatePaths.find(p => fs.existsSync(p));
+if (!agPsdPath) {
+    console.error('Error: ag-psd.bundle.js not found in candidate paths: ' + JSON.stringify(candidatePaths));
+    process.exit(1);
+}
+const agPsd = require(agPsdPath);
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -181,7 +192,7 @@ async function main() {
 
     fs.writeFileSync(outputPath, psdBuffer);
     const sizeMb = (psdBuffer.length / (1024 * 1024)).toFixed(2);
-    console.log(`[ag-psd] ✓ Successfully saved: ${outputPath} (${sizeMb} MB) with ${inpaintPatches ? inpaintPatches.length : 0} inpaint layers, ${textLayers.length} text layers`);
+    console.log(`[ag-psd] ✓ Successfully saved: ${outputPath} (${sizeMb} MB) with ${inpaintPatches ? inpaintPatches.length : 0} inpaint layers, ${textLayers ? textLayers.length : 0} text layers`);
 }
 
 main().catch(err => {
