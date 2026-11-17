@@ -737,8 +737,12 @@ export function QueueView({
         </div>
       </div>
 
-      {/* GAS + GitHub Actions Auto OCR Status Banner */}
-      <AutoOcrStatusBanner onQueueRefresh={handleOcrQueueRefresh} />
+      {/* GAS + GitHub Actions Auto OCR & Export PSD Status Banner */}
+      <AutoOcrStatusBanner
+        onQueueRefresh={handleOcrQueueRefresh}
+        queueList={queueList}
+        mangaList={mangaList}
+      />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#26334d] pt-5">

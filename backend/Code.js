@@ -528,6 +528,9 @@ function doPost(e) {
       case 'TRIGGER_EXPORT_PSD':
         result = triggerExportPsdWorkflow(payload);
         break;
+      case 'RUN_EXPORT_PSD_BATCH_JOB':
+        result = runExportPsdBatchJob(payload);
+        break;
       case 'COMPLETE_EXPORT_PSD':
         result = completeExportPsd(payload);
         break;
@@ -8877,16 +8880,122 @@ function triggerExportPsdWorkflow(params) {
 
     const resp = UrlFetchApp.fetch(url, options);
     const code = resp.getResponseCode();
-    console.log('triggerExportPsdWorkflow dispatch status:', code);
-    return {
-      success: code >= 200 && code < 300,
+    const isOk = code >= 200 && code < 300;
+    const now = new Date().toISOString();
+
+    const resultStatus = {
+      lastTriggeredAt: now,
       statusCode: code,
+      success: isOk,
+      folderId: folderId,
+      mangaName: mangaName,
+      chapter: chapterNum,
       response: resp.getContentText()
     };
+
+    try {
+      PropertiesService.getScriptProperties().setProperty('EXPORT_PSD_LAST_PIPELINE_TRIGGER', JSON.stringify(resultStatus));
+    } catch (e) {}
+
+    if (isOk && (params.queueId || params.queue_id)) {
+      try {
+        const targetQid = String(params.queueId || params.queue_id).trim();
+        const sheet = getSheet(QUEUE_SHEET_NAME);
+        const qData = sheet.getDataRange().getValues();
+        const qHeaders = qData[0].map(h => h.toString().toLowerCase().trim());
+        const psdCol = qHeaders.indexOf('psdstatus') + 1;
+        const psdTimeCol = qHeaders.indexOf('psdtime') + 1;
+        const psdNameCol = qHeaders.indexOf('psdname') + 1;
+        for (let r = 1; r < qData.length; r++) {
+          if (String(qData[r][0]).trim() === targetQid) {
+            if (psdCol > 0) sheet.getRange(r + 1, psdCol).setValue('กำลังทำ');
+            if (psdTimeCol > 0) sheet.getRange(r + 1, psdTimeCol).setValue(new Date());
+            if (psdNameCol > 0) sheet.getRange(r + 1, psdNameCol).setValue('GitHub Actions');
+            invalidateCache('workQueue');
+            break;
+          }
+        }
+      } catch (e) {}
+    }
+
+    console.log('triggerExportPsdWorkflow dispatch status:', code);
+    return resultStatus;
   } catch (err) {
     console.error('triggerExportPsdWorkflow error:', err);
     return { success: false, error: err.toString() };
   }
+}
+
+function runExportPsdBatchJob(payload) {
+  payload = payload || {};
+  const maxBatch = Number(payload.maxBatch || 3);
+  const queueList = getWorkQueue();
+  const mangaList = getMangaList();
+
+  const eligible = queueList.filter(item => {
+    const trDone = String(item.translatestatus || '').trim() === 'เสร็จแล้ว';
+    const tsDone = String(item.typesetstatus || '').trim() === 'เสร็จแล้ว';
+    const postDone = String(item.poststatus || '').trim() === 'เสร็จแล้ว';
+    const psdSt = String(item.psdstatus || '').trim().toLowerCase();
+    const isPsdDoneOrActive = psdSt === 'เสร็จแล้ว' || psdSt === 'กำลังทำ' || psdSt === 'skip';
+    const manga = mangaList.find(m => String(m.mangaid) === String(item.mangaid));
+    const trName = String(item.translatorname || (manga && manga.lockedtranslator) || '').toLowerCase();
+    const isPratchaya = trName.includes('pratchaya');
+
+    return trDone && !tsDone && !postDone && !isPsdDoneOrActive && !isPratchaya;
+  });
+
+  let triggeredCount = 0;
+  const triggeredList = [];
+
+  for (let i = 0; i < eligible.length; i++) {
+    if (triggeredCount >= maxBatch) break;
+    const item = eligible[i];
+    const workLink = String(item.worklink || '');
+    const m = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
+    if (!m) continue;
+    const folderId = m[1];
+    const manga = mangaList.find(mg => String(mg.mangaid) === String(item.mangaid));
+    const mangaTitle = manga ? (manga.manganame || manga.originalname || '') : '';
+    const docUrl = manga ? (manga.translationdocurl || '') : '';
+    if (!docUrl) continue;
+
+    const res = triggerExportPsdWorkflow({
+      queueId: item.queueid,
+      folderId: folderId,
+      workLink: workLink,
+      mangaName: mangaTitle,
+      chapterNum: String(item.chapter || ''),
+      mangaId: item.mangaid,
+      docUrl: docUrl,
+      font: 'TF LANNA Bold'
+    });
+
+    if (res && res.success) {
+      triggeredCount++;
+      triggeredList.push({
+        queueId: item.queueid,
+        mangaTitle: mangaTitle,
+        chapter: item.chapter,
+        folderId: folderId,
+        triggeredAt: new Date().toISOString()
+      });
+    }
+  }
+
+  const summary = {
+    success: true,
+    checkedAt: new Date().toISOString(),
+    totalEligible: eligible.length,
+    triggeredCount: triggeredCount,
+    triggeredList: triggeredList
+  };
+
+  try {
+    PropertiesService.getScriptProperties().setProperty('EXPORT_PSD_LAST_BATCH_SUMMARY', JSON.stringify(summary));
+  } catch (e) {}
+
+  return summary;
 }
 
 function completeExportPsd(payload) {
@@ -9137,6 +9246,8 @@ function deleteMangaOcr6HourTrigger() {
 function getMangaOcrStatus() {
   let lastTrigger = null;
   let lastBatch = null;
+  let lastPsdTrigger = null;
+  let lastPsdBatch = null;
   let is6HourTriggerActive = false;
 
   try {
@@ -9150,6 +9261,16 @@ function getMangaOcrStatus() {
   } catch (e) {}
 
   try {
+    const rawPsdTrigger = PropertiesService.getScriptProperties().getProperty('EXPORT_PSD_LAST_PIPELINE_TRIGGER');
+    if (rawPsdTrigger) lastPsdTrigger = JSON.parse(rawPsdTrigger);
+  } catch (e) {}
+
+  try {
+    const rawPsdBatch = PropertiesService.getScriptProperties().getProperty('EXPORT_PSD_LAST_BATCH_SUMMARY');
+    if (rawPsdBatch) lastPsdBatch = JSON.parse(rawPsdBatch);
+  } catch (e) {}
+
+  try {
     const triggers = ScriptApp.getProjectTriggers();
     is6HourTriggerActive = triggers.some(t => t.getHandlerFunction() === 'scheduledMangaOcr6HourJob');
   } catch (e) {}
@@ -9158,6 +9279,10 @@ function getMangaOcrStatus() {
   let skippedCount = 0;
   let doneCount = 0;
   let totalTasks = 0;
+
+  let pendingPsd = 0;
+  let skippedPsd = 0;
+  let donePsd = 0;
 
   try {
     const sheet = getSheet(QUEUE_SHEET_NAME);
@@ -9169,12 +9294,20 @@ function getMangaOcrStatus() {
       const exIdx = headers.indexOf('extractstatus');
       const ocrIdx = headers.indexOf('ocrstatus');
       const extNameIdx = headers.indexOf('extractorname');
+      const trIdx = headers.indexOf('translatestatus');
+      const trNameIdx = headers.indexOf('translatorname');
+      const psdIdx = headers.indexOf('psdstatus');
+      const tsIdx = headers.indexOf('typesetstatus');
 
       for (let i = 1; i < data.length; i++) {
         const up = String(data[i][upIdx] || '').trim();
         const ex = String(data[i][exIdx] || '').trim();
         const ocr = String(data[i][ocrIdx] || '').trim().toLowerCase();
         const ext = String(data[i][extNameIdx] || '').toLowerCase();
+        const tr = trIdx !== -1 ? String(data[i][trIdx] || '').trim() : '';
+        const trName = trNameIdx !== -1 ? String(data[i][trNameIdx] || '').toLowerCase() : '';
+        const psd = psdIdx !== -1 ? String(data[i][psdIdx] || '').trim().toLowerCase() : '';
+        const ts = tsIdx !== -1 ? String(data[i][tsIdx] || '').trim() : '';
 
         const isKikDone = (ext.includes('kikuk') || ext.includes('kik')) && ex === 'เสร็จแล้ว';
 
@@ -9185,6 +9318,15 @@ function getMangaOcrStatus() {
         } else if (up === 'เสร็จแล้ว' && ex === 'รอเริ่ม') {
           pendingCount++;
         }
+
+        const isPrat = trName.includes('pratchaya');
+        if (psd === 'skip' || isPrat) {
+          skippedPsd++;
+        } else if (psd === 'เสร็จแล้ว' || ts === 'เสร็จแล้ว') {
+          donePsd++;
+        } else if (tr === 'เสร็จแล้ว' && ts !== 'เสร็จแล้ว') {
+          pendingPsd++;
+        }
       }
     }
   } catch (e) {}
@@ -9194,11 +9336,16 @@ function getMangaOcrStatus() {
     is6HourTriggerActive: is6HourTriggerActive,
     lastPipelineTrigger: lastTrigger,
     lastBatchSummary: lastBatch,
+    lastPsdTrigger: lastPsdTrigger,
+    lastPsdBatchSummary: lastPsdBatch,
     stats: {
       totalTasks: totalTasks,
       pendingOcr: pendingCount,
       skippedOcr: skippedCount,
-      doneOcr: doneCount
+      doneOcr: doneCount,
+      pendingPsd: pendingPsd,
+      skippedPsd: skippedPsd,
+      donePsd: donePsd
     }
   };
 }

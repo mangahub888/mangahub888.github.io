@@ -95,6 +95,10 @@ export function useGitHubActionsStatus() {
       (r.path && (r.path.includes("gdrive_ocr") || r.path.includes("ocr"))) ||
       (r.name && (r.name.toLowerCase().includes("ocr") || r.name.toLowerCase().includes("google drive manga ocr")))
 
+    const isExportPsd = (r: GitHubWorkflowRun) =>
+      (r.path && (r.path.includes("export_psd") || r.path.includes("psd"))) ||
+      (r.name && (r.name.toLowerCase().includes("psd") || r.name.toLowerCase().includes("export")))
+
     const activeRuns = runs.filter(isWorkflowRunning)
     const isAnyRunning = activeRuns.length > 0
 
@@ -118,11 +122,16 @@ export function useGitHubActionsStatus() {
     const activeMangaOcrRun = mangaOcrRuns.find(isWorkflowRunning) || null
     const isMangaOcrRunning = Boolean(activeMangaOcrRun)
 
+    const exportPsdRuns = runs.filter(isExportPsd)
+    const activeExportPsdRun = exportPsdRuns.find(isWorkflowRunning) || null
+    const isExportPsdRunning = Boolean(activeExportPsdRun)
+
     const latestActiveRun = activeRuns[0] || null
     const latestKuaikanRun = kuaikanRuns[0] || null
     const latestRawTrackerRun = rawTrackerRuns[0] || null
     const latestProjectIdeasRun = projectIdeasRuns[0] || null
     const latestMangaOcrRun = mangaOcrRuns[0] || null
+    const latestExportPsdRun = exportPsdRuns[0] || null
 
     return {
       runs,
@@ -133,16 +142,19 @@ export function useGitHubActionsStatus() {
       isThunderScansRunning,
       isProjectIdeasRunning,
       isMangaOcrRunning,
+      isExportPsdRunning,
       activeKuaikanRun,
       activeRawTrackerRun,
       activeThunderScansRun,
       activeProjectIdeasRun,
       activeMangaOcrRun,
+      activeExportPsdRun,
       latestActiveRun,
       latestKuaikanRun,
       latestRawTrackerRun,
       latestProjectIdeasRun,
       latestMangaOcrRun,
+      latestExportPsdRun,
     }
   }, [runs])
 
