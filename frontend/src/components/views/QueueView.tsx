@@ -982,7 +982,6 @@ export function QueueView({
                 />
               </TableHead>
               <TableHead className="min-w-[180px] max-w-[260px] px-3 whitespace-nowrap">วันที่ / เรื่อง</TableHead>
-              <TableHead className="w-[105px] min-w-[96px] px-2.5 whitespace-nowrap">1. อัป Raw</TableHead>
               <TableHead className="w-[115px] min-w-[106px] px-2.5 whitespace-nowrap">2. ดึงคำออโต้</TableHead>
               <TableHead className="w-[110px] min-w-[100px] px-2.5 whitespace-nowrap">3. QC ดึงคำ</TableHead>
               <TableHead className="w-[96px] min-w-[88px] px-2.5 whitespace-nowrap">แปล</TableHead>
@@ -999,7 +998,7 @@ export function QueueView({
             {isLoading ? (
               Array.from({ length: 6 }).map((_, idx) => (
                 <TableRow key={idx}>
-                  <TableCell colSpan={12}>
+                  <TableCell colSpan={11}>
                     <Skeleton className="h-12 w-full" />
                   </TableCell>
                 </TableRow>
@@ -1007,7 +1006,7 @@ export function QueueView({
             ) : filteredQueue.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={12}
+                  colSpan={11}
                   className="text-center py-12 text-slate-400"
                 >
                   ไม่มีข้อมูลคิวงานที่ตรงกับตัวกรอง
@@ -1041,10 +1040,13 @@ export function QueueView({
                 const tsDur = formatDuration(q.translatetime, q.typesettime)
                 const pbDur = formatDuration(q.typesettime, q.publishtime)
 
+                const isUploadPending = !isStepDone(q.uploadstatus)
+
                 return (
                   <TableRow
                     key={qid}
                     data-state={isSelected ? "selected" : undefined}
+                    className={isUploadPending ? "bg-amber-950/20 hover:bg-amber-950/30 border-l-4 border-l-amber-500" : undefined}
                   >
                     <TableCell className="px-2.5 py-3 text-center">
                       <input
@@ -1059,7 +1061,7 @@ export function QueueView({
                       <div className="text-[11px] text-slate-400 whitespace-nowrap">{dateStr}</div>
                       <div
                         className={`font-semibold leading-snug ${
-                          urgent ? "text-red-400" : "text-slate-100"
+                          urgent ? "text-red-400" : (isUploadPending ? "text-amber-300" : "text-slate-100")
                         } flex items-center gap-1.5 flex-wrap`}
                       >
                         <span className="line-clamp-2 break-words">
@@ -1072,11 +1074,26 @@ export function QueueView({
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400 whitespace-nowrap mt-0.5">
-                        ตอนที่ {q.chapter}
+                      <div className="text-xs text-slate-400 whitespace-nowrap mt-0.5 flex items-center gap-1.5">
+                        <span>ตอนที่ {q.chapter}</span>
+                        {isUploadPending && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setBackupQueue([...queueList]);
+                              setActiveStepItem(q);
+                              setActiveStepKey("upload");
+                              setStepModalOpen(true);
+                            }}
+                            className="cursor-pointer rounded bg-amber-500/25 border border-amber-500/50 px-1.5 py-0.2 text-[10px] font-bold text-amber-300 hover:bg-amber-500/40 transition-colors shadow-sm"
+                            title="คลิกเพื่ออัปเดตสถานะ อัป Raw"
+                          >
+                            ⚠️ ยังไม่อัป Raw
+                          </span>
+                        )}
                       </div>
-                      {manga?.translationdocurl && (
-                        <div className="mt-1">
+                      <div className="mt-1 flex flex-wrap items-center gap-1">
+                        {manga?.translationdocurl && (
                           <a
                             href={manga.translationdocurl}
                             target="_blank"
@@ -1089,20 +1106,54 @@ export function QueueView({
                             Docs รวมแปล
                             <ExternalLink className="h-2.5 w-2.5 opacity-70 shrink-0" />
                           </a>
-                        </div>
-                      )}
-                      {renderStepLinks(q.worklink, "อัป Raw", "อัป Raw")}
-                    </TableCell>
-
-                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
-                      {renderStatusBadge(q, "upload", q.uploadstatus)}
-                      <div className="text-xs text-slate-400 mt-1 truncate max-w-[115px]" title={q.uploadername || "-"}>
-                        {q.uploadername || "-"}
-                        {upDur && (
-                          <div className="text-[11px] text-slate-500">
-                            ⏱️ {upDur}
-                          </div>
                         )}
+                        {(() => {
+                          const rawLinks = extractStepLinks(q.worklink, "อัป Raw");
+                          const isUpDone = isStepDone(q.uploadstatus);
+                          const rawUrl = rawLinks[0];
+
+                          if (!isUpDone) {
+                            return (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (rawUrl) {
+                                    window.open(rawUrl, "_blank", "noreferrer");
+                                  } else {
+                                    setBackupQueue([...queueList]);
+                                    setActiveStepItem(q);
+                                    setActiveStepKey("upload");
+                                    setStepModalOpen(true);
+                                  }
+                                }}
+                                className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium text-amber-300 hover:text-amber-200 bg-amber-950/60 hover:bg-amber-900/60 px-1.5 py-0.5 rounded border border-amber-600/60 shadow-sm transition-colors cursor-pointer"
+                                title={rawUrl ? "เปิดโฟลเดอร์ Google Drive สำหรับ อัป Raw (ยังไม่อัปเสร็จ)" : "คลิกเพื่ออัปเดตสถานะ/ใส่ลิงก์ อัป Raw"}
+                              >
+                                <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                                ⚠️ ยังไม่อัป Raw
+                              </button>
+                            );
+                          }
+
+                          if (rawUrl) {
+                            return (
+                              <a
+                                href={rawUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-medium text-emerald-400 hover:text-emerald-300 hover:underline bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-800/50 transition-colors"
+                                title="เปิดโฟลเดอร์ Google Drive อัป Raw (เสร็จแล้ว)"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink className="h-2.5 w-2.5 shrink-0" />
+                                อัป Raw
+                              </a>
+                            );
+                          }
+
+                          return null;
+                        })()}
                       </div>
                     </TableCell>
 
