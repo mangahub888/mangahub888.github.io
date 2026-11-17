@@ -181,6 +181,7 @@ export const QUEUE_STEPS = [
   "ocr",
   "extract",
   "translate",
+  "psd",
   "typeset",
   "publish",
   "post",
@@ -223,6 +224,9 @@ export function isQueueStepDone(q: any, step: string, manga?: any): boolean {
       return isStepDone(q.extractstatus)
     case "translate":
       return isStepDone(q.translatestatus)
+    case "psd":
+      if (isPratchaya && strStatus !== "กำลังทำ") return true
+      return isStepDone(q.psdstatus)
     case "typeset":
       return isStepDone(q.typesetstatus)
     case "publish":
@@ -243,6 +247,7 @@ export function matchesStepFilter(q: any, stepFilter: string, manga?: any): bool
       isQueueStepDone(q, "ocr", manga) &&
       isQueueStepDone(q, "extract", manga) &&
       isQueueStepDone(q, "translate", manga) &&
+      isQueueStepDone(q, "psd", manga) &&
       isQueueStepDone(q, "typeset", manga)
 
     return prevStepsDone && !isQueueStepDone(q, "post", manga)

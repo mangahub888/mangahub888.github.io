@@ -496,7 +496,7 @@ export function QueueView({
     )
   }
 
-  const renderStepLinks = (worklink: string | undefined, stepLabel: string) => {
+  const renderStepLinks = (worklink: string | undefined, stepLabel: string, customText?: string) => {
     const urls = extractStepLinks(worklink, stepLabel)
     if (urls.length === 0) return null
     return (
@@ -509,7 +509,7 @@ export function QueueView({
             rel="noreferrer"
             className="inline-flex items-center gap-0.5 whitespace-nowrap rounded bg-indigo-500/15 px-1.5 py-0.5 text-[11px] font-medium text-indigo-300 hover:bg-indigo-500/25"
           >
-            <ExternalLink className="h-3 w-3 shrink-0" /> Link
+            <ExternalLink className="h-3 w-3 shrink-0" /> {customText || (stepLabel === "อัป Raw" ? "อัป Raw" : "Link")}
           </a>
         ))}
       </div>
@@ -986,6 +986,7 @@ export function QueueView({
               <TableHead className="w-[115px] min-w-[106px] px-2.5 whitespace-nowrap">2. ดึงคำออโต้</TableHead>
               <TableHead className="w-[110px] min-w-[100px] px-2.5 whitespace-nowrap">3. QC ดึงคำ</TableHead>
               <TableHead className="w-[96px] min-w-[88px] px-2.5 whitespace-nowrap">แปล</TableHead>
+              <TableHead className="w-[105px] min-w-[96px] px-2.5 whitespace-nowrap">Export PSD</TableHead>
               <TableHead className="w-[105px] min-w-[96px] px-2.5 whitespace-nowrap">ลงคำ</TableHead>
               <TableHead className="w-[96px] min-w-[88px] px-2.5 whitespace-nowrap">Publisher</TableHead>
               <TableHead className="w-[88px] min-w-[80px] px-2.5 whitespace-nowrap">โพสต์</TableHead>
@@ -998,7 +999,7 @@ export function QueueView({
             {isLoading ? (
               Array.from({ length: 6 }).map((_, idx) => (
                 <TableRow key={idx}>
-                  <TableCell colSpan={11}>
+                  <TableCell colSpan={12}>
                     <Skeleton className="h-12 w-full" />
                   </TableCell>
                 </TableRow>
@@ -1006,7 +1007,7 @@ export function QueueView({
             ) : filteredQueue.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={11}
+                  colSpan={12}
                   className="text-center py-12 text-slate-400"
                 >
                   ไม่มีข้อมูลคิวงานที่ตรงกับตัวกรอง
@@ -1090,6 +1091,7 @@ export function QueueView({
                           </a>
                         </div>
                       )}
+                      {renderStepLinks(q.worklink, "อัป Raw", "อัป Raw")}
                     </TableCell>
 
                     <TableCell className="px-2.5 py-3 whitespace-nowrap">
@@ -1102,7 +1104,6 @@ export function QueueView({
                           </div>
                         )}
                       </div>
-                      {renderStepLinks(q.worklink, "อัป Raw")}
                     </TableCell>
 
                     {/* 2. ดึงคำออโต้ */}
@@ -1163,6 +1164,36 @@ export function QueueView({
                         )}
                       </div>
                       {renderStepLinks(q.worklink, "แปล")}
+                    </TableCell>
+
+                    {/* Export PSD */}
+                    <TableCell className="px-2.5 py-3 whitespace-nowrap">
+                      {(() => {
+                        const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || "").toLowerCase().includes("pratchaya");
+                        const isPsdActive = String(q.psdstatus || "").trim() === "กำลังทำ" || String(q.psdstatus || "").trim() === "เสร็จแล้ว";
+                        const effectivePsdStatus = (isPratchaya && !isPsdActive)
+                          ? "skip"
+                          : (q.psdstatus || (isStepDone(q.translatestatus) ? "เสร็จแล้ว" : "รอเริ่ม"));
+                        const psdSubLabel = effectivePsdStatus === "skip"
+                          ? "Pratchaya แปล"
+                          : (q.psdtime ? (parseQueueDate(q.psdtime)?.toLocaleDateString("th-TH") || "เสร็จแล้ว") : "GitHub Actions");
+                        const psdDur = formatDuration(q.translatetime, q.psdtime);
+
+                        return (
+                          <>
+                            {renderStatusBadge(q, "psd", effectivePsdStatus)}
+                            <div className="text-xs text-slate-400 mt-1 truncate max-w-[110px]" title={psdSubLabel}>
+                              {psdSubLabel}
+                              {psdDur && (
+                                <div className="text-[11px] text-slate-500">
+                                  ⏱️ {psdDur}
+                                </div>
+                              )}
+                            </div>
+                            {renderStepLinks(q.worklink, "Export PSD")}
+                          </>
+                        );
+                      })()}
                     </TableCell>
 
                     <TableCell className="px-2.5 py-3 whitespace-nowrap">

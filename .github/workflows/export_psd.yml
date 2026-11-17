@@ -1,0 +1,117 @@
+name: Manga PSD Export & Drive Upload Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder_id:
+        description: 'Google Drive Source Folder ID or URL'
+        required: true
+        default: '1auZHllgyjL1TESH7TQxclE27YmeUNOzM'
+      manga_name:
+        description: 'Manga Title'
+        required: false
+        default: ''
+      chapter_num:
+        description: 'Chapter Number'
+        required: false
+        default: ''
+      queue_id:
+        description: 'WorkQueue Item ID'
+        required: false
+        default: ''
+      doc_url:
+        description: 'Google Docs Reference URL'
+        required: false
+        default: 'https://docs.google.com/document/d/1l2aF-cyk39Xiaz7e1ejBMJMKFv77Ur7hieuvI_CsFh0/edit?tab=t.bdbfibdpplpv'
+      tab_id:
+        description: 'Google Docs Tab ID'
+        required: false
+        default: 't.bdbfibdpplpv'
+      font_family:
+        description: 'Font Family for Typesetting'
+        required: false
+        default: 'TF LANNA Bold'
+      google_access_token:
+        description: 'Google OAuth Access Token (passed from GAS)'
+        required: false
+        default: ''
+      full_run:
+        description: 'Process all pages (true/false)'
+        required: false
+        default: 'true'
+
+permissions:
+  contents: write
+
+jobs:
+  export-psd-job:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Python Dependencies (CPU Optimized)
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install Pillow numpy opencv-python-headless pythainlp gdown google-api-python-client google-auth requests
+
+      - name: Download Offline LaMa Model if Missing
+        run: |
+          mkdir -p models
+          if [ ! -f "models/big-lama.pt" ]; then
+            echo "📥 Downloading big-lama.pt model..."
+            curl -L -o "models/big-lama.pt" "https://github.com/advimman/lama/releases/download/v0.1/big-lama.pt" || true
+          fi
+
+      - name: Run Export PSD & Upload directly to Google Drive Folder
+        env:
+          GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}
+          GOOGLE_ACCESS_TOKEN: ${{ github.event.inputs.google_access_token }}
+        run: |
+          EXTRA_FLAG="--limit 3"
+          if [ "${{ github.event.inputs.full_run }}" = "true" ]; then
+            EXTRA_FLAG="--full"
+          fi
+
+          python tools/export_psd_job.py \
+            --folder-id "${{ github.event.inputs.folder_id }}" \
+            --manga-name "${{ github.event.inputs.manga_name }}" \
+            --chapter-num "${{ github.event.inputs.chapter_num }}" \
+            --queue-id "${{ github.event.inputs.queue_id }}" \
+            --doc-url "${{ github.event.inputs.doc_url }}" \
+            --tab-id "${{ github.event.inputs.tab_id }}" \
+            --font "${{ github.event.inputs.font_family || 'TF LANNA Bold' }}" \
+            --google-access-token "${{ github.event.inputs.google_access_token }}" \
+            --output-dir "./psd_work" \
+            --upload-to-source \
+            $EXTRA_FLAG
+
+      - name: Upload Backup PSD to GitHub Artifacts
+        if: success()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: manga-psd-${{ github.event.inputs.chapter_num || 'psd' }}
+          path: psd_work/psd_output/*.psd
+          retention-days: 7
+
+      - name: Clean Up Runner Workspace
+        if: always()
+        run: |
+          echo "🧹 Cleaning up runner workspace..."
+          rm -rf psd_work downloaded_manga __pycache__ .pytest_cache
+          git status

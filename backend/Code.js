@@ -49,6 +49,7 @@ const READREALM_TIMELINE_SHEET_NAME = 'ReadRealm_Timeline_Summary';
 const READREALM_WORKFLOW_FILE = 'readrealm_tracker.yml';
 const PROJECT_IDEAS_WORKFLOW_FILE = 'project_ideas_crawler.yml';
 const MANGA_OCR_WORKFLOW_FILE = 'gdrive_ocr.yml';
+const EXPORT_PSD_WORKFLOW_FILE = 'export_psd.yml';
 const KAIREW_GROWTH_SHEET_NAME = 'KairewGrowth';
 const KAIREW_TIMELINE_SHEET_NAME = 'Kairew_Timeline_Summary';
 const CHAPLY_GROWTH_SHEET_NAME = 'ChaplyGrowth';
@@ -524,6 +525,12 @@ function doPost(e) {
       case 'COMPLETE_MANGA_OCR':
         result = completeMangaOcr(payload);
         break;
+      case 'TRIGGER_EXPORT_PSD':
+        result = triggerExportPsdWorkflow(payload);
+        break;
+      case 'COMPLETE_EXPORT_PSD':
+        result = completeExportPsd(payload);
+        break;
       case 'TRIGGER_NEXT_PENDING_MANGA_OCR':
         result = triggerNextPendingMangaOcr();
         break;
@@ -852,7 +859,7 @@ function ensureSheetHeaders(sheet, name) {
     const lastCol = sheet.getLastColumn();
     if (lastCol > 0) {
       const currentHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(h => h.toString().toLowerCase().trim());
-      const required = ['poststatus', 'postername', 'posttime', 'isediting', 'editingby', 'editingtime', 'typesettype', 'ocrstatus', 'ocrtime'];
+      const required = ['poststatus', 'postername', 'posttime', 'isediting', 'editingby', 'editingtime', 'typesettype', 'ocrstatus', 'ocrtime', 'psdstatus', 'psdtime', 'psdname'];
       const displayMap = {
         'poststatus': 'PostStatus',
         'postername': 'PosterName',
@@ -862,7 +869,10 @@ function ensureSheetHeaders(sheet, name) {
         'editingtime': 'EditingTime',
         'typesettype': 'TypesetType',
         'ocrstatus': 'OcrStatus',
-        'ocrtime': 'OcrTime'
+        'ocrtime': 'OcrTime',
+        'psdstatus': 'PsdStatus',
+        'psdtime': 'PsdTime',
+        'psdname': 'PsdName'
       };
       required.forEach(req => {
         if (currentHeaders.indexOf(req) === -1) {
@@ -1482,6 +1492,9 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
         obj.ocrstatus = (isUpDone && isExDone) ? 'เสร็จแล้ว' : 'รอเริ่ม';
       }
       if (!obj.translatestatus || String(obj.translatestatus).trim() === '') obj.translatestatus = 'รอเริ่ม';
+      if (!obj.psdstatus || String(obj.psdstatus).trim() === '') {
+        obj.psdstatus = isPratchaya ? 'skip' : 'รอเริ่ม';
+      }
       if (!obj.typesetstatus || String(obj.typesetstatus).trim() === '') obj.typesetstatus = 'รอเริ่ม';
       if (!obj.publishstatus || String(obj.publishstatus).trim() === '') obj.publishstatus = 'รอเริ่ม';
 
@@ -1627,6 +1640,7 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
       'upload': 'uploadername',
       'extract': 'extractorname',
       'translate': 'translatorname',
+      'psd': 'psdname',
       'typeset': 'typesettername',
       'publish': 'publishername',
       'post': 'postername'
@@ -1660,11 +1674,41 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
         if (step.toLowerCase() === 'translate') {
           const effectiveAssignee = assignee !== undefined ? assignee : data[i][headers.indexOf('translatorname')];
           const transStr = String(effectiveAssignee || '').toLowerCase();
+          const psdStatusCol = headers.indexOf('psdstatus') + 1;
           if (transStr.includes('pratchaya')) {
             const ocrStatusCol = headers.indexOf('ocrstatus') + 1;
             const extractStatusCol = headers.indexOf('extractstatus') + 1;
             if (ocrStatusCol > 0) sheet.getRange(rowNum, ocrStatusCol).setValue('skip');
             if (extractStatusCol > 0) sheet.getRange(rowNum, extractStatusCol).setValue('skip');
+            if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('skip');
+          } else if (status === 'เสร็จแล้ว') {
+            const currentPsd = psdStatusCol > 0 ? String(data[i][psdStatusCol - 1] || '').trim() : '';
+            if (currentPsd !== 'เสร็จแล้ว' && currentPsd !== 'กำลังทำ') {
+              const rowWorkLink = data[i][headers.indexOf('worklink')];
+              const rowMangaId = data[i][headers.indexOf('mangaid')];
+              const rowChapter = data[i][headers.indexOf('chapter')];
+              const mangaObj = getMangaById(rowMangaId);
+              const targetDocUrl = mangaObj ? (mangaObj.translationdocurl || '') : '';
+
+              if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('กำลังทำ');
+              const psdTimeCol = headers.indexOf('psdtime') + 1;
+              if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(new Date());
+              const psdNameCol = headers.indexOf('psdname') + 1;
+              if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions');
+
+              try {
+                triggerExportPsdWorkflow({
+                  queueId: queueId,
+                  workLink: rowWorkLink,
+                  mangaId: rowMangaId,
+                  mangaName: mangaObj ? mangaObj.manganame : '',
+                  chapterNum: rowChapter,
+                  docUrl: targetDocUrl
+                });
+              } catch (dispatchErr) {
+                console.warn('Auto-dispatch Export PSD error in updateQueueStep:', dispatchErr);
+              }
+            }
           }
         }
 
@@ -1799,6 +1843,7 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
       'upload': 'uploadername',
       'extract': 'extractorname',
       'translate': 'translatorname',
+      'psd': 'psdname',
       'typeset': 'typesettername',
       'publish': 'publishername',
       'post': 'postername'
@@ -1836,13 +1881,41 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
           }
         }
 
-        if (stepLower === 'translate' && shouldUpdateAssignee) {
-          const transStr = String(assignee || '').toLowerCase();
+        if (stepLower === 'translate') {
+          const transStr = String((shouldUpdateAssignee ? assignee : data[i][headers.indexOf('translatorname')]) || '').toLowerCase();
+          const psdStatusColIndex = headers.indexOf('psdstatus');
           if (transStr.includes('pratchaya')) {
             const ocrStatusColIndex = headers.indexOf('ocrstatus');
             const extractStatusColIndex = headers.indexOf('extractstatus');
             if (ocrStatusColIndex !== -1) data[i][ocrStatusColIndex] = 'skip';
             if (extractStatusColIndex !== -1) data[i][extractStatusColIndex] = 'skip';
+            if (psdStatusColIndex !== -1) data[i][psdStatusColIndex] = 'skip';
+          } else if (status === 'เสร็จแล้ว') {
+            const currentPsd = psdStatusColIndex !== -1 ? String(data[i][psdStatusColIndex] || '').trim() : '';
+            if (currentPsd !== 'เสร็จแล้ว' && currentPsd !== 'กำลังทำ') {
+              if (psdStatusColIndex !== -1) data[i][psdStatusColIndex] = 'กำลังทำ';
+              const psdTimeColIndex = headers.indexOf('psdtime');
+              if (psdTimeColIndex !== -1) data[i][psdTimeColIndex] = now;
+              const psdNameColIndex = headers.indexOf('psdname');
+              if (psdNameColIndex !== -1) data[i][psdNameColIndex] = 'GitHub Actions';
+
+              try {
+                const rowWorkLink = data[i][headers.indexOf('worklink')];
+                const rowMangaId = data[i][headers.indexOf('mangaid')];
+                const rowChapter = data[i][headers.indexOf('chapter')];
+                const mangaObj = getMangaById(rowMangaId);
+                triggerExportPsdWorkflow({
+                  queueId: currentId,
+                  workLink: rowWorkLink,
+                  mangaId: rowMangaId,
+                  mangaName: mangaObj ? mangaObj.manganame : '',
+                  chapterNum: rowChapter,
+                  docUrl: mangaObj ? (mangaObj.translationdocurl || '') : ''
+                });
+              } catch (be) {
+                console.warn('Auto-dispatch Export PSD error in bulkUpdateQueueStep:', be);
+              }
+            }
           }
         }
 
@@ -1959,8 +2032,10 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
 function getStepLabel(step) {
   const labels = {
     'upload': 'อัป Raw',
+    'ocr': 'ดึงคำออโต้',
     'extract': 'ดึงคำ',
     'translate': 'แปล',
+    'psd': 'Export PSD',
     'typeset': 'ลงคำ',
     'publish': 'เผยแพร่',
     'post': 'โพสต์'
@@ -2084,8 +2159,10 @@ function extractLinkForStep(allLinks, stepKey) {
 
   const aliases = {
     'upload': ['อัป Raw', 'Raw', 'อัป RAW', 'Upload'],
+    'ocr': ['ดึงคำออโต้', 'OCR', 'Auto OCR'],
     'extract': ['ดึงคำ', 'Extract', 'Extractor'],
     'translate': ['แปล', 'Translate', 'Translator'],
+    'psd': ['Export PSD', 'PSD', 'psd'],
     'typeset': ['ลงคำ', 'Typeset', 'Typesetter'],
     'publish': ['Publisher', 'เผยแพร่', 'ลงเว็บ', 'Publish'],
     'post': ['โพสต์', 'Post']
@@ -2134,6 +2211,9 @@ function updateFullQueueItem(queueId, updateData) {
         updateCell('ocrstatus', updateData.ocrstatus);
         updateCell('extractstatus', updateData.extractstatus);
         updateCell('translatestatus', updateData.translatestatus);
+        updateCell('psdstatus', updateData.psdstatus);
+        updateCell('psdname', updateData.psdname);
+        updateCell('psdtime', updateData.psdtime);
         updateCell('typesetstatus', updateData.typesetstatus);
         updateCell('publishstatus', updateData.publishstatus);
         updateCell('poststatus', updateData.poststatus);
@@ -8726,6 +8806,152 @@ function triggerMangaOcrWorkflow(params) {
   } catch (err) {
     console.error('triggerMangaOcrWorkflow error:', err);
     return { success: false, error: err.toString() };
+  }
+}
+
+function triggerExportPsdWorkflow(params) {
+  params = params || {};
+  try {
+    const token = getGitHubToken();
+    if (!token) {
+      console.warn('triggerExportPsdWorkflow: GITHUB_TOKEN not available');
+      return { success: false, error: 'GITHUB_TOKEN not available' };
+    }
+
+    let folderId = params.folderId || params.folder_id || '';
+    if (!folderId && params.workLink) {
+      const match = String(params.workLink).match(/folders\/([a-zA-Z0-9_-]+)/);
+      if (match) folderId = match[1];
+      else {
+        const idMatch = String(params.workLink).match(/id=([a-zA-Z0-9_-]+)/);
+        if (idMatch) folderId = idMatch[1];
+        else folderId = String(params.workLink).trim();
+      }
+    }
+
+    let mangaName = params.mangaName || params.manga_name || '';
+    let chapterNum = params.chapterNum || params.chapter_num || params.chapter || '';
+    let docUrl = params.docUrl || params.doc_url || '';
+    let mangaId = params.mangaId || params.manga_id || '';
+
+    if (!docUrl && mangaId) {
+      const m = getMangaById(mangaId);
+      if (m && m.translationdocurl) docUrl = m.translationdocurl;
+      if (!mangaName && m && m.manganame) mangaName = m.manganame;
+    }
+
+    let googleAccessToken = '';
+    try {
+      googleAccessToken = ScriptApp.getOAuthToken() || '';
+    } catch (e) {
+      console.warn('ScriptApp.getOAuthToken() failed:', e);
+    }
+
+    const url = 'https://api.github.com/repos/' + GITHUB_REPO_OWNER + '/' + GITHUB_REPO_NAME + '/actions/workflows/' + EXPORT_PSD_WORKFLOW_FILE + '/dispatches';
+    const payload = {
+      ref: 'main',
+      inputs: {
+        folder_id: String(folderId || ''),
+        manga_name: String(mangaName || ''),
+        chapter_num: String(chapterNum || ''),
+        queue_id: String(params.queueId || params.queue_id || ''),
+        doc_url: String(docUrl || ''),
+        tab_id: String(params.tabId || params.tab_id || ''),
+        font_family: String(params.font || 'TF LANNA Bold'),
+        google_access_token: googleAccessToken,
+        full_run: 'true'
+      }
+    };
+
+    const options = {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'MangaHub-GAS-AutoTracker'
+      },
+      muteHttpExceptions: true
+    };
+
+    const resp = UrlFetchApp.fetch(url, options);
+    const code = resp.getResponseCode();
+    console.log('triggerExportPsdWorkflow dispatch status:', code);
+    return {
+      success: code >= 200 && code < 300,
+      statusCode: code,
+      response: resp.getContentText()
+    };
+  } catch (err) {
+    console.error('triggerExportPsdWorkflow error:', err);
+    return { success: false, error: err.toString() };
+  }
+}
+
+function completeExportPsd(payload) {
+  payload = payload || {};
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { error: 'No queue data' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const queueIdCol = headers.indexOf('queueid');
+    const psdStatusCol = headers.indexOf('psdstatus') + 1;
+    const psdTimeCol = headers.indexOf('psdtime') + 1;
+    const psdNameCol = headers.indexOf('psdname') + 1;
+
+    const targetQueueId = String(payload.queueId || payload.queue_id || '').trim();
+    const targetFolderId = String(payload.folderId || payload.folder_id || '').trim();
+
+    let updatedRow = null;
+
+    for (let r = 1; r < data.length; r++) {
+      const qid = String(data[r][queueIdCol]).trim();
+      const workLink = String(data[r][headers.indexOf('worklink')] || '');
+
+      let matched = false;
+      if (targetQueueId && qid === targetQueueId) {
+        matched = true;
+      } else if (targetFolderId && workLink.includes(targetFolderId)) {
+        matched = true;
+      }
+
+      if (matched) {
+        const rowNum = r + 1;
+        if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
+        if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(new Date());
+        if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions');
+
+        updatedRow = {
+          queueId: qid,
+          mangaId: data[r][headers.indexOf('mangaid')],
+          chapter: data[r][headers.indexOf('chapter')],
+          psdstatus: 'เสร็จแล้ว'
+        };
+
+        try {
+          const mangaName = getMangaNameById(updatedRow.mangaId);
+          sendTelegramNotification(`🎨 <b>Export PSD เสร็จแล้ว!</b>\nเรื่อง: <b>${mangaName}</b>\nตอนที่: ${updatedRow.chapter}\nไฟล์ถูกอัปโหลดไปยังโฟลเดอร์ Google Drive เรียบร้อยแล้ว`);
+        } catch (te) {}
+
+        break;
+      }
+    }
+
+    if (updatedRow) {
+      invalidateCache('workQueue');
+      return { success: true, updated: updatedRow };
+    }
+    return { success: false, message: 'Queue item not found' };
+  } catch (err) {
+    console.error('completeExportPsd error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
   }
 }
 
