@@ -79,8 +79,8 @@ assert.strictEqual(matchesStepFilter(inProgressTranslateItem, 'translate'), true
 assert.strictEqual(getQueueCurrentStep(inProgressTranslateItem), 'translate', 'Current step is translate')
 console.log('✓ Test 4 Passed: Translate in progress matches translate filter')
 
-// Test 5: Translate Done -> Advances to PSD (Export PSD) or Typeset if PSD done
-console.log('\n[Test 5] Translate is done -> Advances to "psd"')
+// Test 5: Translate Done -> Advances to Typeset ("รอลงคำ")
+console.log('\n[Test 5] Translate is done -> Advances to "typeset"')
 const doneTranslateItem = {
   ...readyTranslateItem,
   translatestatus: 'เสร็จแล้ว',
@@ -89,28 +89,20 @@ const doneTranslateItem = {
 }
 assert.strictEqual(isQueueStepDone(doneTranslateItem, 'translate'), true)
 assert.strictEqual(matchesStepFilter(doneTranslateItem, 'translate'), false, 'Target step already done')
-assert.strictEqual(matchesStepFilter(doneTranslateItem, 'psd'), true, 'Must show in psd filter')
-assert.strictEqual(getQueueCurrentStep(doneTranslateItem), 'psd', 'Current step is psd')
+assert.strictEqual(matchesStepFilter(doneTranslateItem, 'typeset'), true, 'Must show in typeset filter ("รอลงคำ")')
+assert.strictEqual(getQueueCurrentStep(doneTranslateItem), 'typeset', 'Current step is typeset')
+console.log('✓ Test 5 Passed: Translate done advances cleanly to typeset ("รอลงคำ")')
 
-const donePsdItem = {
-  ...doneTranslateItem,
-  psdstatus: 'เสร็จแล้ว',
-}
-assert.strictEqual(isQueueStepDone(donePsdItem, 'psd'), true)
-assert.strictEqual(matchesStepFilter(donePsdItem, 'typeset'), true, 'Must show in typeset filter')
-assert.strictEqual(getQueueCurrentStep(donePsdItem), 'typeset', 'Current step is typeset')
-console.log('✓ Test 5 Passed: Translate done advances cleanly to psd then typeset')
-
-// Test 6: Typeset strict sequencing (PSD must be done first)
-console.log('\n[Test 6] Typeset strict sequencing: PSD must be done before Typeset')
-const notReadyTypesetItem = {
+// Test 6: Typeset filter is NOT blocked by optional/automated Export PSD
+console.log('\n[Test 6] Typeset filter matches whether psdstatus is รอเริ่ม or เสร็จแล้ว')
+const psdPendingTypesetItem = {
   ...readyTranslateItem,
   translatestatus: 'เสร็จแล้ว',
   psdstatus: 'กำลังทำ',
   typesetstatus: 'รอเริ่ม',
 }
-assert.strictEqual(matchesStepFilter(notReadyTypesetItem, 'typeset'), false, 'Typeset blocked because psd not done')
-console.log('✓ Test 6 Passed: Typeset blocked while psd is pending')
+assert.strictEqual(matchesStepFilter(psdPendingTypesetItem, 'typeset'), true, 'Typeset must NOT be blocked by psd')
+console.log('✓ Test 6 Passed: Typeset matches cleanly without being blocked by psd')
 
 // Test 7: Publish & Post strict sequencing
 console.log('\n[Test 7] Publish & Post strict sequencing')
@@ -203,7 +195,7 @@ console.log('✓ Test 11 Passed: Upload step has no previous dependencies and ca
 
 // Test 12: Pipeline progression consistency
 console.log('\n[Test 12] Complete pipeline progression consistency check across all steps')
-const steps = ['upload', 'ocr', 'extract', 'translate', 'psd', 'typeset', 'publish', 'post']
+const steps = ['upload', 'ocr', 'extract', 'translate', 'typeset', 'publish', 'post']
 const progressiveItem = {
   uploadstatus: 'รอเริ่ม',
   ocrstatus: 'รอเริ่ม',
