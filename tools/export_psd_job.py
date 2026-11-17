@@ -201,10 +201,19 @@ def extract_tab_id_from_url(url: str) -> str:
 
 def download_images_from_gdrive(folder_url_or_id, output_dir):
     """Downloads images & files from Google Drive folder."""
-    import gdown
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
 
+    # Check if images already exist locally to save bandwidth
+    existing_images = sorted([
+        f for f in out_path.glob("*.*")
+        if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]
+    ])
+    if len(existing_images) > 0:
+        print(f"📦 Found {len(existing_images)} existing images in {out_path}, skipping redownload.")
+        return existing_images
+
+    import gdown
     folder_id = extract_folder_id(folder_url_or_id)
     url = f"https://drive.google.com/drive/folders/{folder_id}"
     print(f"📥 [Drive] Downloading files from: {url}")
@@ -912,17 +921,20 @@ def run_export_psd_pipeline(args):
         print(f"   ✓ Uploaded {up_count}/{len(generated_psds)} PSD files to Google Drive subfolder '{subfolder_name}'!")
 
     # 8. Notify GAS that Export PSD is complete
-    notify_gas_export_psd_completed(
-        folder_id=folder_id,
-        queue_id=args.queue_id,
-        chapter=chapter_num,
-        manga_name=manga_name,
-        psd_count=len(generated_psds),
-        psd_folder_id=target_upload_folder_id if target_upload_folder_id != folder_id else "",
-        subfolder_name=subfolder_name,
-        gas_url=args.gas_url,
-        passcode=args.gas_passcode
-    )
+    if not getattr(args, "no_notify", False):
+        notify_gas_export_psd_completed(
+            folder_id=folder_id,
+            queue_id=args.queue_id,
+            chapter=chapter_num,
+            manga_name=manga_name,
+            psd_count=len(generated_psds),
+            psd_folder_id=target_upload_folder_id if target_upload_folder_id != folder_id else "",
+            subfolder_name=subfolder_name,
+            gas_url=args.gas_url,
+            passcode=args.gas_passcode
+        )
+    else:
+        print("\nℹ️ Skipping GAS notification (--no-notify specified).")
 
     # 9. Clean up local files if requested
     if args.cleanup:
@@ -952,6 +964,7 @@ def main():
     parser.add_argument("--full", action="store_true", default=False, help="Process all chapter pages")
     parser.add_argument("--limit", type=int, default=3, help="Limit number of pages to process (for test)")
     parser.add_argument("--no-inpaint", action="store_true", default=False, help="Skip inpainting step")
+    parser.add_argument("--no-notify", action="store_true", default=False, help="Skip notifying GAS on completion")
 
     args = parser.parse_args()
     run_export_psd_pipeline(args)
