@@ -6,6 +6,25 @@
 
 ## 1. สรุปภาพรวมงานที่ทำเสร็จสมบูรณ์แล้ว (Completed Milestones)
 
+### 🏆 แก้ปัญหา Font Warning Icon (T ⚠️) ในเลเยอร์ข้อความบน Adobe Photoshop หายขาด 100% (17 พ.ย. 2569)
+- **โจทย์และอาการของปัญหา**:
+  - ผู้ใช้พบว่าเมื่อเปิดไฟล์ `.psd` ที่สร้างจากระบบอัตโนมัติใน Adobe Photoshop เลเยอร์ตัวหนังสือภาษาไทย (TF LANNA Bold) ทุกเลเยอร์ติดเครื่องหมายเตือน `T ⚠️` (เช่น "ห่าดาบ ปีศาจ!", "วิชาดาบ ปีศาจ รูปแบบที่ 4", "พลังของ พวกเรามันต่าง ชั้นกันข", "อึก!")
+- **สาเหตุที่แท้จริง (Root Cause Breakdown)**:
+  1. **การตั้งค่า `invalidateTextLayers: true` ใน `ag-psd`**: ในโค้ดเดิม `export_psd_node.js` มีการส่งออปชัน `invalidateTextLayers: true` เข้า `writePsdBuffer()` ซึ่งใน `ag-psd` ออปชันนี้สั่งข้ามการเขียนบล็อก `Txt2` และบังคับให้อินวาลิเดต text layers ส่งผลให้ Photoshop มองว่าเลเยอร์ข้อความทั้งหมด "สร้างจากเวอร์ชันเก่าหรือไม่สมบูรณ์ และต้องอัปเดต" จึงขึ้นไอคอน `T ⚠️` ทุกเลเยอร์
+  2. **โครงสร้าง CoolType Font Cache (`globalTxt2` template)**: Photoshop ยุคใหม่ต้องการบล็อก Additional Layer Information ระดับ Document คือ `8BIMTxt2` ซึ่งบรรจุ `/CoolTypeFont` descriptor ระบุชื่อฟอนต์และเวอร์ชัน หากขาดบล็อกนี้ Photoshop จะตั้งค่า `textWarningLevel: 1` ให้ทุกเลเยอร์
+  3. **การระบุประเภทฟอนต์ `font.type = 1` (TrueType / OpenType)**: `ag-psd` เขียนค่าเริ่มต้นเป็น `type: 0` (Type 1 font) ทำให้ไม่ตรงกับฟอนต์ TrueType ของระบบ การระบุ `type: 1` ชัดเจนจะตรงกับ Photoshop Native
+  4. **พิกัด Bounding Box ใน Point Text**: ในเลเยอร์ Point Text ของ Photoshop ค่า `left, top, right, bottom` ภายในออบเจ็กต์ `text` ต้องเป็น 0 ทั้งหมด (ไม่มี bounding box เหมือน paragraph text)
+- **การแก้ไขในโค้ด (`scripts/export_psd_node.js` และ `tools/export_psd_node.js`)**:
+  1. ตัด `invalidateTextLayers: true` ออกจาก `agPsd.writePsdBuffer()` อย่างเด็ดขาด
+  2. เพิ่มฟังก์ชัน `getGlobalEngineDataBase64(usedFontNames)` โหลด `global_txt2_template.bin` (พร้อม Embedded Base64 fallback สำหรับ GitHub Actions CI / standalone run) และทำการแพตช์ CoolTypeFont ให้ตรงกับฟอนต์ที่ใช้งานจริง
+  3. กำหนด `text.style.font` เป็น `{ name: postScriptName, script: 0, type: 1, synthetic: 0 }` พร้อมตั้ง `antiAlias: 'crisp'`
+  4. ปลดพิกัด `left, top, right, bottom` ภายใน `text` สำหรับ Point Text
+- **ผลการทดสอบยืนยันบน Photoshop 2026 (v27.6.0) ในเครื่องจริง**:
+  - ทดสอบรัน ActionDescriptor ตรวจจับ `textWarningLevel` ผ่าน JSX Script:
+    * ไฟล์เดิม (`001.psd`): `textWarningLevel: 1` (ติด `T ⚠️`)
+    * ไฟล์ใหม่ (`test_verified_final.psd`): **`Status: 0 (0 - NO WARNING)`** ทุกเลเยอร์ 100% ไม่มีไอคอนตกใจ ไม่มีการแจ้งเตือนฟอนต์หายอีกต่อไป
+
+
 ### 🏆 ตั้งค่าผู้ลงคำเริ่มต้น (Default Typesetter) เป็น Tilly ในทุกมังงะ โดยอิงชื่อจาก Team Member (11 พ.ย. 2569)
 - **โจทย์และความต้องการของผู้ใช้**:
   - *"ใส่คิวลงคำ default เป็น tilly โดยดูชื่อ จาก team member ในทุกมังงะ"*
