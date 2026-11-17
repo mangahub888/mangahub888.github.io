@@ -509,7 +509,7 @@ function doPost(e) {
         result = getProjectIdeasData();
         break;
 
-      // --- MANGA OCR (6-HOUR AUTOMATION + AUTO .MTP) ---
+      // --- MANGA OCR (6-HOUR AUTOMATION + AUTO .MTP) & AUTO EXPORT PSD ---
       case 'TRIGGER_MANGA_OCR':
         result = triggerMangaOcrWorkflow(payload);
         break;
@@ -531,8 +531,23 @@ function doPost(e) {
       case 'RUN_EXPORT_PSD_BATCH_JOB':
         result = runExportPsdBatchJob(payload);
         break;
+      case 'RUN_EXPORT_PSD_SCHEDULED_JOB':
+        result = scheduledExportPsdJob();
+        break;
+      case 'SETUP_EXPORT_PSD_TRIGGER':
+        result = { message: createExportPsdScheduledTrigger(payload ? payload.hours : 1) };
+        break;
+      case 'DELETE_EXPORT_PSD_TRIGGER':
+        result = { message: deleteExportPsdScheduledTrigger() };
+        break;
       case 'COMPLETE_EXPORT_PSD':
         result = completeExportPsd(payload);
+        break;
+      case 'TRIGGER_NEXT_PENDING_EXPORT_PSD':
+        result = triggerNextPendingExportPsd();
+        break;
+      case 'SYNC_PSD_FROM_DRIVE':
+        result = syncPsdStatusFromDrive();
         break;
       case 'TRIGGER_NEXT_PENDING_MANGA_OCR':
         result = triggerNextPendingMangaOcr();
@@ -1867,6 +1882,7 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
     const targetIds = new Set(queueIds.map(id => id.toString().trim()));
     const now = new Date();
     let updatedCount = 0;
+    let bulkPsdDispatchedCount = 0;
     const finishedItems = [];
     const shouldUpdateAssignee = assignee !== undefined && assignee !== null && assignee !== '' && assignee !== '__KEEP__';
 
@@ -1895,28 +1911,36 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
             if (psdStatusColIndex !== -1) data[i][psdStatusColIndex] = 'skip';
           } else if (status === 'เสร็จแล้ว') {
             const currentPsd = psdStatusColIndex !== -1 ? String(data[i][psdStatusColIndex] || '').trim() : '';
-            if (currentPsd !== 'เสร็จแล้ว' && currentPsd !== 'กำลังทำ') {
-              if (psdStatusColIndex !== -1) data[i][psdStatusColIndex] = 'กำลังทำ';
-              const psdTimeColIndex = headers.indexOf('psdtime');
-              if (psdTimeColIndex !== -1) data[i][psdTimeColIndex] = now;
-              const psdNameColIndex = headers.indexOf('psdname');
-              if (psdNameColIndex !== -1) data[i][psdNameColIndex] = 'GitHub Actions';
+            if (currentPsd !== 'เสร็จแล้ว' && currentPsd !== 'กำลังทำ' && currentPsd.toLowerCase() !== 'skip') {
+              if (bulkPsdDispatchedCount < 1) {
+                if (psdStatusColIndex !== -1) data[i][psdStatusColIndex] = 'กำลังทำ';
+                const psdTimeColIndex = headers.indexOf('psdtime');
+                if (psdTimeColIndex !== -1) data[i][psdTimeColIndex] = now;
+                const psdNameColIndex = headers.indexOf('psdname');
+                if (psdNameColIndex !== -1) data[i][psdNameColIndex] = 'GitHub Actions';
+                bulkPsdDispatchedCount++;
 
-              try {
-                const rowWorkLink = data[i][headers.indexOf('worklink')];
-                const rowMangaId = data[i][headers.indexOf('mangaid')];
-                const rowChapter = data[i][headers.indexOf('chapter')];
-                const mangaObj = getMangaById(rowMangaId);
-                triggerExportPsdWorkflow({
-                  queueId: currentId,
-                  workLink: rowWorkLink,
-                  mangaId: rowMangaId,
-                  mangaName: mangaObj ? mangaObj.manganame : '',
-                  chapterNum: rowChapter,
-                  docUrl: mangaObj ? (mangaObj.translationdocurl || '') : ''
-                });
-              } catch (be) {
-                console.warn('Auto-dispatch Export PSD error in bulkUpdateQueueStep:', be);
+                try {
+                  const rowWorkLink = data[i][headers.indexOf('worklink')];
+                  const rowMangaId = data[i][headers.indexOf('mangaid')];
+                  const rowChapter = data[i][headers.indexOf('chapter')];
+                  const mangaObj = getMangaById(rowMangaId);
+                  triggerExportPsdWorkflow({
+                    queueId: currentId,
+                    workLink: rowWorkLink,
+                    mangaId: rowMangaId,
+                    mangaName: mangaObj ? mangaObj.manganame : '',
+                    chapterNum: rowChapter,
+                    docUrl: mangaObj ? (mangaObj.translationdocurl || '') : ''
+                  });
+                } catch (be) {
+                  console.warn('Auto-dispatch Export PSD error in bulkUpdateQueueStep:', be);
+                }
+              } else {
+                // คิวที่เหลือตั้งเป็น 'รอเริ่ม' เพื่อให้ Auto-Chain และ GAS Scheduler รันต่อทีละคิวไม่ให้ชนกัน
+                if (psdStatusColIndex !== -1 && !currentPsd) {
+                  data[i][psdStatusColIndex] = 'รอเริ่ม';
+                }
               }
             }
           }
@@ -2293,6 +2317,37 @@ function updateFullQueueItem(queueId, updateData) {
 
         updateCell('worklink', updateData.worklink);
         updateCell('note', updateData.note);
+
+        // Auto-dispatch Export PSD if translatestatus is set to 'เสร็จแล้ว'
+        try {
+          const effTransSt = updateData.translatestatus !== undefined ? updateData.translatestatus : data[i][headers.indexOf('translatestatus')];
+          const effTransName = String((updateData.translatorname !== undefined ? updateData.translatorname : data[i][headers.indexOf('translatorname')]) || '').toLowerCase();
+          const effPsdSt = String((updateData.psdstatus !== undefined ? updateData.psdstatus : data[i][headers.indexOf('psdstatus')]) || '').trim();
+          const effTypesetSt = String((updateData.typesetstatus !== undefined ? updateData.typesetstatus : data[i][headers.indexOf('typesetstatus')]) || '').trim();
+          if (effTransName.includes('pratchaya')) {
+            updateCell('ocrstatus', 'skip');
+            updateCell('extractstatus', 'skip');
+            updateCell('psdstatus', 'skip');
+          } else if (effTransSt === 'เสร็จแล้ว' && effTypesetSt !== 'เสร็จแล้ว' && effPsdSt !== 'เสร็จแล้ว' && effPsdSt !== 'กำลังทำ' && effPsdSt.toLowerCase() !== 'skip') {
+            const effWorkLink = updateData.worklink !== undefined ? updateData.worklink : data[i][headers.indexOf('worklink')];
+            const effMangaId = data[i][headers.indexOf('mangaid')];
+            const effChap = updateData.chapter !== undefined ? updateData.chapter : data[i][headers.indexOf('chapter')];
+            const mangaObj = getMangaById(effMangaId);
+            updateCell('psdstatus', 'กำลังทำ');
+            updateCell('psdtime', new Date());
+            updateCell('psdname', 'GitHub Actions');
+            triggerExportPsdWorkflow({
+              queueId: queueId,
+              workLink: effWorkLink,
+              mangaId: effMangaId,
+              mangaName: mangaObj ? mangaObj.manganame : '',
+              chapterNum: effChap,
+              docUrl: mangaObj ? (mangaObj.translationdocurl || '') : ''
+            });
+          }
+        } catch (psdAutoErr) {
+          console.warn('Auto-dispatch Export PSD error in updateFullQueueItem:', psdAutoErr);
+        }
         
         invalidateCache('workQueue');
         return { success: true, queue: getWorkQueue(true) };
@@ -5435,11 +5490,19 @@ function hourlyRawTrackerJob() {
   const checkResult = checkAllRawTrackers(true);
   // เมื่อ GAS เช็คเสร็จแล้ว สั่งรัน GitAction raw tracker pipeline ทันที
   const triggerResult = triggerGitHubRawTrackerPipeline('hourly_gas_job', checkResult);
-  console.log('hourlyRawTrackerJob finished, pipeline trigger result:', triggerResult);
+  // ตรวจสอบคิวงานที่แปลเสร็จแล้วและรอ Export PSD อัตโนมัติทุกชั่วโมงควบคู่กัน
+  let psdTriggerResult = null;
+  try {
+    psdTriggerResult = scheduledExportPsdJob();
+  } catch (psdErr) {
+    console.warn('hourlyRawTrackerJob -> scheduledExportPsdJob warning:', psdErr);
+  }
+  console.log('hourlyRawTrackerJob finished, pipeline trigger result:', triggerResult, 'psdTriggerResult:', psdTriggerResult);
   return {
     success: true,
     checkResult: checkResult,
-    triggerResult: triggerResult
+    triggerResult: triggerResult,
+    psdTriggerResult: psdTriggerResult
   };
 }
 
@@ -8812,6 +8875,15 @@ function triggerMangaOcrWorkflow(params) {
   }
 }
 
+function resolveQueueDocUrl(item, manga) {
+  let docUrl = manga && manga.translationdocurl ? String(manga.translationdocurl).trim() : '';
+  if (!docUrl && item && item.worklink) {
+    const m = String(item.worklink).match(/https?:\/\/docs\.google\.com\/document\/d\/[a-zA-Z0-9_-]+[^\s\n]*/);
+    if (m) docUrl = m[0].trim();
+  }
+  return docUrl;
+}
+
 function triggerExportPsdWorkflow(params) {
   params = params || {};
   try {
@@ -8837,10 +8909,30 @@ function triggerExportPsdWorkflow(params) {
     let docUrl = params.docUrl || params.doc_url || '';
     let mangaId = params.mangaId || params.manga_id || '';
 
-    if (!docUrl && mangaId) {
+    if ((!docUrl || !mangaName) && mangaId) {
       const m = getMangaById(mangaId);
-      if (m && m.translationdocurl) docUrl = m.translationdocurl;
+      if (!docUrl && m && m.translationdocurl) docUrl = m.translationdocurl;
       if (!mangaName && m && m.manganame) mangaName = m.manganame;
+    }
+
+    if (!docUrl && params.workLink) {
+      const docMatch = String(params.workLink).match(/https?:\/\/docs\.google\.com\/document\/d\/[a-zA-Z0-9_-]+[^\s\n]*/);
+      if (docMatch) docUrl = docMatch[0].trim();
+    }
+
+    if (!docUrl && mangaName) {
+      try {
+        const mangaList = getMangaList();
+        const mClean = String(mangaName).toLowerCase().replace(/[^\w\u0e00-\u0e7f]+/g, '');
+        const matched = mangaList.find(m => {
+          if (m.manganame === mangaName) return true;
+          const targetClean = (m.manganame || '').toLowerCase().replace(/[^\w\u0e00-\u0e7f]+/g, '');
+          return Boolean(mClean && targetClean && (targetClean.includes(mClean) || mClean.includes(targetClean)));
+        });
+        if (matched && matched.translationdocurl) {
+          docUrl = matched.translationdocurl;
+        }
+      } catch (e) {}
     }
 
     let googleAccessToken = '';
@@ -8911,7 +9003,7 @@ function triggerExportPsdWorkflow(params) {
           if (String(qData[r][0]).trim() === targetQid) {
             if (psdCol > 0) sheet.getRange(r + 1, psdCol).setValue('กำลังทำ');
             if (psdTimeCol > 0) sheet.getRange(r + 1, psdTimeCol).setValue(new Date());
-            if (psdNameCol > 0) sheet.getRange(r + 1, psdNameCol).setValue('GitHub Actions');
+            if (psdNameCol > 0) sheet.getRange(r + 1, psdNameCol).setValue('GitHub Actions (Auto PSD)');
             invalidateCache('workQueue');
             break;
           }
@@ -8929,74 +9021,193 @@ function triggerExportPsdWorkflow(params) {
 
 function runExportPsdBatchJob(payload) {
   payload = payload || {};
-  const maxBatch = Number(payload.maxBatch || 3);
-  const queueList = getWorkQueue();
-  const mangaList = getMangaList();
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const maxBatch = Number(payload.maxBatch || 2);
+    const respectActiveLock = Boolean(payload.respectActiveLock);
+    const forceRun = Boolean(payload.force);
+    const triggerSource = String(payload.triggerSource || 'manual_or_batch');
+    const nowMs = Date.now();
+    const STALE_TIMEOUT_MS = 90 * 60 * 1000; // 90 นาที: หากค้าง 'กำลังทำ' เกิน 90 นาที ให้รีเซ็ตและรันใหม่ได้
+    const ACTIVE_COOLDOWN_MS = 60 * 60 * 1000; // 60 นาที: หากมีงานกำลังรันอยู่ไม่เกิน 60 นาที ให้รอก่อนในโหมด Scheduled
 
-  const eligible = queueList.filter(item => {
-    const trDone = String(item.translatestatus || '').trim() === 'เสร็จแล้ว';
-    const tsDone = String(item.typesetstatus || '').trim() === 'เสร็จแล้ว';
-    const postDone = String(item.poststatus || '').trim() === 'เสร็จแล้ว';
-    const psdSt = String(item.psdstatus || '').trim().toLowerCase();
-    const isPsdDoneOrActive = psdSt === 'เสร็จแล้ว' || psdSt === 'กำลังทำ' || psdSt === 'skip';
-    const manga = mangaList.find(m => String(m.mangaid) === String(item.mangaid));
-    const trName = String(item.translatorname || (manga && manga.lockedtranslator) || '').toLowerCase();
-    const isPratchaya = trName.includes('pratchaya');
+    const queueList = getWorkQueue(true);
+    const mangaList = getMangaList();
+    const mangaMap = {};
+    mangaList.forEach(m => { mangaMap[String(m.mangaid)] = m; });
 
-    return trDone && !tsDone && !postDone && !isPsdDoneOrActive && !isPratchaya;
-  });
-
-  let triggeredCount = 0;
-  const triggeredList = [];
-
-  for (let i = 0; i < eligible.length; i++) {
-    if (triggeredCount >= maxBatch) break;
-    const item = eligible[i];
-    const workLink = String(item.worklink || '');
-    const m = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
-    if (!m) continue;
-    const folderId = m[1];
-    const manga = mangaList.find(mg => String(mg.mangaid) === String(item.mangaid));
-    const mangaTitle = manga ? (manga.manganame || manga.originalname || '') : '';
-    const docUrl = manga ? (manga.translationdocurl || '') : '';
-    if (!docUrl) continue;
-
-    const res = triggerExportPsdWorkflow({
-      queueId: item.queueid,
-      folderId: folderId,
-      workLink: workLink,
-      mangaName: mangaTitle,
-      chapterNum: String(item.chapter || ''),
-      mangaId: item.mangaid,
-      docUrl: docUrl,
-      font: 'TF LANNA Bold'
+    // ตรวจสอบว่ามีคิวงานที่กำลัง Export PSD ค้างอยู่และยังไม่หมดเวลาหรือไม่
+    let activeRunningCount = 0;
+    queueList.forEach(item => {
+      const psdSt = String(item.psdstatus || '').trim().toLowerCase();
+      if (psdSt === 'กำลังทำ' || psdSt.includes('กำลัง')) {
+        const tMs = item.psdtime ? new Date(item.psdtime).getTime() : 0;
+        const ageMs = (tMs && !isNaN(tMs)) ? (nowMs - tMs) : Infinity;
+        if (ageMs < ACTIVE_COOLDOWN_MS) {
+          activeRunningCount++;
+        }
+      }
     });
 
-    if (res && res.success) {
-      triggeredCount++;
-      triggeredList.push({
-        queueId: item.queueid,
-        mangaTitle: mangaTitle,
-        chapter: item.chapter,
-        folderId: folderId,
-        triggeredAt: new Date().toISOString()
-      });
+    if (respectActiveLock && activeRunningCount > 0 && !forceRun) {
+      console.log('runExportPsdBatchJob: มีงานกำลัง Export PSD อยู่ในขณะนี้ (' + activeRunningCount + ' ตอน) ข้ามการยิงซ้ำเพื่อรอให้คิวปัจจุบันเสร็จสิ้น');
+      return {
+        success: true,
+        skippedBecauseActive: true,
+        activeRunningCount: activeRunningCount,
+        checkedAt: new Date().toISOString(),
+        totalEligible: 0,
+        triggeredCount: 0,
+        triggeredList: []
+      };
     }
+
+    const eligible = queueList.filter(item => {
+      const trDone = String(item.translatestatus || '').trim() === 'เสร็จแล้ว';
+      const tsDone = String(item.typesetstatus || '').trim() === 'เสร็จแล้ว';
+      const pubDone = String(item.publishstatus || '').trim() === 'เสร็จแล้ว';
+      const postDone = String(item.poststatus || '').trim() === 'เสร็จแล้ว';
+      const ocrDoing = String(item.ocrstatus || '').trim() === 'กำลังทำ';
+
+      const psdSt = String(item.psdstatus || '').trim().toLowerCase();
+      const isPsdDoneOrSkip = psdSt === 'เสร็จแล้ว' || psdSt === 'skip' || psdSt === 'ข้าม';
+
+      let isPsdActivelyRunning = false;
+      if (psdSt === 'กำลังทำ' || psdSt.includes('กำลัง')) {
+        const tMs = item.psdtime ? new Date(item.psdtime).getTime() : 0;
+        const ageMs = (tMs && !isNaN(tMs)) ? (nowMs - tMs) : Infinity;
+        if (ageMs < STALE_TIMEOUT_MS && !forceRun) {
+          isPsdActivelyRunning = true;
+        } else {
+          console.log('runExportPsdBatchJob: พบคิวงานค้างสถานะกำลังทำเกินกำหนด (QueueID: ' + item.queueid + ') เตรียมรันใหม่');
+        }
+      }
+
+      const manga = mangaMap[String(item.mangaid)];
+      const trName = String(item.translatorname || (manga && manga.lockedtranslator) || '').toLowerCase();
+      const isPratchaya = trName.includes('pratchaya');
+
+      const workLink = String(item.worklink || '');
+      const hasFolder = Boolean(workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/));
+      const docUrl = resolveQueueDocUrl(item, manga);
+      const hasDoc = Boolean(docUrl);
+
+      return trDone && !tsDone && !pubDone && !postDone && !ocrDoing && !isPsdDoneOrSkip && !isPsdActivelyRunning && !isPratchaya && hasFolder && hasDoc;
+    });
+
+    console.log('runExportPsdBatchJob (' + triggerSource + '): พบ ' + eligible.length + ' ตอนที่แปลเสร็จแล้วและพร้อม Export PSD');
+
+    let triggeredCount = 0;
+    const triggeredList = [];
+    const syncedFromDriveList = [];
+
+    // ประมวลผลจากตอนใหม่สุดไปหาเก่าสุด (เหมือนระบบ Auto OCR)
+    const reversed = [...eligible].reverse();
+
+    for (let i = 0; i < reversed.length; i++) {
+      if (triggeredCount >= maxBatch) break;
+      const item = reversed[i];
+      const workLink = String(item.worklink || '');
+      const m = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
+      if (!m) continue;
+      const folderId = m[1];
+      const manga = mangaMap[String(item.mangaid)];
+      const mangaTitle = manga ? (manga.manganame || manga.originalname || '') : '';
+      const docUrl = resolveQueueDocUrl(item, manga);
+      if (!docUrl) continue;
+
+      // ตรวจสอบใน Google Drive ก่อนว่ามีโฟลเดอร์ย่อย PSD และไฟล์ .psd อยู่แล้วหรือไม่
+      let hasPsdInDrive = false;
+      let psdSubfolderUrl = '';
+      try {
+        const parentFolder = DriveApp.getFolderById(folderId);
+        const subFolders = parentFolder.getFoldersByName('PSD');
+        if (subFolders.hasNext()) {
+          const psdFolder = subFolders.next();
+          const psdFiles = psdFolder.getFiles();
+          while (psdFiles.hasNext()) {
+            const pf = psdFiles.next();
+            if (pf.getName().toLowerCase().endsWith('.psd')) {
+              hasPsdInDrive = true;
+              psdSubfolderUrl = 'https://drive.google.com/drive/folders/' + psdFolder.getId();
+              break;
+            }
+          }
+        }
+      } catch (driveErr) {
+        console.warn('runExportPsdBatchJob: ไม่สามารถตรวจสอบโฟลเดอร์ PSD ใน Drive ' + folderId + ':', driveErr);
+      }
+
+      if (hasPsdInDrive && !forceRun) {
+        console.log('โฟลเดอร์ ' + folderId + ' มีไฟล์ .psd ในโฟลเดอร์ย่อย PSD เรียบร้อยแล้ว (ซิงค์สถานะเป็นเสร็จแล้ว)');
+        completeExportPsd({
+          folderId: folderId,
+          queueId: item.queueid,
+          psdFolderUrl: psdSubfolderUrl,
+          skipChain: true,
+          silentTelegram: true
+        });
+        syncedFromDriveList.push({
+          queueId: item.queueid,
+          mangaTitle: mangaTitle,
+          chapter: item.chapter,
+          folderId: folderId
+        });
+        continue;
+      }
+
+      const cleanChapter = String(item.chapter || '').trim();
+      console.log('🚀 สั่งรัน Export PSD ไปยัง GitHub Actions:', mangaTitle, 'ตอนที่', cleanChapter, 'Folder:', folderId);
+
+      const res = triggerExportPsdWorkflow({
+        queueId: item.queueid,
+        folderId: folderId,
+        workLink: workLink,
+        mangaName: mangaTitle,
+        chapterNum: cleanChapter,
+        mangaId: item.mangaid,
+        docUrl: docUrl,
+        font: 'TF LANNA Bold'
+      });
+
+      if (res && res.success) {
+        triggeredCount++;
+        triggeredList.push({
+          queueId: item.queueid,
+          mangaTitle: mangaTitle,
+          chapter: item.chapter,
+          folderId: folderId,
+          triggeredAt: new Date().toISOString()
+        });
+        if (triggeredCount < maxBatch) {
+          Utilities.sleep(2000);
+        }
+      }
+    }
+
+    const summary = {
+      success: true,
+      triggerSource: triggerSource,
+      checkedAt: new Date().toISOString(),
+      totalEligible: eligible.length,
+      triggeredCount: triggeredCount,
+      triggeredList: triggeredList,
+      syncedFromDriveCount: syncedFromDriveList.length,
+      syncedFromDriveList: syncedFromDriveList
+    };
+
+    try {
+      PropertiesService.getScriptProperties().setProperty('EXPORT_PSD_LAST_BATCH_SUMMARY', JSON.stringify(summary));
+    } catch (e) {}
+
+    return summary;
+  } catch (err) {
+    console.error('runExportPsdBatchJob error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
   }
-
-  const summary = {
-    success: true,
-    checkedAt: new Date().toISOString(),
-    totalEligible: eligible.length,
-    triggeredCount: triggeredCount,
-    triggeredList: triggeredList
-  };
-
-  try {
-    PropertiesService.getScriptProperties().setProperty('EXPORT_PSD_LAST_BATCH_SUMMARY', JSON.stringify(summary));
-  } catch (e) {}
-
-  return summary;
 }
 
 function completeExportPsd(payload) {
@@ -9034,7 +9245,7 @@ function completeExportPsd(payload) {
         const rowNum = r + 1;
         if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
         if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(new Date());
-        if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions');
+        if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions (Auto PSD)');
 
         const workLinkCol = headers.indexOf('worklink') + 1;
         const psdFolderUrl = String(payload.psdFolderUrl || payload.psd_folder_url || '').trim();
@@ -9053,10 +9264,12 @@ function completeExportPsd(payload) {
           psdstatus: 'เสร็จแล้ว'
         };
 
-        try {
-          const mangaName = getMangaNameById(updatedRow.mangaId);
-          sendTelegramNotification(`🎨 <b>Export PSD เสร็จแล้ว!</b>\nเรื่อง: <b>${mangaName}</b>\nตอนที่: ${updatedRow.chapter}\nไฟล์ PSD ถูกจัดเก็บในโฟลเดอร์ย่อย <b>PSD</b> บน Google Drive เรียบร้อยแล้ว`);
-        } catch (te) {}
+        if (!payload.silentTelegram) {
+          try {
+            const mangaName = getMangaNameById(updatedRow.mangaId);
+            sendTelegramNotification(`🎨 <b>Export PSD เสร็จแล้ว!</b>\nเรื่อง: <b>${mangaName}</b>\nตอนที่: ${updatedRow.chapter}\nไฟล์ PSD ถูกจัดเก็บในโฟลเดอร์ย่อย <b>PSD</b> บน Google Drive เรียบร้อยแล้ว`);
+          } catch (te) {}
+        }
 
         break;
       }
@@ -9064,6 +9277,17 @@ function completeExportPsd(payload) {
 
     if (updatedRow) {
       invalidateCache('workQueue');
+      // Auto-Chaining: เมื่อ Export PSD ตอนนี้เสร็จสมบูรณ์ สั่งรันตอนถัดไปที่แปลเสร็จและรอคิวอยู่ทันที
+      if (!payload.skipChain) {
+        try {
+           lock.releaseLock();
+        } catch (e) {}
+        try {
+          triggerNextPendingExportPsd();
+        } catch (chainErr) {
+          console.warn('Auto-chain triggerNextPendingExportPsd error:', chainErr);
+        }
+      }
       return { success: true, updated: updatedRow };
     }
     return { success: false, message: 'Queue item not found' };
@@ -9071,8 +9295,142 @@ function completeExportPsd(payload) {
     console.error('completeExportPsd error:', err);
     return { success: false, error: err.toString() };
   } finally {
-    lock.releaseLock();
+    try { lock.releaseLock(); } catch (e) {}
   }
+}
+
+/**
+ * สั่งรัน Export PSD คิวถัดไปที่แปลเสร็จแล้วอัตโนมัติ (Auto-Chain Export PSD Queue)
+ */
+function triggerNextPendingExportPsd() {
+  console.log('--- Executing triggerNextPendingExportPsd (Auto-Chain Export PSD) ---');
+  return runExportPsdBatchJob({
+    maxBatch: 1,
+    respectActiveLock: false,
+    triggerSource: 'auto_chain_next_pending'
+  });
+}
+
+/**
+ * สแกน Google Drive สำหรับตอนที่แปลเสร็จแล้วและมีโฟลเดอร์ย่อย PSD พร้อมไฟล์ .psd อยู่แล้ว
+ * เพื่อซิงค์สถานะ psdstatus เป็น 'เสร็จแล้ว' อัตโนมัติ
+ */
+function syncPsdStatusFromDrive() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(45000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: true, updatedCount: 0, updated: [] };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const psdStatusCol = headers.indexOf('psdstatus') + 1;
+    const psdTimeCol = headers.indexOf('psdtime') + 1;
+    const psdNameCol = headers.indexOf('psdname') + 1;
+    const workLinkCol = headers.indexOf('worklink') + 1;
+    const trIdx = headers.indexOf('translatestatus');
+    const psdIdx = headers.indexOf('psdstatus');
+    const tsIdx = headers.indexOf('typesetstatus');
+    const postIdx = headers.indexOf('poststatus');
+    const now = new Date();
+    const updated = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const tr = trIdx !== -1 ? String(data[i][trIdx] || '').trim() : '';
+      const psd = psdIdx !== -1 ? String(data[i][psdIdx] || '').trim().toLowerCase() : '';
+      const ts = tsIdx !== -1 ? String(data[i][tsIdx] || '').trim() : '';
+      const post = postIdx !== -1 ? String(data[i][postIdx] || '').trim() : '';
+      const workLink = workLinkCol > 0 ? String(data[i][workLinkCol - 1] || '') : '';
+
+      if (tr === 'เสร็จแล้ว' && psd !== 'เสร็จแล้ว' && psd !== 'skip' && ts !== 'เสร็จแล้ว' && post !== 'เสร็จแล้ว') {
+        const match = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
+        if (!match) continue;
+        const folderId = match[1];
+
+        let hasPsd = false;
+        let psdFolderUrl = '';
+        try {
+          const parentFolder = DriveApp.getFolderById(folderId);
+          const subFolders = parentFolder.getFoldersByName('PSD');
+          if (subFolders.hasNext()) {
+            const psdFolder = subFolders.next();
+            const files = psdFolder.getFiles();
+            while (files.hasNext()) {
+              const f = files.next();
+              if (f.getName().toLowerCase().endsWith('.psd')) {
+                hasPsd = true;
+                psdFolderUrl = 'https://drive.google.com/drive/folders/' + psdFolder.getId();
+                break;
+              }
+            }
+          }
+        } catch (e) {
+          continue;
+        }
+
+        if (hasPsd) {
+          const rowNum = i + 1;
+          if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
+          if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(now);
+          if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions (Auto PSD)');
+          if (workLinkCol > 0 && psdFolderUrl && !workLink.includes('[Export PSD]')) {
+            const updatedLink = workLink.trim() ? (workLink.trim() + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
+            sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
+          }
+          updated.push({
+            queueId: data[i][0],
+            chapter: data[i][headers.indexOf('chapter')],
+            folderId: folderId
+          });
+        }
+      }
+    }
+
+    if (updated.length > 0) {
+      invalidateCache('workQueue');
+    }
+    return { success: true, updatedCount: updated.length, updated: updated };
+  } catch (err) {
+    console.error('syncPsdStatusFromDrive error:', err);
+    return { success: false, error: err.toString() };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
+  }
+}
+
+/**
+ * ฟังก์ชัน Time-Driven Scheduler สำหรับตรวจสอบคิวงานที่แปลเสร็จแล้วและรอ Export PSD
+ * สั่งรัน GitHub Actions export_psd.yml อัตโนมัติทีละคิวเพื่อไม่ให้ชนกัน
+ */
+function scheduledExportPsdJob() {
+  console.log('--- Executing scheduledExportPsdJob (GAS Time-Driven Auto Export PSD Trigger) ---');
+  return runExportPsdBatchJob({
+    maxBatch: 1,
+    respectActiveLock: true,
+    triggerSource: 'gas_scheduled_psd_trigger'
+  });
+}
+
+function createExportPsdScheduledTrigger(hours) {
+  const h = parseInt(hours) || 1;
+  deleteExportPsdScheduledTrigger();
+  const trigger = ScriptApp.newTrigger('scheduledExportPsdJob')
+    .timeBased()
+    .everyHours(h)
+    .create();
+  return '✓ สร้าง Trigger สั่งรัน Auto Export PSD (สำหรับงานที่แปลเสร็จแล้ว) ไปยัง GitHub Actions ทุกๆ ' + h + ' ชั่วโมงเรียบร้อยแล้ว (TriggerID: ' + trigger.getUniqueId() + ')';
+}
+
+function deleteExportPsdScheduledTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let deleted = 0;
+  triggers.forEach(t => {
+    if (t.getHandlerFunction() === 'scheduledExportPsdJob' || t.getHandlerFunction() === 'runExportPsdBatchJob') {
+      ScriptApp.deleteTrigger(t);
+      deleted++;
+    }
+  });
+  return '✓ ลบ Trigger Auto Export PSD เก่าเรียบร้อยแล้ว (' + deleted + ' รายการ)';
 }
 
 function resolveOcrLanguage(item, manga) {
@@ -9093,13 +9451,14 @@ function resolveOcrLanguage(item, manga) {
 }
 
 function scheduledMangaOcr6HourJob() {
-  console.log('--- Executing scheduledMangaOcr6HourJob (GAS Scheduled Step 2 Trigger -> GitHub Actions) ---');
+  console.log('--- Executing scheduledMangaOcr6HourJob (GAS Scheduled Step 2 OCR & Step 5 Export PSD Trigger -> GitHub Actions) ---');
   try {
     syncOcrStatusFromDrive();
   } catch (syncErr) {
     console.warn('syncOcrStatusFromDrive pre-check warning:', syncErr);
   }
 
+  let psdScheduleResult = null;
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(15000);
@@ -9209,11 +9568,21 @@ function scheduledMangaOcr6HourJob() {
       }
     }
 
+    try { lock.releaseLock(); } catch (e) {}
+
+    // 2. ตรวจสอบและสั่งรันคิวงานที่แปลเสร็จแล้วและรอ Export PSD ต่อเนื่องในรอบเดียวกัน
+    try {
+      psdScheduleResult = scheduledExportPsdJob();
+    } catch (psdErr) {
+      console.warn('scheduledExportPsdJob inside scheduledMangaOcr6HourJob warning:', psdErr);
+    }
+
     const summaryResult = {
       triggeredAt: new Date().toISOString(),
       totalEligible: pendingItems.length,
       triggeredCount: triggeredCount,
-      triggeredList: triggeredList
+      triggeredList: triggeredList,
+      psdScheduleResult: psdScheduleResult
     };
 
     try {
@@ -9225,6 +9594,8 @@ function scheduledMangaOcr6HourJob() {
   } catch (err) {
     console.error('scheduledMangaOcr6HourJob error:', err);
     return { error: err.toString() };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
   }
 }
 
@@ -9235,7 +9606,13 @@ function createMangaOcrScheduledTrigger(hours) {
     .timeBased()
     .everyHours(h)
     .create();
-  return '✓ สร้าง Trigger สั่งรัน Manga OCR (ข้อ 2 ดึงคำออโต้) ไปยัง GitHub Actions ทุกๆ ' + h + ' ชั่วโมงเรียบร้อยแล้ว (TriggerID: ' + trigger.getUniqueId() + ')';
+  let psdTriggerMsg = '';
+  try {
+    psdTriggerMsg = ' | ' + createExportPsdScheduledTrigger(1);
+  } catch (e) {
+    console.warn('createExportPsdScheduledTrigger warning:', e);
+  }
+  return '✓ สร้าง Trigger สั่งรัน Manga OCR (ทุก ' + h + ' ชม.) และ Auto Export PSD (ทุก 1 ชม.) ไปยัง GitHub Actions เรียบร้อยแล้ว (OCR TriggerID: ' + trigger.getUniqueId() + ')' + psdTriggerMsg;
 }
 
 function createMangaOcr6HourTrigger() {
@@ -9260,6 +9637,7 @@ function getMangaOcrStatus() {
   let lastPsdTrigger = null;
   let lastPsdBatch = null;
   let is6HourTriggerActive = false;
+  let isPsdTriggerActive = false;
 
   try {
     const rawTrigger = PropertiesService.getScriptProperties().getProperty('MANGA_OCR_LAST_PIPELINE_TRIGGER');
@@ -9284,6 +9662,7 @@ function getMangaOcrStatus() {
   try {
     const triggers = ScriptApp.getProjectTriggers();
     is6HourTriggerActive = triggers.some(t => t.getHandlerFunction() === 'scheduledMangaOcr6HourJob');
+    isPsdTriggerActive = triggers.some(t => t.getHandlerFunction() === 'scheduledExportPsdJob' || t.getHandlerFunction() === 'scheduledMangaOcr6HourJob');
   } catch (e) {}
 
   let pendingCount = 0;
@@ -9309,6 +9688,8 @@ function getMangaOcrStatus() {
       const trNameIdx = headers.indexOf('translatorname');
       const psdIdx = headers.indexOf('psdstatus');
       const tsIdx = headers.indexOf('typesetstatus');
+      const pubIdx = headers.indexOf('publishstatus');
+      const postIdx = headers.indexOf('poststatus');
 
       for (let i = 1; i < data.length; i++) {
         const up = String(data[i][upIdx] || '').trim();
@@ -9319,6 +9700,8 @@ function getMangaOcrStatus() {
         const trName = trNameIdx !== -1 ? String(data[i][trNameIdx] || '').toLowerCase() : '';
         const psd = psdIdx !== -1 ? String(data[i][psdIdx] || '').trim().toLowerCase() : '';
         const ts = tsIdx !== -1 ? String(data[i][tsIdx] || '').trim() : '';
+        const pub = pubIdx !== -1 ? String(data[i][pubIdx] || '').trim() : '';
+        const post = postIdx !== -1 ? String(data[i][postIdx] || '').trim() : '';
 
         const isKikDone = (ext.includes('kikuk') || ext.includes('kik')) && ex === 'เสร็จแล้ว';
 
@@ -9333,9 +9716,9 @@ function getMangaOcrStatus() {
         const isPrat = trName.includes('pratchaya');
         if (psd === 'skip' || isPrat) {
           skippedPsd++;
-        } else if (psd === 'เสร็จแล้ว' || ts === 'เสร็จแล้ว') {
+        } else if (psd === 'เสร็จแล้ว' || ts === 'เสร็จแล้ว' || pub === 'เสร็จแล้ว' || post === 'เสร็จแล้ว') {
           donePsd++;
-        } else if (tr === 'เสร็จแล้ว' && ts !== 'เสร็จแล้ว') {
+        } else if (tr === 'เสร็จแล้ว' && ts !== 'เสร็จแล้ว' && pub !== 'เสร็จแล้ว' && post !== 'เสร็จแล้ว') {
           pendingPsd++;
         }
       }
@@ -9345,6 +9728,7 @@ function getMangaOcrStatus() {
   return {
     success: true,
     is6HourTriggerActive: is6HourTriggerActive,
+    isPsdTriggerActive: isPsdTriggerActive,
     lastPipelineTrigger: lastTrigger,
     lastBatchSummary: lastBatch,
     lastPsdTrigger: lastPsdTrigger,
