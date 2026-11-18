@@ -9243,40 +9243,51 @@ function completeExportPsd(payload) {
 
       if (matched) {
         const rowNum = r + 1;
-        if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
-        if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(new Date());
-        if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions (Auto PSD)');
-
         const workLinkCol = headers.indexOf('worklink') + 1;
         let psdFolderUrl = String(payload.psdFolderUrl || payload.psd_folder_url || '').trim();
         const psdFolderId = String(payload.psdFolderId || payload.psd_folder_id || '').trim();
         if (!psdFolderUrl && psdFolderId) {
           psdFolderUrl = 'https://drive.google.com/drive/folders/' + psdFolderId;
         }
-        if (!psdFolderUrl) {
-          const rowFolderMatch = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
-          const baseFolderId = targetFolderId || (rowFolderMatch ? rowFolderMatch[1] : '');
-          if (baseFolderId) {
-            try {
-              const parentFolder = DriveApp.getFolderById(baseFolderId);
-              const subFolders = parentFolder.getFoldersByName('PSD');
-              if (subFolders.hasNext()) {
-                psdFolderUrl = 'https://drive.google.com/drive/folders/' + subFolders.next().getId();
-              } else {
-                const createdSub = parentFolder.createFolder('PSD');
-                psdFolderUrl = 'https://drive.google.com/drive/folders/' + createdSub.getId();
+
+        // Verify in Google Drive that the PSD subfolder actually has .psd files before marking เสร็จแล้ว
+        const rowFolderMatch = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
+        const baseFolderId = targetFolderId || (rowFolderMatch ? rowFolderMatch[1] : '');
+        let verifiedPsdCount = Number(payload.psdCount || 0);
+        if (baseFolderId) {
+          try {
+            const parentFolder = DriveApp.getFolderById(baseFolderId);
+            const subFolders = parentFolder.getFoldersByName('PSD');
+            if (subFolders.hasNext()) {
+              const psdSub = subFolders.next();
+              psdFolderUrl = 'https://drive.google.com/drive/folders/' + psdSub.getId();
+              let actualCount = 0;
+              const fIter = psdSub.getFiles();
+              while (fIter.hasNext()) {
+                if (fIter.next().getName().toLowerCase().endsWith('.psd')) {
+                  actualCount++;
+                }
               }
-            } catch (e) {
-              psdFolderUrl = 'https://drive.google.com/drive/folders/' + baseFolderId;
+              verifiedPsdCount = actualCount;
             }
-          }
+          } catch (e) {}
         }
+
+        if (verifiedPsdCount <= 0) {
+          console.warn('completeExportPsd: พบจำนวนไฟล์ .psd = 0 ในโฟลเดอร์ ' + baseFolderId + ' ยกเลิกการตั้งสถานะเป็น เสร็จแล้ว');
+          if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('รอเริ่ม');
+          return { success: false, error: 'No .psd files found in Drive PSD subfolder', queueId: qid };
+        }
+
+        if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
+        if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(new Date());
+        if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions (Auto PSD)');
+
         if (workLinkCol > 0 && psdFolderUrl) {
           const currentLink = String(data[r][headers.indexOf('worklink')] || '').trim();
-          if (!currentLink.includes('[Export PSD]')) {
-            const updatedLink = currentLink ? (currentLink + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
-            sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
-          }
+          const cleanedLines = currentLink.split('\n').filter(line => !line.trim().startsWith('[Export PSD]'));
+          cleanedLines.push('[Export PSD] ' + psdFolderUrl);
+          sheet.getRange(rowNum, workLinkCol).setValue(cleanedLines.filter(Boolean).join('\n'));
         }
 
         updatedRow = {
@@ -9354,8 +9365,12 @@ function syncPsdStatusFromDrive() {
     const psdIdx = headers.indexOf('psdstatus');
     const tsIdx = headers.indexOf('typesetstatus');
     const postIdx = headers.indexOf('poststatus');
+    const mangaIdx = headers.indexOf('mangaid');
+    const chapIdx = headers.indexOf('chapter');
     const now = new Date();
     const updated = [];
+    const validPsdList = [];
+    const emptyResetList = [];
 
     for (let i = 1; i < data.length; i++) {
       const tr = trIdx !== -1 ? String(data[i][trIdx] || '').trim() : '';
@@ -9365,14 +9380,14 @@ function syncPsdStatusFromDrive() {
       const workLink = workLinkCol > 0 ? String(data[i][workLinkCol - 1] || '') : '';
 
       const isWaitingPsd = tr === 'เสร็จแล้ว' && psd !== 'เสร็จแล้ว' && psd !== 'skip' && ts !== 'เสร็จแล้ว' && post !== 'เสร็จแล้ว';
-      const isDoneMissingLink = psd === 'เสร็จแล้ว' && !workLink.includes('[Export PSD]');
+      const isMarkedDoneOrHasLink = psd === 'เสร็จแล้ว' || workLink.includes('[Export PSD]');
 
-      if (isWaitingPsd || isDoneMissingLink) {
+      if (isWaitingPsd || isMarkedDoneOrHasLink) {
         const match = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
         if (!match) continue;
         const folderId = match[1];
 
-        let hasPsd = false;
+        let psdFileCount = 0;
         let psdFolderUrl = '';
         try {
           const parentFolder = DriveApp.getFolderById(folderId);
@@ -9384,52 +9399,63 @@ function syncPsdStatusFromDrive() {
             while (files.hasNext()) {
               const f = files.next();
               if (f.getName().toLowerCase().endsWith('.psd')) {
-                hasPsd = true;
-                break;
+                psdFileCount++;
               }
             }
-          } else if (isDoneMissingLink) {
-            const createdSub = parentFolder.createFolder('PSD');
-            psdFolderUrl = 'https://drive.google.com/drive/folders/' + createdSub.getId();
           }
         } catch (e) {
-          if (isDoneMissingLink) {
-            psdFolderUrl = 'https://drive.google.com/drive/folders/' + folderId;
-          } else {
-            continue;
-          }
+          continue;
         }
 
-        if (isWaitingPsd && hasPsd) {
-          const rowNum = i + 1;
-          if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
-          if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(now);
-          if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions (Auto PSD)');
+        const rowNum = i + 1;
+        const qid = data[i][0];
+        const chap = chapIdx !== -1 ? data[i][chapIdx] : '';
+        const mid = mangaIdx !== -1 ? data[i][mangaIdx] : '';
+
+        if (psdFileCount > 0) {
+          // มีไฟล์ .psd จริงในโฟลเดอร์ PSD
+          if (psd !== 'เสร็จแล้ว' && psdStatusCol > 0) {
+            sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
+            if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(now);
+            if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions (Auto PSD)');
+          }
           if (workLinkCol > 0 && psdFolderUrl && !workLink.includes('[Export PSD]')) {
             const updatedLink = workLink.trim() ? (workLink.trim() + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
             sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
           }
-          updated.push({
-            queueId: data[i][0],
-            chapter: data[i][headers.indexOf('chapter')],
+          const info = {
+            queueId: qid,
+            mangaId: mid,
+            chapter: chap,
             folderId: folderId,
             psdFolderUrl: psdFolderUrl,
-            hasPsd: true
-          });
-        } else if (isDoneMissingLink && psdFolderUrl) {
-          const rowNum = i + 1;
-          const updatedLink = workLink.trim() ? (workLink.trim() + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
-          if (workLinkCol > 0) {
-            sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
+            psdFileCount: psdFileCount
+          };
+          validPsdList.push(info);
+          if (psd !== 'เสร็จแล้ว' || !workLink.includes('[Export PSD]')) {
+            updated.push(info);
           }
-          updated.push({
-            queueId: data[i][0],
-            chapter: data[i][headers.indexOf('chapter')],
+        } else if (isMarkedDoneOrHasLink) {
+          // โฟลเดอร์ PSD ว่างเปล่า (0 ไฟล์ .psd) แต่ถูกตั้งว่า เสร็จแล้ว หรือมีลิงก์โฟลเดอร์เปล่าค้างอยู่ -> รีเซ็ตกลับเป็น รอเริ่ม และเอาลิงก์โฟลเดอร์เปล่าออก
+          if (psdStatusCol > 0 && psd === 'เสร็จแล้ว') {
+            sheet.getRange(rowNum, psdStatusCol).setValue('รอเริ่ม');
+          }
+          if (workLinkCol > 0 && workLink.includes('[Export PSD]')) {
+            const cleanedLines = workLink.split('\n').filter(line => !line.trim().startsWith('[Export PSD]'));
+            sheet.getRange(rowNum, workLinkCol).setValue(cleanedLines.filter(Boolean).join('\n'));
+          }
+          const resetInfo = {
+            queueId: qid,
+            mangaId: mid,
+            chapter: chap,
             folderId: folderId,
-            psdFolderUrl: psdFolderUrl,
-            hasPsd: hasPsd,
-            backfilledLink: true
-          });
+            psdFileCount: 0,
+            typesetstatus: ts,
+            poststatus: post,
+            resetToPending: true
+          };
+          emptyResetList.push(resetInfo);
+          updated.push(resetInfo);
         }
       }
     }
@@ -9437,7 +9463,15 @@ function syncPsdStatusFromDrive() {
     if (updated.length > 0) {
       invalidateCache('workQueue');
     }
-    return { success: true, updatedCount: updated.length, updated: updated };
+    return {
+      success: true,
+      updatedCount: updated.length,
+      validCount: validPsdList.length,
+      emptyResetCount: emptyResetList.length,
+      validPsdList: validPsdList,
+      emptyResetList: emptyResetList,
+      updated: updated
+    };
   } catch (err) {
     console.error('syncPsdStatusFromDrive error:', err);
     return { success: false, error: err.toString() };

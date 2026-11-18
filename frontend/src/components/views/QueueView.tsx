@@ -1394,11 +1394,7 @@ export function QueueView({
                                 </div>
                               )}
                             </div>
-                            {extractStepLinks(q.worklink, "Export PSD").length > 0
-                              ? renderStepLinks(q.worklink, "Export PSD")
-                              : effectivePsdStatus === "เสร็จแล้ว"
-                              ? renderStepLinks(q.worklink, "อัป Raw", "Link")
-                              : null}
+                            {renderStepLinks(q.worklink, "Export PSD")}
                           </div>
                         );
                       })()}
