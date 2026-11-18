@@ -113,8 +113,7 @@ jobs:
         with:
           name: manga-mtp-${{ github.event.inputs.chapter_num || 'mtp' }}
           path: |
-            psd_work/PSD/*.mtp
-            psd_work/*.mtp
+            psd_work/**/*.mtp
           retention-days: 7
 
       - name: Clean Up Runner Workspace

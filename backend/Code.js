@@ -543,6 +543,9 @@ function doPost(e) {
       case 'COMPLETE_EXPORT_PSD':
         result = completeExportPsd(payload);
         break;
+      case 'TRASH_DRIVE_FILES':
+        result = trashDriveFiles(payload);
+        break;
       case 'TRIGGER_NEXT_PENDING_EXPORT_PSD':
         result = triggerNextPendingExportPsd();
         break;
@@ -11326,6 +11329,46 @@ function syncOcrStatusFromDrive() {
 /**
  * อัปโหลดไฟล์ข้อความ (.txt) เข้า Google Drive โฟลเดอร์ที่ระบุ และอัปเดต WorkQueue
  */
+function trashDriveFiles(payload) {
+  try {
+    payload = payload || {};
+    const fileIds = payload.fileIds || (payload.fileId ? [payload.fileId] : []);
+    const folderId = payload.folderId || payload.folder_id;
+    const fileName = payload.fileName || payload.file_name;
+    const trashed = [];
+
+    if (fileIds && fileIds.length) {
+      for (let i = 0; i < fileIds.length; i++) {
+        try {
+          DriveApp.getFileById(fileIds[i]).setTrashed(true);
+          trashed.push(fileIds[i]);
+        } catch (e) {
+          console.warn('trashDriveFiles fileId error:', e);
+        }
+      }
+    }
+
+    if (folderId && fileName) {
+      try {
+        const folder = DriveApp.getFolderById(folderId);
+        const files = folder.getFilesByName(fileName);
+        while (files.hasNext()) {
+          const f = files.next();
+          f.setTrashed(true);
+          trashed.push(f.getId());
+        }
+      } catch (e) {
+        console.warn('trashDriveFiles folderId/fileName error:', e);
+      }
+    }
+
+    return { status: 'success', trashed: trashed };
+  } catch (err) {
+    console.error('trashDriveFiles error:', err);
+    return { error: err.toString() };
+  }
+}
+
 function uploadTextToDriveFolder(payload) {
   try {
     payload = payload || {};
