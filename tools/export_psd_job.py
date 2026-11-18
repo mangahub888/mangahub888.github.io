@@ -199,8 +199,39 @@ def extract_tab_id_from_url(url: str) -> str:
     return ""
 
 
-def download_images_from_gdrive(folder_url_or_id, output_dir):
-    """Downloads images & files from Google Drive folder."""
+def safe_local_filename(name: str, max_bytes: int = 160) -> str:
+    """
+    Sanitizes and truncates a filename so its UTF-8 byte length stays safely
+    below Linux's 255-byte NAME_MAX limit (even when gdown appends .xxxxxx.part).
+    Preserves file extension and chapter suffix.
+    """
+    p = Path(name or "file")
+    suffix = p.suffix
+    stem = p.stem if suffix else p.name
+
+    illegal_chars = set(':"<>|*?\r\n\\/')
+    stem = "".join("_" if c in illegal_chars else c for c in stem).strip("_ ")
+    stem = stem or "file"
+
+    suffix_bytes = len(suffix.encode("utf-8"))
+    budget = max(40, max_bytes - suffix_bytes)
+
+    if len(stem.encode("utf-8")) > budget:
+        tail_budget = min(45, budget // 3)
+        tail = stem
+        while len(tail.encode("utf-8")) > tail_budget:
+            tail = tail[1:]
+        head_budget = budget - len(tail.encode("utf-8")) - 1
+        head = stem
+        while len(head.encode("utf-8")) > head_budget:
+            head = head[:-1]
+        stem = f"{head.rstrip('_ ')}_{tail.lstrip('_ ')}"
+
+    return f"{stem}{suffix}"
+
+
+def download_images_from_gdrive(folder_url_or_id, output_dir, drive_service=None):
+    """Downloads images & files from Google Drive folder with UTF-8 length safety."""
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
 
@@ -213,12 +244,80 @@ def download_images_from_gdrive(folder_url_or_id, output_dir):
         print(f"📦 Found {len(existing_images)} existing images in {out_path}, skipping redownload.")
         return existing_images
 
-    import gdown
     folder_id = extract_folder_id(folder_url_or_id)
     url = f"https://drive.google.com/drive/folders/{folder_id}"
     print(f"📥 [Drive] Downloading files from: {url}")
+
+    # 1. Primary: Download via authenticated Google Drive API v3 if available
+    if drive_service:
+        try:
+            from googleapiclient.http import MediaIoBaseDownload
+            import io
+            query = (
+                f"'{folder_id}' in parents and "
+                f"mimeType != 'application/vnd.google-apps.folder' and "
+                f"trashed = false"
+            )
+            res = drive_service.files().list(
+                q=query,
+                pageSize=500,
+                fields="files(id, name, mimeType)"
+            ).execute()
+            drive_files = res.get("files", [])
+            if drive_files:
+                print(f"   📂 Found {len(drive_files)} files via Google Drive API. Downloading...")
+                for df in sorted(drive_files, key=lambda x: x.get("name", "")):
+                    fid = df.get("id")
+                    orig_name = df.get("name", fid)
+                    mime = df.get("mimeType", "")
+                    if mime.startswith("application/vnd.google-apps."):
+                        continue
+                    safe_name = safe_local_filename(orig_name)
+                    dest_file = out_path / safe_name
+                    try:
+                        request = drive_service.files().get_media(fileId=fid)
+                        with open(dest_file, "wb") as fh:
+                            downloader = MediaIoBaseDownload(fh, request)
+                            done = False
+                            while not done:
+                                _, done = downloader.next_chunk()
+                    except Exception as dl_err:
+                        print(f"   ⚠️ Skipping file {orig_name}: {dl_err}")
+                        if dest_file.exists():
+                            try:
+                                dest_file.unlink()
+                            except Exception:
+                                pass
+        except Exception as api_err:
+            print(f"⚠️ Drive API folder download warning: {api_err}")
+
+    images = sorted([
+        f for f in out_path.glob("*.*")
+        if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]
+    ])
+    if images:
+        return images
+
+    # 2. Fallback: Download via gdown with per-file safe filename truncation
     try:
-        gdown.download_folder(url, output=str(out_path), quiet=False)
+        import gdown
+        try:
+            file_list = gdown.download_folder(url, output=str(out_path), quiet=False, skip_download=True)
+            if file_list:
+                for f_item in file_list:
+                    fid = getattr(f_item, "id", None)
+                    lpath = getattr(f_item, "local_path", None) or getattr(f_item, "path", "")
+                    if not fid:
+                        continue
+                    safe_name = safe_local_filename(Path(lpath).name if lpath else f"{fid}")
+                    dest_path = out_path / safe_name
+                    try:
+                        gdown.download(id=fid, output=str(dest_path), quiet=False)
+                    except Exception as item_err:
+                        print(f"   ⚠️ Warning downloading {safe_name} ({fid}): {item_err}")
+        except TypeError:
+            # Older gdown without skip_download
+            gdown.download_folder(url, output=str(out_path), quiet=False)
     except Exception as e:
         print(f"⚠️ Warning during gdown download_folder: {e}")
 
@@ -740,7 +839,7 @@ def run_export_psd_pipeline(args):
     drive_service = get_drive_service(args.google_access_token)
 
     # 2. Download Images & Project Files from Drive Folder
-    image_files = download_images_from_gdrive(folder_id, work_dir)
+    image_files = download_images_from_gdrive(folder_id, work_dir, drive_service=drive_service)
     if not image_files:
         print("❌ No images found in folder!")
         sys.exit(1)
@@ -1077,7 +1176,7 @@ def run_export_psd_pipeline(args):
     if project_data:
         project_data["textLayersData"] = text_layers_data
         base_name = selected_mtp.stem if selected_mtp else f"chapter_{chapter_num}"
-        out_mtp_file = work_dir / f"{base_name}_updated.mtp"
+        out_mtp_file = work_dir / safe_local_filename(f"{base_name}_updated.mtp")
         with open(out_mtp_file, "w", encoding="utf-8") as f:
             json.dump(project_data, f, ensure_ascii=False)
         print(f"\n📦 Saved updated project: {out_mtp_file.name}")

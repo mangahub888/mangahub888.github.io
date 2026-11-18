@@ -41,20 +41,89 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 
-def download_images_from_gdrive(folder_url_or_id, output_dir):
-    """Downloads all raw image slices from Google Drive folder."""
+def download_images_from_gdrive(folder_url_or_id, output_dir, drive_service=None):
+    """Downloads all raw image slices from Google Drive folder with UTF-8 length safety."""
     import gdown
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
 
     if "drive.google.com" in folder_url_or_id:
         url = folder_url_or_id
+        clean_id = folder_url_or_id.split("/")[-1].split("?")[0].strip()
     else:
-        url = f"https://drive.google.com/drive/folders/{folder_url_or_id}"
+        clean_id = folder_url_or_id.strip()
+        url = f"https://drive.google.com/drive/folders/{clean_id}"
 
     print(f"📥 [Drive] Downloading manga images from: {url}")
+
+    # 1. Primary: Download images via authenticated Google Drive API v3 if available
+    if drive_service and clean_id:
+        try:
+            from googleapiclient.http import MediaIoBaseDownload
+            query = (
+                f"'{clean_id}' in parents and "
+                f"mimeType != 'application/vnd.google-apps.folder' and "
+                f"trashed = false"
+            )
+            res = drive_service.files().list(
+                q=query,
+                pageSize=500,
+                fields="files(id, name, mimeType)"
+            ).execute()
+            drive_files = res.get("files", [])
+            if drive_files:
+                for df in sorted(drive_files, key=lambda x: x.get("name", "")):
+                    fid = df.get("id")
+                    orig_name = df.get("name", fid)
+                    ext = Path(orig_name).suffix.lower()
+                    if ext not in [".jpg", ".jpeg", ".png", ".webp"]:
+                        continue
+                    safe_name = f"{sanitize_filename(Path(orig_name).stem)}{ext}"
+                    dest_file = out_path / safe_name
+                    try:
+                        request = drive_service.files().get_media(fileId=fid)
+                        with open(dest_file, "wb") as fh:
+                            downloader = MediaIoBaseDownload(fh, request)
+                            done = False
+                            while not done:
+                                _, done = downloader.next_chunk()
+                    except Exception as dl_err:
+                        print(f"   ⚠️ Skipping image {orig_name}: {dl_err}")
+                        if dest_file.exists():
+                            try:
+                                dest_file.unlink()
+                            except Exception:
+                                pass
+        except Exception as api_err:
+            print(f"⚠️ Drive API folder download warning: {api_err}")
+
+    images = sorted([
+        str(f) for f in out_path.glob("*.*")
+        if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]
+    ])
+    if images:
+        return images
+
+    # 2. Fallback: gdown with per-file safe filename truncation
     try:
-        gdown.download_folder(url, output=str(out_path), quiet=False)
+        try:
+            file_list = gdown.download_folder(url, output=str(out_path), quiet=False, skip_download=True)
+            if file_list:
+                for f_item in file_list:
+                    fid = getattr(f_item, "id", None)
+                    lpath = getattr(f_item, "local_path", None) or getattr(f_item, "path", "")
+                    if not fid:
+                        continue
+                    p_item = Path(lpath) if lpath else Path(f"{fid}")
+                    ext = p_item.suffix
+                    safe_name = f"{sanitize_filename(p_item.stem)}{ext}" if ext else sanitize_filename(p_item.name)
+                    dest_path = out_path / safe_name
+                    try:
+                        gdown.download(id=fid, output=str(dest_path), quiet=False)
+                    except Exception as item_err:
+                        print(f"   ⚠️ Warning downloading {safe_name} ({fid}): {item_err}")
+        except TypeError:
+            gdown.download_folder(url, output=str(out_path), quiet=False)
     except Exception as e:
         print(f"⚠️ Warning during gdown download_folder: {e}")
 
@@ -770,9 +839,9 @@ def sanitize_filename(name: str) -> str:
     cleaned = cleaned or 'chapter'
 
     # Linux limits a filename to 255 BYTES (Thai chars are 3 bytes each in UTF-8).
-    # Keep a safe budget (leaves room for suffixes like _ocr.json / .mtp) and
+    # Keep a safe budget (leaves room for suffixes like _ocr.json / .mtp / .part) and
     # preserve the tail so the chapter number is not lost.
-    max_bytes = 180
+    max_bytes = 150
     if len(cleaned.encode('utf-8')) > max_bytes:
         tail_budget = 45
         tail = cleaned
@@ -1060,7 +1129,7 @@ def main():
 
     # 1. Download images
     download_dir = Path("./downloaded_manga")
-    image_files = download_images_from_gdrive(args.folder_id, download_dir)
+    image_files = download_images_from_gdrive(args.folder_id, download_dir, drive_service=drive_service)
     if not image_files:
         print("❌ No images found in folder!")
         sys.exit(1)
@@ -1086,7 +1155,12 @@ def main():
 
     # Export formatted OCR .txt file ([#1] line 1 \n\n [#2] line 2 ...)
     ocr_txt_content = format_ocr_text_blocks(image_files, ocr_results, direction=reading_dir)
-    txt_filename = args.txt_filename.strip() if args.txt_filename else f"{base_filename}_ocr.txt"
+    if args.txt_filename and args.txt_filename.strip():
+        raw_txt = args.txt_filename.strip()
+        txt_stem = raw_txt[:-4] if raw_txt.lower().endswith(".txt") else raw_txt
+        txt_filename = f"{sanitize_filename(txt_stem)}.txt"
+    else:
+        txt_filename = f"{base_filename}_ocr.txt"
     ocr_txt_path = out_dir / txt_filename
     with open(ocr_txt_path, "w", encoding="utf-8") as fp:
         fp.write(ocr_txt_content)
@@ -1133,7 +1207,8 @@ def main():
     # Default: (ชั่วคราว) <ชื่อเรื่อง> ตอนที่ <เลขตอน>.mtp
     passed_mtp = (getattr(args, "mtp_filename", "") or "").strip()
     if passed_mtp and passed_mtp.lower() != "tempt.mtp":
-        mtp_filename = passed_mtp
+        mtp_stem = passed_mtp[:-4] if passed_mtp.lower().endswith(".mtp") else passed_mtp
+        mtp_filename = f"{sanitize_filename(mtp_stem)}.mtp"
     else:
         mtp_filename = default_mtp_filename
 
