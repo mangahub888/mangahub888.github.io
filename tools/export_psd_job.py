@@ -772,9 +772,10 @@ def wrap_thai_text_for_bubble(text: str, box_w: float, box_h: float) -> tuple[st
 # 5. GAS Notification Callback
 # ==============================================================================
 def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_name="", psd_count=0, psd_folder_id="", subfolder_name="PSD", gas_url=None, passcode="10211032"):
-    """Notifies Google Apps Script to mark Export PSD as 'เสร็จแล้ว'."""
+    """Notifies Google Apps Script to mark Export PSD as 'เสร็จแล้ว' and attach [Export PSD] link."""
     gas_api_url = gas_url or "https://script.google.com/macros/s/AKfycbzG1H1eBoTsF7Omfso8v23N6HidWXU4kS-yyf0xDunb2BoZgPiUYPIOO2vMLSvYWwHsnw/exec"
-    psd_folder_url = f"https://drive.google.com/drive/folders/{psd_folder_id}" if psd_folder_id else ""
+    effective_folder_id = (psd_folder_id or folder_id or "").strip()
+    psd_folder_url = f"https://drive.google.com/drive/folders/{effective_folder_id}" if effective_folder_id else ""
     payload = {
         "action": "COMPLETE_EXPORT_PSD",
         "passcode": passcode,
@@ -785,7 +786,7 @@ def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_na
             "mangaName": manga_name,
             "psdCount": psd_count,
             "subfolder": subfolder_name,
-            "psdFolderId": psd_folder_id,
+            "psdFolderId": effective_folder_id,
             "psdFolderUrl": psd_folder_url,
             "completedAt": time.strftime("%Y-%m-%dT%H:%M:%S+07:00")
         }
@@ -864,27 +865,36 @@ def run_export_psd_pipeline(args):
     ts_data = project_data.get("tsData", {})
     ocr_data = project_data.get("ocrData", {})
 
+    # Helper: normalize page stems so '001.jpg', '01.jpg', '1.jpg' match cleanly
+    def normalize_page_stem(name: str) -> str:
+        stem = Path(str(name or "")).stem.lower().strip()
+        m = re.match(r"^(.*?)0*(\d+)$", stem)
+        if m:
+            return f"{m.group(1)}{int(m.group(2))}"
+        return stem
+
     # Helper: resolve layers for a given file name
     def get_layers_for_page(filename: str):
         # 1. Exact match in tsData
         if filename in ts_data and ts_data[filename]:
             return ts_data[filename]
-        # 2. Case-insensitive or stem match in tsData
+        # 2. Case-insensitive or normalized stem match in tsData
         stem = Path(filename).stem.lower()
+        norm_stem = normalize_page_stem(filename)
         for k, v in ts_data.items():
-            if Path(k).stem.lower() == stem and v:
+            if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
                 return v
         # 3. Fallback to ocrData
         if filename in ocr_data and ocr_data[filename]:
             return ocr_data[filename]
         for k, v in ocr_data.items():
-            if Path(k).stem.lower() == stem and v:
+            if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
                 return v
         # 4. Check legacy 'pages' format if any
         if "pages" in project_data:
             for p in project_data.get("pages", []):
                 p_name = p.get("fileName", "") or p.get("name", "")
-                if Path(p_name).stem.lower() == stem:
+                if Path(p_name).stem.lower() == stem or normalize_page_stem(p_name) == norm_stem:
                     return p.get("layers", [])
         return []
 
@@ -960,9 +970,28 @@ def run_export_psd_pipeline(args):
         fname = f_info.get("name", "")
         img_path = work_dir / fname
         if not img_path.exists():
-            # Try finding image with matching stem
+            # 1. Try finding image with exact matching stem
             cand = list(work_dir.glob(f"{Path(fname).stem}.*"))
             cand = [c for c in cand if c.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]]
+            # 2. Try normalized numeric stem match (e.g. '01.jpg' in .mtp vs '001.jpg' on disk)
+            if not cand:
+                norm_target = normalize_page_stem(fname)
+                cand = [c for c in image_files if normalize_page_stem(c.name) == norm_target]
+            # 3. Try positional match if image count matches MTP page count
+            if not cand and len(image_files) == len(all_files_info) and 1 <= file_idx <= len(image_files):
+                cand = [image_files[file_idx - 1]]
+            # 4. Try decoding embedded base64 dataUrl from .mtp if present
+            if not cand and f_info.get("dataUrl") and "base64," in str(f_info.get("dataUrl", "")):
+                try:
+                    import base64
+                    b64_part = str(f_info["dataUrl"]).split("base64,", 1)[1]
+                    decoded_path = work_dir / safe_local_filename(fname or f"{file_idx:03d}.jpg")
+                    with open(decoded_path, "wb") as fb:
+                        fb.write(base64.b64decode(b64_part))
+                    cand = [decoded_path]
+                except Exception as dec_err:
+                    print(f"   ⚠️ Failed to decode embedded dataUrl for {fname}: {dec_err}")
+
             if cand:
                 img_path = cand[0]
             else:
@@ -975,8 +1004,8 @@ def run_export_psd_pipeline(args):
             continue
         h, w = raw_img.shape[:2]
 
-        # Retrieve layers for this page
-        layers = get_layers_for_page(fname)
+        # Retrieve layers for this page (check both MTP fname and actual disk filename)
+        layers = get_layers_for_page(fname) or get_layers_for_page(img_path.name)
         page_matched_layers = []
 
         for l in layers:
@@ -1132,7 +1161,7 @@ def run_export_psd_pipeline(args):
             f_bg.write(raw_rgba.tobytes())
         temp_patch_files.append(raw_bg_bin)
 
-        psd_filename = f"{Path(fname).stem}.psd"
+        psd_filename = f"{img_path.stem}.psd"
         out_psd_path = psd_out_dir / psd_filename
         psd_manifest = {
             "width": w,
@@ -1143,7 +1172,7 @@ def run_export_psd_pipeline(args):
             "textLayers": page_text_layers
         }
 
-        manifest_file = work_dir / f"{Path(fname).stem}_manifest.json"
+        manifest_file = work_dir / f"{img_path.stem}_manifest.json"
         with open(manifest_file, "w", encoding="utf-8") as f_m:
             json.dump(psd_manifest, f_m, ensure_ascii=False)
         temp_patch_files.append(manifest_file)
@@ -1190,10 +1219,15 @@ def run_export_psd_pipeline(args):
     print(f"   Total Elapsed Time:        {time.time() - start_time:.2f}s")
     print("=" * 65)
 
+    if not generated_psds:
+        print("❌ Error: No PSD files were generated! Exiting with error so queue is not marked finished without PSDs.")
+        sys.exit(1)
+
     # 7. Upload PSD files directly to Google Drive Subfolder
     target_upload_folder_id = folder_id
-    if args.upload_to_source and drive_service and generated_psds:
+    if drive_service:
         target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
+    if args.upload_to_source and drive_service and generated_psds:
         print(f"\n☁️ [Google Drive Upload] Uploading {len(generated_psds)} PSD files to Drive folder '{subfolder_name}' ({target_upload_folder_id})...")
         up_count = 0
         for psd_file in generated_psds:
@@ -1202,7 +1236,7 @@ def run_export_psd_pipeline(args):
                 up_count += 1
         print(f"   ✓ Uploaded {up_count}/{len(generated_psds)} PSD files to Google Drive subfolder '{subfolder_name}'!")
 
-    # 8. Notify GAS that Export PSD is complete
+    # 8. Notify GAS that Export PSD is complete (always pass PSD folder ID so [Export PSD] link is attached)
     if not getattr(args, "no_notify", False):
         notify_gas_export_psd_completed(
             folder_id=folder_id,
@@ -1210,7 +1244,7 @@ def run_export_psd_pipeline(args):
             chapter=chapter_num,
             manga_name=manga_name,
             psd_count=len(generated_psds),
-            psd_folder_id=target_upload_folder_id if target_upload_folder_id != folder_id else "",
+            psd_folder_id=target_upload_folder_id or folder_id,
             subfolder_name=subfolder_name,
             gas_url=args.gas_url,
             passcode=args.gas_passcode

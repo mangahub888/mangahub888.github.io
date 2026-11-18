@@ -9248,10 +9248,32 @@ function completeExportPsd(payload) {
         if (psdNameCol > 0) sheet.getRange(rowNum, psdNameCol).setValue('GitHub Actions (Auto PSD)');
 
         const workLinkCol = headers.indexOf('worklink') + 1;
-        const psdFolderUrl = String(payload.psdFolderUrl || payload.psd_folder_url || '').trim();
+        let psdFolderUrl = String(payload.psdFolderUrl || payload.psd_folder_url || '').trim();
+        const psdFolderId = String(payload.psdFolderId || payload.psd_folder_id || '').trim();
+        if (!psdFolderUrl && psdFolderId) {
+          psdFolderUrl = 'https://drive.google.com/drive/folders/' + psdFolderId;
+        }
+        if (!psdFolderUrl) {
+          const rowFolderMatch = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
+          const baseFolderId = targetFolderId || (rowFolderMatch ? rowFolderMatch[1] : '');
+          if (baseFolderId) {
+            try {
+              const parentFolder = DriveApp.getFolderById(baseFolderId);
+              const subFolders = parentFolder.getFoldersByName('PSD');
+              if (subFolders.hasNext()) {
+                psdFolderUrl = 'https://drive.google.com/drive/folders/' + subFolders.next().getId();
+              } else {
+                const createdSub = parentFolder.createFolder('PSD');
+                psdFolderUrl = 'https://drive.google.com/drive/folders/' + createdSub.getId();
+              }
+            } catch (e) {
+              psdFolderUrl = 'https://drive.google.com/drive/folders/' + baseFolderId;
+            }
+          }
+        }
         if (workLinkCol > 0 && psdFolderUrl) {
           const currentLink = String(data[r][headers.indexOf('worklink')] || '').trim();
-          if (!currentLink.includes(psdFolderUrl) && !currentLink.includes('[Export PSD]')) {
+          if (!currentLink.includes('[Export PSD]')) {
             const updatedLink = currentLink ? (currentLink + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
             sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
           }
@@ -9342,7 +9364,10 @@ function syncPsdStatusFromDrive() {
       const post = postIdx !== -1 ? String(data[i][postIdx] || '').trim() : '';
       const workLink = workLinkCol > 0 ? String(data[i][workLinkCol - 1] || '') : '';
 
-      if (tr === 'เสร็จแล้ว' && psd !== 'เสร็จแล้ว' && psd !== 'skip' && ts !== 'เสร็จแล้ว' && post !== 'เสร็จแล้ว') {
+      const isWaitingPsd = tr === 'เสร็จแล้ว' && psd !== 'เสร็จแล้ว' && psd !== 'skip' && ts !== 'เสร็จแล้ว' && post !== 'เสร็จแล้ว';
+      const isDoneMissingLink = psd === 'เสร็จแล้ว' && !workLink.includes('[Export PSD]');
+
+      if (isWaitingPsd || isDoneMissingLink) {
         const match = workLink.match(/folders\/([a-zA-Z0-9_-]+)/) || workLink.match(/id=([a-zA-Z0-9_-]+)/);
         if (!match) continue;
         const folderId = match[1];
@@ -9354,21 +9379,28 @@ function syncPsdStatusFromDrive() {
           const subFolders = parentFolder.getFoldersByName('PSD');
           if (subFolders.hasNext()) {
             const psdFolder = subFolders.next();
+            psdFolderUrl = 'https://drive.google.com/drive/folders/' + psdFolder.getId();
             const files = psdFolder.getFiles();
             while (files.hasNext()) {
               const f = files.next();
               if (f.getName().toLowerCase().endsWith('.psd')) {
                 hasPsd = true;
-                psdFolderUrl = 'https://drive.google.com/drive/folders/' + psdFolder.getId();
                 break;
               }
             }
+          } else if (isDoneMissingLink) {
+            const createdSub = parentFolder.createFolder('PSD');
+            psdFolderUrl = 'https://drive.google.com/drive/folders/' + createdSub.getId();
           }
         } catch (e) {
-          continue;
+          if (isDoneMissingLink) {
+            psdFolderUrl = 'https://drive.google.com/drive/folders/' + folderId;
+          } else {
+            continue;
+          }
         }
 
-        if (hasPsd) {
+        if (isWaitingPsd && hasPsd) {
           const rowNum = i + 1;
           if (psdStatusCol > 0) sheet.getRange(rowNum, psdStatusCol).setValue('เสร็จแล้ว');
           if (psdTimeCol > 0) sheet.getRange(rowNum, psdTimeCol).setValue(now);
@@ -9380,7 +9412,23 @@ function syncPsdStatusFromDrive() {
           updated.push({
             queueId: data[i][0],
             chapter: data[i][headers.indexOf('chapter')],
-            folderId: folderId
+            folderId: folderId,
+            psdFolderUrl: psdFolderUrl,
+            hasPsd: true
+          });
+        } else if (isDoneMissingLink && psdFolderUrl) {
+          const rowNum = i + 1;
+          const updatedLink = workLink.trim() ? (workLink.trim() + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
+          if (workLinkCol > 0) {
+            sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
+          }
+          updated.push({
+            queueId: data[i][0],
+            chapter: data[i][headers.indexOf('chapter')],
+            folderId: folderId,
+            psdFolderUrl: psdFolderUrl,
+            hasPsd: hasPsd,
+            backfilledLink: true
           });
         }
       }
