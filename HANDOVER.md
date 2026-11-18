@@ -38,6 +38,34 @@
       - `Group: Inpaint Patches`: Inpaint #9, #10, #11 แยกเลเยอร์
       - `Layer: Background`: ภาพดิบเดิมก่อน Inpaint
 
+---
+
+### 🔬 การวิจัยและสเปกการออกแบบ: ระบบ MangaToolPlus Source Text Matching (18 พ.ย. 2569)
+- **โจทย์และข้อสังเกตจาก USER**:
+  - *"แต่ระบบใน mangatoonplus มันจะแมทชิ้งแบบ เอาข้อความต้นฉบับมาแมท์กันไม่ใช่เหรอ?"*
+- **ผลการวิเคราะห์สถาปัตยกรรมและการทำงานของ MangaToolPlus**:
+  1. **โครงสร้างข้อมูลในไฟล์ `.mtp`**:
+     - ภายใน `tsData[page_name]` เลเยอร์ทุกตัวเก็บฟิลด์ `text` และ `originalText` (ข้อความดิบจากการ OCR เช่น ภาษาจีน/เกาหลี/ญี่ปุ่น)
+     - `translation` เริ่มต้นเป็นค่าว่าง เพื่อรอการจับคู่คำแปล
+  2. **โครงสร้างสคริปต์คำแปลใน Google Docs / TXT**:
+     - รูปแบบมาตรฐานของสคริปต์แปลมักจะมีทั้งข้อความต้นฉบับและคำแปลไทยคู่กัน เช่น:
+       ```text
+       [#1] 救命啊！
+       ช่วยด้วย!
+       ```
+       หรือแยกบรรทัดเป็น Original Text ก่อน แล้วตามด้วย Translated Thai Text
+  3. **ข้อแตกต่างระหว่าง Sequential Index Matching vs Source Text Matching**:
+     - **ระบบปัจจุบัน (`tools/export_psd_job.py`)**: ใช้วิธี Sequential Global Indexing ข้ามหน้าตามลำดับตัวเลข `[#1]..[#N]` ข้อดีคือรวดเร็วและตรงไปตรงมา แต่หาก OCR ตรวจจับ Noise หรือ SFX แทรกเข้ามา จะทำให้ Index ลำดับถัดไปคลาดเคลื่อนได้
+     - **แนวทางของ MangaToolPlus (Source Text Matching)**: นำข้อความต้นฉบับ (`originalText`) ในเลเยอร์ มาทำ Text Similarity Matching (Levenshtein / LCS / Substring Match) กับข้อความต้นฉบับในเอกสารคำแปล เพื่อหาเลเยอร์ที่ตรงกันโดยตรง
+- **สเปกการพัฒนาสำหรับรอบถัดไป (Implementation Blueprint)**:
+  1. **Doc Parser Enhancement (`parse_numbered_translations`)**:
+     - ปรับให้แยกทั้ง `source_text` (ข้อความภาษาต้นฉบับที่ไม่ใช่ภาษาไทย) และ `translation_text` (ภาษาไทย) ออกมาเป็นโครงสร้าง Dictionary คู่กัน
+  2. **Hybrid Matching Engine (Source Text Similarity + Index Window Proximity)**:
+     - นำ `originalText` ของเลเยอร์มาเปรียบเทียบกับ `source_text` ของคำแปล
+     - หากมีความเหมือน (Similarity >= 0.60) ภายในช่วงหน้าหรือลำดับใกล้เคียง ให้จับคู่โดยตรง
+     - หากไม่มี `source_text` (เช่น เอกสารมีแต่ภาษาไทยล้วน) ให้ Fallback กลับไปใช้ Sequential Index Matching เดิม เพื่อให้ Backward Compatible 100%
+  3. **สถานะปัจจุบัน**: บันทึกสเปกขึ้น Git ตามคำสั่ง USER เพื่อให้ทีมงานนำมาพัฒนาต่อในวันหลังได้อย่างราบรื่น
+
 
 ### 🏆 ตั้งค่าผู้ลงคำเริ่มต้น (Default Typesetter) เป็น Tilly ในทุกมังงะ โดยอิงชื่อจาก Team Member (11 พ.ย. 2569)
 - **โจทย์และความต้องการของผู้ใช้**:
