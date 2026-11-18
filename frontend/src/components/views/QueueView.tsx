@@ -199,7 +199,7 @@ export function QueueView({
 
   React.useEffect(() => {
     if (stepFilter !== "all" && stepFilter !== "publish_post") {
-      setBulkStep(stepFilter)
+      setBulkStep(stepFilter === "psd_done" ? "typeset" : stepFilter)
     }
   }, [stepFilter])
 
@@ -210,6 +210,8 @@ export function QueueView({
       waitOcr = 0,
       waitExtract = 0,
       waitTranslate = 0,
+      waitPsd = 0,
+      donePsdWaitTypeset = 0,
       waitTypeset = 0,
       waitPublish = 0,
       waitPost = 0
@@ -222,6 +224,13 @@ export function QueueView({
       }
 
       const mangaItem = (mangaList || []).find((m: any) => String(m.mangaid) === String(q.mangaid))
+
+      if (matchesStepFilter(q, "psd", mangaItem)) {
+        waitPsd += count
+      }
+      if (matchesStepFilter(q, "psd_done", mangaItem)) {
+        donePsdWaitTypeset += count
+      }
 
       if (matchesStepFilter(q, "upload", mangaItem)) {
         waitUpload += count
@@ -248,6 +257,8 @@ export function QueueView({
       waitOcr,
       waitExtract,
       waitTranslate,
+      waitPsd,
+      donePsdWaitTypeset,
       waitTypeset,
       waitPublish,
       waitPost,
@@ -346,6 +357,7 @@ export function QueueView({
         const isOcr = stepFilter === "ocr" || stepFilter.includes("ocr") || stepFilter.includes("ดึงคำออโต้")
         const isExtract = stepFilter === "extract" || stepFilter.includes("QC") || (stepFilter.includes("ดึงคำ") && !stepFilter.includes("ออโต้"))
         const isTranslate = stepFilter === "translate" || stepFilter.includes("แปล")
+        const isPsd = stepFilter === "psd" || stepFilter === "psd_done" || stepFilter.toLowerCase().includes("psd")
         const isTypeset = stepFilter === "typeset" || stepFilter.includes("ลงคำ")
         const isPublish = stepFilter === "publish" || stepFilter.includes("publish") || stepFilter.includes("เผยแพร่")
         const isPost = stepFilter === "post" || stepFilter.includes("โพสต์")
@@ -370,6 +382,12 @@ export function QueueView({
           matchesAssignee =
             q.extractorname === assigneeFilter ||
             resolvedExtractor === assigneeFilter
+        } else if (isPsd) {
+          matchesAssignee =
+            q.typesettername === assigneeFilter ||
+            resolvedTypesetter === assigneeFilter ||
+            q.translatorname === assigneeFilter ||
+            resolvedTranslator === assigneeFilter
         } else if (isTypeset) {
           matchesAssignee =
             q.typesettername === assigneeFilter ||
@@ -614,7 +632,7 @@ export function QueueView({
             </button>
           )}
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-3">
           {[
             {
               id: "finished",
@@ -677,6 +695,18 @@ export function QueueView({
               active: stepFilter === "translate",
               onClick: () => {
                 setStepFilter(stepFilter === "translate" ? "all" : "translate")
+                if (completionFilter === "complete") setCompletionFilter("incomplete")
+              },
+            },
+            {
+              id: "psd",
+              label: "รอ Export PSD",
+              val: queueStats.waitPsd,
+              icon: "🎨",
+              color: "text-purple-400",
+              active: stepFilter === "psd",
+              onClick: () => {
+                setStepFilter(stepFilter === "psd" ? "all" : "psd")
                 if (completionFilter === "complete") setCompletionFilter("incomplete")
               },
             },
@@ -906,6 +936,8 @@ export function QueueView({
             <option value="ocr">รอ/ทำ: 2. ดึงคำออโต้ (AI)</option>
             <option value="extract">รอ/ทำ: 3. QC ดึงคำ</option>
             <option value="translate">รอ/ทำ: แปล</option>
+            <option value="psd">รอ/ทำ: Export PSD ({queueStats.waitPsd} ตอน)</option>
+            <option value="psd_done">Export PSD: เสร็จแล้ว / พร้อมลงคำ ({queueStats.donePsdWaitTypeset} ตอน)</option>
             <option value="typeset">รอ/ทำ: ลงคำ</option>
             <option value="publish">รอ/ทำ: Publish</option>
             <option value="post">รอ/ทำ: โพสต์</option>
@@ -1000,6 +1032,7 @@ export function QueueView({
               <option value="post">📮 โพสต์</option>
               <option value="publish">📤 Publisher</option>
               <option value="typeset">✍️ ลงคำ</option>
+              <option value="psd">🎨 Export PSD</option>
               <option value="translate">🌐 แปล</option>
               <option value="extract">📝 3. QC ดึงคำ</option>
               <option value="ocr">🤖 2. ดึงคำออโต้</option>
@@ -1324,7 +1357,7 @@ export function QueueView({
                         const isPsdActive = String(q.psdstatus || "").trim() === "กำลังทำ" || String(q.psdstatus || "").trim() === "เสร็จแล้ว";
                         const effectivePsdStatus = (isPratchaya && !isPsdActive)
                           ? "skip"
-                          : (q.psdstatus || (isStepDone(q.translatestatus) ? "เสร็จแล้ว" : "รอเริ่ม"));
+                          : (q.psdstatus || (isStepDone(q.typesetstatus) ? "เสร็จแล้ว" : "รอเริ่ม"));
                         const psdSubLabel = effectivePsdStatus === "skip"
                           ? "Pratchaya แปล"
                           : (q.psdtime ? (parseQueueDate(q.psdtime)?.toLocaleDateString("th-TH") || "เสร็จแล้ว") : "GitHub Actions");

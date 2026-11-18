@@ -225,6 +225,13 @@ export function isQueueStepDone(q: any, step: string, manga?: any): boolean {
       return isStepDone(q.translatestatus)
     case "psd":
       if (isPratchaya && strStatus !== "กำลังทำ") return true
+      if (
+        isStepDone(q.typesetstatus) ||
+        isStepDone(q.publishstatus) ||
+        isStepDone(q.poststatus)
+      ) {
+        return true
+      }
       return isStepDone(q.psdstatus)
     case "typeset":
       return isStepDone(q.typesetstatus)
@@ -249,6 +256,34 @@ export function matchesStepFilter(q: any, stepFilter: string, manga?: any): bool
       isQueueStepDone(q, "typeset", manga)
 
     return prevStepsDone && !isQueueStepDone(q, "post", manga)
+  }
+
+  if (stepFilter === "psd") {
+    const strPsd = String(q.psdstatus || "").trim()
+    if (strPsd === "กำลังทำ") return true
+
+    const prevStepsDone =
+      isQueueStepDone(q, "upload", manga) &&
+      isQueueStepDone(q, "ocr", manga) &&
+      isQueueStepDone(q, "extract", manga) &&
+      isQueueStepDone(q, "translate", manga)
+
+    const downstreamDone =
+      isQueueStepDone(q, "typeset", manga) ||
+      isQueueStepDone(q, "publish", manga) ||
+      isQueueStepDone(q, "post", manga)
+
+    return prevStepsDone && !downstreamDone && !isQueueStepDone(q, "psd", manga)
+  }
+
+  if (stepFilter === "psd_done") {
+    const strPsd = String(q.psdstatus || "").trim()
+    const downstreamDone =
+      isQueueStepDone(q, "typeset", manga) ||
+      isQueueStepDone(q, "publish", manga) ||
+      isQueueStepDone(q, "post", manga)
+
+    return strPsd === "เสร็จแล้ว" && !downstreamDone
   }
 
   const stepIdx = QUEUE_STEPS.indexOf(stepFilter as QueueStepKey)
