@@ -9128,7 +9128,8 @@ function runExportPsdBatchJob(payload) {
           const psdFiles = psdFolder.getFiles();
           while (psdFiles.hasNext()) {
             const pf = psdFiles.next();
-            if (pf.getName().toLowerCase().endsWith('.psd')) {
+            const fn = pf.getName().toLowerCase();
+            if (fn.endsWith('.mtp') || fn.endsWith('.psd')) {
               hasPsdInDrive = true;
               psdSubfolderUrl = 'https://drive.google.com/drive/folders/' + psdFolder.getId();
               break;
@@ -9264,7 +9265,8 @@ function completeExportPsd(payload) {
               let actualCount = 0;
               const fIter = psdSub.getFiles();
               while (fIter.hasNext()) {
-                if (fIter.next().getName().toLowerCase().endsWith('.psd')) {
+                const fn = fIter.next().getName().toLowerCase();
+                if (fn.endsWith('.mtp') || fn.endsWith('.psd')) {
                   actualCount++;
                 }
               }
@@ -9401,7 +9403,8 @@ function syncPsdStatusFromDrive() {
             const files = psdFolder.getFiles();
             while (files.hasNext()) {
               const f = files.next();
-              if (f.getName().toLowerCase().endsWith('.psd')) {
+              const fn = f.getName().toLowerCase();
+              if (fn.endsWith('.mtp') || fn.endsWith('.psd')) {
                 psdFileCount++;
               }
             }

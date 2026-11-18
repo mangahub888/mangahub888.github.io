@@ -82,7 +82,7 @@ jobs:
             curl -fL -o "models/big-lama.pt" "https://huggingface.co/fashn-ai/LaMa/resolve/main/big-lama.pt" || true
           fi
 
-      - name: Run Export PSD & Upload directly to Google Drive Folder
+      - name: Run Export Edited MTP & Upload directly to Google Drive Folder
         env:
           GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}
           GOOGLE_ACCESS_TOKEN: ${{ github.event.inputs.google_access_token }}
@@ -106,15 +106,15 @@ jobs:
             --upload-to-source \
             $EXTRA_FLAG
 
-      - name: Upload Backup PSD to GitHub Artifacts
+      - name: Upload Backup Edited MTP to GitHub Artifacts
         if: success()
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: manga-psd-${{ github.event.inputs.chapter_num || 'psd' }}
+          name: manga-mtp-${{ github.event.inputs.chapter_num || 'mtp' }}
           path: |
-            psd_work/PSD/*.psd
-            psd_work/**/*.psd
+            psd_work/PSD/*.mtp
+            psd_work/*.mtp
           retention-days: 7
 
       - name: Clean Up Runner Workspace

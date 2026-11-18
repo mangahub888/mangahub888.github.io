@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Automated Manga PSD Export & Drive Upload Job
-=============================================
+Automated Manga Edited MTP Export & Drive Upload Job
+====================================================
 Automates:
 1. Downloads manga raw images & .mtp project from Google Drive source folder.
 2. Fetches translation text directly from Google Docs tab (matching chapter number or tab ID).
 3. Parses numbered translation [#N] and matches with OCR layers sequentially across the chapter.
-4. Cleans speech bubbles using LaMa model (or OpenCV fallback) as individual cropped layers (Inpaint #N).
-5. Typesets translation text onto images using 'TF LANNA Bold' font with Thai word wrap & bubble auto-fit.
-6. Generates native editable PSD files via tools/export_psd_node.js:
-   - Background: Raw uncleaned image before inpainting
-   - Inpaint Patches Group: Individual box layer per bubble
-   - Translated Text Group: Centered Thai text with TF LANNA Bold and white stroke
-7. Updates and saves native MangaToolPlus project (*_updated.mtp).
-8. Uploads all generated .psd files directly back into the Google Drive source folder (PSD subfolder).
-9. Notifies Google Apps Script (COMPLETE_EXPORT_PSD) to update WorkQueue status to 'เสร็จแล้ว'.
+4. Cleans speech bubbles using LaMa model (or OpenCV fallback) as individual cropped inpaint layers (Inpaint #N) stored directly as PNG Base64 Data URLs in .mtp tsData.
+5. Typesets translation text onto images using 'TF LANNA Bold' font with Thai word wrap & bubble auto-fit stored in .mtp textLayersData & fontRegistry.
+6. Generates and saves native editable MangaToolPlus project (.mtp) into the PSD subfolder & updates the source folder .mtp (no .psd generation required).
+7. Uploads the edited .mtp file directly back into the Google Drive source folder (PSD subfolder & root folder).
+8. Notifies Google Apps Script (COMPLETE_EXPORT_PSD) to update WorkQueue status to 'เสร็จแล้ว'.
 """
 
 import os
@@ -24,6 +20,8 @@ import re
 import json
 import time
 import math
+import copy
+import base64
 import shutil
 import subprocess
 import argparse
@@ -145,10 +143,19 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
     print(f"📤 Uploading {file_name} ({size_mb:.2f} MB) to Drive folder ({target_folder_id})...")
 
     try:
-        query = f"'{target_folder_id}' in parents and name='{file_name}' and trashed=false"
+        escaped_name = file_name.replace("'", "\\'")
+        query = f"'{target_folder_id}' in parents and name='{escaped_name}' and trashed=false"
         existing = drive_service.files().list(q=query, fields="files(id, name)").execute().get("files", [])
 
-        mimetype = "image/vnd.adobe.photoshop" if p.suffix.lower() == ".psd" else "application/octet-stream"
+        suffix = p.suffix.lower()
+        if suffix == ".psd":
+            mimetype = "image/vnd.adobe.photoshop"
+        elif suffix == ".mtp":
+            mimetype = "application/octet-stream"
+        elif suffix == ".json":
+            mimetype = "application/json"
+        else:
+            mimetype = "application/octet-stream"
         media = MediaFileUpload(str(p), mimetype=mimetype, resumable=True)
 
         if existing:
@@ -290,7 +297,6 @@ def download_images_from_gdrive(folder_url_or_id, output_dir, drive_service=None
     if drive_service:
         try:
             from googleapiclient.http import MediaIoBaseDownload
-            import io
             query = (
                 f"'{folder_id}' in parents and "
                 f"mimeType != 'application/vnd.google-apps.folder' and "
@@ -598,7 +604,6 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
         return raw_text
 
 
-
 def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int, str]:
     """
     Parses numbered translation blocks [#N] matching MangaToolPlus sequential OCR layers.
@@ -731,7 +736,10 @@ def wrap_thai_text_for_bubble(text: str, box_w: float, box_h: float) -> tuple[st
     max_line_width_chars = max(4, int(box_w / (font_size * 0.55)))
     est_lines = max(1, int(math.ceil(visual_len / max(1, max_line_width_chars))))
 
-    raw_tokens = pythainlp.word_tokenize(raw_text, engine="newmm")
+    if pythainlp is not None:
+        raw_tokens = pythainlp.word_tokenize(raw_text, engine="newmm")
+    else:
+        raw_tokens = raw_text.split() or [raw_text]
 
     # Merge broken tokens (e.g. 'เห' + 'รอ' -> 'เหรอ', numbers attached to previous word)
     merged = []
@@ -865,7 +873,7 @@ def run_export_psd_pipeline(args):
     font_family = args.font or "TF LANNA Bold"
 
     print("=" * 65)
-    print("🚀 Manga PSD Export Pipeline (MangaToolPlus Native Logic)")
+    print("🚀 Manga Edited MTP Export Pipeline (MangaToolPlus Native Logic)")
     print(f"📁 Folder ID:     {folder_id}")
     print(f"📂 Subfolder:     {subfolder_name}")
     print(f"📖 Manga Name:    {manga_name}")
@@ -904,9 +912,6 @@ def run_export_psd_pipeline(args):
             print(f"⚠️ [MTP-Only] Error downloading .mtp via Drive API: {e}")
     else:
         image_files = download_images_from_gdrive(folder_id, work_dir, drive_service=drive_service)
-        if not image_files and not mtp_only:
-            print("❌ No images found in folder!")
-            sys.exit(1)
 
     # 3. Load MangaToolPlus Project (.mtp)
     # Prefer original downloaded .mtp file (not *_updated.mtp)
@@ -923,12 +928,16 @@ def run_export_psd_pipeline(args):
         except Exception as e:
             print(f"⚠️ Could not load {selected_mtp.name}: {e}")
 
+    if not image_files and not project_data:
+        print("❌ No images or valid .mtp project found in folder!")
+        sys.exit(1)
+
     if mtp_only and not project_data:
         print("❌ [MTP-Only] No valid .mtp project found in folder!")
         return
 
     # Preserve original unfiltered OCR/TS layers inside project_data so re-syncing is 100% idempotent
-    import copy
+    existing_ts_data = copy.deepcopy(project_data.get("tsData", {}))
     if "tsData" in project_data and project_data["tsData"] and "originalTsData" not in project_data:
         project_data["originalTsData"] = copy.deepcopy(project_data["tsData"])
     if "ocrData" in project_data and project_data["ocrData"] and "originalOcrData" not in project_data:
@@ -949,30 +958,57 @@ def run_export_psd_pipeline(args):
             return f"{m.group(1)}{int(m.group(2))}"
         return stem
 
+    def _filter_text_layers(raw_layers):
+        if not isinstance(raw_layers, list):
+            return []
+        return [copy.deepcopy(l) for l in raw_layers if isinstance(l, dict) and l.get("type") != "inpaint" and not l.get("patchUrl")]
+
+    def get_existing_inpaint_layers_for_page(filename: str):
+        raw_layers = []
+        if filename in existing_ts_data and existing_ts_data[filename]:
+            raw_layers = existing_ts_data[filename]
+        else:
+            stem = Path(filename).stem.lower()
+            norm_stem = normalize_page_stem(filename)
+            for k, v in existing_ts_data.items():
+                if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
+                    raw_layers = v
+                    break
+        if not isinstance(raw_layers, list):
+            return []
+        return [copy.deepcopy(l) for l in raw_layers if isinstance(l, dict) and (l.get("type") == "inpaint" or bool(l.get("patchUrl")))]
+
     # Helper: resolve layers for a given file name (reading from original unfiltered layers)
     def get_layers_for_page(filename: str):
+        raw_layers = []
         # 1. Exact match in source_ts_data
         if filename in source_ts_data and source_ts_data[filename]:
-            return source_ts_data[filename]
-        # 2. Case-insensitive or normalized stem match in source_ts_data
-        stem = Path(filename).stem.lower()
-        norm_stem = normalize_page_stem(filename)
-        for k, v in source_ts_data.items():
-            if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
-                return v
-        # 3. Fallback to source_ocr_data
-        if filename in source_ocr_data and source_ocr_data[filename]:
-            return source_ocr_data[filename]
-        for k, v in source_ocr_data.items():
-            if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
-                return v
-        # 4. Check legacy 'pages' format if any
-        if "pages" in project_data:
-            for p in project_data.get("pages", []):
-                p_name = p.get("fileName", "") or p.get("name", "")
-                if Path(p_name).stem.lower() == stem or normalize_page_stem(p_name) == norm_stem:
-                    return p.get("layers", [])
-        return []
+            raw_layers = source_ts_data[filename]
+        else:
+            # 2. Case-insensitive or normalized stem match in source_ts_data
+            stem = Path(filename).stem.lower()
+            norm_stem = normalize_page_stem(filename)
+            for k, v in source_ts_data.items():
+                if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
+                    raw_layers = v
+                    break
+            # 3. Fallback to source_ocr_data
+            if not raw_layers:
+                if filename in source_ocr_data and source_ocr_data[filename]:
+                    raw_layers = source_ocr_data[filename]
+                else:
+                    for k, v in source_ocr_data.items():
+                        if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
+                            raw_layers = v
+                            break
+            # 4. Check legacy 'pages' format if any
+            if not raw_layers and "pages" in project_data:
+                for p in project_data.get("pages", []):
+                    p_name = p.get("fileName", "") or p.get("name", "")
+                    if Path(p_name).stem.lower() == stem or normalize_page_stem(p_name) == norm_stem:
+                        raw_layers = p.get("layers", [])
+                        break
+        return _filter_text_layers(raw_layers)
 
     # If project_data["files"] is missing or empty, build from sorted image_files on disk
     if not all_files_info:
@@ -1003,7 +1039,6 @@ def run_export_psd_pipeline(args):
         model_paths = [
             Path("models/big-lama.pt"),
             Path(__file__).resolve().parent.parent / "models" / "big-lama.pt",
-            # Standalone repository model paths only
         ]
         repo_model = Path(__file__).resolve().parent.parent / "models" / "big-lama.pt"
         if not any(mp.exists() and mp.stat().st_size > 50_000_000 for mp in model_paths):
@@ -1014,9 +1049,6 @@ def run_export_psd_pipeline(args):
                 urllib.request.urlretrieve(lama_url, str(repo_model))
             except Exception as dl_err:
                 print(f"⚠️ Could not auto-download LaMa model: {dl_err}")
-        _unused_list = [
-            # end auto-download block
-        ]
         for mp in model_paths:
             if mp.exists() and mp.stat().st_size > 50_000_000:
                 try:
@@ -1035,8 +1067,8 @@ def run_export_psd_pipeline(args):
 
     pages_to_process = all_files_info if (args.full or mtp_only) else all_files_info[:args.limit]
     total_pages = len(pages_to_process)
-    generated_psds = []
     text_layers_data = {}
+    total_inpaint_count = 0
 
     # Sequential global indexing across all pages in the chapter (MangaToolPlus logic)
     global_index = 1
@@ -1068,7 +1100,6 @@ def run_export_psd_pipeline(args):
                 # 4. Try decoding embedded base64 dataUrl from .mtp if present
                 if not cand and f_info.get("dataUrl") and "base64," in str(f_info.get("dataUrl", "")):
                     try:
-                        import base64
                         b64_part = str(f_info["dataUrl"]).split("base64,", 1)[1]
                         decoded_path = work_dir / safe_local_filename(fname or f"{file_idx:03d}.jpg")
                         with open(decoded_path, "wb") as fb:
@@ -1088,55 +1119,50 @@ def run_export_psd_pipeline(args):
                 print(f"[{file_idx}/{total_pages}] ⚠️ Failed to decode {fname}, skipping.")
                 continue
             h, w = raw_img.shape[:2]
+            f_info["width"] = w
+            f_info["height"] = h
+            if not f_info.get("dataUrl") or "base64," not in str(f_info.get("dataUrl", "")):
+                try:
+                    ext = img_path.suffix.lower()
+                    mime_map = {".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
+                    mime_type = mime_map.get(ext, "image/jpeg")
+                    with open(img_path, "rb") as img_fb:
+                        img_b64 = base64.b64encode(img_fb.read()).decode("utf-8")
+                    f_info["dataUrl"] = f"data:{mime_type};base64,{img_b64}"
+                except Exception as enc_err:
+                    print(f"   ⚠️ Could not encode image dataUrl for {fname}: {enc_err}")
 
         # Retrieve layers for this page (check both MTP fname and actual disk filename)
         layers = get_layers_for_page(fname) or get_layers_for_page(img_path.name)
+        existing_inpaint_layers = get_existing_inpaint_layers_for_page(fname) or get_existing_inpaint_layers_for_page(img_path.name)
         page_matched_layers = []
 
         for l in layers:
             current_num = global_index
             global_index += 1
 
+            if not l.get("id"):
+                l["id"] = f"ocr_layer_{Path(fname).stem}_{current_num}"
+            if not l.get("type"):
+                l["type"] = "text"
+
             if current_num in translations:
                 thai_trans = translations[current_num]
                 l["translation"] = thai_trans
+                page_matched_layers.append((current_num, l))
+                total_matched_count += 1
+            elif not translations and l.get("translation") and str(l.get("translation")).strip():
+                # Fallback if no doc translations were fetched or provided, keep existing non-empty translation in layer
                 page_matched_layers.append((current_num, l))
                 total_matched_count += 1
             else:
                 l["translation"] = ""
                 total_unmatched_count += 1
 
-        # Remove unmatched layers from MTP project (tsData, ocrData, pages) so only matched layers remain
-        matched_only_layers = [l for _, l in page_matched_layers]
-        matched_ocr_entries = [
-            {"text": l.get("originalText") or l.get("text", ""), "box": l.get("box", [])}
-            for _, l in page_matched_layers
-        ]
-        norm_page = normalize_page_stem(fname)
-        stem_page = Path(fname).stem.lower()
-        updated_ts_key = False
-        for k in list(ts_data.keys()):
-            if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
-                ts_data[k] = matched_only_layers
-                updated_ts_key = True
-        if not updated_ts_key and matched_only_layers:
-            ts_data[fname] = matched_only_layers
-
-        for k in list(ocr_data.keys()):
-            if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
-                ocr_data[k] = matched_ocr_entries
-
-        if "pages" in project_data and isinstance(project_data.get("pages"), list):
-            for p_obj in project_data["pages"]:
-                p_name = p_obj.get("fileName", "") or p_obj.get("name", "")
-                if Path(p_name).stem.lower() == stem_page or normalize_page_stem(p_name) == norm_page:
-                    p_obj["layers"] = matched_only_layers
-
         print(f"\n📄 [{file_idx}/{total_pages}] Processing {fname} ({w}x{h}): {len(page_matched_layers)} matched / {len(layers) - len(page_matched_layers)} unmatched removed")
 
-        # Inpainting speech bubbles as individual layers
-        inpaint_patches = []
-        temp_patch_files = []
+        # Inpainting speech bubbles as individual MangaToolPlus inpaint layers
+        inpaint_map = {}
         pad = 12  # Padding around the bounding box
 
         if not args.no_inpaint and not mtp_only and raw_img is not None and page_matched_layers:
@@ -1190,33 +1216,97 @@ def run_export_psd_pipeline(args):
                     else:
                         cleaned_patch = cv2.inpaint(patch_crop, patch_mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
 
-                    patch_rgba = cv2.cvtColor(cleaned_patch, cv2.COLOR_BGR2RGBA)
-                    patch_bin_path = work_dir / f"{Path(fname).stem}_patch_{num}.bin"
-                    with open(patch_bin_path, "wb") as f_p:
-                        f_p.write(patch_rgba.tobytes())
-                    temp_patch_files.append(patch_bin_path)
+                    ok_png, png_buf = cv2.imencode(".png", cleaned_patch)
+                    if not ok_png:
+                        continue
+                    patch_b64 = base64.b64encode(png_buf.tobytes()).decode("utf-8")
+                    patch_data_url = f"data:image/png;base64,{patch_b64}"
 
-                    inpaint_patches.append({
-                        "name": f"Inpaint #{num}",
-                        "number": num,
-                        "left": min_x,
-                        "top": min_y,
-                        "right": max_x,
-                        "bottom": max_y,
-                        "width": patch_w,
-                        "height": patch_h,
-                        "rawPath": str(patch_bin_path).replace("\\", "/")
-                    })
+                    inpaint_layer = {
+                        "id": f"inpaint_{Path(fname).stem}_{num}",
+                        "type": "inpaint",
+                        "targetLayerId": l.get("id"),
+                        "box": l.get("box", []),
+                        "inpaintModel": "lama" if lama_service else "fill",
+                        "patchUrl": patch_data_url,
+                        "patchExpansion": pad,
+                        "patchRect": [min_x, min_y, max_x, max_y],
+                        "inpaintVisible": True,
+                        "patchTimestamp": int(time.time() * 1000),
+                        "visible": True,
+                        "selected": False,
+                        "text": "",
+                        "originalText": "",
+                        "translation": "",
+                        "isExternalEdit": False,
+                    }
+                    inpaint_map[num] = inpaint_layer
 
-                    # Record in mtp layer structure
+                    # Record in mtp text layer structure
+                    l["patchUrl"] = None
+                    l["inpaintModel"] = None
                     l["patchRect"] = [min_x, min_y, max_x, max_y]
                     l["inpaintVisible"] = True
-                    l["inpaintModel"] = "lama" if lama_service else "cv2"
                 except Exception as inp_err:
                     print(f"   ⚠️ Inpaint error #{num}: {inp_err}")
 
-            if inpaint_patches:
-                print(f"   🎨 Inpainted {len(inpaint_patches)} patches in {time.time() - t_inp0:.2f}s")
+            if inpaint_map:
+                total_inpaint_count += len(inpaint_map)
+                print(f"   🎨 Inpainted {len(inpaint_map)} patches in {time.time() - t_inp0:.2f}s")
+        elif existing_inpaint_layers and page_matched_layers:
+            # In --mtp-only or --no-inpaint mode, preserve existing inpaint layers that match matched text layers
+            for num, l in page_matched_layers:
+                l_id = l.get("id")
+                l_box = l.get("box", [])
+                matched_inp = None
+                for inp in existing_inpaint_layers:
+                    if (l_id and inp.get("targetLayerId") == l_id) or (l_box and inp.get("box") == l_box):
+                        matched_inp = copy.deepcopy(inp)
+                        break
+                if matched_inp:
+                    inpaint_map[num] = matched_inp
+                    l["patchUrl"] = None
+                    l["inpaintModel"] = None
+                    if matched_inp.get("patchRect"):
+                        l["patchRect"] = matched_inp["patchRect"]
+                    l["inpaintVisible"] = True
+            total_inpaint_count += len(inpaint_map)
+
+        # Pair [inpaint_layer_1, l_1, inpaint_layer_2, l_2, ...] in tsData and remove unmatched layers
+        combined_ts_layers = []
+        for num, l in page_matched_layers:
+            if num in inpaint_map:
+                combined_ts_layers.append(inpaint_map[num])
+            combined_ts_layers.append(l)
+
+        matched_only_text_layers = [l for _, l in page_matched_layers]
+        matched_ocr_entries = [
+            {"text": l.get("originalText") or l.get("text", ""), "box": l.get("box", [])}
+            for _, l in page_matched_layers
+        ]
+        norm_page = normalize_page_stem(fname)
+        stem_page = Path(fname).stem.lower()
+        updated_ts_key = False
+        for k in list(ts_data.keys()):
+            if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
+                ts_data[k] = combined_ts_layers
+                updated_ts_key = True
+        if not updated_ts_key and combined_ts_layers:
+            ts_data[fname] = combined_ts_layers
+
+        updated_ocr_key = False
+        for k in list(ocr_data.keys()):
+            if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
+                ocr_data[k] = matched_ocr_entries
+                updated_ocr_key = True
+        if not updated_ocr_key and matched_ocr_entries:
+            ocr_data[fname] = matched_ocr_entries
+
+        if "pages" in project_data and isinstance(project_data.get("pages"), list):
+            for p_obj in project_data["pages"]:
+                p_name = p_obj.get("fileName", "") or p_obj.get("name", "")
+                if Path(p_name).stem.lower() == stem_page or normalize_page_stem(p_name) == norm_page:
+                    p_obj["layers"] = matched_only_text_layers
 
         # Typesetting text layers (Font 'TF LANNA Bold')
         page_text_layers = []
@@ -1248,18 +1338,33 @@ def run_export_psd_pipeline(args):
 
             layer_obj = {
                 "id": f"ts_layer_{Path(fname).stem}_{num}",
+                "type": "text",
                 "number": num,
                 "text": wrapped_text,
                 "x": round(center_x),
                 "y": round(center_y),
                 "boxWidth": round(box_w),
                 "boxHeight": round(box_h),
+                "size": font_size,
                 "fontSize": font_size,
+                "fontType": l.get("fontType") or "normal",
                 "fontFamily": font_family,
                 "weight": "bold",
+                "style": "normal",
                 "color": "#000000",
+                "rot": 0,
+                "align": "center",
+                "textAlign": "center",
+                "lineHeight": 1.2,
+                "letterSpacing": 0,
+                "opacity": 1,
+                "visible": True,
+                "selected": False,
                 "strokeWidth": 3,
-                "strokeColor": "#FFFFFF"
+                "strokeColor": "#FFFFFF",
+                "strokePosition": "outside",
+                "strokeOpacity": 1,
+                "blendMode": "source-over",
             }
             l["targetLayerId"] = layer_obj["id"]
             page_text_layers.append(layer_obj)
@@ -1267,117 +1372,123 @@ def run_export_psd_pipeline(args):
         text_layers_data[fname] = page_text_layers
         if img_path.name != fname:
             text_layers_data[img_path.name] = page_text_layers
+        print(f"   ✓ Prepared page {fname} ({time.time() - page_start:.2f}s, {len(inpaint_map)} patches, {len(page_text_layers)} texts)")
 
-        if not mtp_only and raw_img is not None:
-            # Export to Native PSD via ag-psd
-            raw_bg_bin = work_dir / f"{Path(fname).stem}_raw_bg.bin"
-            raw_rgba = cv2.cvtColor(raw_img, cv2.COLOR_BGR2RGBA)
-            with open(raw_bg_bin, "wb") as f_bg:
-                f_bg.write(raw_rgba.tobytes())
-            temp_patch_files.append(raw_bg_bin)
+    # Ensure standard MangaToolPlus project structure (version, savedAt, currentMode, files, fontRegistry)
+    if not project_data.get("version"):
+        project_data["version"] = "1.0.0"
+    project_data["savedAt"] = time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime())
+    project_data["currentMode"] = project_data.get("currentMode") or "typesetter"
 
-            psd_filename = f"{img_path.stem}.psd"
-            out_psd_path = psd_out_dir / psd_filename
-            psd_manifest = {
-                "width": w,
-                "height": h,
-                "rawImagePath": str(raw_bg_bin).replace("\\", "/"),
-                "outputPath": str(out_psd_path).replace("\\", "/"),
-                "inpaintPatches": inpaint_patches,
-                "textLayers": page_text_layers
-            }
+    if not project_data.get("files"):
+        project_data["files"] = all_files_info
+    else:
+        # Ensure all files in project_data["files"] have embedded dataUrl if available on disk
+        for f_entry in project_data["files"]:
+            if not f_entry.get("dataUrl") or "base64," not in str(f_entry.get("dataUrl", "")):
+                fn = f_entry.get("name", "")
+                cand_p = work_dir / fn
+                if not cand_p.exists():
+                    norm_fn = normalize_page_stem(fn)
+                    matches = [c for c in image_files if normalize_page_stem(c.name) == norm_fn]
+                    if matches:
+                        cand_p = matches[0]
+                if cand_p.exists() and cand_p.is_file():
+                    try:
+                        ext = cand_p.suffix.lower()
+                        mime_map = {".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
+                        mime_type = mime_map.get(ext, "image/jpeg")
+                        with open(cand_p, "rb") as img_fb:
+                            img_b64 = base64.b64encode(img_fb.read()).decode("utf-8")
+                        f_entry["dataUrl"] = f"data:{mime_type};base64,{img_b64}"
+                    except Exception:
+                        pass
 
-            manifest_file = work_dir / f"{img_path.stem}_manifest.json"
-            with open(manifest_file, "w", encoding="utf-8") as f_m:
-                json.dump(psd_manifest, f_m, ensure_ascii=False)
-            temp_patch_files.append(manifest_file)
+    font_registry = project_data.get("fontRegistry")
+    if not isinstance(font_registry, dict):
+        font_registry = {}
+    font_registry["normal"] = font_family
+    for role in ["scream", "thought", "narration", "sfx", "system"]:
+        if not font_registry.get(role):
+            font_registry[role] = font_family
+    project_data["fontRegistry"] = font_registry
 
-            # Call export_psd_node.js
-            node_script = Path(__file__).resolve().parent / "export_psd_node.js"
-            if not node_script.exists():
-                node_script = Path(__file__).resolve().parent.parent / "scripts" / "export_psd_node.js"
+    project_data["tsData"] = ts_data
+    project_data["ocrData"] = ocr_data
+    project_data["textLayersData"] = text_layers_data
+    if "originalTsData" not in project_data:
+        project_data["originalTsData"] = source_ts_data
+    if "originalOcrData" not in project_data:
+        project_data["originalOcrData"] = source_ocr_data
 
-            cmd = ["node", str(node_script), "--manifest", str(manifest_file)]
-            try:
-                res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
-                if res.returncode == 0 and out_psd_path.exists():
-                    generated_psds.append(out_psd_path)
-                    print(f"   ✓ Created {psd_filename} ({time.time() - page_start:.2f}s, {len(inpaint_patches)} patches, {len(page_text_layers)} texts)")
-                else:
-                    print(f"   ❌ PSD Export error: {res.stderr.strip() or res.stdout.strip()}")
-            except Exception as e:
-                print(f"   ❌ Node invocation error: {e}")
+    # Determine output .mtp filename and save to psd_out_dir & work_dir
+    if selected_mtp:
+        clean_stem = re.sub(r"_updated$", "", selected_mtp.stem, flags=re.IGNORECASE) or selected_mtp.stem
+        mtp_filename = safe_local_filename(f"{clean_stem}.mtp")
+        base_name = clean_stem
+    else:
+        mtp_filename = safe_local_filename(f"chapter_{chapter_num}.mtp" if chapter_num else "project.mtp")
+        base_name = Path(mtp_filename).stem
 
-            # Clean up temporary page binary files
-            for tf in temp_patch_files:
-                try:
-                    if tf.exists():
-                        tf.unlink()
-                except Exception:
-                    pass
+    out_mtp_path = psd_out_dir / mtp_filename
+    with open(out_mtp_path, "w", encoding="utf-8") as f_out:
+        json.dump(project_data, f_out, ensure_ascii=False)
 
-    # Update and Save Native MangaToolPlus Project (with translations imported & unmatched layers removed)
-    out_mtp_file = None
-    if project_data:
-        project_data["tsData"] = ts_data
-        project_data["ocrData"] = ocr_data
-        project_data["textLayersData"] = text_layers_data
-        base_name = selected_mtp.stem if selected_mtp else f"chapter_{chapter_num}"
-        out_mtp_file = work_dir / safe_local_filename(f"{base_name}_updated.mtp")
-        with open(out_mtp_file, "w", encoding="utf-8") as f:
-            json.dump(project_data, f, ensure_ascii=False)
-        if selected_mtp and selected_mtp.exists():
-            try:
-                with open(selected_mtp, "w", encoding="utf-8") as f_orig:
-                    json.dump(project_data, f_orig, ensure_ascii=False)
-            except Exception:
-                pass
-        print(f"\n📦 Saved updated project (unmatched layers removed): {out_mtp_file.name}")
+    out_mtp_file = work_dir / safe_local_filename(f"{base_name}_updated.mtp")
+    with open(out_mtp_file, "w", encoding="utf-8") as f_upd:
+        json.dump(project_data, f_upd, ensure_ascii=False)
+
+    if selected_mtp and selected_mtp.exists():
+        try:
+            with open(selected_mtp, "w", encoding="utf-8") as f_orig:
+                json.dump(project_data, f_orig, ensure_ascii=False)
+        except Exception:
+            pass
+
+    print(f"\n📦 Saved Edited MangaToolPlus Project (.mtp): {out_mtp_path} (and {out_mtp_file.name})")
 
     print("\n" + "=" * 65)
-    print("🎉 PSD / MTP Generation Summary:")
+    print("🎉 Edited MTP Generation Summary:")
     print(f"   Total Pages Processed:     {len(pages_to_process)}")
     print(f"   Total Matched Layers:      {total_matched_count}")
     print(f"   Total Unmatched Removed:   {total_unmatched_count}")
-    print(f"   Generated PSD Files:       {len(generated_psds)}")
+    print(f"   Total Inpaint Layers:      {total_inpaint_count}")
+    print(f"   Generated MTP File:        {out_mtp_path.name}")
     print(f"   Total Elapsed Time:        {time.time() - start_time:.2f}s")
     print("=" * 65)
 
+    if not out_mtp_path.exists():
+        print("❌ Error: Edited .mtp file was not generated! Exiting with error.")
+        sys.exit(1)
+
     if mtp_only:
-        if args.upload_to_source and drive_service and out_mtp_file and out_mtp_file.exists():
-            update_mtp_in_source_folder(drive_service, folder_id, out_mtp_file)
+        if args.upload_to_source and drive_service and out_mtp_path.exists():
+            target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
+            upload_file_to_source_folder(drive_service, target_upload_folder_id, out_mtp_path)
+            update_mtp_in_source_folder(drive_service, folder_id, out_mtp_path)
         if args.cleanup:
             shutil.rmtree(work_dir, ignore_errors=True)
         return
 
-    if not generated_psds:
-        print("❌ Error: No PSD files were generated! Exiting with error so queue is not marked finished without PSDs.")
-        sys.exit(1)
-
-    # 7. Upload PSD files directly to Google Drive Subfolder & update .mtp in Source Folder
+    # 7. Upload Edited .mtp file directly to Google Drive Subfolder & update .mtp in Source Folder
     target_upload_folder_id = folder_id
     if drive_service:
         target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
-    if args.upload_to_source and drive_service and generated_psds:
-        print(f"\n☁️ [Google Drive Upload] Uploading {len(generated_psds)} PSD files to Drive folder '{subfolder_name}' ({target_upload_folder_id})...")
-        up_count = 0
-        for psd_file in generated_psds:
-            up_id = upload_file_to_source_folder(drive_service, target_upload_folder_id, psd_file)
-            if up_id:
-                up_count += 1
-        print(f"   ✓ Uploaded {up_count}/{len(generated_psds)} PSD files to Google Drive subfolder '{subfolder_name}'!")
+    if args.upload_to_source and drive_service and out_mtp_path.exists():
+        print(f"\n☁️ [Google Drive Upload] Uploading edited .mtp ({out_mtp_path.name}) to Drive folder '{subfolder_name}' ({target_upload_folder_id})...")
+        up_id = upload_file_to_source_folder(drive_service, target_upload_folder_id, out_mtp_path)
+        if up_id:
+            print(f"   ✓ Uploaded edited .mtp to Google Drive subfolder '{subfolder_name}'!")
+        update_mtp_in_source_folder(drive_service, folder_id, out_mtp_path)
 
-        if out_mtp_file and out_mtp_file.exists():
-            update_mtp_in_source_folder(drive_service, folder_id, out_mtp_file)
-
-    # 8. Notify GAS that Export PSD is complete (always pass PSD folder ID so [Export PSD] link is attached)
+    # 8. Notify GAS that Export PSD/MTP is complete (always pass PSD folder ID so [Export PSD] link is attached)
     if not getattr(args, "no_notify", False):
         notify_gas_export_psd_completed(
             folder_id=folder_id,
             queue_id=args.queue_id,
             chapter=chapter_num,
             manga_name=manga_name,
-            psd_count=len(generated_psds),
+            psd_count=1,
             psd_folder_id=target_upload_folder_id or folder_id,
             subfolder_name=subfolder_name,
             gas_url=args.gas_url,
@@ -1396,9 +1507,9 @@ def run_export_psd_pipeline(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="MangaToolPlus PSD Export & Upload Job")
+    parser = argparse.ArgumentParser(description="MangaToolPlus Edited MTP Export & Upload Job")
     parser.add_argument("--folder-id", required=True, help="Google Drive Source Folder ID or URL")
-    parser.add_argument("--subfolder-name", "--psd-subfolder", dest="subfolder_name", default="PSD", help="Subfolder name for storing PSD files (default: PSD)")
+    parser.add_argument("--subfolder-name", "--psd-subfolder", dest="subfolder_name", default="PSD", help="Subfolder name for storing edited .mtp file (default: PSD)")
     parser.add_argument("--manga-name", default="", help="Manga Title")
     parser.add_argument("--chapter-num", default="", help="Chapter Number")
     parser.add_argument("--queue-id", default="", help="WorkQueue item ID")
@@ -1409,13 +1520,13 @@ def main():
     parser.add_argument("--gas-url", default=None, help="GAS Web App exec URL")
     parser.add_argument("--gas-passcode", default="10211032", help="GAS Passcode")
     parser.add_argument("--output-dir", default="./psd_work", help="Local working directory")
-    parser.add_argument("--upload-to-source", action="store_true", default=True, help="Upload PSDs to Drive folder")
+    parser.add_argument("--upload-to-source", action="store_true", default=True, help="Upload edited .mtp to Drive folder")
     parser.add_argument("--cleanup", action="store_true", default=False, help="Clean up local files")
     parser.add_argument("--full", action="store_true", default=False, help="Process all chapter pages")
     parser.add_argument("--limit", type=int, default=3, help="Limit number of pages to process (for test)")
     parser.add_argument("--no-inpaint", action="store_true", default=False, help="Skip inpainting step")
     parser.add_argument("--no-notify", action="store_true", default=False, help="Skip notifying GAS on completion")
-    parser.add_argument("--mtp-only", action="store_true", default=False, help="Only resync & update .mtp in Google Drive without regenerating PSDs")
+    parser.add_argument("--mtp-only", action="store_true", default=False, help="Only resync & update .mtp in Google Drive without re-inpainting")
 
     args = parser.parse_args()
     run_export_psd_pipeline(args)
