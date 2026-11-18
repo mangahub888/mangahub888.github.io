@@ -85,6 +85,28 @@ def get_drive_service(google_access_token=None, service_account_json=None):
         except Exception as e:
             print(f"⚠️ Failed to init with Service Account: {e}")
 
+    # 3. Local Clasp OAuth Credentials (~/.clasprc.json)
+    try:
+        clasprc = os.path.expanduser("~/.clasprc.json")
+        if os.path.exists(clasprc):
+            with open(clasprc, "r", encoding="utf-8") as f:
+                c = json.load(f)
+            tok = c.get("tokens", {}).get("default", {}) or c.get("tokens", {})
+            if tok.get("refresh_token") and tok.get("client_id"):
+                from google.oauth2.credentials import Credentials
+                creds = Credentials(
+                    token=tok.get("access_token"),
+                    refresh_token=tok.get("refresh_token"),
+                    token_uri="https://oauth2.googleapis.com/token",
+                    client_id=tok.get("client_id"),
+                    client_secret=tok.get("client_secret"),
+                )
+                service = build("drive", "v3", credentials=creds)
+                print("🔑 Authenticated Google Drive via Clasp OAuth Credentials")
+                return service
+    except Exception as e:
+        print(f"⚠️ Failed to init with Clasp credentials: {e}")
+
     return None
 
 
@@ -279,17 +301,39 @@ def download_images_from_gdrive(folder_url_or_id, output_dir, drive_service=None
     """Downloads images & files from Google Drive folder with UTF-8 length safety."""
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
+    folder_id = extract_folder_id(folder_url_or_id)
 
-    # Check if images already exist locally to save bandwidth
+    # Check if folder marker matches to avoid cross-folder contamination
+    marker_file = out_path / ".folder_id"
+    if marker_file.exists():
+        try:
+            cached_id = marker_file.read_text(encoding="utf-8").strip()
+            if cached_id != folder_id:
+                print(f"🧹 Folder ID changed ({cached_id} -> {folder_id}), cleaning cached files...")
+                for f in out_path.glob("*.*"):
+                    if not f.name.startswith("."):
+                        try:
+                            f.unlink()
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+
+    # Check if images & .mtp already exist locally for this folder to save bandwidth
     existing_images = sorted([
         f for f in out_path.glob("*.*")
         if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]
     ])
-    if len(existing_images) > 0:
-        print(f"📦 Found {len(existing_images)} existing images in {out_path}, skipping redownload.")
+    existing_mtp = list(out_path.glob("*.mtp"))
+    if len(existing_images) > 0 and len(existing_mtp) > 0:
+        print(f"📦 Found {len(existing_images)} existing images & {len(existing_mtp)} .mtp in {out_path}, skipping redownload.")
         return existing_images
 
-    folder_id = extract_folder_id(folder_url_or_id)
+    try:
+        marker_file.write_text(folder_id, encoding="utf-8")
+    except Exception:
+        pass
+
     url = f"https://drive.google.com/drive/folders/{folder_id}"
     print(f"📥 [Drive] Downloading files from: {url}")
 
@@ -859,18 +903,23 @@ def notify_gas_export_psd_completed(folder_id, queue_id="", chapter="", manga_na
 # ==============================================================================
 def run_export_psd_pipeline(args):
     start_time = time.time()
-    work_dir = Path(args.output_dir).resolve()
-    work_dir.mkdir(parents=True, exist_ok=True)
-
-    subfolder_name = getattr(args, "subfolder_name", None) or getattr(args, "psd_subfolder", "PSD") or "PSD"
-    psd_out_dir = work_dir / subfolder_name
-    psd_out_dir.mkdir(parents=True, exist_ok=True)
-
     folder_id = extract_folder_id(args.folder_id)
     doc_id = extract_doc_id(args.doc_url)
     chapter_num = str(args.chapter_num).strip()
     manga_name = args.manga_name.strip()
     font_family = args.font or "TF LANNA Bold"
+
+    subfolder_name = getattr(args, "subfolder_name", None) or getattr(args, "psd_subfolder", "PSD") or "PSD"
+
+    # Ensure working directory is isolated per folder_id to avoid sharing/polluting cache between runs
+    base_out = Path(args.output_dir)
+    if base_out.name == "psd_work" or not base_out.is_absolute():
+        work_dir = (base_out / folder_id).resolve()
+    else:
+        work_dir = base_out.resolve()
+    work_dir.mkdir(parents=True, exist_ok=True)
+    psd_out_dir = work_dir / subfolder_name
+    psd_out_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 65)
     print("🚀 Manga Edited MTP Export Pipeline (MangaToolPlus Native Logic)")
@@ -880,6 +929,7 @@ def run_export_psd_pipeline(args):
     print(f"🔢 Chapter:       {chapter_num}")
     print(f"📄 Doc ID:        {doc_id}")
     print(f"🔤 Font:          {font_family}")
+    print(f"💾 Work Dir:      {work_dir}")
     print("=" * 65)
 
     # 1. Initialize Google Drive Service
@@ -919,6 +969,41 @@ def run_export_psd_pipeline(args):
     original_mtps = [f for f in mtp_files if not f.name.endswith("_updated.mtp")]
     selected_mtp = original_mtps[0] if original_mtps else (mtp_files[0] if mtp_files else None)
 
+    # If no .mtp found locally, search Drive folder explicitly
+    if not selected_mtp and drive_service:
+        try:
+            from googleapiclient.http import MediaIoBaseDownload
+            # 1. Search in root folder
+            query = f"'{folder_id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false"
+            res = drive_service.files().list(q=query, pageSize=100, fields="files(id, name)").execute()
+            root_mtps = [f for f in res.get("files", []) if f.get("name", "").lower().endswith(".mtp")]
+            # 2. If not in root, check subfolder PSD
+            if not root_mtps:
+                q_sub = f"'{folder_id}' in parents and name='{subfolder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+                res_sub = drive_service.files().list(q=q_sub, fields="files(id, name)").execute()
+                sub_list = res_sub.get("files", [])
+                if sub_list:
+                    sub_fid = sub_list[0]["id"]
+                    q_sub_mtp = f"'{sub_fid}' in parents and trashed=false"
+                    res_sub_mtp = drive_service.files().list(q=q_sub_mtp, pageSize=100, fields="files(id, name)").execute()
+                    root_mtps = [f for f in res_sub_mtp.get("files", []) if f.get("name", "").lower().endswith(".mtp")]
+
+            for df in root_mtps:
+                safe_name = safe_local_filename(df.get("name", df["id"]))
+                dest_file = work_dir / safe_name
+                request = drive_service.files().get_media(fileId=df["id"])
+                with open(dest_file, "wb") as fh:
+                    downloader = MediaIoBaseDownload(fh, request)
+                    done = False
+                    while not done:
+                        _, done = downloader.next_chunk()
+                print(f"📥 Downloaded source .mtp from Drive: {safe_name}")
+            mtp_files = list(work_dir.glob("*.mtp"))
+            original_mtps = [f for f in mtp_files if not f.name.endswith("_updated.mtp")]
+            selected_mtp = original_mtps[0] if original_mtps else (mtp_files[0] if mtp_files else None)
+        except Exception as e:
+            print(f"⚠️ Error downloading source .mtp via Drive API: {e}")
+
     project_data = {}
     if selected_mtp and selected_mtp.exists():
         try:
@@ -938,9 +1023,9 @@ def run_export_psd_pipeline(args):
 
     # Preserve original unfiltered OCR/TS layers inside project_data so re-syncing is 100% idempotent
     existing_ts_data = copy.deepcopy(project_data.get("tsData", {}))
-    if "tsData" in project_data and project_data["tsData"] and "originalTsData" not in project_data:
+    if "originalTsData" not in project_data and "tsData" in project_data and project_data["tsData"]:
         project_data["originalTsData"] = copy.deepcopy(project_data["tsData"])
-    if "ocrData" in project_data and project_data["ocrData"] and "originalOcrData" not in project_data:
+    if "originalOcrData" not in project_data and "ocrData" in project_data and project_data["ocrData"]:
         project_data["originalOcrData"] = copy.deepcopy(project_data["ocrData"])
 
     # Prepare files list and layer mappings from MTP
@@ -978,37 +1063,50 @@ def run_export_psd_pipeline(args):
             return []
         return [copy.deepcopy(l) for l in raw_layers if isinstance(l, dict) and (l.get("type") == "inpaint" or bool(l.get("patchUrl")))]
 
-    # Helper: resolve layers for a given file name (reading from original unfiltered layers)
+    # Check if project has valid speech bubble layers defined in tsData across any page
+    has_project_ts_layers = False
+    if isinstance(source_ts_data, dict):
+        for k_val in source_ts_data.values():
+            if _filter_text_layers(k_val):
+                has_project_ts_layers = True
+                break
+
+    # Helper: resolve layers for a given file name
+    # When project has tsData, tsData is the absolute authority! Empty list means 0 dialogue layers.
+    # NEVER fallback to ocr_data on a per-page basis when tsData exists in the project.
     def get_layers_for_page(filename: str):
-        raw_layers = []
-        # 1. Exact match in source_ts_data
-        if filename in source_ts_data and source_ts_data[filename]:
-            raw_layers = source_ts_data[filename]
-        else:
+        stem = Path(filename).stem.lower()
+        norm_stem = normalize_page_stem(filename)
+
+        if has_project_ts_layers:
+            # 1. Exact match in source_ts_data
+            if filename in source_ts_data:
+                return _filter_text_layers(source_ts_data[filename])
             # 2. Case-insensitive or normalized stem match in source_ts_data
-            stem = Path(filename).stem.lower()
-            norm_stem = normalize_page_stem(filename)
             for k, v in source_ts_data.items():
-                if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
-                    raw_layers = v
-                    break
-            # 3. Fallback to source_ocr_data
-            if not raw_layers:
-                if filename in source_ocr_data and source_ocr_data[filename]:
-                    raw_layers = source_ocr_data[filename]
-                else:
-                    for k, v in source_ocr_data.items():
-                        if (Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem) and v:
-                            raw_layers = v
-                            break
-            # 4. Check legacy 'pages' format if any
-            if not raw_layers and "pages" in project_data:
-                for p in project_data.get("pages", []):
+                if Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem:
+                    return _filter_text_layers(v)
+            # 3. Check legacy 'pages' format if any
+            if "pages" in project_data and isinstance(project_data.get("pages"), list):
+                for p in project_data["pages"]:
                     p_name = p.get("fileName", "") or p.get("name", "")
                     if Path(p_name).stem.lower() == stem or normalize_page_stem(p_name) == norm_stem:
-                        raw_layers = p.get("layers", [])
-                        break
-        return _filter_text_layers(raw_layers)
+                        return _filter_text_layers(p.get("layers", []))
+            return []
+
+        # Only if the entire project has NO tsData at all, fallback to OCR data:
+        if filename in source_ocr_data:
+            return _filter_text_layers(source_ocr_data[filename])
+        for k, v in source_ocr_data.items():
+            if Path(k).stem.lower() == stem or normalize_page_stem(k) == norm_stem:
+                return _filter_text_layers(v)
+
+        if "pages" in project_data and isinstance(project_data.get("pages"), list):
+            for p in project_data["pages"]:
+                p_name = p.get("fileName", "") or p.get("name", "")
+                if Path(p_name).stem.lower() == stem or normalize_page_stem(p_name) == norm_stem:
+                    return _filter_text_layers(p.get("layers", []))
+        return []
 
     # If project_data["files"] is missing or empty, build from sorted image_files on disk
     if not all_files_info:
@@ -1291,7 +1389,7 @@ def run_export_psd_pipeline(args):
             if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
                 ts_data[k] = combined_ts_layers
                 updated_ts_key = True
-        if not updated_ts_key and combined_ts_layers:
+        if not updated_ts_key:
             ts_data[fname] = combined_ts_layers
 
         updated_ocr_key = False
@@ -1299,7 +1397,7 @@ def run_export_psd_pipeline(args):
             if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
                 ocr_data[k] = matched_ocr_entries
                 updated_ocr_key = True
-        if not updated_ocr_key and matched_ocr_entries:
+        if not updated_ocr_key:
             ocr_data[fname] = matched_ocr_entries
 
         if "pages" in project_data and isinstance(project_data.get("pages"), list):
