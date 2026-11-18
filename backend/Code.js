@@ -9367,6 +9367,9 @@ function syncPsdStatusFromDrive() {
     const postIdx = headers.indexOf('poststatus');
     const mangaIdx = headers.indexOf('mangaid');
     const chapIdx = headers.indexOf('chapter');
+    const mangaList = getMangaList();
+    const mangaMap = {};
+    mangaList.forEach(m => { mangaMap[String(m.mangaid)] = m; });
     const now = new Date();
     const updated = [];
     const validPsdList = [];
@@ -9423,11 +9426,15 @@ function syncPsdStatusFromDrive() {
             const updatedLink = workLink.trim() ? (workLink.trim() + '\n[Export PSD] ' + psdFolderUrl) : ('[Export PSD] ' + psdFolderUrl);
             sheet.getRange(rowNum, workLinkCol).setValue(updatedLink);
           }
+          const mObj = mangaMap[String(mid)];
+          const resolvedDoc = resolveQueueDocUrl({ worklink: workLink }, mObj);
           const info = {
             queueId: qid,
             mangaId: mid,
+            mangaName: mObj ? (mObj.manganame || '') : '',
             chapter: chap,
             folderId: folderId,
+            docUrl: resolvedDoc,
             psdFolderUrl: psdFolderUrl,
             psdFileCount: psdFileCount
           };
@@ -9463,6 +9470,8 @@ function syncPsdStatusFromDrive() {
     if (updated.length > 0) {
       invalidateCache('workQueue');
     }
+    let oauthToken = '';
+    try { oauthToken = ScriptApp.getOAuthToken(); } catch (e) {}
     return {
       success: true,
       updatedCount: updated.length,
@@ -9470,7 +9479,8 @@ function syncPsdStatusFromDrive() {
       emptyResetCount: emptyResetList.length,
       validPsdList: validPsdList,
       emptyResetList: emptyResetList,
-      updated: updated
+      updated: updated,
+      oauthToken: oauthToken
     };
   } catch (err) {
     console.error('syncPsdStatusFromDrive error:', err);
