@@ -345,7 +345,14 @@ def run_pipeline(
                 l["translation"] = ""
                 unmatched_count += 1
 
-        print(f"   -> Matched: {len(page_matched_layers)} layers | Unmatched (cleared): {len(layers) - len(page_matched_layers)} layers")
+        ts_data[fname] = [l for _, l in page_matched_layers]
+        if "ocrData" in project_data and fname in project_data["ocrData"]:
+            project_data["ocrData"][fname] = [
+                {"text": l.get("originalText") or l.get("text", ""), "box": l.get("box", [])}
+                for _, l in page_matched_layers
+            ]
+
+        print(f"   -> Matched: {len(page_matched_layers)} layers | Unmatched (removed): {len(layers) - len(page_matched_layers)} layers")
 
         # Requirement 3: Inpainted แปะเป็นกล่องละ 1 เลเยอร์ (Individual Inpaint Patch per Box)
         inpaint_patches = []

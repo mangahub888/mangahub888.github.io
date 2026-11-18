@@ -166,6 +166,44 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path):
         return None
 
 
+def update_mtp_in_source_folder(drive_service, source_folder_id, local_mtp_path):
+    """Updates existing .mtp project file in source_folder_id on Google Drive (with imported translations & unmatched layers removed)."""
+    if not drive_service or not local_mtp_path or not Path(local_mtp_path).exists():
+        return None
+
+    from googleapiclient.http import MediaFileUpload
+    p = Path(local_mtp_path)
+    size_mb = p.stat().st_size / (1024 * 1024)
+    clean_folder_id = extract_folder_id(source_folder_id)
+
+    try:
+        query = (
+            f"'{clean_folder_id}' in parents and "
+            f"mimeType != 'application/vnd.google-apps.folder' and "
+            f"trashed = false"
+        )
+        res = drive_service.files().list(q=query, pageSize=200, fields="files(id, name)").execute()
+        mtp_files = [f for f in res.get("files", []) if f.get("name", "").lower().endswith(".mtp")]
+        media = MediaFileUpload(str(p), mimetype="application/octet-stream", resumable=True)
+
+        if mtp_files:
+            primary = [f for f in mtp_files if not f["name"].lower().endswith("_updated.mtp")] or mtp_files
+            target = primary[0]
+            print(f"📤 [Drive MTP Update] Updating {target['name']} ({size_mb:.2f} MB) in Drive source folder ({clean_folder_id})...")
+            updated = drive_service.files().update(fileId=target["id"], media_body=media).execute()
+            print(f"   ✓ Updated .mtp in Google Drive: {target['name']} (ID: {updated.get('id')})")
+            return updated.get("id")
+        else:
+            print(f"📤 [Drive MTP Upload] Uploading {p.name} ({size_mb:.2f} MB) to Drive source folder ({clean_folder_id})...")
+            meta = {"name": p.name, "parents": [clean_folder_id]}
+            uploaded = drive_service.files().create(body=meta, media_body=media, fields="id").execute()
+            print(f"   ✓ Uploaded new .mtp to Google Drive: {p.name} (ID: {uploaded.get('id')})")
+            return uploaded.get("id")
+    except Exception as e:
+        print(f"❌ Failed to update .mtp in Google Drive: {e}")
+        return None
+
+
 def extract_folder_id(url_or_id):
     """Extracts raw folder ID from Drive folder URL or returns id as-is."""
     if not url_or_id:
@@ -1021,7 +1059,33 @@ def run_export_psd_pipeline(args):
                 l["translation"] = ""
                 total_unmatched_count += 1
 
-        print(f"\n📄 [{file_idx}/{total_pages}] Processing {fname} ({w}x{h}): {len(page_matched_layers)} matched / {len(layers)} total layers")
+        # Remove unmatched layers from MTP project (tsData, ocrData, pages) so only matched layers remain
+        matched_only_layers = [l for _, l in page_matched_layers]
+        matched_ocr_entries = [
+            {"text": l.get("originalText") or l.get("text", ""), "box": l.get("box", [])}
+            for _, l in page_matched_layers
+        ]
+        norm_page = normalize_page_stem(fname)
+        stem_page = Path(fname).stem.lower()
+        updated_ts_key = False
+        for k in list(ts_data.keys()):
+            if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
+                ts_data[k] = matched_only_layers
+                updated_ts_key = True
+        if not updated_ts_key and matched_only_layers:
+            ts_data[fname] = matched_only_layers
+
+        for k in list(ocr_data.keys()):
+            if k == fname or Path(k).stem.lower() == stem_page or normalize_page_stem(k) == norm_page:
+                ocr_data[k] = matched_ocr_entries
+
+        if "pages" in project_data and isinstance(project_data.get("pages"), list):
+            for p_obj in project_data["pages"]:
+                p_name = p_obj.get("fileName", "") or p_obj.get("name", "")
+                if Path(p_name).stem.lower() == stem_page or normalize_page_stem(p_name) == norm_page:
+                    p_obj["layers"] = matched_only_layers
+
+        print(f"\n📄 [{file_idx}/{total_pages}] Processing {fname} ({w}x{h}): {len(page_matched_layers)} matched / {len(layers) - len(page_matched_layers)} unmatched removed")
 
         # Inpainting speech bubbles as individual layers
         inpaint_patches = []
@@ -1150,9 +1214,12 @@ def run_export_psd_pipeline(args):
                 "strokeWidth": 3,
                 "strokeColor": "#FFFFFF"
             }
+            l["targetLayerId"] = layer_obj["id"]
             page_text_layers.append(layer_obj)
 
         text_layers_data[fname] = page_text_layers
+        if img_path.name != fname:
+            text_layers_data[img_path.name] = page_text_layers
 
         # Export to Native PSD via ag-psd
         raw_bg_bin = work_dir / f"{Path(fname).stem}_raw_bg.bin"
@@ -1201,20 +1268,29 @@ def run_export_psd_pipeline(args):
             except Exception:
                 pass
 
-    # Update and Save Native MangaToolPlus Project
+    # Update and Save Native MangaToolPlus Project (with translations imported & unmatched layers removed)
+    out_mtp_file = None
     if project_data:
+        project_data["tsData"] = ts_data
+        project_data["ocrData"] = ocr_data
         project_data["textLayersData"] = text_layers_data
         base_name = selected_mtp.stem if selected_mtp else f"chapter_{chapter_num}"
         out_mtp_file = work_dir / safe_local_filename(f"{base_name}_updated.mtp")
         with open(out_mtp_file, "w", encoding="utf-8") as f:
             json.dump(project_data, f, ensure_ascii=False)
-        print(f"\n📦 Saved updated project: {out_mtp_file.name}")
+        if selected_mtp and selected_mtp.exists():
+            try:
+                with open(selected_mtp, "w", encoding="utf-8") as f_orig:
+                    json.dump(project_data, f_orig, ensure_ascii=False)
+            except Exception:
+                pass
+        print(f"\n📦 Saved updated project (unmatched layers removed): {out_mtp_file.name}")
 
     print("\n" + "=" * 65)
     print("🎉 PSD Generation Summary:")
     print(f"   Total Pages Processed:     {len(pages_to_process)}")
     print(f"   Total Matched Layers:      {total_matched_count}")
-    print(f"   Total Unmatched Layers:    {total_unmatched_count}")
+    print(f"   Total Unmatched Removed:   {total_unmatched_count}")
     print(f"   Generated PSD Files:       {len(generated_psds)}")
     print(f"   Total Elapsed Time:        {time.time() - start_time:.2f}s")
     print("=" * 65)
@@ -1223,7 +1299,7 @@ def run_export_psd_pipeline(args):
         print("❌ Error: No PSD files were generated! Exiting with error so queue is not marked finished without PSDs.")
         sys.exit(1)
 
-    # 7. Upload PSD files directly to Google Drive Subfolder
+    # 7. Upload PSD files directly to Google Drive Subfolder & update .mtp in Source Folder
     target_upload_folder_id = folder_id
     if drive_service:
         target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
@@ -1235,6 +1311,9 @@ def run_export_psd_pipeline(args):
             if up_id:
                 up_count += 1
         print(f"   ✓ Uploaded {up_count}/{len(generated_psds)} PSD files to Google Drive subfolder '{subfolder_name}'!")
+
+        if out_mtp_file and out_mtp_file.exists():
+            update_mtp_in_source_folder(drive_service, folder_id, out_mtp_file)
 
     # 8. Notify GAS that Export PSD is complete (always pass PSD folder ID so [Export PSD] link is attached)
     if not getattr(args, "no_notify", False):
