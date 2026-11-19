@@ -500,44 +500,61 @@ def discover_all_tabs(doc_id: str, access_token: str = None) -> list[dict]:
     return tabs
 
 
+def clean_chapter_number_str(ch: any) -> str:
+    """Normalizes chapter string to a canonical numeric string (e.g. 'ตอนที่ 31' -> '31', '031' -> '31', 'Ch.31.5' -> '31.5')."""
+    if ch is None:
+        return ""
+    s = str(ch).strip()
+    if not s:
+        return ""
+    # Extract number (supports decimals like 31.5, ranges like 31-32 takes first 31)
+    m = re.search(r"(\d+(?:\.\d+)?)", s)
+    if m:
+        val = m.group(1)
+        # Strip trailing .0 if present
+        if val.endswith(".0"):
+            val = val[:-2]
+        return val.lstrip("0") or "0"
+    return s.lower()
+
+
 def resolve_tab_id(doc_id: str, tab_id: str = "", chapter_num: str = "", access_token: str = None) -> tuple[str, str]:
     """
-    Intelligently resolves the correct tab_id for given chapter_num.
-    Translators typically name tabs as just '31', '32', '33' (without 'ch' prefix) or '01', '02', '03'.
-    Prevents mismatched tab selection (e.g. Chapter 1 tab sent for Chapter 31).
+    Intelligently resolves the correct tab_id for given chapter_num across multi-tab Google Docs.
+    Supports all naming conventions: '31', '031', 'ตอนที่ 31', 'ตอน 31', 'Ch.31', 'Chapter 31', etc.
     """
     tabs = discover_all_tabs(doc_id, access_token)
     if not tabs:
         return tab_id, "direct tab_id or default document (no tabs found)"
 
-    clean_target = str(chapter_num).strip().lstrip("0") or "0" if chapter_num else ""
+    clean_target = clean_chapter_number_str(chapter_num)
 
     matched_tab = None
     if clean_target:
         # Match strategy 1: Exact title match or normalized title match (e.g. '31' == '31', '031' == '31')
         for t in tabs:
-            tclean = t["title"].strip()
-            if tclean.lower() == str(chapter_num).strip().lower() or (tclean.lstrip("0") or "0") == clean_target:
+            tclean = clean_chapter_number_str(t["title"])
+            if tclean == clean_target:
                 matched_tab = t
                 break
 
         # Match strategy 2: Title with prefix (Chapter 31, ตอน 31, ตอนที่ 31, Ch.31)
         if not matched_tab:
             for t in tabs:
-                tclean = t["title"].strip()
-                m = re.search(r'(?:chapter|ตอนที่|ตอน|ch\.?|ep\.?)\s*(\d+(?:\.\d+)?)', tclean, re.IGNORECASE)
-                if m and (m.group(1).lstrip("0") or "0") == clean_target:
+                t_raw = t["title"].strip()
+                m = re.search(r"(?:chapter|ตอนที่|ตอน|ch\.?|ep\.?)\s*(\d+(?:\.\d+)?)", t_raw, re.IGNORECASE)
+                if m and clean_chapter_number_str(m.group(1)) == clean_target:
                     matched_tab = t
                     break
 
-        # Match strategy 3: Isolated number in title (ignoring glossary)
+        # Match strategy 3: Isolated number in title (ignoring glossary / คำศัพท์)
         if not matched_tab:
             for t in tabs:
-                tclean = t["title"].strip()
-                if re.search(r'glossary|คำศัพท์', tclean, re.IGNORECASE):
+                t_raw = t["title"].strip()
+                if re.search(r"glossary|คำศัพท์|สารบัญ|index", t_raw, re.IGNORECASE):
                     continue
-                m = re.search(r'\b0*(\d+(?:\.\d+)?)\b', tclean)
-                if m and (m.group(1).lstrip("0") or "0") == clean_target:
+                m = re.search(r"\b0*(\d+(?:\.\d+)?)\b", t_raw)
+                if m and clean_chapter_number_str(m.group(1)) == clean_target:
                     matched_tab = t
                     break
 
