@@ -175,7 +175,7 @@ def trash_drive_file_via_gas(file_id, gas_url=None, passcode="10211032"):
 
 
 def upload_file_to_source_folder(drive_service, target_folder_id, file_path, gas_url=None, passcode=None):
-    """Uploads a local file directly into target_folder_id, updating if already exists."""
+    """Uploads a local file directly into target_folder_id."""
     if not drive_service:
         print(f"⚠️ No Google Drive service. Skipping cloud upload for {file_path}.")
         return None
@@ -187,10 +187,6 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path, gas
     print(f"📤 Uploading {file_name} ({size_mb:.2f} MB) to Drive folder ({target_folder_id})...")
 
     try:
-        escaped_name = file_name.replace("'", "\\'")
-        query = f"'{target_folder_id}' in parents and name='{escaped_name}' and trashed=false"
-        existing = drive_service.files().list(q=query, fields="files(id, name)").execute().get("files", [])
-
         suffix = p.suffix.lower()
         if suffix == ".psd":
             mimetype = "image/vnd.adobe.photoshop"
@@ -202,24 +198,10 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path, gas
             mimetype = "application/octet-stream"
         media = MediaFileUpload(str(p), mimetype=mimetype, resumable=True)
 
-        if existing:
-            file_id = existing[0]["id"]
-            try:
-                updated = drive_service.files().update(fileId=file_id, media_body=media).execute()
-                print(f"   ✓ Updated existing {file_name} (ID: {updated.get('id')})")
-                return updated.get("id")
-            except Exception as upd_err:
-                print(f"   ⚠️ Direct update failed ({upd_err}). Trashing old copy via GAS and uploading fresh...")
-                trash_drive_file_via_gas(file_id, gas_url=gas_url, passcode=passcode)
-                meta = {"name": file_name, "parents": [target_folder_id]}
-                uploaded = drive_service.files().create(body=meta, media_body=media, fields="id").execute()
-                print(f"   ✓ Uploaded replacement {file_name} (ID: {uploaded.get('id')})")
-                return uploaded.get("id")
-        else:
-            meta = {"name": file_name, "parents": [target_folder_id]}
-            uploaded = drive_service.files().create(body=meta, media_body=media, fields="id").execute()
-            print(f"   ✓ Uploaded new {file_name} (ID: {uploaded.get('id')})")
-            return uploaded.get("id")
+        meta = {"name": file_name, "parents": [target_folder_id]}
+        uploaded = drive_service.files().create(body=meta, media_body=media, fields="id").execute()
+        print(f"   ✓ Uploaded new {file_name} (ID: {uploaded.get('id')})")
+        return uploaded.get("id")
     except Exception as e:
         print(f"❌ Failed to upload {file_name} to Google Drive: {e}")
         return None
@@ -1601,12 +1583,11 @@ def run_export_psd_pipeline(args):
         if args.upload_to_source and drive_service and out_mtp_path.exists():
             target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
             upload_file_to_source_folder(drive_service, target_upload_folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
-            update_mtp_in_source_folder(drive_service, folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
         if args.cleanup:
             shutil.rmtree(work_dir, ignore_errors=True)
         return
 
-    # 7. Upload Edited .mtp file directly to Google Drive Subfolder & update .mtp in Source Folder
+    # 7. Upload Edited .mtp file directly to Google Drive Subfolder (PSD)
     target_upload_folder_id = folder_id
     if drive_service:
         target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
@@ -1615,7 +1596,6 @@ def run_export_psd_pipeline(args):
         up_id = upload_file_to_source_folder(drive_service, target_upload_folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
         if up_id:
             print(f"   ✓ Uploaded edited .mtp to Google Drive subfolder '{subfolder_name}'!")
-        update_mtp_in_source_folder(drive_service, folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
 
     # 8. Notify GAS that Export PSD/MTP is complete (always pass PSD folder ID so [Export PSD] link is attached)
     if not getattr(args, "no_notify", False):
