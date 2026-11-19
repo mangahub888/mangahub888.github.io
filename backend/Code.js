@@ -277,6 +277,9 @@ function doPost(e) {
       case 'BATCH_UPDATE_MANGA_DOC_LINKS':
         result = batchUpdateMangaDocLinks(payload.linksMap);
         break;
+      case 'BATCH_UPDATE_MANGA_PLATFORMS':
+        result = batchUpdateMangaPlatforms(payload.platformsMap, payload.defaultPlatforms);
+        break;
       case 'DELETE_MANGA':
         result = deleteManga(payload.id);
         break;
@@ -872,6 +875,7 @@ function ensureSheetHeaders(sheet, name) {
       ensureCol('TranslationDocUrl', '');
 
       ensureCol('ScanGroup', '');
+      ensureCol('Platforms', '');
       ensureCol('ExcludeTranslatePayout', false);
     }
   }
@@ -1421,6 +1425,66 @@ function batchUpdateMangaDocLinks(docLinksMap) {
     };
   } catch (err) {
     return { error: 'Batch Update Manga Doc Links Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * BATCH UPDATE: อัปเดตแพลตฟอร์มสำหรับหลายมังงะพร้อมกัน
+ */
+function batchUpdateMangaPlatforms(platformsMap, defaultPlatforms) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet();
+    ensureSheetHeaders(sheet, SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: false, message: 'No manga found' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    let platCol = headers.indexOf('platforms');
+    if (platCol === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('Platforms');
+      if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue('');
+      }
+      platCol = newCol - 1;
+    }
+
+    let updatedCount = 0;
+    const values = [];
+    for (let i = 1; i < data.length; i++) {
+      const mid = String(data[i][0]).trim();
+      let targetVal = null;
+      if (platformsMap && platformsMap.hasOwnProperty(mid)) {
+        targetVal = platformsMap[mid];
+      } else if (defaultPlatforms !== undefined) {
+        targetVal = defaultPlatforms;
+      }
+      
+      if (targetVal !== null) {
+        const strVal = Array.isArray(targetVal) ? targetVal.join(', ') : String(targetVal);
+        values.push([strVal]);
+        updatedCount++;
+      } else {
+        values.push([data[i][platCol] || '']);
+      }
+    }
+
+    if (values.length > 0) {
+      sheet.getRange(2, platCol + 1, values.length, 1).setValues(values);
+    }
+
+    invalidateCache('mangaList');
+    return {
+      success: true,
+      updatedCount: updatedCount,
+      list: getMangaList()
+    };
+  } catch (err) {
+    return { error: 'Batch Update Manga Platforms Failed: ' + err.toString() };
   } finally {
     lock.releaseLock();
   }
