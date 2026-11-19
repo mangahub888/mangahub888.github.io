@@ -679,6 +679,8 @@ def parse_numbered_translations(doc_text: str, quiet: bool = False) -> tuple[dic
     if not doc_text:
         return {}, []
 
+    # Strip UTF-8 BOM if present so regex starts cleanly at line 1
+    doc_text = doc_text.lstrip("\ufeff\ufffe")
     lines = [line.strip() for line in doc_text.splitlines() if line.strip()]
     by_number = {}
     current_num = None
@@ -1338,9 +1340,9 @@ def run_export_psd_pipeline(args):
             ocr_c = clean_cjk(l.get("originalText") or l.get("text", ""))
 
             if has_doc_raw and ocr_c and doc_entries:
-                # Monotonic Content-Aware Search around last_doc_index
-                search_start = max(0, last_doc_index - 3)
-                search_end = min(len(doc_entries), last_doc_index + 12)
+                # 1. First attempt: search in forward monotonic window around last_doc_index
+                search_start = max(0, last_doc_index - 4)
+                search_end = min(len(doc_entries), last_doc_index + 15)
 
                 for d_idx in range(search_start, search_end):
                     if d_idx in used_doc_indices:
@@ -1363,8 +1365,29 @@ def run_export_psd_pipeline(args):
                         matched_doc_entry = d_item
                         best_d_idx = d_idx
 
+                # 2. Second attempt: if no good match in local window, search globally across all unused doc entries
+                if best_score < 0.65:
+                    for d_idx, d_item in enumerate(doc_entries):
+                        if d_idx in used_doc_indices:
+                            continue
+                        doc_c = d_item.get("raw_clean", "")
+                        if not doc_c:
+                            continue
+                        if ocr_c == doc_c:
+                            score = 1.0
+                        elif ocr_c in doc_c or doc_c in ocr_c:
+                            ratio = min(len(ocr_c), len(doc_c)) / max(len(ocr_c), len(doc_c))
+                            score = 0.85 + ratio * 0.14
+                        else:
+                            score = difflib.SequenceMatcher(None, ocr_c, doc_c).ratio()
+
+                        if score > best_score:
+                            best_score = score
+                            matched_doc_entry = d_item
+                            best_d_idx = d_idx
+
                 if matched_doc_entry and best_score >= 0.52:
-                    last_doc_index = best_d_idx + 1
+                    last_doc_index = max(last_doc_index, best_d_idx + 1)
                     used_doc_indices.add(best_d_idx)
                 else:
                     matched_doc_entry = None
