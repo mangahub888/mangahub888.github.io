@@ -175,7 +175,7 @@ def trash_drive_file_via_gas(file_id, gas_url=None, passcode="10211032"):
 
 
 def upload_file_to_source_folder(drive_service, target_folder_id, file_path, gas_url=None, passcode=None):
-    """Uploads a local file directly into target_folder_id, updating if already exists."""
+    """Uploads a local file directly into target_folder_id."""
     if not drive_service:
         print(f"⚠️ No Google Drive service. Skipping cloud upload for {file_path}.")
         return None
@@ -187,10 +187,6 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path, gas
     print(f"📤 Uploading {file_name} ({size_mb:.2f} MB) to Drive folder ({target_folder_id})...")
 
     try:
-        escaped_name = file_name.replace("'", "\\'")
-        query = f"'{target_folder_id}' in parents and name='{escaped_name}' and trashed=false"
-        existing = drive_service.files().list(q=query, fields="files(id, name)").execute().get("files", [])
-
         suffix = p.suffix.lower()
         if suffix == ".psd":
             mimetype = "image/vnd.adobe.photoshop"
@@ -202,24 +198,10 @@ def upload_file_to_source_folder(drive_service, target_folder_id, file_path, gas
             mimetype = "application/octet-stream"
         media = MediaFileUpload(str(p), mimetype=mimetype, resumable=True)
 
-        if existing:
-            file_id = existing[0]["id"]
-            try:
-                updated = drive_service.files().update(fileId=file_id, media_body=media).execute()
-                print(f"   ✓ Updated existing {file_name} (ID: {updated.get('id')})")
-                return updated.get("id")
-            except Exception as upd_err:
-                print(f"   ⚠️ Direct update failed ({upd_err}). Trashing old copy via GAS and uploading fresh...")
-                trash_drive_file_via_gas(file_id, gas_url=gas_url, passcode=passcode)
-                meta = {"name": file_name, "parents": [target_folder_id]}
-                uploaded = drive_service.files().create(body=meta, media_body=media, fields="id").execute()
-                print(f"   ✓ Uploaded replacement {file_name} (ID: {uploaded.get('id')})")
-                return uploaded.get("id")
-        else:
-            meta = {"name": file_name, "parents": [target_folder_id]}
-            uploaded = drive_service.files().create(body=meta, media_body=media, fields="id").execute()
-            print(f"   ✓ Uploaded new {file_name} (ID: {uploaded.get('id')})")
-            return uploaded.get("id")
+        meta = {"name": file_name, "parents": [target_folder_id]}
+        uploaded = drive_service.files().create(body=meta, media_body=media, fields="id").execute()
+        print(f"   ✓ Uploaded new {file_name} (ID: {uploaded.get('id')})")
+        return uploaded.get("id")
     except Exception as e:
         print(f"❌ Failed to upload {file_name} to Google Drive: {e}")
         return None
@@ -518,44 +500,61 @@ def discover_all_tabs(doc_id: str, access_token: str = None) -> list[dict]:
     return tabs
 
 
+def clean_chapter_number_str(ch: any) -> str:
+    """Normalizes chapter string to a canonical numeric string (e.g. 'ตอนที่ 31' -> '31', '031' -> '31', 'Ch.31.5' -> '31.5')."""
+    if ch is None:
+        return ""
+    s = str(ch).strip()
+    if not s:
+        return ""
+    # Extract number (supports decimals like 31.5, ranges like 31-32 takes first 31)
+    m = re.search(r"(\d+(?:\.\d+)?)", s)
+    if m:
+        val = m.group(1)
+        # Strip trailing .0 if present
+        if val.endswith(".0"):
+            val = val[:-2]
+        return val.lstrip("0") or "0"
+    return s.lower()
+
+
 def resolve_tab_id(doc_id: str, tab_id: str = "", chapter_num: str = "", access_token: str = None) -> tuple[str, str]:
     """
-    Intelligently resolves the correct tab_id for given chapter_num.
-    Translators typically name tabs as just '31', '32', '33' (without 'ch' prefix) or '01', '02', '03'.
-    Prevents mismatched tab selection (e.g. Chapter 1 tab sent for Chapter 31).
+    Intelligently resolves the correct tab_id for given chapter_num across multi-tab Google Docs.
+    Supports all naming conventions: '31', '031', 'ตอนที่ 31', 'ตอน 31', 'Ch.31', 'Chapter 31', etc.
     """
     tabs = discover_all_tabs(doc_id, access_token)
     if not tabs:
         return tab_id, "direct tab_id or default document (no tabs found)"
 
-    clean_target = str(chapter_num).strip().lstrip("0") or "0" if chapter_num else ""
+    clean_target = clean_chapter_number_str(chapter_num)
 
     matched_tab = None
     if clean_target:
         # Match strategy 1: Exact title match or normalized title match (e.g. '31' == '31', '031' == '31')
         for t in tabs:
-            tclean = t["title"].strip()
-            if tclean.lower() == str(chapter_num).strip().lower() or (tclean.lstrip("0") or "0") == clean_target:
+            tclean = clean_chapter_number_str(t["title"])
+            if tclean == clean_target:
                 matched_tab = t
                 break
 
         # Match strategy 2: Title with prefix (Chapter 31, ตอน 31, ตอนที่ 31, Ch.31)
         if not matched_tab:
             for t in tabs:
-                tclean = t["title"].strip()
-                m = re.search(r'(?:chapter|ตอนที่|ตอน|ch\.?|ep\.?)\s*(\d+(?:\.\d+)?)', tclean, re.IGNORECASE)
-                if m and (m.group(1).lstrip("0") or "0") == clean_target:
+                t_raw = t["title"].strip()
+                m = re.search(r"(?:chapter|ตอนที่|ตอน|ch\.?|ep\.?)\s*(\d+(?:\.\d+)?)", t_raw, re.IGNORECASE)
+                if m and clean_chapter_number_str(m.group(1)) == clean_target:
                     matched_tab = t
                     break
 
-        # Match strategy 3: Isolated number in title (ignoring glossary)
+        # Match strategy 3: Isolated number in title (ignoring glossary / คำศัพท์)
         if not matched_tab:
             for t in tabs:
-                tclean = t["title"].strip()
-                if re.search(r'glossary|คำศัพท์', tclean, re.IGNORECASE):
+                t_raw = t["title"].strip()
+                if re.search(r"glossary|คำศัพท์|สารบัญ|index", t_raw, re.IGNORECASE):
                     continue
-                m = re.search(r'\b0*(\d+(?:\.\d+)?)\b', tclean)
-                if m and (m.group(1).lstrip("0") or "0") == clean_target:
+                m = re.search(r"\b0*(\d+(?:\.\d+)?)\b", t_raw)
+                if m and clean_chapter_number_str(m.group(1)) == clean_target:
                     matched_tab = t
                     break
 
@@ -600,7 +599,7 @@ def fetch_doc_translation_text(doc_id: str, tab_id: str = "", chapter_num: str =
             print(f"   ⚠️ Tab {resolved_tab} fetch failed: {e}")
 
     # Verify if tab content contains dialogue items [#N]
-    test_d = parse_numbered_translations(text, quiet=True) if text else {}
+    test_d, _ = parse_numbered_translations(text, quiet=True) if text else ({}, [])
     if len(test_d) > 0:
         return text
 
@@ -686,22 +685,28 @@ def extract_chapter_section(raw_text: str, chapter_num: str) -> str:
         return raw_text
 
 
-def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int, str]:
+def parse_numbered_translations(doc_text: str, quiet: bool = False) -> tuple[dict[int, str], list[dict]]:
     """
     Parses numbered translation blocks [#N] matching MangaToolPlus sequential OCR layers.
-    Selects Thai translated text if present, otherwise uses last available line.
-    Prevents concatenating multiple chapters if the document contains repetitive [#1] blocks.
+    Extracts both original text (Chinese/Japanese/raw) and Thai translated text.
+    Returns:
+      (translations_map, doc_entries_list)
+      where doc_entries_list holds [{'num': N, 'raw_clean': '...', 'thai_str': '...', 'raw_str': '...'}]
     """
     if not doc_text:
-        return {}
+        return {}, []
 
+    # Strip UTF-8 BOM if present so regex starts cleanly at line 1
+    doc_text = doc_text.lstrip("\ufeff\ufffe")
     lines = [line.strip() for line in doc_text.splitlines() if line.strip()]
     by_number = {}
     current_num = None
 
     thai_char_re = re.compile(r"[\u0E00-\u0E7F]")
-    # Matches [#1], [#01], [# 1], or [1]
+    cjk_re = re.compile(r"[\u4e00-\u9fff\u3040-\u30ff]")
     marker_re = re.compile(r"^\[#?\s*(\d+)\]\s*(.*)$")
+
+    ordered_entries = []
 
     for line in lines:
         m = marker_re.match(line)
@@ -714,28 +719,40 @@ def parse_numbered_translations(doc_text: str, quiet: bool = False) -> dict[int,
                 break
 
             current_num = num
-            if current_num not in by_number:
-                by_number[current_num] = []
+            if not ordered_entries or ordered_entries[-1]["num"] != current_num:
+                ordered_entries.append({"num": current_num, "raw": [], "thai": []})
+
             if content:
-                by_number[current_num].append(content)
-        elif current_num is not None:
-            by_number[current_num].append(line)
+                if thai_char_re.search(content):
+                    ordered_entries[-1]["thai"].append(content)
+                else:
+                    ordered_entries[-1]["raw"].append(content)
+        elif current_num is not None and ordered_entries:
+            if thai_char_re.search(line):
+                ordered_entries[-1]["thai"].append(line)
+            else:
+                ordered_entries[-1]["raw"].append(line)
 
     translations = {}
-    for num, parts in by_number.items():
-        thai_parts = [p for p in parts if thai_char_re.search(p)]
-        if thai_parts:
-            # If translator wrote lines with multiple Thai sentences, combine them cleanly
-            translations[num] = "\n".join(thai_parts)
-        elif parts:
-            translations[num] = parts[-1]
+    for entry in ordered_entries:
+        num = entry["num"]
+        raw_str = " ".join(entry["raw"])
+        thai_str = "\n".join(entry["thai"]) if entry["thai"] else ""
+        if not thai_str and entry["raw"]:
+            thai_str = entry["raw"][-1]
+
+        clean_cjk_val = re.sub(r"[^\w\u4e00-\u9fff\u3040-\u30ff]+", "", raw_str)
+        entry["raw_str"] = raw_str
+        entry["raw_clean"] = clean_cjk_val
+        entry["thai_str"] = thai_str
+        translations[num] = thai_str
 
     if not quiet:
         if translations:
             print(f"📝 Parsed {len(translations)} translation blocks (indices #{min(translations.keys())} - #{max(translations.keys())})")
         else:
             print("⚠️ Parsed 0 translation blocks from document text")
-    return translations
+    return translations, ordered_entries
 
 
 # ==============================================================================
@@ -1167,7 +1184,7 @@ def run_export_psd_pipeline(args):
         except Exception as e:
             print(f"⚠️ Failed to fetch doc text: {e}")
 
-    translations = parse_numbered_translations(doc_text) if doc_text else {}
+    translations, doc_entries = parse_numbered_translations(doc_text) if doc_text else ({}, [])
 
     # 5. Initialize LaMa Inpainting Engine
     lama_service = None
@@ -1210,6 +1227,21 @@ def run_export_psd_pipeline(args):
     global_index = 1
     total_matched_count = 0
     total_unmatched_count = 0
+
+    # Helper to clean CJK text for similarity matching
+    def clean_cjk(s: str) -> str:
+        if not s:
+            return ""
+        return re.sub(r"[^\w\u4e00-\u9fff\u3040-\u30ff]+", "", str(s))
+
+    has_doc_raw = any(bool(e.get("raw_clean")) for e in doc_entries)
+    if has_doc_raw:
+        print(f"🎯 Content-Aware Alignment active: matching {len(doc_entries)} doc blocks with OCR text similarity")
+    else:
+        print("ℹ️ Doc has no raw CJK text anchors: falling back to sequential index matching")
+
+    last_doc_index = 0
+    used_doc_indices = set()
 
     print(f"\n🎨 Processing {total_pages} pages (matching translations [#1]..[#N])...")
 
@@ -1273,23 +1305,125 @@ def run_export_psd_pipeline(args):
         existing_inpaint_layers = get_existing_inpaint_layers_for_page(fname) or get_existing_inpaint_layers_for_page(img_path.name)
         page_matched_layers = []
 
-        for l in layers:
-            current_num = global_index
-            global_index += 1
+        # 1. Pre-filter heavily overlapping or fragmented sub-boxes on the same page
+        deduped_layers = []
+        for l_curr in layers:
+            b_curr = l_curr.get("box", [])
+            txt_curr = clean_cjk(l_curr.get("originalText") or l_curr.get("text", ""))
+            if not b_curr or len(txt_curr) == 0:
+                continue
 
-            if not l.get("id"):
-                l["id"] = f"ocr_layer_{Path(fname).stem}_{current_num}"
-            if not l.get("type"):
-                l["type"] = "text"
+            xs_c = [p[0] for p in b_curr] if isinstance(b_curr[0], (list, tuple)) else [b_curr[0], b_curr[2]]
+            ys_c = [p[1] for p in b_curr] if isinstance(b_curr[0], (list, tuple)) else [b_curr[1], b_curr[3]]
+            min_x_c, max_x_c = min(xs_c), max(xs_c)
+            min_y_c, max_y_c = min(ys_c), max(ys_c)
+            area_c = max(1, (max_x_c - min_x_c) * (max_y_c - min_y_c))
 
-            if current_num in translations:
-                thai_trans = translations[current_num]
+            is_duplicate_sub = False
+            for l_prev in list(deduped_layers):
+                b_prev = l_prev.get("box", [])
+                xs_p = [p[0] for p in b_prev] if isinstance(b_prev[0], (list, tuple)) else [b_prev[0], b_prev[2]]
+                ys_p = [p[1] for p in b_prev] if isinstance(b_prev[0], (list, tuple)) else [b_prev[1], b_prev[3]]
+                min_x_p, max_x_p = min(xs_p), max(xs_p)
+                min_y_p, max_y_p = min(ys_p), max(ys_p)
+                area_p = max(1, (max_x_p - min_x_p) * (max_y_p - min_y_p))
+
+                inter_w = max(0, min(max_x_c, max_x_p) - max(min_x_c, min_x_p))
+                inter_h = max(0, min(max_y_c, max_y_p) - max(min_y_c, min_y_p))
+                inter_area = inter_w * inter_h
+                overlap_ratio = inter_area / min(area_c, area_p)
+
+                txt_prev = clean_cjk(l_prev.get("originalText") or l_prev.get("text", ""))
+                # If boxes overlap significantly (> 50%) and one is a substring of the other or identical
+                if overlap_ratio > 0.5:
+                    if txt_curr == txt_prev or txt_curr in txt_prev:
+                        is_duplicate_sub = True
+                        break
+                    elif txt_prev in txt_curr and area_c > area_p:
+                        # Current is the larger/complete bubble, replace previous smaller fragment
+                        deduped_layers.remove(l_prev)
+                        break
+
+            if not is_duplicate_sub:
+                deduped_layers.append(l_curr)
+
+        # 2. Match layers with Doc Translations
+        import difflib
+        for l in deduped_layers:
+            matched_doc_entry = None
+            best_score = 0.0
+            best_d_idx = -1
+
+            ocr_c = clean_cjk(l.get("originalText") or l.get("text", ""))
+
+            if has_doc_raw and ocr_c and doc_entries:
+                # 1. First attempt: search in forward monotonic window around last_doc_index
+                search_start = max(0, last_doc_index - 4)
+                search_end = min(len(doc_entries), last_doc_index + 15)
+
+                for d_idx in range(search_start, search_end):
+                    if d_idx in used_doc_indices:
+                        continue
+                    d_item = doc_entries[d_idx]
+                    doc_c = d_item.get("raw_clean", "")
+                    if not doc_c:
+                        continue
+
+                    if ocr_c == doc_c:
+                        score = 1.0
+                    elif ocr_c in doc_c or doc_c in ocr_c:
+                        ratio = min(len(ocr_c), len(doc_c)) / max(len(ocr_c), len(doc_c))
+                        score = 0.85 + ratio * 0.14
+                    else:
+                        score = difflib.SequenceMatcher(None, ocr_c, doc_c).ratio()
+
+                    if score > best_score:
+                        best_score = score
+                        matched_doc_entry = d_item
+                        best_d_idx = d_idx
+
+                # 2. Second attempt: if no good match in local window, search globally across all unused doc entries
+                if best_score < 0.65:
+                    for d_idx, d_item in enumerate(doc_entries):
+                        if d_idx in used_doc_indices:
+                            continue
+                        doc_c = d_item.get("raw_clean", "")
+                        if not doc_c:
+                            continue
+                        if ocr_c == doc_c:
+                            score = 1.0
+                        elif ocr_c in doc_c or doc_c in ocr_c:
+                            ratio = min(len(ocr_c), len(doc_c)) / max(len(ocr_c), len(doc_c))
+                            score = 0.85 + ratio * 0.14
+                        else:
+                            score = difflib.SequenceMatcher(None, ocr_c, doc_c).ratio()
+
+                        if score > best_score:
+                            best_score = score
+                            matched_doc_entry = d_item
+                            best_d_idx = d_idx
+
+                if matched_doc_entry and best_score >= 0.52:
+                    last_doc_index = max(last_doc_index, best_d_idx + 1)
+                    used_doc_indices.add(best_d_idx)
+                else:
+                    matched_doc_entry = None
+            else:
+                # Sequential Fallback if no CJK raw in doc
+                current_num = global_index
+                global_index += 1
+                if current_num in translations:
+                    matched_doc_entry = {"num": current_num, "thai_str": translations[current_num]}
+
+            if matched_doc_entry:
+                c_num = matched_doc_entry["num"]
+                thai_trans = matched_doc_entry["thai_str"]
+                if not l.get("id"):
+                    l["id"] = f"ocr_layer_{Path(fname).stem}_{c_num}"
+                if not l.get("type"):
+                    l["type"] = "text"
                 l["translation"] = thai_trans
-                page_matched_layers.append((current_num, l))
-                total_matched_count += 1
-            elif not translations and l.get("translation") and str(l.get("translation")).strip():
-                # Fallback if no doc translations were fetched or provided, keep existing non-empty translation in layer
-                page_matched_layers.append((current_num, l))
+                page_matched_layers.append((c_num, l))
                 total_matched_count += 1
             else:
                 l["translation"] = ""
@@ -1601,12 +1735,11 @@ def run_export_psd_pipeline(args):
         if args.upload_to_source and drive_service and out_mtp_path.exists():
             target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
             upload_file_to_source_folder(drive_service, target_upload_folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
-            update_mtp_in_source_folder(drive_service, folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
         if args.cleanup:
             shutil.rmtree(work_dir, ignore_errors=True)
         return
 
-    # 7. Upload Edited .mtp file directly to Google Drive Subfolder & update .mtp in Source Folder
+    # 7. Upload Edited .mtp file directly to Google Drive Subfolder (PSD)
     target_upload_folder_id = folder_id
     if drive_service:
         target_upload_folder_id = get_or_create_subfolder(drive_service, folder_id, folder_name=subfolder_name)
@@ -1615,7 +1748,6 @@ def run_export_psd_pipeline(args):
         up_id = upload_file_to_source_folder(drive_service, target_upload_folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
         if up_id:
             print(f"   ✓ Uploaded edited .mtp to Google Drive subfolder '{subfolder_name}'!")
-        update_mtp_in_source_folder(drive_service, folder_id, out_mtp_path, gas_url=args.gas_url, passcode=args.gas_passcode)
 
     # 8. Notify GAS that Export PSD/MTP is complete (always pass PSD folder ID so [Export PSD] link is attached)
     if not getattr(args, "no_notify", False):

@@ -286,6 +286,18 @@ export function matchesStepFilter(q: any, stepFilter: string, manga?: any): bool
     return strPsd === "เสร็จแล้ว" && !downstreamDone
   }
 
+  if (stepFilter === "translate_any_qc") {
+    // แปล (แม้ QC ยังไม่เสร็จ): ขั้นตอนอัป Raw เสร็จแล้ว, ยังไม่เสร็จขั้นตอนแปล (และงานยังไม่จบ)
+    const uploadDone = isQueueStepDone(q, "upload", manga)
+    const translateDone = isQueueStepDone(q, "translate", manga)
+    const downstreamDone =
+      isQueueStepDone(q, "typeset", manga) ||
+      isQueueStepDone(q, "publish", manga) ||
+      isQueueStepDone(q, "post", manga)
+
+    return uploadDone && !translateDone && !downstreamDone
+  }
+
   const stepIdx = QUEUE_STEPS.indexOf(stepFilter as QueueStepKey)
   if (stepIdx === -1) {
     return !isStepDone(q[stepFilter + "status"])
