@@ -11,7 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { isUrgentManga, isTranslatePayoutExcluded, timeSince } from "@/lib/utils"
+import {
+  isUrgentManga,
+  isTranslatePayoutExcluded,
+  timeSince,
+  TARGET_PLATFORMS,
+  parsePlatforms,
+} from "@/lib/utils"
 import { callGasApi, DEFAULT_GAS_URL, getGasUrl, setGasUrl } from "@/api/gasClient"
 import { toast } from "sonner"
 import {
@@ -27,6 +33,7 @@ import {
   CheckCircle2,
   Loader2,
   Search,
+  Globe,
 } from "lucide-react"
 
 interface MangaSettingsViewProps {
@@ -48,6 +55,7 @@ export function MangaSettingsView({
   const [updatingPayoutId, setUpdatingPayoutId] = React.useState<string | number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
   const [filterPayout, setFilterPayout] = React.useState<"all" | "excluded" | "included">("all")
+  const [filterPlatform, setFilterPlatform] = React.useState<string>("all")
 
   const handleToggleExcludePayout = async (manga: any) => {
     const mangaId = manga.mangaid
@@ -90,15 +98,33 @@ export function MangaSettingsView({
     }
   }
 
+  const platformCounts = React.useMemo(() => {
+    const counts: Record<string, number> = { readrealm: 0, chaply: 0, kairew: 0 }
+    mangaList.forEach((m) => {
+      const plats = parsePlatforms(m.platforms || m.Platforms)
+      plats.forEach((p) => {
+        if (counts[p] !== undefined) counts[p]++
+      })
+    })
+    return counts
+  }, [mangaList])
+
   const filteredMangaList = React.useMemo(() => {
     return mangaList.filter((m) => {
       const q = searchQuery.trim().toLowerCase()
+      const plats = parsePlatforms(m.platforms || m.Platforms)
+
+      if (filterPlatform !== "all" && !plats.includes(filterPlatform)) {
+        return false
+      }
+
       const matchQuery =
         !q ||
         (m.manganame && m.manganame.toLowerCase().includes(q)) ||
         (m.originalname && m.originalname.toLowerCase().includes(q)) ||
         (m.slug && m.slug.toLowerCase().includes(q)) ||
-        (m.scangroup && m.scangroup.toLowerCase().includes(q))
+        (m.scangroup && m.scangroup.toLowerCase().includes(q)) ||
+        plats.some((p) => p.includes(q))
 
       if (!matchQuery) return false
 
@@ -107,7 +133,7 @@ export function MangaSettingsView({
       if (filterPayout === "included") return !isExcluded
       return true
     })
-  }, [mangaList, searchQuery, filterPayout])
+  }, [mangaList, searchQuery, filterPayout, filterPlatform])
 
   const totalExcluded = React.useMemo(() => {
     return mangaList.filter((m) => isTranslatePayoutExcluded(m)).length
@@ -140,54 +166,91 @@ export function MangaSettingsView({
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0f172a]/70 p-3 rounded-xl border border-slate-800">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <Input
-            placeholder="ค้นหาชื่อเรื่อง, Slug, หรือชื่อค่าย..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-[#0b1120] border-slate-700 text-sm placeholder:text-slate-500"
-          />
+      <div className="space-y-2.5 bg-[#0f172a]/70 p-3 rounded-xl border border-slate-800">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="ค้นหาชื่อเรื่อง, Slug, หรือชื่อค่าย, แพลตฟอร์ม..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 bg-[#0b1120] border-slate-700 text-sm placeholder:text-slate-500"
+            />
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Button
+              type="button"
+              variant={filterPayout === "all" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilterPayout("all")}
+              className="text-xs h-8"
+            >
+              ทั้งหมด ({mangaList.length})
+            </Button>
+            <Button
+              type="button"
+              variant={filterPayout === "included" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilterPayout("included")}
+              className={`text-xs h-8 ${
+                filterPayout === "included"
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                  : "text-emerald-400 hover:text-emerald-300 border-emerald-500/30"
+              }`}
+            >
+              <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+              นับยอดปกติ ({mangaList.length - totalExcluded})
+            </Button>
+            <Button
+              type="button"
+              variant={filterPayout === "excluded" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilterPayout("excluded")}
+              className={`text-xs h-8 ${
+                filterPayout === "excluded"
+                  ? "bg-amber-600 hover:bg-amber-700 text-white"
+                  : "text-amber-400 hover:text-amber-300 border-amber-500/40"
+              }`}
+            >
+              <Coins className="h-3.5 w-3.5 mr-1" />
+              ไม่นับยอดเบิกจ่าย ({totalExcluded})
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 flex-wrap">
+
+        {/* Platform Quick Filter */}
+        <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-800/80">
+          <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
+            <Globe className="h-3.5 w-3.5 text-slate-400" /> แพลตฟอร์ม:
+          </span>
           <Button
             type="button"
-            variant={filterPayout === "all" ? "default" : "outline"}
+            variant={filterPlatform === "all" ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilterPayout("all")}
-            className="text-xs h-8"
+            onClick={() => setFilterPlatform("all")}
+            className="text-xs h-7 px-2.5"
           >
-            ทั้งหมด ({mangaList.length})
+            ทุกแพลตฟอร์ม
           </Button>
-          <Button
-            type="button"
-            variant={filterPayout === "included" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFilterPayout("included")}
-            className={`text-xs h-8 ${
-              filterPayout === "included"
-                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                : "text-emerald-400 hover:text-emerald-300 border-emerald-500/30"
-            }`}
-          >
-            <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
-            นับยอดปกติ ({mangaList.length - totalExcluded})
-          </Button>
-          <Button
-            type="button"
-            variant={filterPayout === "excluded" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFilterPayout("excluded")}
-            className={`text-xs h-8 ${
-              filterPayout === "excluded"
-                ? "bg-amber-600 hover:bg-amber-700 text-white"
-                : "text-amber-400 hover:text-amber-300 border-amber-500/40"
-            }`}
-          >
-            <Coins className="h-3.5 w-3.5 mr-1" />
-            ไม่นับยอดเบิกจ่าย ({totalExcluded})
-          </Button>
+          {TARGET_PLATFORMS.map((tp) => {
+            const isSelected = filterPlatform === tp.id
+            const count = platformCounts[tp.id] || 0
+            return (
+              <Button
+                key={tp.id}
+                type="button"
+                variant={isSelected ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFilterPlatform(isSelected ? "all" : tp.id)}
+                className={`text-xs h-7 px-2.5 flex items-center gap-1.5 ${
+                  isSelected ? "" : tp.badgeClass
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${tp.dotClass}`} />
+                {tp.label} ({count})
+              </Button>
+            )
+          })}
         </div>
       </div>
 
@@ -198,6 +261,7 @@ export function MangaSettingsView({
             <TableRow>
               <TableHead>ชื่อมังงะ</TableHead>
               <TableHead>Slug</TableHead>
+              <TableHead>แพลตฟอร์ม</TableHead>
               <TableHead>สถานะ</TableHead>
               <TableHead>วันปล่อยดิบ</TableHead>
               <TableHead>ตอนล่าสุด</TableHead>
@@ -215,10 +279,10 @@ export function MangaSettingsView({
             {filteredMangaList.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={9}
+                  colSpan={10}
                   className="text-center py-12 text-slate-400"
                 >
-                  {searchQuery || filterPayout !== "all"
+                  {searchQuery || filterPayout !== "all" || filterPlatform !== "all"
                     ? "ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา/ตัวกรอง"
                     : "ไม่มีข้อมูลแสดงผล"}
                 </TableCell>
@@ -284,6 +348,31 @@ export function MangaSettingsView({
                     </TableCell>
                     <TableCell className="text-xs font-mono text-amber-300">
                       {m.slug || "-"}
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        const plats = parsePlatforms(m.platforms || m.Platforms)
+                        if (plats.length === 0) {
+                          return <span className="text-xs text-slate-500 font-mono">-</span>
+                        }
+                        return (
+                          <div className="flex flex-wrap items-center gap-1 max-w-[170px]">
+                            {TARGET_PLATFORMS.map((tp) => {
+                              if (!plats.includes(tp.id)) return null
+                              return (
+                                <span
+                                  key={tp.id}
+                                  className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium ${tp.badgeClass}`}
+                                  title={`ลงที่ ${tp.label}`}
+                                >
+                                  <span className={`h-1.5 w-1.5 rounded-full ${tp.dotClass}`} />
+                                  {tp.label}
+                                </span>
+                              )
+                            })}
+                          </div>
+                        )
+                      })()}
                     </TableCell>
                     <TableCell>
                       <Badge

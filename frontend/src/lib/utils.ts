@@ -30,6 +30,61 @@ export function getThaiDayName(date: Date): string {
   return days[date.getDay()]
 }
 
+export const TARGET_PLATFORMS = [
+  {
+    id: "readrealm",
+    label: "ReadRealm",
+    color: "indigo",
+    badgeClass: "bg-indigo-500/20 text-indigo-300 border-indigo-500/40",
+    activeCardClass: "border-indigo-500/60 bg-indigo-500/15 ring-1 ring-indigo-500/40",
+    dotClass: "bg-indigo-400",
+  },
+  {
+    id: "chaply",
+    label: "Chaply",
+    color: "sky",
+    badgeClass: "bg-sky-500/20 text-sky-300 border-sky-500/40",
+    activeCardClass: "border-sky-500/60 bg-sky-500/15 ring-1 ring-sky-500/40",
+    dotClass: "bg-sky-400",
+  },
+  {
+    id: "kairew",
+    label: "Kairew",
+    color: "amber",
+    badgeClass: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+    activeCardClass: "border-amber-500/60 bg-amber-500/15 ring-1 ring-amber-500/40",
+    dotClass: "bg-amber-400",
+  },
+] as const
+
+export type TargetPlatformId = (typeof TARGET_PLATFORMS)[number]["id"]
+
+export function parsePlatforms(val: any): string[] {
+  if (!val) return []
+  if (Array.isArray(val)) {
+    return val.map((p) => String(p).trim().toLowerCase()).filter(Boolean)
+  }
+  if (typeof val === "string") {
+    const trimmed = val.trim()
+    if (!trimmed || trimmed === "None" || trimmed === "-") return []
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(trimmed)
+        if (Array.isArray(parsed)) {
+          return parsed.map((p: any) => String(p).trim().toLowerCase()).filter(Boolean)
+        }
+      } catch (e) {
+        // fall through
+      }
+    }
+    return trimmed
+      .split(/[,+]/)
+      .map((p) => p.trim().toLowerCase())
+      .filter(Boolean)
+  }
+  return []
+}
+
 export function isUrgentManga(manga: any): boolean {
   if (!manga) return false
   const v = manga.isurgent

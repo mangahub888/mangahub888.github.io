@@ -1113,6 +1113,9 @@ function getMangaList() {
       );
       obj.excludetranslatepayout = isExcluded;
       obj.ExcludeTranslatePayout = isExcluded;
+      if (obj.platforms !== undefined) {
+        obj.Platforms = obj.platforms;
+      }
       return obj;
     }).filter(item => item.manganame);
   } catch (err) {
@@ -1160,6 +1163,15 @@ function addManga(manga) {
       headers.push('excludetranslatepayout');
     }
 
+    if (headers.indexOf('platforms') === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('Platforms');
+      if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue('');
+      }
+      headers.push('platforms');
+    }
+
     const id = getNextId();
     const timestamp = new Date();
     
@@ -1184,6 +1196,10 @@ function addManga(manga) {
       if (header === 'translationdocurl') return manga.translationdocurl || '';
 
       if (header === 'scangroup') return manga.scangroup || manga.scanGroup || '';
+      if (header === 'platforms') {
+        if (Array.isArray(manga.platforms)) return manga.platforms.join(', ');
+        return manga.platforms !== undefined ? manga.platforms : (manga.Platforms !== undefined ? manga.Platforms : '');
+      }
       if (header === 'excludetranslatepayout') {
         const rawVal = manga.excludetranslatepayout !== undefined 
           ? manga.excludetranslatepayout 
@@ -1294,6 +1310,15 @@ function updateManga(id, updatedManga) {
       }
       headers.push('excludetranslatepayout');
     }
+
+    if (headers.indexOf('platforms') === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('Platforms');
+      if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue('');
+      }
+      headers.push('platforms');
+    }
     
     for (let i = 1; i < data.length; i++) {
       if (data[i][0].toString() === id.toString()) {
@@ -1319,6 +1344,12 @@ function updateManga(id, updatedManga) {
           if (header === 'translationdocurl') sheet.getRange(rowNum, colNum).setValue(updatedManga.translationdocurl !== undefined ? updatedManga.translationdocurl : '');
 
           if (header === 'scangroup') sheet.getRange(rowNum, colNum).setValue(updatedManga.scangroup !== undefined ? updatedManga.scangroup : (updatedManga.scanGroup !== undefined ? updatedManga.scanGroup : ''));
+          if (header === 'platforms') {
+            const val = Array.isArray(updatedManga.platforms)
+              ? updatedManga.platforms.join(', ')
+              : (updatedManga.platforms !== undefined ? updatedManga.platforms : (updatedManga.Platforms !== undefined ? updatedManga.Platforms : ''));
+            sheet.getRange(rowNum, colNum).setValue(val);
+          }
           if (header === 'excludetranslatepayout') {
             const rawVal = updatedManga.excludetranslatepayout !== undefined 
               ? updatedManga.excludetranslatepayout 

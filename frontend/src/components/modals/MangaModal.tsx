@@ -13,7 +13,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SearchableSelect } from "@/components/ui/searchable-select"
-import { RELEASE_DAYS, isUrgentManga, isTranslatePayoutExcluded } from "@/lib/utils"
+import {
+  RELEASE_DAYS,
+  TARGET_PLATFORMS,
+  parsePlatforms,
+  isUrgentManga,
+  isTranslatePayoutExcluded,
+} from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
 import {
@@ -27,6 +33,7 @@ import {
   Search,
   Coins,
   CheckCircle2,
+  Globe,
 } from "lucide-react"
 import { ComixUrlSearchDialog } from "@/components/modals/ComixUrlSearchDialog"
 
@@ -48,6 +55,7 @@ const mangaSchema = z.object({
   notifyonadd: z.boolean().default(false),
   isurgent: z.boolean().default(false),
   excludetranslatepayout: z.boolean().default(false),
+  platforms: z.union([z.array(z.string()), z.string()]).optional(),
 })
 
 type MangaFormValues = z.infer<typeof mangaSchema>
@@ -68,6 +76,7 @@ export function MangaModal({
   onSuccess,
 }: MangaModalProps) {
   const [selectedDays, setSelectedDays] = React.useState<string[]>([])
+  const [selectedPlatforms, setSelectedPlatforms] = React.useState<string[]>([])
   const [submitting, setSubmitting] = React.useState(false)
   const [comixGroups, setComixGroups] = React.useState<
     Array<{ id: string; name: string }>
@@ -219,6 +228,8 @@ export function MangaModal({
         } else {
           setSelectedDays([])
         }
+        const rawPlats = editItem.platforms || editItem.Platforms || ""
+        setSelectedPlatforms(parsePlatforms(rawPlats))
       } else {
         reset({
           manganame: "",
@@ -240,9 +251,19 @@ export function MangaModal({
           excludetranslatepayout: false,
         })
         setSelectedDays([])
+        const rawPlats = editItem?.platforms || editItem?.Platforms || ""
+        setSelectedPlatforms(parsePlatforms(rawPlats))
       }
     }
   }, [open, editItem, reset])
+
+  const togglePlatform = (platId: string) => {
+    setSelectedPlatforms((prev) =>
+      prev.includes(platId)
+        ? prev.filter((p) => p !== platId)
+        : [...prev, platId]
+    )
+  }
 
   const translatorOptions = React.useMemo(() => {
     const active = (teamList || []).filter(
@@ -301,6 +322,8 @@ export function MangaModal({
     try {
       const payload = {
         ...values,
+        platforms: selectedPlatforms.join(", "),
+        Platforms: selectedPlatforms.join(", "),
         excludetranslatepayout: Boolean(values.excludetranslatepayout),
         ExcludeTranslatePayout: Boolean(values.excludetranslatepayout),
         releaseday: selectedDays.length > 0 ? selectedDays.join(", ") : "None",
@@ -683,6 +706,55 @@ export function MangaModal({
                 งานด่วน (Urgent) — แสดงชื่อเรื่องเป็นสีแดงในหน้าจัดการคิวงาน
               </span>
             </label>
+          </div>
+
+          {/* แพลตฟอร์มที่ลงเผยแพร่ (Platforms: ReadRealm / Chaply / Kairew) */}
+          <div className="rounded-xl border border-indigo-500/30 bg-[#0c1427]/80 p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-2 text-sm font-semibold text-indigo-200">
+                <Globe className="h-4 w-4 text-indigo-400" />
+                แพลตฟอร์มที่ลงเผยแพร่ (Platforms)
+              </Label>
+              <span className="text-xs text-indigo-300 font-medium">
+                เลือก {selectedPlatforms.length} / {TARGET_PLATFORMS.length} แพลตฟอร์ม
+              </span>
+            </div>
+            <p className="text-xs text-slate-400">
+              กำหนดว่าโปรเจกต์นี้จะนำไปลงเผยแพร่ที่แพลตฟอร์มไหนบ้าง (เลือกได้หลายแพลตฟอร์ม)
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              {TARGET_PLATFORMS.map((plat) => {
+                const isChecked = selectedPlatforms.includes(plat.id)
+                return (
+                  <label
+                    key={plat.id}
+                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer select-none transition-all ${
+                      isChecked
+                        ? plat.activeCardClass
+                        : "border-slate-800 bg-[#0b1120] hover:border-slate-700 hover:bg-slate-900/60"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => togglePlatform(plat.id)}
+                      className="h-4 w-4 rounded accent-indigo-500 cursor-pointer"
+                    />
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className={`h-2 w-2 rounded-full ${plat.dotClass}`} />
+                        <span className="text-sm font-semibold text-slate-200">
+                          {plat.label}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-slate-400 font-mono">
+                        {plat.id}
+                      </span>
+                    </div>
+                  </label>
+                )
+              })}
+            </div>
           </div>
 
           {/* Release Days */}
