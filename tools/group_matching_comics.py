@@ -2,6 +2,7 @@ import os
 import json
 import re
 import sys
+import argparse
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -11,7 +12,12 @@ FRONTEND_SRC_DIR = os.path.join(BASE_DIR, "..", "frontend", "src", "data")
 FRONTEND_PUB_DIR = os.path.join(BASE_DIR, "..", "frontend", "public", "data")
 
 sys.path.append(BASE_DIR)
-from manga_matcher import get_manga_setting, match_manga_setting, normalize_title
+from manga_matcher import get_manga_setting, match_manga_setting, normalize_title, DEFAULT_MATCH_THRESHOLD
+
+parser = argparse.ArgumentParser(description="Group matched comics across platforms by MangaSetting")
+parser.add_argument("--min-match", type=float, default=DEFAULT_MATCH_THRESHOLD, help="Minimum title match ratio against MangaSetting (strictly > threshold, default: 0.80)")
+args, _ = parser.parse_known_args()
+MIN_MATCH = args.min_match
 
 # Standard Thai Month List for Multi-Platform Monthly Sales
 THAI_MONTHS = [
@@ -89,7 +95,7 @@ if not chaply and os.path.exists(chaply_all_path):
 
 # Load MangaSetting projects
 manga_setting = get_manga_setting()
-print(f"📊 เริ่มต้นจัดกลุ่มข้อมูลตาม MangaSetting ({len(manga_setting)} เรื่อง)...")
+print(f"📊 เริ่มต้นจัดกลุ่มข้อมูลตาม MangaSetting ({len(manga_setting)} เรื่อง | เกณฑ์แมทช์ > {int(round(MIN_MATCH * 100))}%)...")
 
 matched_groups = []
 
@@ -102,7 +108,7 @@ for m in manga_setting:
     rr_c = None
     best_rr_s = 0.0
     for c in rr_list:
-        mat, s = match_manga_setting(c.get('subject', ''), [m], threshold=0.85)
+        mat, s = match_manga_setting(c.get('subject', ''), [m], threshold=MIN_MATCH, platform_key='readrealm')
         if mat and s > best_rr_s:
             best_rr_s = s
             rr_c = c
@@ -112,7 +118,7 @@ for m in manga_setting:
     best_kw_s = 0.0
     for c in kairew:
         t = (c.get('name') or c.get('subject') or '').strip()
-        mat, s = match_manga_setting(t, [m], threshold=0.85)
+        mat, s = match_manga_setting(t, [m], threshold=MIN_MATCH, platform_key='kairew')
         if mat and s > best_kw_s:
             best_kw_s = s
             kw_c = c
@@ -122,7 +128,7 @@ for m in manga_setting:
     best_ch_s = 0.0
     for c in chaply:
         t = (c.get('subject') or c.get('title') or '').strip()
-        mat, s = match_manga_setting(t, [m], threshold=0.85)
+        mat, s = match_manga_setting(t, [m], threshold=MIN_MATCH, platform_key='chaply')
         if mat and s > best_ch_s:
             best_ch_s = s
             ch_c = c

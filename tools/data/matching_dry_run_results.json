@@ -1,0 +1,1888 @@
+{
+  "timestamp": "2026-11-19 21:09:15",
+  "total_manga": 54,
+  "matched_100_count": 48,
+  "matched_100_percent": 88.89,
+  "mismatches_count": 6,
+  "platforms_summary": {
+    "readrealm": {
+      "expected": 53,
+      "matched": 52,
+      "percent": 98.11
+    },
+    "kairew": {
+      "expected": 54,
+      "matched": 53,
+      "percent": 98.15
+    },
+    "chaply": {
+      "expected": 54,
+      "matched": 48,
+      "percent": 88.89
+    }
+  },
+  "results": [
+    {
+      "index": 1,
+      "manga_id": 4,
+      "title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain",
+        "comic_id": "EZ41KDdWY1Nxw7MA5PkN"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+        "comic_id": 335
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 2,
+      "manga_id": 7,
+      "title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+        "comic_id": "pRbKaMELO72xglzP41qW"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+        "comic_id": 390
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 3,
+      "manga_id": 8,
+      "title": "อิสระทางทรัพย์ พันธะทางใจ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อิสระทางทรัพย์ พันธะทางใจ",
+        "comic_id": "ng5GbmNxBA34Y9AlMyk0"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อิสระทางทรัพย์ พันธะทางใจ",
+        "comic_id": 348
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อิสระทางทรัพย์ พันธะทางใจ",
+        "comic_id": "cmvezsehy25w0t5eupwauchpa"
+      }
+    },
+    {
+      "index": 4,
+      "manga_id": 9,
+      "title": "นักฆ่าระดับเทพ ข้าคือเงามืด",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+        "comic_id": "XrDoGdyOrN17O8pbqz1a"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+        "comic_id": 334
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นักฆ่าระดับเทพ ข้าคือเงามืด | God-level Assassin, I’m the Shadow",
+        "comic_id": "cmvscqbse140ot5i8vfzbibtm"
+      }
+    },
+    {
+      "index": 5,
+      "manga_id": 10,
+      "title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+        "comic_id": "qzkJdZa0Y6bYrv4KR5nm"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+        "comic_id": 588
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 6,
+      "manga_id": 12,
+      "title": "ผู้ฝึกกระบี่เต็มเวลา",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้ฝึกกระบี่เต็มเวลา",
+        "comic_id": "lkJy7ZdeYZvMYX5PAwB6"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้ฝึกกระบี่เต็มเวลา | Full-Time Swordsman",
+        "comic_id": 768
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้ฝึกกระบี่เต็มเวลา | Full-Time Swordsman",
+        "comic_id": "cmw4jffvx2x4vt5i7sjfydn7d"
+      }
+    },
+    {
+      "index": 7,
+      "manga_id": 13,
+      "title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้ชายแสนดีเช่นข้า ไฉนต้องกลับกลายเป็นจอมวายร้าย",
+        "comic_id": "GpeQDXZlx2jvx5n0JWoR"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
+        "comic_id": 389
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต | The Disciple Wants to Kill Me",
+        "comic_id": "cmu8mjor52dc36kdg6vlj2zw2"
+      }
+    },
+    {
+      "index": 8,
+      "manga_id": 14,
+      "title": "เจ้าแห่งกงล้อโชคชะตา",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เจ้าแห่งกงล้อโชคชะตา",
+        "comic_id": "5qDAm32WxX9XOogPnaGe"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 0.851,
+        "matched_title": "เจ้าแห่งกงล้อหมุนฝืนโชคชะตา",
+        "comic_id": 341
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เจ้าแห่งกงล้อโชคชะตา | The Lord of Wheel of Destiny",
+        "comic_id": "cmw69pgg5001ct5o7y6pqze0r"
+      }
+    },
+    {
+      "index": 9,
+      "manga_id": 16,
+      "title": "Mr.Zombie",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นายท่านซอมบี้ | Mr.Zombie",
+        "comic_id": 388
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 10,
+      "manga_id": 17,
+      "title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+        "comic_id": "qzkJdZa0Y6kgxrv4KR5n"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+        "comic_id": 391
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 11,
+      "manga_id": 21,
+      "title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+        "comic_id": "NG8Qg2kxDpNKxz7Kdeo9"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+        "comic_id": 421
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ก่อกำเนิดราชันย์อสูร สู่หนทางวิวัฒนาการ | Breeds of Magical Animals",
+        "comic_id": "cmw34uhdn2l07t5i45r53h94c"
+      }
+    },
+    {
+      "index": 12,
+      "manga_id": 24,
+      "title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely",
+        "comic_id": "n6r39MJVwy58xNAB81yk"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ",
+        "comic_id": 346
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ทรราชวิวัฒนาการได้ไร้ขีดจำกัดแห่งแดนทมิฬ | Tyrant of the Otherworld: My Shadow Can Evolve Infinitely",
+        "comic_id": "cmuzqktr60f70t5kkpqz1btwu"
+      }
+    },
+    {
+      "index": 13,
+      "manga_id": 27,
+      "title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+        "comic_id": "n6r39MJVwynpxNAB81yk"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+        "comic_id": 328
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "หลังจากโดนดาวโรงเรียนทิ้ง ฉันก็ได้บรรลุวิถียุทธ์",
+        "comic_id": "cmuua0knr0dggt5h971a8fsib"
+      }
+    },
+    {
+      "index": 14,
+      "manga_id": 28,
+      "title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+        "comic_id": "NG8Qg2kxDk7gYz7Kdeo9"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ",
+        "comic_id": 345
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เพราะมีหนี้เป็นพันล้าน ก็เลยต้องยอมใจเป็นทาสของจอมปีศาจ I Owe Billions in Debt, So I Was Forced to Work for an Evil God",
+        "comic_id": "cmuu97eqw0d44t5hg6zfwvyf8"
+      }
+    },
+    {
+      "index": 15,
+      "manga_id": 29,
+      "title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+        "comic_id": "le0bk9XVGdJ0Yj34oaQw"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+        "comic_id": 344
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เกิดใหม่อีกครั้ง: ล้างแค้นอาฆาตด้วยพลังโลกกระจก | Rebirth : My Vengeance Through the Mirror",
+        "comic_id": "cmun1mjxm0yu7t5ioj5wa6031"
+      }
+    },
+    {
+      "index": 16,
+      "manga_id": 30,
+      "title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+        "comic_id": "zkJdZa0Y6gBoxrv4KR5n"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่",
+        "comic_id": 343
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ก็ผมมันสายเปย์ จะเป็นผู้ชายเฮงซวยบ้างก็สมเหตุสมผลดีนี่ | I’m a Rich Tycoon, So Being a Scumbag Makes Perfect Sense!",
+        "comic_id": "cmumgpiis0tmst5itwxnwtwt7"
+      }
+    },
+    {
+      "index": 17,
+      "manga_id": 34,
+      "title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
+        "comic_id": "EQwLk1zYR9RXV50y2Wed"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ I Shall Seal the Heavens",
+        "comic_id": 431
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผนึกสวรรค์ สยบมาร สะท้านเทพ | I Shall Seal the Heavens",
+        "comic_id": "cmuk7y4dr0gcpt5im40yny60d"
+      }
+    },
+    {
+      "index": 18,
+      "manga_id": 35,
+      "title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+        "comic_id": "ng5GbmNxB4r5V9AlMyk0"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+        "comic_id": 443
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "การกลับมาของบรรพชนรุ่นแรก: จอมยุทธ์ผู้แข็งแกร่งที่สุดกลับชาติมาเกิดเป็นทายาทในอีกพันปีต่อมา",
+        "comic_id": "cmuk6ni1y0g4gt5imnxxmob4z"
+      }
+    },
+    {
+      "index": 19,
+      "manga_id": 39,
+      "title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+        "comic_id": "GmA4egMxWR5KYB8PWbyp"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+        "comic_id": 486
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ข้าเริ่มต้นด้วยพรสวรรค์ระดับตำนาน เพียงหนึ่งกระบี่พิฆาตเทพ! | I Start with Mythical Talent, One Sword Slays Kings!",
+        "comic_id": "cmuk2isn40ff1t5imkxirfqoc"
+      }
+    },
+    {
+      "index": 20,
+      "manga_id": 44,
+      "title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign",
+        "comic_id": "azlwDvqOA7BpYbkJoedB"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ",
+        "comic_id": 543
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ฉันกลายเป็นอัจฉริยะประจำอคาเดมีในโลกที่เวทมนตร์ครองอำนาจ | I Became a Genius at the Academy in a World Where Magic Reign",
+        "comic_id": "cmujtou700ea2t5iqi3fhllox"
+      }
+    },
+    {
+      "index": 21,
+      "manga_id": 45,
+      "title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+        "comic_id": "ng5GbmNxB4zEV9AlMyk0"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด!",
+        "comic_id": 578
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เกิดใหม่ในแดนวีรบุรุษริมวารี ข้านี่แหละอู่ต้าหลางที่แข็งแกร่งที่สุด! | Rebirth of the Water Margin World: The Strongest Wu Dalang",
+        "comic_id": "cmujt3jjs0ebkt5iohzuzr2fq"
+      }
+    },
+    {
+      "index": 22,
+      "manga_id": 51,
+      "title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+        "comic_id": "NG8Qg2kxDy5KOz7Kdeo9"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+        "comic_id": 661
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จ้าวสายฟ้าเกิดใหม่ในฐานะสตรีมเมอร์ | Reincarnated Streamer",
+        "comic_id": "cmubpx26j2u1v6kdgil3fq5o8"
+      }
+    },
+    {
+      "index": 23,
+      "manga_id": 59,
+      "title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+        "comic_id": "RbKaMELO7p6PVglzP41q"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+        "comic_id": 766
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อดีตแชมเปี้ยนไร้เทียมทาน จุติใหม่เป็นขยะของตระกูล | The Clan’s Failure Is a Former Continental Champion",
+        "comic_id": "cmub9scyd2qzl6kdax0weqtow"
+      }
+    },
+    {
+      "index": 24,
+      "manga_id": 60,
+      "title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+        "comic_id": "peQDXZlx2laqV5n0JWoR"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+        "comic_id": 784
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ระบบคืนผลหมื่นเท่า ชะตานี้ข้าขอกำหนดเอง | Ten-Thousandfold Return, Senior Sister, Please Behave",
+        "comic_id": "cmua459q82p666kdcoll0jcwa"
+      }
+    },
+    {
+      "index": 25,
+      "manga_id": 69,
+      "title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+        "comic_id": "m5MEjRdOnz8dOg6Ay8ZW"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+        "comic_id": 2607
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เทพธิดาไร้ใจ จงกลายเป็นเตาหลอมของข้าซะ! | If the Fairy is Heartless, Then Let her Become a Furnace!",
+        "comic_id": "cmu9exmzu2nlr6kdbjz8f4p62"
+      }
+    },
+    {
+      "index": 26,
+      "manga_id": 72,
+      "title": "เทพสงครามคืนบัลลังก์",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+        "comic_id": "zkJdZa0Y69dkVrv4KR5n"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+        "comic_id": 3379
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เทพสงครามคืนบัลลังก์ | Rebirth of the Super Battle God",
+        "comic_id": "cmu6fncvn25g56kdcsltke4aa"
+      }
+    },
+    {
+      "index": 27,
+      "manga_id": 73,
+      "title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+        "comic_id": "Z41KDdWY19goYw7MA5Pk"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+        "comic_id": 3569
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันนักฆ่าเกิดใหม่เป็นลูกเขย | This killer is a son-in-law",
+        "comic_id": "cmu5rxd0p25jk6kdbt4wnhweh"
+      }
+    },
+    {
+      "index": 28,
+      "manga_id": 75,
+      "title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
+        "comic_id": "rKk19Eexy8ZpYWAyR3qL"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ I Became the Supreme Martial God Through Dream Reincarnation",
+        "comic_id": 4675
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "วังวนแห่งความฝัน: ฉันกลายเป็นเทพสูงสุดแห่งวิถียุทธ์ | I Became the Supreme Martial God Through Dream Reincarnation",
+        "comic_id": "cmu5mmr5j1zvl6kdejn4p80l8"
+      }
+    },
+    {
+      "index": 29,
+      "manga_id": 76,
+      "title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+        "comic_id": "Z41KDdWY1989Yw7MA5Pk"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ Cataclysm Hunter: I Have an XP System",
+        "comic_id": 4674
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จุติฮันเตอร์วันสิ้นโลก: ฉันมีระบบค่าประสบการณ์ | Cataclysm Hunter: I Have an XP System",
+        "comic_id": "cmu5mrfj01zyt6kden87j1ch7"
+      }
+    },
+    {
+      "index": 30,
+      "manga_id": 77,
+      "title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+        "comic_id": "GmA4egMxWRADYB8PWbyp"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+        "comic_id": 4673
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เนโครแมนเซอร์: จากร่างแยกโครงกระดูกสู่เส้นทางเทพเจ้า Absolute Necromancer: Ascension Through Skeleton Clone",
+        "comic_id": "cmu5ofcn422d36kdd9ox2ccvd"
+      }
+    },
+    {
+      "index": 31,
+      "manga_id": 78,
+      "title": "มหาปรมาจารย์ระดับเทพแห่งนคร",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+        "comic_id": "NG8Qg2kxDyqvOz7Kdeo9"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาปรมาจารย์ระดับเทพแห่งนคร City God Level Grandmaster",
+        "comic_id": 5076
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาปรมาจารย์ระดับเทพแห่งนคร | City God Level Grandmaster",
+        "comic_id": "cmu5lttk91ygj6kdgu18gt0i5"
+      }
+    },
+    {
+      "index": 32,
+      "manga_id": 79,
+      "title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+        "comic_id": "kJy7ZdeYZRJJYX5PAwB6"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+        "comic_id": 5077
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน I Turn Skills into Broken Ones with a Single Word",
+        "comic_id": "cmu5lkq6z1zi36kdeaw12cfwi"
+      }
+    },
+    {
+      "index": 33,
+      "manga_id": 80,
+      "title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+        "comic_id": "RbKaMELO7plPVglzP41q"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+        "comic_id": 5079
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นักรบระดับ SSS ขอหวนคืนมาเป็นราชา Rebirth Of The Warrior King",
+        "comic_id": "cmu5kkh7v23fn6kdb2ccmv103"
+      }
+    },
+    {
+      "index": 34,
+      "manga_id": 81,
+      "title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+        "comic_id": "ng5GbmNxBrg8x9AlMyk0"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+        "comic_id": 5356
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จุติเทพนักดาบไร้พ่าย จากอาชีพสุดรั้งท้าย The Strongest Swordsman Rising from a Bottom-Tier Job",
+        "comic_id": "cmu5jxqqr20ss6kddg7es62wu"
+      }
+    },
+    {
+      "index": 35,
+      "manga_id": 82,
+      "title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+        "comic_id": "BAyoRlNxvJpaxdqp18wL"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+        "comic_id": 6059
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาวิบัติยุคเปลี่ยนอาชีพ: ราชันย์เงามืดไร้เทียมทาน! | Global Class Awakening: I’m Invincible as the Shadow Monarch",
+        "comic_id": "cmu5jqil320rv6kddszeia5iz"
+      }
+    },
+    {
+      "index": 36,
+      "manga_id": 83,
+      "title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+        "comic_id": "DBQ4k6PYpQr5x8qrm0J5"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+        "comic_id": 6060
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผมมีอาชีพสุดกาก แต่ขอบัญชาการภัยพิบัติล้างโลก! | I Got the Weakest Class, But I Rule the Scourge",
+        "comic_id": "cmu5jkndf1z9l6kdfzd09qnhi"
+      }
+    },
+    {
+      "index": 37,
+      "manga_id": 84,
+      "title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+        "comic_id": "EQwLk1zYRR9KY50y2Wed"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upgrades",
+        "comic_id": 6062
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ราชันย์เวทยัดออปชั่นสกิลไร้ขีดจำกัด! | Global Class Awakening: The Mage King’s Skills Gain Infinite Upg",
+        "comic_id": "cmu5hk40d1xsh6kdh2y1fw76m"
+      }
+    },
+    {
+      "index": 38,
+      "manga_id": 85,
+      "title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+        "comic_id": "a7qNk8mOK95RYXyvogDn"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+        "comic_id": 6063
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "สองมิติ: ข้าครอบครองพิภพกำลังภายในโบราณ! | Two Realms: I Have an Ancient Martial Arts World",
+        "comic_id": "cmu5aojjy21k26kdbtrqxx43l"
+      }
+    },
+    {
+      "index": 39,
+      "manga_id": 86,
+      "title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack S",
+        "comic_id": "m5MEjRdOnnzbOg6Ay8ZW"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack Speed",
+        "comic_id": 6064
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "★สุดยอดแทงก์★คืนชีพ~ไร้เทียมทานด้วยความเร็วโจมตีหมื่นเท่า | ★The Ultimate Tank Returns★ Dominating with 10,000× Attack S",
+        "comic_id": "cmu5akdig1xmj6kdfkhi81lpw"
+      }
+    },
+    {
+      "index": 40,
+      "manga_id": 87,
+      "title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
+        "comic_id": "aDZ1qlAOewl3Y5k7gmeM"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark Creatures",
+        "comic_id": 6065
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "หลังตัดขาดตระกูล อสูรอัญเชิญของข้าล้วนเป็นสิ่งมีชีวิตแห่งความมืด! | After Severing Our Ties, All My Summons Became Dark",
+        "comic_id": "cmu599yt01yj56kddr5yp4zaz"
+      }
+    },
+    {
+      "index": 41,
+      "manga_id": 88,
+      "title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+        "comic_id": "7vgQpJ2VjRM9V6Zr5GmX"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+        "comic_id": 6061
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ! | Global Awakening: I’m a Necromancer, and I Alone Am a",
+        "comic_id": "cmu5jeo6p238k6kdbhw868cqm"
+      }
+    },
+    {
+      "index": 42,
+      "manga_id": 89,
+      "title": "พี่ชายของผมคือหมาบ้า",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+        "comic_id": "n6r39MJVwpqjYNAB81yk"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+        "comic_id": 6682
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "พี่ชายของผมคือหมาบ้า | My Brother Is A Mad Dog",
+        "comic_id": "cmu57f4i51wi96kdepjdx8u96"
+      }
+    },
+    {
+      "index": 43,
+      "manga_id": 90,
+      "title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+        "comic_id": "rwEvg7LY8QnJx20blNPp"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead Army",
+        "comic_id": 7300
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุคเปลี่ยนอาชีพ: ผู้หลอมรวม เปิดฉากฟิวชั่นกองทัพอันเดด! | Global Awakening: The Synthesis Master Starts with an Undead",
+        "comic_id": "cmu55krov20aa6kdb4kzmjpr9"
+      }
+    },
+    {
+      "index": 44,
+      "manga_id": 91,
+      "title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+        "comic_id": "3MjZ0qWYgw1oYJLAreG1"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+        "comic_id": 7301
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "สกิลไร้คูลดาวน์? งั้นข้าขอจุติเป็นภัยพิบัติอันเดด! | With a No-Cooldown Cheat, I Can Transform into an Undead Calamity!",
+        "comic_id": "cmu55dp6m1xyq6kdc3hxp43hz"
+      }
+    },
+    {
+      "index": 45,
+      "manga_id": 92,
+      "title": "ยอดอัจฉริยะอหังการ์",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+        "comic_id": "nvEqQwJYPz8NOedr65l2"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+        "comic_id": 7304
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยอดอัจฉริยะอหังการ์ | The Supreme Prodigy",
+        "comic_id": "cmu53j7bu1urc6kdgjv42ackr"
+      }
+    },
+    {
+      "index": 46,
+      "manga_id": 93,
+      "title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+        "comic_id": "zkJdZa0Y6n5NYrv4KR5n"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+        "comic_id": 7302
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันย์แห่งยมโลก: ข้านี่แหละคือห้วงอเวจี! | Underworld Monarch: I Am the Abyss",
+        "comic_id": "cmu54x6jl1xul6kdc7qbb0we0"
+      }
+    },
+    {
+      "index": 47,
+      "manga_id": 94,
+      "title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+        "comic_id": "wPZAJq7OkDryVW8Dozkm"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+        "comic_id": 7303
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "กำเนิดใหม่ไซอิ๋ว: มหาปราชญ์กระดูกขาวไร้เทียมทาน! | Reborn as the Strongest White-Bone Great Sage: A Journey to the West",
+        "comic_id": "cmu54cw331xcm6kddlj7skzbf"
+      }
+    },
+    {
+      "index": 48,
+      "manga_id": 95,
+      "title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+        "comic_id": "9ZazJMeV9LJwO4wK6vRq"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+        "comic_id": 8124
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "มหาสงครามสัตว์อสูร: เปิดเกมมาข้าก็คว้าพรสวรรค์ระดับ SSS!",
+        "comic_id": "cmuob7ddh15eft5ip2uz7v3i7"
+      }
+    },
+    {
+      "index": 49,
+      "manga_id": 96,
+      "title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+        "comic_id": "DBQ4k6PYpQnnx8qrm0J5"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+        "comic_id": 8127
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ซัมมอนเนอร์ภัยพิบัติ: ขอบัญชาการอภิมหาบอสล้างโลก!",
+        "comic_id": "cmuobh13c158at5ive3im4waa"
+      }
+    },
+    {
+      "index": 50,
+      "manga_id": 97,
+      "title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+        "comic_id": "BAyoRlNxvJEbxdqp18wL"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+        "comic_id": 8126
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "จอมดาบศักดิ์สิทธิ์เหนือขีดจำกัด ขอย้อนเวลากลับเป็นคุณชายเล็กตระกูลดาบเวท!",
+        "comic_id": "cmuobbvll17smt5invj3xzl8e"
+      }
+    },
+    {
+      "index": 51,
+      "manga_id": 98,
+      "title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+        "comic_id": "7vgQpJ2VjRK3V6Zr5GmX"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+        "comic_id": 8128
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "เปิดเกมด้วยระบบคูณสิบ: มีบัคทั้งทีขอกลิตช์โกงให้ยับ!",
+        "comic_id": "cmuobknyt1597t5ivrj12kch2"
+      }
+    },
+    {
+      "index": 52,
+      "manga_id": 99,
+      "title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+        "comic_id": "jamDek8YoebyO0Pz1JNw"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+        "comic_id": 8123
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด! Infinite Evolution: My Cells Keep Evolving",
+        "comic_id": "cmuob2q0t15rht5iwh2m2w0rw"
+      }
+    },
+    {
+      "index": 53,
+      "manga_id": 101,
+      "title": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด!",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": true,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด!",
+        "comic_id": "L9EPNkRVdzvLxmn3Agyq"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด!",
+        "comic_id": 9282
+      },
+      "chaply": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ราชันย์แห่งห้วงอเวจี: การหวนคืนของยอดอัจฉริยะที่ถูกหยามเหยียด! ",
+        "comic_id": "cmw81qoru0as0t5o8cho1r2ew"
+      }
+    },
+    {
+      "index": 54,
+      "manga_id": 102,
+      "title": "จอมเวทผู้ถูกตราหน้าว่าไร้ค่า แท้จริงคือผู้แข็งแกร่งที่สุดในโลก แต่เพราะโดนขังลืมเลยไม่รู้ตัว!",
+      "expected_platforms": "chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": false,
+        "matched": false,
+        "ok": true,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      },
+      "kairew": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    }
+  ],
+  "mismatches": [
+    {
+      "index": 1,
+      "manga_id": 4,
+      "title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่ | I Am the Fated Villain",
+        "comic_id": "EZ41KDdWY1Nxw7MA5PkN"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ข้าคือจอมวายร้ายผู้ยิ่งใหญ่",
+        "comic_id": 335
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 2,
+      "manga_id": 7,
+      "title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+        "comic_id": "pRbKaMELO72xglzP41qW"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "อาจารย์ ศิษย์บ้าขอกบฎนะขอรับ",
+        "comic_id": 390
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 5,
+      "manga_id": 10,
+      "title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+        "comic_id": "qzkJdZa0Y6bYrv4KR5nm"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ฉันคือผู้เล่นไร้อาชีพที่สังหารเหล่าเทพ",
+        "comic_id": 588
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 9,
+      "manga_id": 16,
+      "title": "Mr.Zombie",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "นายท่านซอมบี้ | Mr.Zombie",
+        "comic_id": 388
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 10,
+      "manga_id": 17,
+      "title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+      "expected_platforms": "readrealm, chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+        "comic_id": "qzkJdZa0Y6kgxrv4KR5n"
+      },
+      "kairew": {
+        "expected": true,
+        "matched": true,
+        "ok": true,
+        "score": 1.0,
+        "matched_title": "ผู้โหดเหี้ยมวันโลกาวินาศ : กักตุนเสบียงนับล้านล้าน",
+        "comic_id": 391
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    },
+    {
+      "index": 54,
+      "manga_id": 102,
+      "title": "จอมเวทผู้ถูกตราหน้าว่าไร้ค่า แท้จริงคือผู้แข็งแกร่งที่สุดในโลก แต่เพราะโดนขังลืมเลยไม่รู้ตัว!",
+      "expected_platforms": "chaply, kairew",
+      "is_100": false,
+      "readrealm": {
+        "expected": false,
+        "matched": false,
+        "ok": true,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      },
+      "kairew": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      },
+      "chaply": {
+        "expected": true,
+        "matched": false,
+        "ok": false,
+        "score": 0.0,
+        "matched_title": null,
+        "comic_id": null
+      }
+    }
+  ]
+}

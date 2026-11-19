@@ -80,6 +80,182 @@ THAI_MONTHS = [
     "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
 ]
+THAI_MONTH_TO_NUM = {m: idx + 1 for idx, m in enumerate(THAI_MONTHS)}
+
+
+def normalize_monthly_sales_2026(raw_monthly: Optional[Dict[str, Any]], year: int = 2026) -> Dict[str, float]:
+    """Normalize monthly sales dict (Thai month names or YYYY-MM) to standard YYYY-01..YYYY-12 keys."""
+    result = {f"{year}-{m:02d}": 0.0 for m in range(1, 13)}
+    if not isinstance(raw_monthly, dict):
+        return result
+    for k, v in raw_monthly.items():
+        try:
+            val = round(float(v or 0.0), 2)
+        except (ValueError, TypeError):
+            val = 0.0
+        k_str = str(k).strip()
+        if k_str in result:
+            result[k_str] = val
+        elif k_str in THAI_MONTH_TO_NUM:
+            ym_key = f"{year}-{THAI_MONTH_TO_NUM[k_str]:02d}"
+            result[ym_key] = val
+    return result
+
+
+def monthly_2026_to_thai(monthly_2026: Dict[str, float], year: int = 2026) -> Dict[str, float]:
+    """Convert standard YYYY-01..YYYY-12 monthly_sales dict to Thai month names for backward compatibility."""
+    return {
+        THAI_MONTHS[m - 1]: round(float(monthly_2026.get(f"{year}-{m:02d}", 0.0) or 0.0), 2)
+        for m in range(1, 13)
+    }
+
+
+def compute_weekly_deltas_and_monthly_rollup(
+    daily_snapshots: Dict[str, Dict[str, Any]],
+    comic_id: str,
+    year: int = 2026,
+    fallback_monthly: Optional[Dict[str, float]] = None,
+    interval_days: int = 7,
+) -> Dict[str, Any]:
+    """
+    Compute 7-day weekly deltas from dated cumulative coin snapshots and roll them up
+    into monthly_sales ('YYYY-01' .. 'YYYY-12').
+
+    Edge cases handled:
+    - No snapshots yet: returns empty weekly_deltas and normalized fallback_monthly (or zeros).
+    - Single snapshot (first run): records a baseline entry (delta=0) so cumulative lifetime
+      coins are NOT double-counted into a single month; uses fallback_monthly for historical months.
+    - Multiple snapshots: pairs snapshots every `interval_days` (default 7 days), plus a final
+      partial-week delta if the latest snapshot is < 7 days after the last 7-day anchor so no
+      recent sales are lost. Negative deltas (adjustments) are clamped to 0.0.
+    - Historical months strictly before the first snapshot month use fallback_monthly if provided,
+      while months covered by snapshots use weekly delta rollup exclusively (no double-counting).
+    """
+    monthly_sales = {f"{year}-{m:02d}": 0.0 for m in range(1, 13)}
+    norm_fallback = normalize_monthly_sales_2026(fallback_monthly, year=year) if fallback_monthly else None
+
+    series = []
+    for date_key in sorted(daily_snapshots.keys()):
+        snap_day = daily_snapshots.get(date_key)
+        if not isinstance(snap_day, dict) or comic_id not in snap_day:
+            continue
+        item = snap_day[comic_id]
+        try:
+            dt = datetime.strptime(date_key[:10], "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        try:
+            sales_val = round(float(item.get("total_sales") or 0.0), 2)
+        except (ValueError, TypeError):
+            sales_val = 0.0
+        try:
+            views_val = int(item.get("total_views") or 0)
+        except (ValueError, TypeError):
+            views_val = 0
+        series.append({
+            "date": date_key[:10],
+            "dt": dt,
+            "sales": sales_val,
+            "views": views_val,
+        })
+
+    if not series:
+        if norm_fallback:
+            monthly_sales = dict(norm_fallback)
+        return {
+            "weekly_deltas": [],
+            "monthly_sales": monthly_sales,
+            "monthly_sales_th": monthly_2026_to_thai(monthly_sales, year=year),
+            "snapshot_count": 0,
+            "first_snapshot_date": "",
+            "latest_snapshot_date": "",
+        }
+
+    first_date_str = series[0]["date"]
+    latest_date_str = series[-1]["date"]
+    first_ym = first_date_str[:7]
+
+    if len(series) == 1:
+        if norm_fallback:
+            monthly_sales = dict(norm_fallback)
+        baseline_entry = {
+            "from_date": first_date_str,
+            "to_date": first_date_str,
+            "days_span": 0,
+            "month": first_ym,
+            "prev_sales": series[0]["sales"],
+            "curr_sales": series[0]["sales"],
+            "sales_delta": 0.0,
+            "views_delta": 0,
+            "is_baseline": True,
+            "is_partial_week": False,
+        }
+        return {
+            "weekly_deltas": [baseline_entry],
+            "monthly_sales": monthly_sales,
+            "monthly_sales_th": monthly_2026_to_thai(monthly_sales, year=year),
+            "snapshot_count": 1,
+            "first_snapshot_date": first_date_str,
+            "latest_snapshot_date": latest_date_str,
+        }
+
+    weekly_deltas: List[Dict[str, Any]] = []
+    anchor_idx = 0
+    n = len(series)
+
+    while anchor_idx < n - 1:
+        anchor = series[anchor_idx]
+        next_idx = None
+        for j in range(anchor_idx + 1, n):
+            span = (series[j]["dt"] - anchor["dt"]).days
+            if span >= interval_days:
+                next_idx = j
+                break
+
+        is_partial = False
+        if next_idx is None:
+            next_idx = n - 1
+            is_partial = True
+
+        curr = series[next_idx]
+        days_span = (curr["dt"] - anchor["dt"]).days
+        sales_delta = round(max(0.0, curr["sales"] - anchor["sales"]), 2)
+        views_delta = max(0, curr["views"] - anchor["views"])
+        ym_key = curr["date"][:7]
+
+        weekly_deltas.append({
+            "from_date": anchor["date"],
+            "to_date": curr["date"],
+            "days_span": days_span,
+            "month": ym_key,
+            "prev_sales": anchor["sales"],
+            "curr_sales": curr["sales"],
+            "sales_delta": sales_delta,
+            "views_delta": views_delta,
+            "is_baseline": False,
+            "is_partial_week": is_partial,
+        })
+
+        anchor_idx = next_idx
+
+    if norm_fallback:
+        for ym_key, val in norm_fallback.items():
+            if ym_key < first_ym:
+                monthly_sales[ym_key] = round(val, 2)
+
+    for wd in weekly_deltas:
+        ym_key = wd["month"]
+        if ym_key in monthly_sales:
+            monthly_sales[ym_key] = round(monthly_sales[ym_key] + wd["sales_delta"], 2)
+
+    return {
+        "weekly_deltas": weekly_deltas,
+        "monthly_sales": monthly_sales,
+        "monthly_sales_th": monthly_2026_to_thai(monthly_sales, year=year),
+        "snapshot_count": len(series),
+        "first_snapshot_date": first_date_str,
+        "latest_snapshot_date": latest_date_str,
+    }
 
 def month_to_thai(dt: datetime) -> str:
     m = dt.month
@@ -363,7 +539,7 @@ def launch_browser_context(headless: bool = False):
     
     return p, context
 
-def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, live_html: bool = False, no_cache: bool = False):
+def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80):
     now = datetime.now(timezone.utc)
     recorded_at = now.isoformat()
     snapshot_date_key = now.strftime("%Y-%m-%d")
@@ -418,6 +594,15 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             check_and_handle_antibot_or_login(page, platform_name="Chaply")
             page.goto("https://www.chaply.net/writer/dashboard", wait_until="domcontentloaded")
             time.sleep(2)
+
+        _ss_dir = os.environ.get("PROOF_SCREENSHOT_DIR")
+        if _ss_dir and os.path.isdir(_ss_dir):
+            try:
+                _ss_path = os.path.join(_ss_dir, "proof_chaply.png")
+                page.screenshot(path=_ss_path, full_page=False)
+                print(f"📸 [Chaply] บันทึกภาพหน้าจอยืนยันสด: {_ss_path}", flush=True)
+            except Exception as _e_ss:
+                print(f"⚠️ [Chaply] Screenshot notice: {_e_ss}", flush=True)
 
         # Scrape live Dashboard HTML DOM numbers directly
         dom_dash_stats = page.evaluate(r"""() => {
@@ -489,7 +674,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # กรองเฉพาะเรื่องที่มีอยู่ใน MangaSetting เท่านั้น (ข้ามโปรเจกต์ที่ลบไปแล้ว)
     try:
         from manga_matcher import filter_comics_by_manga_setting
-        raw_comics = filter_comics_by_manga_setting(raw_comics, title_key="title", threshold=0.85, platform_name="Chaply")
+        raw_comics = filter_comics_by_manga_setting(raw_comics, title_key="title", threshold=min_match, platform_name="Chaply", platform_key="chaply")
     except Exception as e_f:
         print(f"⚠️ [MangaFilter] Error: {e_f}")
 
@@ -693,9 +878,12 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "slug": slug,
             "account": ACCOUNT_INFO["name"],
             "account_id": ACCOUNT_INFO["id"],
+            "snapshot_date": snapshot_date_key,
+            "recorded_at": recorded_at,
             "total_views": views,
             "total_sales": tot_sales,
-            "monthly_sales": monthly_sales,
+            "monthly_sales": normalize_monthly_sales_2026(monthly_sales, year=now.year),
+            "monthly_sales_th": monthly_sales,
             "sales_7_chapters": s7,
             "views_7_chapters": v7,
             "chapters_count": eps,
@@ -733,6 +921,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     daily_snaps[snapshot_date_key] = current_snap_dict
     snap_entry = {
         "timestamp": recorded_at,
+        "snapshot_date": snapshot_date_key,
         "key": snapshot_time_key,
         "date": snapshot_date_key,
         "total_comics": len(raw_comics),
@@ -742,8 +931,20 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     }
     six_hour_snaps.append(snap_entry)
 
-    # Maintain 7-day timeline snapshots for exact monthly matching
-    if not seven_day_snaps or (datetime.now() - datetime.fromisoformat(seven_day_snaps[-1]["timestamp"])).days >= 7:
+    # Maintain 7-day timeline snapshots for exact monthly matching (timezone-safe)
+    should_append_7d = False
+    if not seven_day_snaps:
+        should_append_7d = True
+    else:
+        try:
+            last_7d_dt = datetime.fromisoformat(str(seven_day_snaps[-1]["timestamp"]).replace("Z", "+00:00"))
+            if last_7d_dt.tzinfo is None:
+                last_7d_dt = last_7d_dt.replace(tzinfo=timezone.utc)
+            if (now - last_7d_dt).days >= 7:
+                should_append_7d = True
+        except Exception:
+            should_append_7d = True
+    if should_append_7d:
         seven_day_snaps.append(snap_entry)
 
     if len(six_hour_snaps) > 1200:
@@ -809,6 +1010,14 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             views_delta_30d, views_pct_30d = 0, 0.0
             sales_delta_30d, sales_pct_30d = 0.0, 0.0
 
+        rollup = compute_weekly_deltas_and_monthly_rollup(
+            daily_snaps,
+            cid,
+            year=now.year,
+            fallback_monthly=cur.get("monthly_sales", {}),
+            interval_days=7,
+        )
+
         row = {
             "comic_id": cid,
             "subject": cur["subject"],
@@ -816,10 +1025,13 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "platform": "chaply",
             "account": cur["account"],
             "account_id": cur["account_id"],
+            "snapshot_date": snapshot_date_key,
             "chapters_count": cur["chapters_count"],
             "total_views": cur_views,
             "total_sales": cur_sales,
-            "monthly_sales": cur.get("monthly_sales", {}),
+            "monthly_sales": rollup["monthly_sales"],
+            "monthly_sales_th": rollup["monthly_sales_th"],
+            "weekly_deltas": rollup["weekly_deltas"],
             "sales_7_chapters": cur.get("sales_7_chapters", 0.0),
             "views_7_chapters": cur.get("views_7_chapters", 0),
             "recorded_at": recorded_at,
@@ -844,13 +1056,21 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # Sort by views descending
     enriched_comics.sort(key=lambda x: x["total_views"], reverse=True)
 
+    portfolio_monthly_sales = {f"{now.year}-{m:02d}": 0.0 for m in range(1, 13)}
+    for ec in enriched_comics:
+        for ym_k, ym_v in ec.get("monthly_sales", {}).items():
+            if ym_k in portfolio_monthly_sales:
+                portfolio_monthly_sales[ym_k] = round(portfolio_monthly_sales[ym_k] + float(ym_v or 0.0), 2)
+
     report_output = {
         "platform": "chaply",
         "pipeline_recorded_at": recorded_at,
         "date_reference": snapshot_date_key,
+        "snapshot_date": snapshot_date_key,
         "total_comics": len(enriched_comics),
         "total_sales_portfolio": lifetime_sales,
         "total_views_portfolio": total_views_overall,
+        "portfolio_monthly_sales": portfolio_monthly_sales,
         "top_sales_comic": enriched_comics[0]["subject"] if enriched_comics else "",
         "total_inactive_30d": inactive_count_30d,
         "total_active_30d": active_count_30d,
@@ -911,6 +1131,7 @@ if __name__ == "__main__":
     parser.add_argument("--passcode", type=str, default="10211032", help="Backend passcode")
     parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
     parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
+    parser.add_argument("--min-match", type=float, default=0.80, help="Minimum title match ratio against MangaSetting (strictly > threshold, default: 0.80)")
     args = parser.parse_args()
 
     # Browser is enabled by default or when --browser / --no-api is passed
@@ -923,5 +1144,6 @@ if __name__ == "__main__":
         use_browser=use_browser,
         headless=headless,
         live_html=args.live_html,
-        no_cache=args.no_cache
+        no_cache=args.no_cache,
+        min_match=args.min_match
     )

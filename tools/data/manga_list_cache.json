@@ -7,7 +7,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/12602/",
     "status": "Ongoing",
     "lastchapter": 370,
-    "lastupdated": "2026-11-15T23:05:44.281Z",
+    "lastupdated": "2026-11-19T13:33:06.843Z",
     "needsextract": false,
     "releaseday": "วันจันทร์, วันอังคาร",
     "lockedtranslator": "Pratchaya",
@@ -20,7 +20,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 7,
@@ -29,8 +31,8 @@
     "originalname": "师尊：这个冲师逆徒才不是圣子漫画",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/19109/",
     "status": "Ongoing",
-    "lastchapter": 215,
-    "lastupdated": "2026-11-15T06:10:20.155Z",
+    "lastchapter": 216,
+    "lastupdated": "2026-11-19T13:33:16.912Z",
     "needsextract": false,
     "releaseday": "วันพุธ",
     "lockedtranslator": "Pratchaya",
@@ -43,7 +45,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 8,
@@ -52,8 +56,8 @@
     "originalname": "财富自由后，她们献上了忠诚漫画",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/24760/?cps=undefined",
     "status": "Ongoing",
-    "lastchapter": 132,
-    "lastupdated": "2026-11-14T23:18:29.781Z",
+    "lastchapter": 133,
+    "lastupdated": "2026-11-19T13:33:27.847Z",
     "needsextract": true,
     "releaseday": "วันพุธ",
     "lockedtranslator": "เร",
@@ -66,7 +70,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 9,
@@ -75,8 +81,8 @@
     "originalname": "网游：神级刺客",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/24719/?cps=undefined",
     "status": "Ongoing",
-    "lastchapter": 156,
-    "lastupdated": "2026-11-13T06:14:05.265Z",
+    "lastchapter": 157,
+    "lastupdated": "2026-11-19T15:24:28.271Z",
     "needsextract": false,
     "releaseday": "วันพุธ",
     "lockedtranslator": "Pratchaya",
@@ -89,7 +95,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 10,
@@ -98,8 +106,8 @@
     "originalname": "全民转职：无职的我终结了神明",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/16315/",
     "status": "Ongoing",
-    "lastchapter": 242,
-    "lastupdated": "2026-11-11T08:21:11.269Z",
+    "lastchapter": 243,
+    "lastupdated": "2026-11-19T13:33:52.520Z",
     "needsextract": true,
     "releaseday": "วันพุธ",
     "lockedtranslator": "Apt",
@@ -112,7 +120,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 12,
@@ -121,8 +131,8 @@
     "originalname": "全职剑修漫画",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/17649/",
     "status": "Ongoing",
-    "lastchapter": 129,
-    "lastupdated": "2026-11-14T13:35:00.018Z",
+    "lastchapter": 130,
+    "lastupdated": "2026-11-19T13:34:04.865Z",
     "needsextract": true,
     "releaseday": "วันพุธ",
     "lockedtranslator": "ภูมิ",
@@ -135,17 +145,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 13,
-    "manganame": "จอมมารแสนดีขนาดนี้ แต่ศิษย์สตรีทั้งหลายกลับต้องการชีวิตข้า",
+    "manganame": "จอมมารแสนดีเช่นข้า ไฉนกลับต้องถูกศิษย์ต้องการชีวิต",
     "costperchapter": 0,
     "originalname": "大爱魔尊，女徒弟都想杀我",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/21720/",
     "status": "Ongoing",
-    "lastchapter": 151,
-    "lastupdated": "2026-11-14T22:32:16.401Z",
+    "lastchapter": 152,
+    "lastupdated": "2026-11-19T13:34:16.443Z",
     "needsextract": false,
     "releaseday": "วันพุธ",
     "lockedtranslator": "Pratchaya",
@@ -158,17 +170,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 14,
-    "manganame": "เจ้ากงล้อแห่งโชคชะตา",
+    "manganame": "เจ้าแห่งกงล้อโชคชะตา",
     "costperchapter": 0,
     "originalname": "命轮之主！当异变降临人间-腾讯动漫",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/655278",
     "status": "Ongoing",
     "lastchapter": 282,
-    "lastupdated": "2026-11-15T14:12:57.870Z",
+    "lastupdated": "2026-11-19T13:34:28.722Z",
     "needsextract": true,
     "releaseday": "วันพฤหัสบดี",
     "lockedtranslator": "ภูมิ",
@@ -181,30 +195,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
-  },
-  {
-    "mangaid": 16,
-    "manganame": "Mr.Zombie",
-    "costperchapter": 210,
-    "originalname": "Mr.Zombie",
-    "originalurl": "https://bada.iqiyi.com/manhua/detail_1s03yoyss39.html",
-    "status": "Ongoing",
-    "lastchapter": 191,
-    "lastupdated": "2026-02-07T03:41:44.454Z",
-    "needsextract": true,
-    "releaseday": "None",
-    "lockedtranslator": "เร",
-    "notifyonadd": false,
-    "slug": "",
-    "isurgent": false,
-    "translationdocurl": "",
-    "scangroup": "",
-    "lockedtypesetter": "Tilly",
-    "lockedpublisher": "Kikkuk",
-    "lockedposter": "ภูมิ",
-    "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 17,
@@ -214,7 +207,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/21809/",
     "status": "Ongoing",
     "lastchapter": 145,
-    "lastupdated": "2026-11-14T23:18:29.781Z",
+    "lastupdated": "2026-11-19T13:34:52.428Z",
     "needsextract": false,
     "releaseday": "วันเสาร์",
     "lockedtranslator": "Pratchaya",
@@ -227,30 +220,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
-  },
-  {
-    "mangaid": 19,
-    "manganame": "วิถีพิชิตผู้แข็งแกร่ง สวนชะตาเหนือฟ้า",
-    "costperchapter": 0,
-    "originalname": "遇强则强，我的修为无上限",
-    "originalurl": "https://ac.qq.com/Comic/comicInfo/id/656028",
-    "status": "Ongoing",
-    "lastchapter": 130,
-    "lastupdated": "2026-06-03T19:59:15.031Z",
-    "needsextract": false,
-    "releaseday": "None",
-    "lockedtranslator": "Pratchaya",
-    "notifyonadd": false,
-    "slug": "the-way-to-conquer-the-strong-a-fate-beyond-the-sky",
-    "isurgent": false,
-    "translationdocurl": "",
-    "scangroup": "",
-    "lockedtypesetter": "Tilly",
-    "lockedpublisher": "Kikkuk",
-    "lockedposter": "ภูมิ",
-    "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 21,
@@ -259,8 +231,8 @@
     "originalname": "全球御兽：我能看见进化路线",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/24602/",
     "status": "Ongoing",
-    "lastchapter": 115,
-    "lastupdated": "2026-11-13T15:31:41.989Z",
+    "lastchapter": 116,
+    "lastupdated": "2026-11-19T13:35:09.917Z",
     "needsextract": true,
     "releaseday": "วันเสาร์",
     "lockedtranslator": "เร",
@@ -273,7 +245,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 24,
@@ -283,7 +257,7 @@
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/656737",
     "status": "",
     "lastchapter": 123,
-    "lastupdated": "2026-11-14T11:59:59.016Z",
+    "lastupdated": "2026-11-19T13:35:31.155Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -296,7 +270,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 27,
@@ -306,7 +282,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/25858/?cps=undefined",
     "status": "Ongoing",
     "lastchapter": 132,
-    "lastupdated": "2026-11-16T00:00:06.397Z",
+    "lastupdated": "2026-11-19T13:35:40.832Z",
     "needsextract": false,
     "releaseday": "วันพฤหัสบดี, วันอาทิตย์",
     "lockedtranslator": "Pratchaya",
@@ -319,7 +295,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 28,
@@ -329,7 +307,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/25871/?cps=undefined",
     "status": "Ongoing",
     "lastchapter": 73,
-    "lastupdated": "2026-11-06T08:21:02.453Z",
+    "lastupdated": "2026-11-19T13:36:14.313Z",
     "needsextract": true,
     "releaseday": "วันอาทิตย์",
     "lockedtranslator": "เร",
@@ -342,7 +320,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 29,
@@ -352,7 +332,7 @@
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/656779",
     "status": "Ongoing",
     "lastchapter": 75,
-    "lastupdated": "2026-11-15T23:59:52.229Z",
+    "lastupdated": "2026-11-19T13:36:22.832Z",
     "needsextract": false,
     "releaseday": "None",
     "lockedtranslator": "Pratchaya",
@@ -365,7 +345,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 30,
@@ -375,7 +357,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/25837/?cps=undefined",
     "status": "Ongoing",
     "lastchapter": 57,
-    "lastupdated": "2026-11-14T10:12:32.399Z",
+    "lastupdated": "2026-11-19T13:36:33.878Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "เร",
@@ -388,17 +370,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 34,
-    "manganame": "ข้าขอท้าผนึกสวรรค์",
+    "manganame": "ผนึกสวรรค์ สยบมาร สะท้านเทพ",
     "costperchapter": 70,
     "originalname": "我欲封天",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657044",
     "status": "Ongoing",
     "lastchapter": 58,
-    "lastupdated": "2026-11-15T14:12:57.870Z",
+    "lastupdated": "2026-11-19T13:36:48.948Z",
     "needsextract": true,
     "releaseday": "วันอังคาร",
     "lockedtranslator": "Apt",
@@ -411,7 +395,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 35,
@@ -421,7 +407,7 @@
     "originalurl": "https://en-thunderscans.com/comics/return-of-the-first-generation-the-strongest-in-history-reincarnates-as-his-descendant-1000-years-later",
     "status": "Ongoing",
     "lastchapter": 65,
-    "lastupdated": "2026-11-15T06:10:22.937Z",
+    "lastupdated": "2026-11-19T13:37:00.045Z",
     "needsextract": true,
     "releaseday": "วันพุธ",
     "lockedtranslator": "เร",
@@ -434,7 +420,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 39,
@@ -443,8 +431,8 @@
     "originalname": "我开局神话天赋，一剑斩神！",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/26542/?cps=undefined",
     "status": "Ongoing",
-    "lastchapter": 61,
-    "lastupdated": "2026-11-14T15:25:11.100Z",
+    "lastchapter": 62,
+    "lastupdated": "2026-11-19T13:37:08.833Z",
     "needsextract": true,
     "releaseday": "วันอังคาร",
     "lockedtranslator": "ภูมิ",
@@ -457,7 +445,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 44,
@@ -467,7 +457,7 @@
     "originalurl": "https://en-thunderscans.com/comics/i-became-a-genius-at-the-academy-in-a-world-where-magic-reigns-supreme/",
     "status": "Ongoing",
     "lastchapter": 131,
-    "lastupdated": "2026-11-09T15:46:49.173Z",
+    "lastupdated": "2026-11-19T13:37:22.838Z",
     "needsextract": true,
     "releaseday": "วันจันทร์",
     "lockedtranslator": "เร",
@@ -480,7 +470,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 45,
@@ -489,8 +481,8 @@
     "originalname": "重生水浒世界之最强武大郎",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/656856",
     "status": "Ongoing",
-    "lastchapter": 109,
-    "lastupdated": "2026-11-15T12:42:57.365Z",
+    "lastchapter": 110,
+    "lastupdated": "2026-11-19T13:37:33.154Z",
     "needsextract": true,
     "releaseday": "วันพฤหัสบดี",
     "lockedtranslator": "เร",
@@ -503,7 +495,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 51,
@@ -513,7 +507,7 @@
     "originalurl": "https://en-thunderscans.com/comics/reincarnated-streamer/",
     "status": "Ongoing",
     "lastchapter": 73,
-    "lastupdated": "2026-11-16T01:34:37.093Z",
+    "lastupdated": "2026-11-19T13:37:46.631Z",
     "needsextract": true,
     "releaseday": "วันอาทิตย์",
     "lockedtranslator": "ภูมิ",
@@ -526,7 +520,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 59,
@@ -536,7 +532,7 @@
     "originalurl": "https://en-thunderscans.com/comics/the-clans-failure-is-a-former-continental-champion/",
     "status": "Ongoing",
     "lastchapter": 66,
-    "lastupdated": "2026-11-13T19:21:03.779Z",
+    "lastupdated": "2026-11-19T13:37:57.230Z",
     "needsextract": true,
     "releaseday": "วันเสาร์",
     "lockedtranslator": "Apt",
@@ -549,7 +545,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 60,
@@ -559,7 +557,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27125/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2568-12-29%2002%3A33%3A10%3A572&cps=undefined",
     "status": "Ongoing",
     "lastchapter": 45,
-    "lastupdated": "2026-11-14T18:16:30.862Z",
+    "lastupdated": "2026-11-19T13:38:05.849Z",
     "needsextract": true,
     "releaseday": "วันเสาร์",
     "lockedtranslator": "ภูมิ",
@@ -572,7 +570,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 69,
@@ -582,7 +582,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27325/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-03-14%2012%3A52%3A35%3A180&cps=undefined",
     "status": "Ongoing",
     "lastchapter": 37,
-    "lastupdated": "2026-11-15T23:05:44.281Z",
+    "lastupdated": "2026-11-19T13:38:16.223Z",
     "needsextract": true,
     "releaseday": "วันจันทร์",
     "lockedtranslator": "ภูมิ",
@@ -595,7 +595,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 72,
@@ -605,7 +607,7 @@
     "originalurl": "https://m.ac.qq.com/comic/index/id/657151",
     "status": "Ongoing",
     "lastchapter": 48,
-    "lastupdated": "2026-11-14T14:21:15.688Z",
+    "lastupdated": "2026-11-19T13:38:28.577Z",
     "needsextract": true,
     "releaseday": "วันเสาร์",
     "lockedtranslator": "Apt",
@@ -618,7 +620,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 73,
@@ -627,8 +631,8 @@
     "originalname": "这个杀手是赘婿",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27455/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-04-21%2008%3A44%3A18%3A153&cps=undefined",
     "status": "Ongoing",
-    "lastchapter": 37,
-    "lastupdated": "2026-11-11T09:21:03.226Z",
+    "lastchapter": 38,
+    "lastupdated": "2026-11-19T13:38:39.403Z",
     "needsextract": true,
     "releaseday": "วันอังคาร",
     "lockedtranslator": "Apt",
@@ -641,7 +645,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 75,
@@ -651,7 +657,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27363/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-05-15%2013%3A48%3A20%3A267&cps=undefined",
     "status": "Ongoing",
     "lastchapter": 15,
-    "lastupdated": "2026-08-21T15:49:53.930Z",
+    "lastupdated": "2026-11-19T13:38:49.837Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "ภูมิ",
@@ -664,7 +670,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 76,
@@ -673,8 +681,8 @@
     "originalname": "灾变猎人：我有一个经验值系统",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27683/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-05-27%2008%3A46%3A31%3A267&cps=undefined",
     "status": "Ongoing",
-    "lastchapter": 28,
-    "lastupdated": "2026-11-14T18:16:33.791Z",
+    "lastchapter": 29,
+    "lastupdated": "2026-11-19T13:39:19.603Z",
     "needsextract": true,
     "releaseday": "วันพฤหัสบดี",
     "lockedtranslator": "ภูมิ",
@@ -687,7 +695,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 77,
@@ -697,7 +707,7 @@
     "originalurl": "http://m.kuaikanmanhua.com/mobile/27711/list/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-05-31%2001%3A28%3A04%3A210",
     "status": "Ongoing",
     "lastchapter": 27,
-    "lastupdated": "2026-11-14T18:16:36.881Z",
+    "lastupdated": "2026-11-19T13:39:29.880Z",
     "needsextract": true,
     "releaseday": "วันศุกร์",
     "lockedtranslator": "ภูมิ",
@@ -710,17 +720,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 78,
-    "manganame": "มหาปรจารย์ระดับเทพแห่งนคร",
+    "manganame": "มหาปรมาจารย์ระดับเทพแห่งนคร",
     "costperchapter": 0,
     "originalname": "都市之神级宗师",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657544",
     "status": "Ongoing",
-    "lastchapter": 33,
-    "lastupdated": "2026-11-14T15:49:49.373Z",
+    "lastchapter": 34,
+    "lastupdated": "2026-11-19T13:39:37.672Z",
     "needsextract": true,
     "releaseday": "วันพุธ",
     "lockedtranslator": "",
@@ -733,17 +745,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 79,
-    "manganame": "พลิกอักษรเปลี่ยนสกิลบงการโลกจนยับเยิน",
+    "manganame": "พลิกอักษรเปลี่ยนสกิล บงการโลกจนยับเยิน",
     "costperchapter": 0,
     "originalname": "技能改一个字，他们被我玩坏了",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657528",
     "status": "Ongoing",
     "lastchapter": 40,
-    "lastupdated": "2026-11-14T14:21:15.688Z",
+    "lastupdated": "2026-11-19T13:39:48.613Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -756,7 +770,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 80,
@@ -765,8 +781,8 @@
     "originalname": "重生之战士为王",
     "originalurl": "https://ac.qq.com/Comic/ComicInfo/id/657529",
     "status": "Ongoing",
-    "lastchapter": 36,
-    "lastupdated": "2026-11-12T14:21:05.103Z",
+    "lastchapter": 37,
+    "lastupdated": "2026-11-19T13:39:56.449Z",
     "needsextract": true,
     "releaseday": "วันพุธ",
     "lockedtranslator": "",
@@ -779,7 +795,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 81,
@@ -788,8 +806,8 @@
     "originalname": "全民转职，谁敢说剑客是垃圾职业",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657375",
     "status": "Ongoing",
-    "lastchapter": 31,
-    "lastupdated": "2026-11-11T12:21:21.530Z",
+    "lastchapter": 32,
+    "lastupdated": "2026-11-19T13:40:04.468Z",
     "needsextract": true,
     "releaseday": "วันอังคาร",
     "lockedtranslator": "",
@@ -802,7 +820,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 82,
@@ -811,8 +831,8 @@
     "originalname": "全民转职：暗影君主我无敌你随意",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27677/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-07-12%2022%3A49%3A33%3A868&cps=undefined",
     "status": "Ongoing",
-    "lastchapter": 7,
-    "lastupdated": "2026-11-10T23:22:40.136Z",
+    "lastchapter": 8,
+    "lastupdated": "2026-11-19T13:40:12.923Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -825,7 +845,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 83,
@@ -835,7 +857,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27899/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-07-12%2022%3A50%3A12%3A958&cps=undefined",
     "status": "Ongoing",
     "lastchapter": 0,
-    "lastupdated": "2026-07-21T16:09:23.392Z",
+    "lastupdated": "2026-11-19T13:40:27.821Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -848,7 +870,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 84,
@@ -858,7 +882,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27818/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-07-12%2022%3A51%3A16%3A438&cps=undefined",
     "status": "Ongoing",
     "lastchapter": 27,
-    "lastupdated": "2026-11-14T23:18:29.781Z",
+    "lastupdated": "2026-11-19T13:40:38.358Z",
     "needsextract": true,
     "releaseday": "วันศุกร์",
     "lockedtranslator": "",
@@ -871,7 +895,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 85,
@@ -880,8 +906,8 @@
     "originalname": "两界：我有一个古武世界",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27688/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-07-12%2022%3A51%3A54%3A019&cps=undefined",
     "status": "Ongoing",
-    "lastchapter": 17,
-    "lastupdated": "2026-11-11T09:21:03.226Z",
+    "lastchapter": 18,
+    "lastupdated": "2026-11-19T13:40:48.728Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -894,7 +920,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 86,
@@ -904,7 +932,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27816/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-07-12%2022%3A52%3A10%3A275&cps=undefined",
     "status": "Ongoing",
     "lastchapter": 11,
-    "lastupdated": "2026-11-13T22:48:22.442Z",
+    "lastupdated": "2026-11-19T13:41:00.211Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -917,7 +945,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 87,
@@ -927,7 +957,7 @@
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27690/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-07-12%2022%3A52%3A25%3A328&cps=undefined",
     "status": "Ongoing",
     "lastchapter": 21,
-    "lastupdated": "2026-11-15T12:31:01.784Z",
+    "lastupdated": "2026-11-19T13:41:09.486Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -940,17 +970,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 88,
     "manganame": "ยุคเปลี่ยนอาชีพ: ซัมมอนเนอร์อันเดด ข้าเพียงผู้เดียวคือภัยพิบัติ!",
-    "costperchapter": "",
+    "costperchapter": 0,
     "originalname": "全民：亡灵召唤师，我一人即天灾",
     "originalurl": "http://m.kuaikanmanhua.com/mobile/27689/list/?ServiceType=1&ServiceName=12&Source=6&TimeStamp=2569-07-21%2023%3A14%3A28%3A182",
     "status": "Ongoing",
-    "lastchapter": 10,
-    "lastupdated": "2026-11-10T23:22:40.136Z",
+    "lastchapter": 11,
+    "lastupdated": "2026-11-19T13:41:17.591Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -963,7 +995,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 89,
@@ -972,8 +1006,8 @@
     "originalname": "我的哥哥是恶犬",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657728",
     "status": "Ongoing",
-    "lastchapter": 48,
-    "lastupdated": "2026-11-15T05:29:42.271Z",
+    "lastchapter": 49,
+    "lastupdated": "2026-11-19T13:41:27.504Z",
     "needsextract": true,
     "releaseday": "วันจันทร์",
     "lockedtranslator": "",
@@ -986,7 +1020,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": true,
-    "ExcludeTranslatePayout": true
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": true,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 90,
@@ -995,8 +1031,8 @@
     "originalname": "全民：合成师，开局合成亡灵大军",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657631",
     "status": "Ongoing",
-    "lastchapter": 34,
-    "lastupdated": "2026-11-15T12:42:57.365Z",
+    "lastchapter": 36,
+    "lastupdated": "2026-11-19T13:41:43.988Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1009,7 +1045,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 91,
@@ -1018,8 +1056,8 @@
     "originalname": "技能无冷却？我化身亡灵天灾！",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657540",
     "status": "Ongoing",
-    "lastchapter": 22,
-    "lastupdated": "2026-11-14T14:21:15.688Z",
+    "lastchapter": 23,
+    "lastupdated": "2026-11-19T13:41:54.199Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1032,7 +1070,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 92,
@@ -1042,7 +1082,7 @@
     "originalurl": "https://ac.qq.com/Comic/ComicInfo/id/657666",
     "status": "Ongoing",
     "lastchapter": 21,
-    "lastupdated": "2026-11-14T14:21:15.688Z",
+    "lastupdated": "2026-11-19T13:42:04.208Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1055,7 +1095,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 93,
@@ -1065,7 +1107,7 @@
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657781",
     "status": "Ongoing",
     "lastchapter": 18,
-    "lastupdated": "2026-11-15T12:42:57.365Z",
+    "lastupdated": "2026-11-19T14:26:50.616Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1078,7 +1120,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 94,
@@ -1087,8 +1131,8 @@
     "originalname": "重生西游之最强白骨大圣",
     "originalurl": "https://ac.qq.com/Comic/ComicInfo/id/657368",
     "status": "Ongoing",
-    "lastchapter": 31,
-    "lastupdated": "2026-11-15T14:12:57.870Z",
+    "lastchapter": 32,
+    "lastupdated": "2026-11-19T13:42:20.374Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1101,7 +1145,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 95,
@@ -1111,7 +1157,7 @@
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657755",
     "status": "Ongoing",
     "lastchapter": 18,
-    "lastupdated": "2026-11-15T14:12:57.870Z",
+    "lastupdated": "2026-11-19T13:42:29.050Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1124,7 +1170,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 96,
@@ -1133,8 +1181,8 @@
     "originalname": "天灾召唤师",
     "originalurl": "https://ac.qq.com/Comic/comicInfo/id/657981",
     "status": "Ongoing",
-    "lastchapter": 10,
-    "lastupdated": "2026-11-14T14:21:15.688Z",
+    "lastchapter": 11,
+    "lastupdated": "2026-11-19T13:42:36.560Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1147,7 +1195,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 97,
@@ -1157,7 +1207,7 @@
     "originalurl": "https://en-thunderscans.com/comics/the-transcendent-holy-swordsman-regresses-as-the-youngest-son-of-a-magic-swordsman-family/",
     "status": "Ongoing",
     "lastchapter": 40,
-    "lastupdated": "2026-11-14T18:21:06.343Z",
+    "lastupdated": "2026-11-19T13:42:48.298Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1170,7 +1220,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 98,
@@ -1179,8 +1231,8 @@
     "originalname": "起手乘十，有BUG你是真卡啊",
     "originalurl": "https://www.kuaikanmanhua.com/web/topic/27865/",
     "status": "Ongoing",
-    "lastchapter": 10,
-    "lastupdated": "2026-11-10T23:21:18.114Z",
+    "lastchapter": 11,
+    "lastupdated": "2026-11-19T13:42:57.287Z",
     "needsextract": true,
     "releaseday": "วันจันทร์",
     "lockedtranslator": "",
@@ -1193,17 +1245,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 99,
     "manganame": "ยุควิทยายุทธ์เดือด: เซลล์ของข้าวิวัฒนาการไร้ขีดจำกัด!",
-    "costperchapter": "",
+    "costperchapter": 0,
     "originalname": "高武：我的细胞可以无限进化",
     "originalurl": "https://m.kuaikanmanhua.com/mobile/28211/list/?cps=undefined",
     "status": "Ongoing",
     "lastchapter": 8,
-    "lastupdated": "2026-11-12T23:21:08.098Z",
+    "lastupdated": "2026-11-19T13:43:07.277Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "",
@@ -1216,7 +1270,9 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 101,
@@ -1226,7 +1282,7 @@
     "originalurl": "https://en-thunderscans.com/comics/the-return-of-the-scorned-genius/",
     "status": "Ongoing",
     "lastchapter": 31,
-    "lastupdated": "2026-11-11T20:21:06.194Z",
+    "lastupdated": "2026-11-19T13:43:16.065Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "ภูมิ",
@@ -1239,17 +1295,19 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "readrealm, chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "readrealm, chaply, kairew"
   },
   {
     "mangaid": 102,
-    "manganame": "Munou to iware tsuzuketa madoushi, jitsu wa sekai saikyou na no ni yuuhei sareteita node jikaku nash",
+    "manganame": "จอมเวทผู้ถูกตราหน้าว่าไร้ค่า แท้จริงคือผู้แข็งแกร่งที่สุดในโลก แต่เพราะโดนขังลืมเลยไม่รู้ตัว!",
     "costperchapter": 0,
     "originalname": "Munou to iware tsuzuketa madoushi, jitsu wa sekai saikyou na no ni yuuhei sareteita node jikaku nash",
     "originalurl": "https://comix.to/title/jyzv-munou-to-iware-tsuzuketa-madoushi-jitsu-wa-sekai-saikyou-nanoni-yuuhei-sareteita-node-jikaku-nashi?group_id=11445",
     "status": "Ongoing",
-    "lastchapter": 10.2,
-    "lastupdated": "2026-11-15T15:21:07.376Z",
+    "lastchapter": 10,
+    "lastupdated": "2026-11-19T13:54:36.537Z",
     "needsextract": true,
     "releaseday": "None",
     "lockedtranslator": "Apt",
@@ -1262,6 +1320,8 @@
     "lockedpublisher": "Kikkuk",
     "lockedposter": "ภูมิ",
     "excludetranslatepayout": false,
-    "ExcludeTranslatePayout": false
+    "platforms": "chaply, kairew",
+    "ExcludeTranslatePayout": false,
+    "Platforms": "chaply, kairew"
   }
 ]

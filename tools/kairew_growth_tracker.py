@@ -165,7 +165,7 @@ def fetch_kairew_data_via_requests() -> Optional[Dict[str, Any]]:
 
     return None
 
-def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = False, live_html: bool = False, no_cache: bool = False) -> Dict[str, Any]:
+def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80) -> Dict[str, Any]:
 
     """Launch persistent context to extract manage-book props from Kairew in visible non-headless mode."""
 
@@ -278,7 +278,16 @@ def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = Fal
 
             time.sleep(4)
 
-        props_data = page.evaluate("""() => {
+        _ss_dir = os.environ.get("PROOF_SCREENSHOT_DIR")
+        if _ss_dir and os.path.isdir(_ss_dir):
+            try:
+                _ss_path = os.path.join(_ss_dir, "proof_kairew.png")
+                page.screenshot(path=_ss_path, full_page=False)
+                print(f"📸 [Kairew] บันทึกภาพหน้าจอยืนยันสด: {_ss_path}", flush=True)
+            except Exception as _e_ss:
+                print(f"⚠️ [Kairew] Screenshot notice: {_e_ss}", flush=True)
+
+        props_data = page.evaluate(r"""() => {
             const app = document.getElementById('app');
             let data = null;
             if (app) {
@@ -317,7 +326,7 @@ def fetch_kairew_data_via_browser(headless: bool = False, foreground: bool = Fal
             # กรองเฉพาะเรื่องที่อยู่ใน MangaSetting ก่อนดึงสถิติรายเรื่อง
             try:
                 from manga_matcher import filter_comics_by_manga_setting
-                cartoon_list = filter_comics_by_manga_setting(cartoon_list, title_key="name", threshold=0.85, platform_name="Kairew")
+                cartoon_list = filter_comics_by_manga_setting(cartoon_list, title_key="name", threshold=min_match, platform_name="Kairew", platform_key="kairew")
                 if "props" in props_data:
                     props_data["props"]["cartoon_list"] = cartoon_list
             except Exception as e_f:
@@ -374,6 +383,34 @@ THAI_MONTHS_LIST = [
     'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
     'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
 ]
+THAI_MONTH_TO_NUM = {m: idx + 1 for idx, m in enumerate(THAI_MONTHS_LIST)}
+
+
+def normalize_monthly_sales_2026(raw_monthly: Optional[Dict[str, Any]], year: int = 2026) -> Dict[str, float]:
+    """Normalize monthly sales dict (Thai month names or YYYY-MM) to standard YYYY-01..YYYY-12 keys."""
+    result = {f"{year}-{m:02d}": 0.0 for m in range(1, 13)}
+    if not isinstance(raw_monthly, dict):
+        return result
+    for k, v in raw_monthly.items():
+        try:
+            val = round(float(v or 0.0), 2)
+        except (ValueError, TypeError):
+            val = 0.0
+        k_str = str(k).strip()
+        if k_str in result:
+            result[k_str] = val
+        elif k_str in THAI_MONTH_TO_NUM:
+            ym_key = f"{year}-{THAI_MONTH_TO_NUM[k_str]:02d}"
+            result[ym_key] = val
+    return result
+
+
+def monthly_2026_to_thai(monthly_2026: Dict[str, float], year: int = 2026) -> Dict[str, float]:
+    """Convert standard YYYY-01..YYYY-12 monthly_sales dict to Thai month names."""
+    return {
+        THAI_MONTHS_LIST[m - 1]: round(float(monthly_2026.get(f"{year}-{m:02d}", 0.0) or 0.0), 2)
+        for m in range(1, 13)
+    }
 
 def fetch_all_kairew_monthly_stats(cartoon_list: List[Dict[str, Any]], year: int = None) -> Dict[str, Dict[str, float]]:
 
@@ -531,7 +568,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
 
         return False
 
-def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, foreground: bool = False, no_api: bool = False, force_refresh: bool = False, live_html: bool = False, no_cache: bool = False):
+def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, headless: bool = False, foreground: bool = False, no_api: bool = False, force_refresh: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80):
 
     now = datetime.now(timezone.utc)
 
@@ -569,9 +606,9 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
     # Strictly real browser if no_api or use_browser is set
     if no_api or use_browser or force_refresh or live_html or no_cache:
-        page_data = fetch_kairew_data_via_browser(headless=headless, foreground=foreground, live_html=live_html, no_cache=no_cache)
+        page_data = fetch_kairew_data_via_browser(headless=headless, foreground=foreground, live_html=live_html, no_cache=no_cache, min_match=min_match)
     else:
-        page_data = fetch_kairew_data_via_requests() or fetch_kairew_data_via_browser(headless=headless, foreground=foreground) or {}
+        page_data = fetch_kairew_data_via_requests() or fetch_kairew_data_via_browser(headless=headless, foreground=foreground, min_match=min_match) or {}
 
     # If direct fetch didn't return data, check cached props file (< 30 mins)
 
@@ -599,7 +636,7 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
         print("🔄 เริ่มต้นเบราว์เซอร์เพื่อดึงข้อมูลสดจาก Kairew...")
 
-        page_data = fetch_kairew_data_via_browser(headless=headless)
+        page_data = fetch_kairew_data_via_browser(headless=headless, min_match=min_match)
 
     props = page_data.get("props", {})
 
@@ -608,7 +645,7 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # กรองเฉพาะเรื่องที่มีอยู่ใน MangaSetting
     try:
         from manga_matcher import filter_comics_by_manga_setting
-        cartoon_list = filter_comics_by_manga_setting(cartoon_list, title_key="name", threshold=0.85, platform_name="Kairew Pipeline")
+        cartoon_list = filter_comics_by_manga_setting(cartoon_list, title_key="name", threshold=min_match, platform_name="Kairew Pipeline", platform_key="kairew")
     except Exception:
         pass
 
@@ -741,7 +778,8 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "is_inactive_30d": is_inactive_30d,
             "sales_7_chapters": round(float(c.get("sales_7_chapters") or 0.0), 2),
             "net_profit": round(float(c.get("net_profit") or (float(c.get("sales") or sales) * 0.7)), 2),
-            "monthly_sales": monthly_sales_map.get(cid, {})
+            "monthly_sales": normalize_monthly_sales_2026(c.get("monthly_sales") or monthly_sales_map.get(cid, {}), year=now.year),
+            "monthly_sales_th": monthly_2026_to_thai(normalize_monthly_sales_2026(c.get("monthly_sales") or monthly_sales_map.get(cid, {}), year=now.year), year=now.year)
         }
 
     # 3. Load past history
@@ -954,7 +992,8 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
             "views_7_chapters": int(prev_kw_7ch.get(str(cid), {}).get("views_7_chapters") or 0),
 
-            "monthly_sales": cur.get("monthly_sales", {})
+            "monthly_sales": normalize_monthly_sales_2026(cur.get("monthly_sales", {}), year=now.year),
+            "monthly_sales_th": cur.get("monthly_sales_th") or monthly_2026_to_thai(normalize_monthly_sales_2026(cur.get("monthly_sales", {}), year=now.year), year=now.year)
 
         }
 
@@ -977,6 +1016,11 @@ def run_kairew_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         "total_sales_portfolio": lifetime_sales,
 
         "total_views_portfolio": total_views_overall,
+
+        "portfolio_monthly_sales": {
+            f"{now.year}-{m:02d}": round(sum(float(ec.get("monthly_sales", {}).get(f"{now.year}-{m:02d}", 0.0) or 0.0) for ec in enriched_comics), 2)
+            for m in range(1, 13)
+        },
 
         "top_sales_comic": enriched_comics[0]["subject"] if enriched_comics else "",
 
@@ -1068,6 +1112,7 @@ if __name__ == "__main__":
     parser.add_argument("--force-refresh", action="store_true", default=False, help="Force refresh via browser session")
     parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
     parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
+    parser.add_argument("--min-match", type=float, default=0.80, help="Minimum title match ratio against MangaSetting (strictly > threshold, default: 0.80)")
 
     args = parser.parse_args()
 
@@ -1083,5 +1128,6 @@ if __name__ == "__main__":
         no_api=args.no_api,
         force_refresh=args.force_refresh,
         live_html=args.live_html,
-        no_cache=args.no_cache
+        no_cache=args.no_cache,
+        min_match=args.min_match
     )

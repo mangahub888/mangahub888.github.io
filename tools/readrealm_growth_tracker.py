@@ -86,6 +86,34 @@ THAI_MONTHS = [
     "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
 ]
+THAI_MONTH_TO_NUM = {m: idx + 1 for idx, m in enumerate(THAI_MONTHS)}
+
+
+def normalize_monthly_sales_2026(raw_monthly: Optional[Dict[str, Any]], year: int = 2026) -> Dict[str, float]:
+    """Normalize monthly sales dict (Thai month names or YYYY-MM) to standard YYYY-01..YYYY-12 keys."""
+    result = {f"{year}-{m:02d}": 0.0 for m in range(1, 13)}
+    if not isinstance(raw_monthly, dict):
+        return result
+    for k, v in raw_monthly.items():
+        try:
+            val = round(float(v or 0.0), 2)
+        except (ValueError, TypeError):
+            val = 0.0
+        k_str = str(k).strip()
+        if k_str in result:
+            result[k_str] = val
+        elif k_str in THAI_MONTH_TO_NUM:
+            ym_key = f"{year}-{THAI_MONTH_TO_NUM[k_str]:02d}"
+            result[ym_key] = val
+    return result
+
+
+def monthly_2026_to_thai(monthly_2026: Dict[str, float], year: int = 2026) -> Dict[str, float]:
+    """Convert standard YYYY-01..YYYY-12 monthly_sales dict to Thai month names."""
+    return {
+        THAI_MONTHS[m - 1]: round(float(monthly_2026.get(f"{year}-{m:02d}", 0.0) or 0.0), 2)
+        for m in range(1, 13)
+    }
 
 HISTORY_FILE = os.path.join(DATA_DIR, "readrealm_history.json")
 
@@ -1316,7 +1344,7 @@ def fetch_writer_total_sales(cid: str, token: str, acc: Optional[Dict[str, Any]]
 
 
 
-def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, live_html: bool = False, no_cache: bool = False) -> List[Dict[str, Any]]:
+def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80) -> List[Dict[str, Any]]:
     """Fetch complete comics list and latest stats for an account by automating the real visible Google Chrome browser page-by-page and comic-by-comic (mgeko style, zero API calls)."""
     comics_list = []
     now_utc = datetime.now(timezone.utc)
@@ -1446,6 +1474,17 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, li
                 pass
 
         print(f"📄 [{acc['name']}] กำลังกวาดรายชื่อการ์ตูนทีละหน้าจาก DOM...", flush=True)
+        _ss_dir = os.environ.get("PROOF_SCREENSHOT_DIR")
+        if _ss_dir and os.path.isdir(_ss_dir):
+            try:
+                _ss_path = os.path.join(_ss_dir, f"proof_readrealm_{acc['name'].lower()}.png")
+                page.screenshot(path=_ss_path, full_page=False)
+                _main_ss = os.path.join(_ss_dir, "proof_readrealm.png")
+                if not os.path.exists(_main_ss) or acc['name'].lower() == 'lionking':
+                    page.screenshot(path=_main_ss, full_page=False)
+                print(f"📸 [{acc['name']}] บันทึกภาพหน้าจอยืนยันสด: {_ss_path}", flush=True)
+            except Exception as _e_ss:
+                print(f"⚠️ [{acc['name']}] Screenshot notice: {_e_ss}", flush=True)
         page_nums = page.evaluate(r"""() => {
             const btns = Array.from(document.querySelectorAll('button, .join-item'));
             const nums = [];
@@ -1548,7 +1587,8 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, li
             comics_list = filter_comics_by_manga_setting(
                 comics_list,
                 title_key="subject",
-                threshold=0.85,
+                threshold=min_match,
+                platform_key="readrealm",
                 platform_name=f"ReadRealm ({acc['name']})"
             )
         except Exception as e_filter:
@@ -1914,7 +1954,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
 
 
 
-def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, force_refresh: bool = False, no_api: bool = False, live_html: bool = False, no_cache: bool = False):
+def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, force_refresh: bool = False, no_api: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80):
 
     now = datetime.now(timezone.utc)
 
@@ -1955,7 +1995,7 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
         try:
 
-            acc_comics = fetch_all_comics_for_account(acc, headless=not use_browser, live_html=live_html, no_cache=no_cache)
+            acc_comics = fetch_all_comics_for_account(acc, headless=not use_browser, live_html=live_html, no_cache=no_cache, min_match=min_match)
 
         except Exception as e:
 
@@ -2098,7 +2138,7 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
     # กรองเฉพาะเรื่องที่ยังเปิดใช้งานใน MangaSetting
     try:
         from manga_matcher import filter_comics_by_manga_setting
-        all_current_comics = filter_comics_by_manga_setting(all_current_comics, title_key="subject", threshold=0.85, platform_name="ReadRealm Snapshot")
+        all_current_comics = filter_comics_by_manga_setting(all_current_comics, title_key="subject", threshold=min_match, platform_name="ReadRealm Snapshot", platform_key="readrealm")
     except Exception:
         pass
 
@@ -2448,21 +2488,27 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
 
 
+    portfolio_monthly_sales = {f"{now.year}-{m:02d}": 0.0 for m in range(1, 13)}
+
     for c in growth_results:
 
         cid = c.get("comic_id")
 
         subj = (c.get("subject") or "").strip()
 
-        m_sales = c.get("monthly_sales") or stats_map.get(cid) or stats_map.get(subj)
+        raw_m_sales = c.get("monthly_sales") or stats_map.get(cid) or stats_map.get(subj) or {}
 
-        if m_sales:
+        norm_m = normalize_monthly_sales_2026(raw_m_sales, year=now.year)
 
-            c["monthly_sales"] = m_sales
+        c["monthly_sales"] = norm_m
 
-        elif "monthly_sales" not in c:
+        c["monthly_sales_th"] = monthly_2026_to_thai(norm_m, year=now.year)
 
-            c["monthly_sales"] = {}
+        for ym_k, ym_v in norm_m.items():
+
+            if ym_k in portfolio_monthly_sales:
+
+                portfolio_monthly_sales[ym_k] = round(portfolio_monthly_sales[ym_k] + ym_v, 2)
 
 
 
@@ -2479,6 +2525,8 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
         "total_sales_portfolio": round(sum(x["total_sales"] for x in growth_results), 2),
 
         "total_views_portfolio": sum(x["total_views"] for x in growth_results),
+
+        "portfolio_monthly_sales": portfolio_monthly_sales,
 
         "lionking_sales": lk_sales,
 
@@ -2615,6 +2663,7 @@ if __name__ == "__main__":
     parser.add_argument("--passcode", type=str, default="10211032", help="GAS Passcode")
     parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
     parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
+    parser.add_argument("--min-match", type=float, default=0.80, help="Minimum title match ratio against MangaSetting (strictly > threshold, default: 0.80)")
 
     args = parser.parse_args()
 
@@ -2644,7 +2693,8 @@ if __name__ == "__main__":
 
         live_html=args.live_html,
 
-        no_cache=args.no_cache
+        no_cache=args.no_cache,
+        min_match=args.min_match
 
     )
 

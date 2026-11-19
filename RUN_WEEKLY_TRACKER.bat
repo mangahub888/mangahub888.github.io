@@ -16,7 +16,7 @@ echo   [1] รันติดตามการเติบโตประจำ
 echo       - ดึง Git ล่าสุด [git pull origin main]
 echo       - รัน Google Chrome จริง [เปิดอยู่ด้านหลังสุด HWND_BOTTOM ไม่แย่งโฟกัส]
 echo       - ระบบ Adaptive Anti-Bot Window: หากพบ Turnstile/Captcha จะเด้งขึ้นมาเตือนอัตโนมัติ
-echo       - กรองดึงข้อมูลเฉพาะเรื่องใน MangaSetting [Matching >= 85% ข้ามโปรเจกต์ที่ลบแล้ว]
+echo       - กรองดึงข้อมูลเฉพาะเรื่องใน MangaSetting [Matching ^> 80%% ข้ามโปรเจกต์ที่ลบแล้ว]
 echo       - สกัดข้อมูลสดจาก Live DOM 3 แพลตฟอร์ม [ReadRealm + Kairew + Chaply]
 echo       - ซิงค์ 'สมุดบันทึกต้นทุน and PnL' สองเดือนล่าสุด [เดือนก่อนหน้า + เดือนปัจจุบัน]
 echo       - สรุปภาพรวมและ Build Frontend Production
@@ -47,7 +47,7 @@ echo       - Kairew [stat/{book_id} ยอดขายและกำไรส�
 echo       - Chaply [แท็บจัดการตอน 50 รายการ/หน้า + Timeline 7 วัน]
 echo       * หน้าต่าง Chrome จะทำงานอยู่หลังสุดจอ ไม่รบกวนการทำงาน
 echo =====================================================================
-python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache
+python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
 set TRACKER_EXIT=%ERRORLEVEL%
 if %TRACKER_EXIT% NEQ 0 goto TRACKER_WARN
 goto SYNC_WEEKLY
@@ -60,7 +60,7 @@ echo       - Kairew [stat/{book_id} ยอดขายและกำไรส�
 echo       - Chaply [แท็บจัดการตอน 50 รายการ/หน้า + Timeline 7 วัน]
 echo       * หน้าต่าง Chrome จะทำงานอยู่หลังสุดจอ ไม่รบกวนการทำงาน
 echo =====================================================================
-python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache
+python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
 set TRACKER_EXIT=%ERRORLEVEL%
 if %TRACKER_EXIT% NEQ 0 goto TRACKER_WARN
 goto SYNC_ALL
