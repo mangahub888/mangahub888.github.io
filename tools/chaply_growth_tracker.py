@@ -773,6 +773,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
                     page.goto(edit_url, wait_until="domcontentloaded")
                     set_browser_window_bottom_most("chaply")
                     check_and_handle_antibot_or_login(page, platform_name=f"Chaply ({title})")
+                    page.wait_for_timeout(2200)
 
                     # Click จัดการตอน tab to render the episode list table visually (strict tab/button selector)
                     try:
