@@ -2009,7 +2009,7 @@ export function FinancialsView({
 
       .sort((a, b) => b.profit - a.profit)
 
-      .slice(0, 5);
+      .slice(0, 10);
 
     const topLosses = sortedRank
 
@@ -2017,7 +2017,7 @@ export function FinancialsView({
 
       .sort((a, b) => a.profit - b.profit)
 
-      .slice(0, 5);
+      .slice(0, 10);
 
     const finalSummaryRev = reconciledMonthData.hasBudgetRevenue
       ? reconciledMonthData.totalRev
@@ -4514,7 +4514,7 @@ export function FinancialsView({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-3">
                     <p className="text-xs font-semibold text-emerald-400">
-                      🏆 5 อันดับกำไรสูงสุด
+                      🏆 10 อันดับกำไรสูงสุด
                     </p>
 
                     {summary.topProfits.length === 0 ? (
