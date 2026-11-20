@@ -1344,7 +1344,7 @@ def fetch_writer_total_sales(cid: str, token: str, acc: Optional[Dict[str, Any]]
 
 
 
-def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80) -> List[Dict[str, Any]]:
+def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80, all_months_dom: bool = False) -> List[Dict[str, Any]]:
     """Fetch complete comics list and latest stats for an account by automating the real visible Google Chrome browser page-by-page and comic-by-comic (mgeko style, zero API calls)."""
     comics_list = []
     now_utc = datetime.now(timezone.utc)
@@ -1669,24 +1669,39 @@ def fetch_all_comics_for_account(acc: Dict[str, Any], headless: bool = False, li
                                     th_m = THAI_MONTHS[m_idx]
                                     m_dict[th_m] = round(float(m_val or 0.0), 2)
 
-                # Fallback: If getYearSaleReport wasn't in cache, fetch it directly in browser context
-                cur_year_be = now_dt.year + 543
-                if not any("getYearSaleReport" in u for u in analytics_cache):
-                    try:
-                        tok = tokens[-1] if tokens else (acc.get("_cached_token") or "")
-                        if tok:
-                            yr_res = page.evaluate("""async ([tok, cid, yr]) => {
-                                const res = await fetch(`https://api-writer.readrealm.co/writer/comics/analytics/getYearSaleReport?year=${yr}&comic_ID=${cid}`, {
-                                    headers: { 'Authorization': tok }
-                                });
-                                return await res.json();
-                            }""", [tok, cid, cur_year_be])
-                            if yr_res and isinstance(yr_res.get("data"), list):
-                                for m_idx, m_val in enumerate(yr_res["data"]):
-                                    if m_idx < len(THAI_MONTHS):
-                                        m_dict[THAI_MONTHS[m_idx]] = round(float(m_val or 0.0), 2)
-                    except Exception:
-                        pass
+                # Strictly No-API: Direct fetch() to getYearSaleReport is intentionally disabled.
+                # Only DOM text and passively captured browser responses are used.
+
+                # Mode 2 (--all-months-dom): Click each month in 'ข้อมูลประจำเดือน' dropdown
+                # and read exact 'ยอดขายรวมรายเดือน' directly from DOM under the first chart.
+                if all_months_dom:
+                    for m_idx in range(now_dt.month):
+                        th_m = THAI_MONTHS[m_idx]
+                        try:
+                            sel_elem = page.locator("select").first
+                            if sel_elem.count():
+                                sel_elem.select_option(label=th_m)
+                            else:
+                                # Click dropdown button showing any Thai month name
+                                cur_btn = page.locator("button:has-text('มกราคม'), button:has-text('กุมภาพันธ์'), button:has-text('มีนาคม'), button:has-text('เมษายน'), button:has-text('พฤษภาคม'), button:has-text('มิถุนายน'), button:has-text('กรกฎาคม'), button:has-text('สิงหาคม'), button:has-text('กันยายน'), button:has-text('ตุลาคม'), button:has-text('พฤศจิกายน'), button:has-text('ธันวาคม')").first
+                                if cur_btn.count():
+                                    cur_btn.click(timeout=2000)
+                                    page.wait_for_timeout(350)
+                                    opt_m = page.locator(f"text={th_m}").first
+                                    if opt_m.count():
+                                        opt_m.click(timeout=2000)
+                            page.wait_for_timeout(1200)
+                            dom_m_val = page.evaluate("""() => {
+                                const txt = document.body.innerText || '';
+                                const m = txt.match(/ยอดขายรวมรายเดือน\\s*:\\s*(?:[^\\d]*)([\\d,]+(?:\\.\\d+)?)/);
+                                return m ? parseFloat(m[1].replace(/,/g, '')) : null;
+                            }""")
+                            if dom_m_val is not None:
+                                m_dict[th_m] = round(float(dom_m_val), 2)
+                                if th_m == cur_month_th:
+                                    month_sales = m_dict[th_m]
+                        except Exception:
+                            pass
 
                 if tot_sales > 0:
                     c["total_sales"] = tot_sales
@@ -1954,7 +1969,7 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
 
 
 
-def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, force_refresh: bool = False, no_api: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80):
+def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: str = "10211032", use_browser: bool = True, force_refresh: bool = False, no_api: bool = False, live_html: bool = False, no_cache: bool = False, min_match: float = 0.80, all_months_dom: bool = False):
 
     now = datetime.now(timezone.utc)
 
@@ -1995,7 +2010,7 @@ def run_growth_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
 
         try:
 
-            acc_comics = fetch_all_comics_for_account(acc, headless=not use_browser, live_html=live_html, no_cache=no_cache, min_match=min_match)
+            acc_comics = fetch_all_comics_for_account(acc, headless=not use_browser, live_html=live_html, no_cache=no_cache, min_match=min_match, all_months_dom=all_months_dom)
 
         except Exception as e:
 
@@ -2664,6 +2679,7 @@ if __name__ == "__main__":
     parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
     parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
     parser.add_argument("--min-match", type=float, default=0.80, help="Minimum title match ratio against MangaSetting (strictly > threshold, default: 0.80)")
+    parser.add_argument("--all-months-dom", action="store_true", default=False, help="Click each month in dropdown and read exact 'ยอดขายรวมรายเดือน' under the first chart")
 
     args = parser.parse_args()
 
@@ -2693,7 +2709,7 @@ if __name__ == "__main__":
         live_html=args.live_html,
 
         no_cache=args.no_cache,
-        min_match=args.min_match
-
+        min_match=args.min_match,
+        all_months_dom=args.all_months_dom
     )
 

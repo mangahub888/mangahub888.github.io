@@ -55,7 +55,7 @@ goto BUILD_STEP
 echo =====================================================================
 echo [2/5] โหมด 2: ดึงย้อนหลังทุกเดือนของ 2 แพลตฟอร์ม (ReadRealm + Kairew)...
 echo =====================================================================
-python tools\multi_platform_tracker.py --platform readrealm --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
+python tools\multi_platform_tracker.py --platform readrealm --all-months-dom --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
 python tools\multi_platform_tracker.py --platform kairew --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
 set TRACKER_EXIT=%ERRORLEVEL%
 if %TRACKER_EXIT% NEQ 0 echo [WARNING] การดึงข้อมูลเสร็จสิ้นด้วยรหัส: %TRACKER_EXIT%

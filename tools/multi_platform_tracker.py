@@ -497,6 +497,7 @@ def main():
     parser.add_argument("--live-html", action="store_true", default=False, help="Force direct live HTML DOM scraping, skip local JSON cache fallback")
     parser.add_argument("--no-cache", action="store_true", default=False, help="Disable reading or falling back to local JSON cache files")
     parser.add_argument("--min-match", type=float, default=DEFAULT_MIN_MATCH, help="Minimum title match ratio against MangaSetting (strictly > threshold, default: 0.80)")
+    parser.add_argument("--all-months-dom", action="store_true", default=False, help="Pass --all-months-dom to ReadRealm to read each month under the first chart")
     args = parser.parse_args()
 
     # Refresh active MangaSetting whitelist from GAS once before running scrapers
@@ -534,6 +535,8 @@ def main():
                 rr_args.append("--live-html")
             if args.no_cache:
                 rr_args.append("--no-cache")
+            if args.all_months_dom:
+                rr_args.append("--all-months-dom")
             if args.send_gas:
                 rr_args.append("--sync-gas")
                 rr_args.extend(["--gas-url", args.gas_url or DEFAULT_GAS_URL])
