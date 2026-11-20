@@ -1710,17 +1710,24 @@ export function FinancialsView({
       return Number.isFinite(sum) ? sum : 0;
     };
 
-    // Default & Selected Sorting: Profit DESC (Highest profit on top, losses at bottom)
-    list = [...list].sort((a, b) => {
-      const revA = getEffectiveSaleRevenue(a);
-      const rawCostA = parseFloat(a.totalcost) || 0;
-      const costA = deductWithholdingTax ? Math.round(rawCostA * 0.97 * 100) / 100 : rawCostA;
-      const profitA = revA - costA;
+    // Pre-compute exact display revenue & profit once so sorting and rendering ALWAYS use the exact same numbers
+    const enriched = list.map((item) => {
+      const effRev = getEffectiveSaleRevenue(item);
+      const rawC = parseFloat(item.totalcost) || 0;
+      const effCost = deductWithholdingTax ? Math.round(rawC * 0.97 * 100) / 100 : rawC;
+      const effProfit = Math.round((effRev - effCost) * 100) / 100;
+      return { ...item, _effectiveRev: effRev, _effectiveCost: effCost, _effectiveProfit: effProfit };
+    });
 
-      const revB = getEffectiveSaleRevenue(b);
-      const rawCostB = parseFloat(b.totalcost) || 0;
-      const costB = deductWithholdingTax ? Math.round(rawCostB * 0.97 * 100) / 100 : rawCostB;
-      const profitB = revB - costB;
+    // Default & Selected Sorting: Profit DESC (Highest profit on top, losses at bottom)
+    enriched.sort((a, b) => {
+      const revA = a._effectiveRev;
+      const costA = a._effectiveCost;
+      const profitA = a._effectiveProfit;
+
+      const revB = b._effectiveRev;
+      const costB = b._effectiveCost;
+      const profitB = b._effectiveProfit;
 
       if (salesSortBy === "profit") {
         return salesSortOrder === "desc" ? profitB - profitA : profitA - profitB;
@@ -1747,7 +1754,7 @@ export function FinancialsView({
       return salesSortOrder === "desc" ? dateB - dateA : dateA - dateB;
     });
 
-    return list;
+    return enriched;
   }, [resolvedSalesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms, deductWithholdingTax, platformBreakdownMap, allMangaPlatformsMap]);
 
   // Dynamic Monthly Reconciliation Data based on focused month
@@ -4904,8 +4911,8 @@ export function FinancialsView({
 
                       const sheetRev = parseFloat(sale.revenue) || 0;
                       const monthlyExactSum = Math.round(((rrExists ? rrMonthSales : 0) + (kwExists ? krMonthSales : 0) + (chExists ? chMonthSales : 0)) * 100) / 100;
-                      const rev = sheetRev > 0 ? sheetRev : monthlyExactSum;
-                      const profit = Math.round((rev - cost) * 100) / 100;
+                      const rev = typeof sale._effectiveRev === "number" ? sale._effectiveRev : (sheetRev > 0 ? sheetRev : monthlyExactSum);
+                      const profit = typeof sale._effectiveProfit === "number" ? sale._effectiveProfit : Math.round((rev - cost) * 100) / 100;
 
                       if (isRrExact || isKrExact || isChExact) {
                         // Priority 1: Use verified round sales directly.
