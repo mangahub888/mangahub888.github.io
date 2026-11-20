@@ -1286,7 +1286,7 @@ export function QueueView({
                       {(() => {
                         const isPratchaya = String(q.translatorname || (manga && manga.lockedtranslator) || "").toLowerCase().includes("pratchaya");
                         const extStr = String(q.extractorname || "").toLowerCase();
-                        const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus);
+                        const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && String(q.extractstatus || "").trim() === "เสร็จแล้ว";
                         const isOcrDoing = String(q.ocrstatus || "").trim() === "กำลังทำ";
                         const effectiveOcrStatus = ((isPratchaya || isKikExtractDone) && !isOcrDoing)
                           ? "skip"

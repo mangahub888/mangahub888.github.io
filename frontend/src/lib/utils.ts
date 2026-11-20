@@ -259,7 +259,7 @@ export function isQueueStepDone(q: any, step: string, manga?: any): boolean {
   ).toLowerCase().includes("pratchaya")
 
   const extStr = String(q.extractorname || "").toLowerCase()
-  const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && isStepDone(q.extractstatus)
+  const isKikExtractDone = (extStr.includes("kikuk") || extStr.includes("kik")) && String(q.extractstatus || "").trim() === "เสร็จแล้ว"
 
   switch (step) {
     case "upload":
