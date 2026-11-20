@@ -1699,18 +1699,19 @@ export function FinancialsView({
       }
       const readVal = (mMap: any) => {
         if (!mMap || typeof mMap !== "object") return 0;
-        if (rMonth && typeof mMap[rMonth] === "number") return Number(mMap[rMonth]);
-        if (rThaiMonth && typeof mMap[rThaiMonth] === "number") return Number(mMap[rThaiMonth]);
+        if (rMonth && mMap[rMonth] !== undefined && Number.isFinite(Number(mMap[rMonth]))) return Number(mMap[rMonth]);
+        if (rThaiMonth && mMap[rThaiMonth] !== undefined && Number.isFinite(Number(mMap[rThaiMonth]))) return Number(mMap[rThaiMonth]);
         return 0;
       };
       const rrV = readVal(breakdown?.readrealm_monthly || platM?.readrealm?.monthly_sales);
       const krV = readVal(breakdown?.kairew_monthly || platM?.kairew?.monthly_sales);
       const chV = readVal(breakdown?.chaply_monthly || (platM?.chaply as any)?.monthly_sales);
-      return Math.round((rrV + krV + chV) * 100) / 100;
+      const sum = Math.round((rrV + krV + chV) * 100) / 100;
+      return Number.isFinite(sum) ? sum : 0;
     };
 
     // Default & Selected Sorting: Profit DESC (Highest profit on top, losses at bottom)
-    list.sort((a, b) => {
+    list = [...list].sort((a, b) => {
       const revA = getEffectiveSaleRevenue(a);
       const rawCostA = parseFloat(a.totalcost) || 0;
       const costA = deductWithholdingTax ? Math.round(rawCostA * 0.97 * 100) / 100 : rawCostA;
@@ -1747,7 +1748,7 @@ export function FinancialsView({
     });
 
     return list;
-  }, [resolvedSalesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms, deductWithholdingTax]);
+  }, [resolvedSalesList, yearFilter, selectedLedgerMonth, salesSortBy, salesSortOrder, salesSearchText, salesPlatformFilter, getSalePlatforms, deductWithholdingTax, platformBreakdownMap, allMangaPlatformsMap]);
 
   // Dynamic Monthly Reconciliation Data based on focused month
   const reconciledMonthData = React.useMemo(() => {
