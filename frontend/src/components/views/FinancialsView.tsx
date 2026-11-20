@@ -1938,13 +1938,47 @@ export function FinancialsView({
     const profitMap: Record<string, number> = {};
 
     filteredSales.forEach((s) => {
-      const rev = parseFloat(s.revenue) || 0;
+      const sheetRev = parseFloat(s.revenue) || 0;
+      let rev = sheetRev;
+      if (rev <= 0) {
+        const normKey = normalizeMangaTitle(s.seriesname);
+        const breakdown = normKey ? platformBreakdownMap.get(normKey) : null;
+        const platM = normKey ? allMangaPlatformsMap.get(normKey) : null;
+        let rMonth = "";
+        if (s.month) {
+          const mM = String(s.month).match(/^(\d{4}-\d{2})/);
+          if (mM) rMonth = mM[1];
+        }
+        if (!rMonth && s.date) {
+          const dM = String(s.date).match(/^(\d{4}-\d{2})/);
+          if (dM) rMonth = dM[1];
+        }
+        if (!rMonth && selectedLedgerMonth && selectedLedgerMonth !== "all") {
+          const sM = String(selectedLedgerMonth).match(/^(\d{4}-\d{2})/);
+          if (sM) rMonth = sM[1];
+        }
+        let rThaiMonth = "";
+        if (rMonth) {
+          const mIdx = parseInt(rMonth.split("-")[1], 10) - 1;
+          if (mIdx >= 0 && mIdx < 12) rThaiMonth = THAI_MONTHS[mIdx];
+        }
+        const readVal = (mMap: any) => {
+          if (!mMap || typeof mMap !== "object") return 0;
+          if (rMonth && typeof mMap[rMonth] === "number") return Number(mMap[rMonth]);
+          if (rThaiMonth && typeof mMap[rThaiMonth] === "number") return Number(mMap[rThaiMonth]);
+          return 0;
+        };
+        const rrV = readVal(breakdown?.readrealm_monthly || platM?.readrealm?.monthly_sales);
+        const krV = readVal(breakdown?.kairew_monthly || platM?.kairew?.monthly_sales);
+        const chV = readVal(breakdown?.chaply_monthly || (platM?.chaply as any)?.monthly_sales);
+        rev = Math.round((rrV + krV + chV) * 100) / 100;
+      }
 
       const rawCost = parseFloat(s.totalcost) || 0;
 
       const cost = deductWithholdingTax ? Math.round(rawCost * 0.97 * 100) / 100 : rawCost;
 
-      const profit = rev - cost;
+      const profit = Math.round((rev - cost) * 100) / 100;
 
       totalRev += rev;
 
