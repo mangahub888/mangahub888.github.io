@@ -3097,7 +3097,7 @@ export function FinancialsView({
                   </TableRow>
                 </TableHeader>
 
-                <TableBody>
+                <TableBody key={`${selectedLedgerMonth}-${salesSortBy}-${salesSortOrder}`}>
                   {filteredComics.length === 0 ? (
                     <TableRow>
                       <TableCell
@@ -3938,7 +3938,7 @@ export function FinancialsView({
                   </TableRow>
                 </TableHeader>
 
-                <TableBody>
+                <TableBody key={`${selectedLedgerMonth}-${salesSortBy}-${salesSortOrder}`}>
                   {filteredGroupedComics.length === 0 ? (
                     <TableRow>
                       <TableCell
@@ -4829,7 +4829,7 @@ export function FinancialsView({
                   </TableRow>
                 </TableHeader>
 
-                <TableBody>
+                <TableBody key={`${selectedLedgerMonth}-${salesSortBy}-${salesSortOrder}`}>
                   {filteredSales.length === 0 ? (
                     <TableRow>
                       <TableCell
@@ -4961,7 +4961,7 @@ export function FinancialsView({
 
                       return (
                         <TableRow
-                          key={sale._rowIndex || idx}
+                          key={`sale-${sale._rowIndex ?? "x"}-${sale.date ?? ""}-${idx}`}
                           className={`relative transition-colors hover:bg-[#151d2f]/50 hover:z-30 ${
                             isUrgent
                               ? "bg-red-950/20 border-l-2 border-l-red-500 hover:bg-red-950/30"
