@@ -280,6 +280,9 @@ function doPost(e) {
       case 'BATCH_UPDATE_MANGA_PLATFORMS':
         result = batchUpdateMangaPlatforms(payload.platformsMap, payload.defaultPlatforms);
         break;
+      case 'BATCH_UPDATE_MANGA_PLATFORM_URLS':
+        result = batchUpdateMangaPlatformUrls(payload.urlsMap);
+        break;
       case 'DELETE_MANGA':
         result = deleteManga(payload.id);
         break;
@@ -290,6 +293,9 @@ function doPost(e) {
         break;
       case 'BATCH_SET_KIKKUK_OCR_SKIP':
         result = batchSetKikkukDoneOcrToSkip();
+        break;
+      case 'BATCH_SET_KIKKUK_PENDING_EXTRACT_SKIP':
+        result = batchSetKikkukPendingExtractToSkip();
         break;
       case 'BATCH_SET_DEFAULT_TRANSLATOR_RE':
         result = batchSetDefaultTranslatorRe();
@@ -876,6 +882,10 @@ function ensureSheetHeaders(sheet, name) {
 
       ensureCol('ScanGroup', '');
       ensureCol('Platforms', '');
+      ensureCol('ReadRealmURL', '');
+      ensureCol('ReadRealmAccount', '');
+      ensureCol('KairewURL', '');
+      ensureCol('ChaplyURL', '');
       ensureCol('ExcludeTranslatePayout', false);
     }
   }
@@ -1092,6 +1102,12 @@ function parseBooleanParam(val, fallback = false) {
 /**
  * READ: ดึงข้อมูลและแปลงเป็น Object ตามหัวตาราง
  */
+function getMangaById(mangaId) {
+  if (mangaId === undefined || mangaId === null || String(mangaId).trim() === '') return null;
+  const list = getMangaList();
+  return list.find(m => String(m.mangaid) === String(mangaId)) || null;
+}
+
 function getMangaList() {
   try {
     const sheet = getSheet();
@@ -1490,6 +1506,76 @@ function batchUpdateMangaPlatforms(platformsMap, defaultPlatforms) {
   }
 }
 
+/**
+ * BATCH UPDATE: อัปเดตลิงก์แพลตฟอร์ม (ReadRealmURL, KairewURL, ChaplyURL) สำหรับหลายมังงะพร้อมกัน
+ */
+function batchUpdateMangaPlatformUrls(urlsMap) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet();
+    ensureSheetHeaders(sheet, SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { success: false, message: 'No manga found' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const colDefs = [
+      { key: 'readrealm', headerName: 'ReadRealmURL', lower: 'readrealmurl' },
+      { key: 'readrealm_account', headerName: 'ReadRealmAccount', lower: 'readrealmaccount' },
+      { key: 'kairew', headerName: 'KairewURL', lower: 'kairewurl' },
+      { key: 'chaply', headerName: 'ChaplyURL', lower: 'chaplyurl' }
+    ];
+
+    const colIndices = {};
+    colDefs.forEach(def => {
+      let idx = headers.indexOf(def.lower);
+      if (idx === -1) {
+        const newCol = sheet.getLastColumn() + 1;
+        sheet.getRange(1, newCol).setValue(def.headerName);
+        if (sheet.getLastRow() > 1) {
+          sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue('');
+        }
+        idx = newCol - 1;
+        headers.push(def.lower);
+      }
+      colIndices[def.key] = idx;
+    });
+
+    let updatedCount = 0;
+    const colValues = { readrealm: [], readrealm_account: [], kairew: [], chaply: [] };
+    for (let i = 1; i < data.length; i++) {
+      const mid = String(data[i][0]).trim();
+      const entry = (urlsMap && urlsMap.hasOwnProperty(mid)) ? urlsMap[mid] : null;
+      if (entry) updatedCount++;
+
+      colDefs.forEach(def => {
+        const existingVal = data[i][colIndices[def.key]] || '';
+        const nextVal = (entry && entry[def.key] !== undefined && entry[def.key] !== null)
+          ? String(entry[def.key]).trim()
+          : existingVal;
+        colValues[def.key].push([nextVal]);
+      });
+    }
+
+    colDefs.forEach(def => {
+      if (colValues[def.key].length > 0) {
+        sheet.getRange(2, colIndices[def.key] + 1, colValues[def.key].length, 1).setValues(colValues[def.key]);
+      }
+    });
+
+    invalidateCache('mangaList');
+    return {
+      success: true,
+      updatedCount: updatedCount,
+      list: getMangaList()
+    };
+  } catch (err) {
+    return { error: 'Batch Update Manga Platform URLs Failed: ' + err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function deleteManga(id) {
   const lock = LockService.getScriptLock();
   try {
@@ -1677,7 +1763,7 @@ function addQueue(queueData) {
         if (queueData.extractstatus && String(queueData.extractstatus).trim() !== '') {
           return queueData.extractstatus;
         }
-        return 'รอเริ่ม';
+        return 'skip';
       }
       if (header === 'translatestatus') return queueData.translatestatus || 'รอเริ่ม';
       if (header === 'typesetstatus') return queueData.typesetstatus || 'รอเริ่ม';
@@ -6875,7 +6961,7 @@ function uploadChapterStitchedPart(payload) {
             uploadername: uploaderName,
             worklink: workLink,
             note: payload.note || ('KuaiKan VIP Concat รวมเป็น ' + totalParts + ' หน้า ลง แปลจนเมื่อย'),
-            extractstatus: 'รอเริ่ม',
+            extractstatus: payload.extractstatus || 'skip',
             extractorname: 'kikkuk'
           });
         }
@@ -7070,7 +7156,7 @@ function downloadKuaikanChapterToDrive(payload) {
             uploadername: uploaderName,
             worklink: workLink,
             note: (payload && payload.note) || ('Auto KuaiKan VIP DL (ตอน: ' + (testRes ? testRes.title : chapter) + ') ลง แปลจนเมื่อย'),
-            extractstatus: 'รอเริ่ม',
+            extractstatus: (payload && payload.extractstatus) || 'skip',
             extractorname: 'kikkuk'
           });
         }
@@ -10841,6 +10927,53 @@ function batchSetKikkukDoneOcrToSkip() {
     return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
   } catch (err) {
     console.error('batchSetKikkukDoneOcrToSkip error:', err);
+    return { error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * อัปเดตคิวงานทั้งหมดที่ขั้นตอน 3. QC ดึงคำ (ExtractStatus) ของ Kikkuk ยังไม่ได้เริ่มดำเนินการ ('รอเริ่ม' หรือว่าง) ให้เป็น 'skip'
+ */
+function batchSetKikkukPendingExtractToSkip() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+    const sheet = getSheet(QUEUE_SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { count: 0, message: 'No data' };
+
+    const headers = data[0].map(h => h.toString().toLowerCase().trim());
+    const extractorColIndex = headers.indexOf('extractorname');
+    const extractStatusColIndex = headers.indexOf('extractstatus');
+    if (extractStatusColIndex === -1) return { error: 'ExtractStatus column not found' };
+
+    let updatedCount = 0;
+    const extractValues = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const extractor = extractorColIndex !== -1 ? String(data[i][extractorColIndex] || '').toLowerCase().trim() : '';
+      const currentExtractStatus = String(data[i][extractStatusColIndex] || '').trim();
+
+      const isKikkuk = extractor === '' || extractor.includes('kikuk') || extractor.includes('kikkuk');
+      const isNotStarted = currentExtractStatus === '' || currentExtractStatus === 'รอเริ่ม';
+
+      let newStatus = currentExtractStatus;
+      if (isKikkuk && isNotStarted) {
+        newStatus = 'skip';
+        updatedCount++;
+      }
+      extractValues.push([newStatus]);
+    }
+
+    if (updatedCount > 0) {
+      sheet.getRange(2, extractStatusColIndex + 1, extractValues.length, 1).setValues(extractValues);
+    }
+
+    return { success: true, updatedCount: updatedCount, totalRows: data.length - 1 };
+  } catch (err) {
+    console.error('batchSetKikkukPendingExtractToSkip error:', err);
     return { error: err.toString() };
   } finally {
     lock.releaseLock();

@@ -2,31 +2,29 @@
 chcp 65001 >nul
 set PYTHONUTF8=1
 set PYTHONIOENCODING=utf-8
-title MangaHub Weekly 1-Click Multi-Platform Tracker and PnL Sync
+title MangaHub Multi-Platform Tracker and PnL Sync
 
 cd /d "%~dp0."
 
 echo =====================================================================
-echo    MangaHub Production Weekly Tracker and PnL Sync System
+echo    MangaHub Production Multi-Platform Tracker and PnL Sync System
+echo    (Strictly Real Google Chrome / No-Headless / No-API)
 echo =====================================================================
 echo.
-echo เลือกระบบการทำงาน [กด Enter เพื่อเลือกรันข้อ 1 ทันที]:
+echo เลือกโหมดการทำงาน [กด Enter เพื่อเลือกรันข้อ 1 ทันที]:
 echo.
-echo   [1] รันติดตามการเติบโตประจำสัปดาห์ [Live DOM + Adaptive Anti-Bot Window] [แนะนำ]:
-echo       - ดึง Git ล่าสุด [git pull origin main]
-echo       - รัน Google Chrome จริง [เปิดอยู่ด้านหลังสุด HWND_BOTTOM ไม่แย่งโฟกัส]
-echo       - ระบบ Adaptive Anti-Bot Window: หากพบ Turnstile/Captcha จะเด้งขึ้นมาเตือนอัตโนมัติ
-echo       - กรองดึงข้อมูลเฉพาะเรื่องใน MangaSetting [Matching ^> 80%% ข้ามโปรเจกต์ที่ลบแล้ว]
-echo       - สกัดข้อมูลสดจาก Live DOM 3 แพลตฟอร์ม [ReadRealm + Kairew + Chaply]
-echo       - ซิงค์ 'สมุดบันทึกต้นทุน and PnL' สองเดือนล่าสุด [เดือนก่อนหน้า + เดือนปัจจุบัน]
-echo       - สรุปภาพรวมและ Build Frontend Production
+echo   [1] ออโต้ดึงเดือนปัจจุบัน + Chaply ล่าสุด [ค่าเริ่มต้น]:
+echo       - ดึงข้อมูลสดเดือนปัจจุบัน (ReadRealm + Kairew) + เก็บ Snapshot Chaply ล่าสุด
+echo       - คำนวณและซิงก์ความแตกต่างจากรอบก่อนเฉพาะของ Chaply (run_deltas -^> เดือนปัจจุบัน)
+echo       - ซิงค์ PnL รอบล่าสุด + สร้าง MONTHLY_SUMMARY_2026.md + Build ^& Push
 echo.
-echo   [2] รันติดตามประจำสัปดาห์ + ซิงค์ PnL ครบทุกเดือน [มกราคม - ปัจจุบัน 2026]
-echo.
-echo   [3] ซิงค์เฉพาะ PnL อย่างเดียว [คำนวณและกระทบยอด Google Sheets ทันที ไม่เปิดเบราว์เซอร์]
+echo   [2] ดึงย้อนหลังทุกเดือนของ 2 แพลตฟอร์ม (ReadRealm + Kairew):
+echo       - ดึงข้อมูลรายเดือนย้อนหลังครบทุกเดือน (2026-01 ถึง 2026-12) เฉพาะ ReadRealm + Kairew
+echo       - ไม่แตะ Chaply (ป้องกันกระทบ Snapshot สะสม)
+echo       - ซิงค์ PnL ครบทุกเดือนตั้งแต่ ม.ค. 2026 - ปัจจุบัน + Build ^& Push
 echo.
 set "CHOICE=1"
-set /p CHOICE="กรุณาเลือก [1, 2 หรือ 3] (ค่าเริ่มต้น [1]): "
+set /p CHOICE="กรุณาเลือก [1 หรือ 2] (ค่าเริ่มต้น [1]): "
 
 echo.
 echo =====================================================================
@@ -35,63 +33,36 @@ echo =====================================================================
 git pull origin main
 echo.
 
-if "%CHOICE%"=="2" goto RUN_ALL
-if "%CHOICE%"=="3" goto RUN_PNL_ONLY
-goto RUN_WEEKLY
+if "%CHOICE%"=="2" goto RUN_MODE_2
+goto RUN_MODE_1
 
-:RUN_WEEKLY
+:RUN_MODE_1
 echo =====================================================================
-echo [2/5] รัน Google Chrome จริงดึงสถิติสดจาก Live DOM 3 แพลตฟอร์ม...
-echo       - ReadRealm [กล่องรายงานการขายรายเดือน + ยอดสะสม + รายตอน]
-echo       - Kairew [stat/{book_id} ยอดขายและกำไรสุทธิ 12 เดือน]
-echo       - Chaply [แท็บจัดการตอน 50 รายการ/หน้า + Timeline 7 วัน]
-echo       * หน้าต่าง Chrome จะทำงานอยู่หลังสุดจอ ไม่รบกวนการทำงาน
+echo [2/5] โหมด 1: ออโต้ดึงเดือนปัจจุบัน + Chaply ล่าสุด (Chrome จริง / No-API)...
 echo =====================================================================
 python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
 set TRACKER_EXIT=%ERRORLEVEL%
-if %TRACKER_EXIT% NEQ 0 goto TRACKER_WARN
-goto SYNC_WEEKLY
+if %TRACKER_EXIT% NEQ 0 echo [WARNING] การดึงข้อมูลเสร็จสิ้นด้วยรหัส: %TRACKER_EXIT%
 
-:RUN_ALL
-echo =====================================================================
-echo [2/5] รัน Google Chrome จริงดึงสถิติสดจาก Live DOM 3 แพลตฟอร์ม...
-echo       - ReadRealm [กล่องรายงานการขายรายเดือน + ยอดสะสม + รายตอน]
-echo       - Kairew [stat/{book_id} ยอดขายและกำไรสุทธิ 12 เดือน]
-echo       - Chaply [แท็บจัดการตอน 50 รายการ/หน้า + Timeline 7 วัน]
-echo       * หน้าต่าง Chrome จะทำงานอยู่หลังสุดจอ ไม่รบกวนการทำงาน
-echo =====================================================================
-python tools\multi_platform_tracker.py --platform all --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
-set TRACKER_EXIT=%ERRORLEVEL%
-if %TRACKER_EXIT% NEQ 0 goto TRACKER_WARN
-goto SYNC_ALL
-
-:TRACKER_WARN
-echo [WARNING] การดึงข้อมูลแพลตฟอร์มเสร็จสิ้นด้วยรหัส: %TRACKER_EXIT%
-if "%CHOICE%"=="2" goto SYNC_ALL
-goto SYNC_WEEKLY
-
-:SYNC_WEEKLY
 echo.
 echo =====================================================================
-echo [3/5] คำนวณและกระทบยอด 'สมุดบันทึกต้นทุน and PnL' [Google Sheets]...
-echo [INFO] กำลังซิงค์รอบ 2 เดือนล่าสุด...
+echo [3/5] ซิงค์ PnL รอบล่าสุด (เดือนก่อนหน้า + เดือนปัจจุบัน)...
 echo =====================================================================
 python tools\sync_monthly_pnl.py --recent-two
 goto BUILD_STEP
 
-:SYNC_ALL
-echo.
+:RUN_MODE_2
 echo =====================================================================
-echo [3/5] คำนวณและกระทบยอด 'สมุดบันทึกต้นทุน and PnL' [Google Sheets]...
-echo [INFO] กำลังซิงค์ทุกเดือนปี 2026...
+echo [2/5] โหมด 2: ดึงย้อนหลังทุกเดือนของ 2 แพลตฟอร์ม (ReadRealm + Kairew)...
 echo =====================================================================
-python tools\sync_monthly_pnl.py --all-months
-goto BUILD_STEP
+python tools\multi_platform_tracker.py --platform readrealm --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
+python tools\multi_platform_tracker.py --platform kairew --send-gas --passcode 10211032 --browser --no-api --force-refresh --live-html --no-cache --min-match 0.80
+set TRACKER_EXIT=%ERRORLEVEL%
+if %TRACKER_EXIT% NEQ 0 echo [WARNING] การดึงข้อมูลเสร็จสิ้นด้วยรหัส: %TRACKER_EXIT%
 
-:RUN_PNL_ONLY
 echo.
 echo =====================================================================
-echo [2/3] ข้ามการดึงเบราว์เซอร์ - กำลังคำนวณและซิงค์ PnL ไปยัง Google Sheets...
+echo [3/5] ซิงค์ PnL ย้อนหลังครบทุกเดือน (ม.ค. 2026 - ปัจจุบัน)...
 echo =====================================================================
 python tools\sync_monthly_pnl.py --all-months
 goto BUILD_STEP
@@ -112,12 +83,12 @@ echo =====================================================================
 echo [5/5] บันทึกและ Push การเปลี่ยนแปลงทั้งหมดขึ้น GitHub...
 echo =====================================================================
 git add -A
-git commit -m "chore(routine): weekly 7d sales, views and monthly PnL ledger update [skip ci]"
+git commit -m "chore(routine): multi-platform sales, chaply delta and monthly PnL update [skip ci]"
 git push origin main
 
 echo.
 echo =====================================================================
-echo    [SUCCESS] การทำงานประจำสัปดาห์ [Weekly Routine] เสร็จสมบูรณ์แล้ว!
+echo    [SUCCESS] การทำงานเสร็จสมบูรณ์แล้ว!
 echo =====================================================================
 echo.
 pause

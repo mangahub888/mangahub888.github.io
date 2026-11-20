@@ -199,9 +199,31 @@ def compute_weekly_deltas_and_monthly_rollup(
             "latest_snapshot_date": latest_date_str,
         }
 
+    # 1. Consecutive run-to-run deltas (compare every recorded snapshot against the previous one)
+    run_deltas: List[Dict[str, Any]] = []
+    n = len(series)
+    for i in range(1, n):
+        prev_s = series[i - 1]
+        curr_s = series[i]
+        days_span = (curr_s["dt"] - prev_s["dt"]).days
+        sales_delta = round(max(0.0, curr_s["sales"] - prev_s["sales"]), 2)
+        views_delta = max(0, curr_s["views"] - prev_s["views"])
+        ym_key = curr_s["date"][:7]
+        run_deltas.append({
+            "from_date": prev_s["date"],
+            "to_date": curr_s["date"],
+            "days_span": days_span,
+            "month": ym_key,
+            "prev_sales": prev_s["sales"],
+            "curr_sales": curr_s["sales"],
+            "sales_delta": sales_delta,
+            "views_delta": views_delta,
+            "is_baseline": False,
+        })
+
+    # 2. 7-day grouped weekly_deltas summary (backward compatibility)
     weekly_deltas: List[Dict[str, Any]] = []
     anchor_idx = 0
-    n = len(series)
 
     while anchor_idx < n - 1:
         anchor = series[anchor_idx]
@@ -243,12 +265,14 @@ def compute_weekly_deltas_and_monthly_rollup(
             if ym_key < first_ym:
                 monthly_sales[ym_key] = round(val, 2)
 
-    for wd in weekly_deltas:
-        ym_key = wd["month"]
+    # Roll up consecutive run_deltas into their exact calendar month
+    for rd in run_deltas:
+        ym_key = rd["month"]
         if ym_key in monthly_sales:
-            monthly_sales[ym_key] = round(monthly_sales[ym_key] + wd["sales_delta"], 2)
+            monthly_sales[ym_key] = round(monthly_sales[ym_key] + rd["sales_delta"], 2)
 
     return {
+        "run_deltas": run_deltas,
         "weekly_deltas": weekly_deltas,
         "monthly_sales": monthly_sales,
         "monthly_sales_th": monthly_2026_to_thai(monthly_sales, year=year),
@@ -511,10 +535,11 @@ def send_data_to_gas(report_output: Dict[str, Any], gas_url: str, passcode: str 
         return False
 
 def launch_browser_context(headless: bool = False):
-    """Launch Playwright persistent context with real Google Chrome pinned to bottom."""
+    """Launch Playwright persistent context with real Google Chrome pinned to bottom (Strictly No-Headless)."""
+    headless = False  # Enforce strictly No-Headless mode
     profile_dir = os.path.join(BASE_DIR, ".chrome_chaply")
     os.makedirs(profile_dir, exist_ok=True)
-    mode_str = "Headless" if headless else "Google Chrome จริง (หน้าต่างเปิดอยู่ด้านหลังสุด / HWND_BOTTOM ไม่แย่งโฟกัส)"
+    mode_str = "Google Chrome จริง (หน้าต่างเปิดอยู่ด้านหลังสุด / HWND_BOTTOM ไม่แย่งโฟกัส)"
     print(f"🌐 [Chaply] กำลังเปิด {mode_str}...", flush=True)
     p = sync_playwright().start()
     launch_kwargs = {
@@ -732,89 +757,96 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             # Visually navigate to comic edit screen in real Chrome
             try:
                 edit_url = f"https://www.chaply.net/writer/contents/{cid}/edit"
-                page.goto(edit_url, wait_until="domcontentloaded")
-                if not headless:
-                    set_browser_window_bottom_most("chaply")
-                check_and_handle_antibot_or_login(page, platform_name=f"Chaply ({title})")
+                # Passive response listener for episode list loaded naturally by clicking 'จัดการตอน' (No direct API calls)
+                captured_ep_pages = []
+                def _on_ep_response(resp):
+                    try:
+                        if f"/content-episodes/group/{cid}" in resp.url and resp.status == 200:
+                            body = resp.json()
+                            if isinstance(body, dict) and isinstance(body.get("data"), dict):
+                                captured_ep_pages.append(body["data"])
+                    except Exception:
+                        pass
 
-                # Click จัดการตอน tab to render the episode list table visually
+                page.on("response", _on_ep_response)
                 try:
-                    btn = page.locator("button:has-text('จัดการตอน'), a:has-text('จัดการตอน'), div:has-text('จัดการตอน')").first
-                    if btn.count():
-                        btn.click(timeout=800)
-                        page.wait_for_timeout(400)
-                        # Switch pagination to 50 items/page if dropdown exists in DOM
-                        page.evaluate("""() => {
-                            const selects = Array.from(document.querySelectorAll('select'));
-                            for (const s of selects) {
-                                const opt50 = Array.from(s.options).find(o => o.value === '50' || o.text.includes('50'));
-                                if (opt50) {
-                                    s.value = opt50.value;
-                                    s.dispatchEvent(new Event('change', { bubbles: true }));
-                                    break;
-                                }
-                            }
-                        }""")
-                except Exception:
-                    pass
+                    page.goto(edit_url, wait_until="domcontentloaded")
+                    set_browser_window_bottom_most("chaply")
+                    check_and_handle_antibot_or_login(page, platform_name=f"Chaply ({title})")
 
-                # Extract episodes inside active page context
-                page_idx = 0
-                while True:
-                    ep_res = page.evaluate("""async ({cid, page_idx, token}) => {
-                        try {
-                            const r = await fetch('https://api.chaply.net/api/writer/content-episodes/group/' + cid + '?pageIndex=' + page_idx + '&pageSize=500&includeSales=true', {
-                                headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+                    # Click จัดการตอน tab to render the episode list table visually (strict tab/button selector)
+                    try:
+                        btn = page.locator("[role='tab']:has-text('จัดการตอน'), button:has-text('จัดการตอน')").first
+                        if btn.count():
+                            btn.click(timeout=3000)
+                            page.wait_for_timeout(2500)
+                            # Switch pagination to 50 items/page via Radix combobox button (not native <select>)
+                            try:
+                                combo = page.locator("button[role='combobox']:has-text('10')").last
+                                if combo.count():
+                                    combo.scroll_into_view_if_needed()
+                                    combo.click(timeout=2000)
+                                    page.wait_for_timeout(500)
+                                    opt50 = page.locator("[role='option']:has-text('50')").first
+                                    if opt50.count():
+                                        opt50.click(timeout=2000)
+                                        page.wait_for_timeout(1500)
+                            except Exception:
+                                pass
+
+                            # Click 'Next' pagination until all episode pages are loaded naturally
+                            for _pg in range(30):
+                                try:
+                                    next_btn = page.locator("a:has-text('Next'), button:has-text('Next')").last
+                                    if not next_btn.count():
+                                        break
+                                    is_disabled = next_btn.evaluate("el => el.disabled || el.getAttribute('aria-disabled') === 'true' || el.className.includes('pointer-events-none') || el.className.includes('opacity-50')")
+                                    if is_disabled:
+                                        break
+                                    next_btn.scroll_into_view_if_needed()
+                                    next_btn.click(timeout=2000)
+                                    page.wait_for_timeout(1200)
+                                except Exception:
+                                    break
+                    except Exception:
+                        pass
+
+                    # Collect passively captured episode data from natural page navigation
+                    seen_ep_ids = set()
+                    for data_box in captured_ep_pages:
+                        for item in data_box.get("items", []):
+                            ep_key = str(item.get("id") or item.get("index") or "")
+                            if ep_key and ep_key not in seen_ep_ids:
+                                seen_ep_ids.add(ep_key)
+                                all_ep_items.append(item)
+                        pag = data_box.get("pagination", {})
+                        if total_items_from_api is None and "totalItems" in pag:
+                            try:
+                                total_items_from_api = int(pag["totalItems"])
+                            except (ValueError, TypeError):
+                                pass
+
+                    # Fallback: parse visible episode rows directly from DOM table if passive capture was empty
+                    if not all_ep_items:
+                        dom_rows = page.evaluate("""() => {
+                            const rows = Array.from(document.querySelectorAll('table tbody tr'));
+                            return rows.map((tr, idx) => {
+                                const txt = (tr.innerText || '').trim();
+                                const nums = txt.match(/[\\d,]+(?:\\.\\d+)?/g) || [];
+                                return { index: idx + 1, text: txt, nums };
                             });
-                            return await r.json();
-                        } catch(e) {
-                            return { error: e.toString() };
-                        }
-                    }""", {"cid": cid, "page_idx": page_idx, "token": token})
-
-                    data_box = ep_res.get("data", {}) if isinstance(ep_res, dict) else {}
-                    page_items = data_box.get("items", [])
-                    all_ep_items.extend(page_items)
-                    pag = data_box.get("pagination", {})
-                    if total_items_from_api is None and "totalItems" in pag:
-                        try:
-                            total_items_from_api = int(pag["totalItems"])
-                        except (ValueError, TypeError):
-                            pass
-                    if not pag.get("hasNextPage") or not page_items:
-                        break
-                    page_idx += 1
-                    if page_idx > 20:
-                        break
+                        }""")
+                        if isinstance(dom_rows, list) and dom_rows:
+                            eps = max(eps, len(dom_rows))
+                finally:
+                    try:
+                        page.remove_listener("response", _on_ep_response)
+                    except Exception:
+                        pass
             except Exception as e_nav:
                 pass
 
-        # Fallback to direct requests if needed
-        if not all_ep_items:
-            try:
-                page_idx = 0
-                ep_headers = {"Authorization": f"Bearer {token}", "Origin": "https://www.chaply.net"}
-                while True:
-                    ep_url = f"https://api.chaply.net/api/writer/content-episodes/group/{cid}?pageIndex={page_idx}&pageSize=500&includeSales=true"
-                    r_ep = requests.get(ep_url, headers=ep_headers, timeout=20)
-                    if r_ep.status_code != 200:
-                        break
-                    ep_res = r_ep.json().get("data", {})
-                    page_items = ep_res.get("items", [])
-                    all_ep_items.extend(page_items)
-                    pag = ep_res.get("pagination", {})
-                    if total_items_from_api is None and "totalItems" in pag:
-                        try:
-                            total_items_from_api = int(pag["totalItems"])
-                        except (ValueError, TypeError):
-                            pass
-                    if not pag.get("hasNextPage") or not page_items:
-                        break
-                    page_idx += 1
-                    if page_idx > 20:
-                        break
-            except Exception:
-                pass
+        # Strictly No-API: Direct requests.get() fallback is intentionally disabled.
 
         # Resolve total chapters
         if total_items_from_api is not None and total_items_from_api > 0:
@@ -1031,6 +1063,7 @@ def run_chaply_pipeline(send_to_gas: bool = False, gas_url: str = "", passcode: 
             "total_sales": cur_sales,
             "monthly_sales": rollup["monthly_sales"],
             "monthly_sales_th": rollup["monthly_sales_th"],
+            "run_deltas": rollup.get("run_deltas", []),
             "weekly_deltas": rollup["weekly_deltas"],
             "sales_7_chapters": cur.get("sales_7_chapters", 0.0),
             "views_7_chapters": cur.get("views_7_chapters", 0),
@@ -1134,9 +1167,9 @@ if __name__ == "__main__":
     parser.add_argument("--min-match", type=float, default=0.80, help="Minimum title match ratio against MangaSetting (strictly > threshold, default: 0.80)")
     args = parser.parse_args()
 
-    # Browser is enabled by default or when --browser / --no-api is passed
-    headless = args.headless
-    use_browser = True if (not headless or args.browser or args.no_api) else False
+    # Strictly enforce Real Chrome Visible (No-Headless) and No-API mode
+    headless = False
+    use_browser = True
     run_chaply_pipeline(
         send_to_gas=args.send_gas,
         gas_url=args.gas_url,

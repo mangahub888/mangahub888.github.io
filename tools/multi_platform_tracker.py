@@ -305,6 +305,8 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
             print(f"🎯 [Consolidate Kairew] ดึงเข้าพอร์ต: {len(kr_comics)} เรื่อง | ข้าม (ไม่ตรง Settings/แมทช์ <={pct_label}%): {kr_skipped} เรื่อง")
             for c in kr_comics:
                 c["platform"] = "kairew"
+                c["monthly_sales"] = normalize_monthly_sales_2026(c.get("monthly_sales"), year=TARGET_YEAR)
+                c["monthly_sales_th"] = monthly_2026_to_thai(c["monthly_sales"], year=TARGET_YEAR)
                 apply_cross_platform_canonical(c, "kairew")
                 unified_comics.append(c)
 
@@ -312,6 +314,7 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
             kr_views = sum(int(c.get("total_views", 0) or 0) for c in kr_comics)
             kr_inactive = sum(1 for c in kr_comics if c.get("is_inactive_30d"))
             kr_active = len(kr_comics) - kr_inactive
+            kr_monthly = sum_monthly_dicts([c["monthly_sales"] for c in kr_comics], year=TARGET_YEAR)
 
             breakdown["kairew"] = {
                 "name": "Kairew",
@@ -320,6 +323,7 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
                 "comics_count": len(kr_comics),
                 "inactive_30d": kr_inactive,
                 "active_30d": kr_active,
+                "monthly_sales": kr_monthly,
                 "last_recorded": kr_data.get("pipeline_recorded_at", recorded_at)
             }
             total_sales_portfolio += kr_sales
@@ -348,6 +352,8 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
             print(f"🎯 [Consolidate Chaply] ดึงเข้าพอร์ต: {len(ch_comics)} เรื่อง | ข้าม (ไม่ตรง Settings/แมทช์ <={pct_label}%): {ch_skipped} เรื่อง")
             for c in ch_comics:
                 c["platform"] = "chaply"
+                c["monthly_sales"] = normalize_monthly_sales_2026(c.get("monthly_sales"), year=TARGET_YEAR)
+                c["monthly_sales_th"] = monthly_2026_to_thai(c["monthly_sales"], year=TARGET_YEAR)
                 apply_cross_platform_canonical(c, "chaply")
                 unified_comics.append(c)
 
@@ -355,6 +361,7 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
             ch_views = sum(int(c.get("total_views", 0) or 0) for c in ch_comics)
             ch_inactive = sum(1 for c in ch_comics if c.get("is_inactive_30d"))
             ch_active = len(ch_comics) - ch_inactive
+            ch_monthly = sum_monthly_dicts([c["monthly_sales"] for c in ch_comics], year=TARGET_YEAR)
 
             breakdown["chaply"] = {
                 "name": "Chaply",
@@ -363,6 +370,7 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
                 "comics_count": len(ch_comics),
                 "inactive_30d": ch_inactive,
                 "active_30d": ch_active,
+                "monthly_sales": ch_monthly,
                 "last_recorded": ch_data.get("pipeline_recorded_at", recorded_at)
             }
             total_sales_portfolio += ch_sales
@@ -397,41 +405,44 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
             if ch_num > other_platform_max_chapters.get(th, 0):
                 other_platform_max_chapters[th] = ch_num
 
-    rr_discrepancy_resolved = 0
-    try:
-        from readrealm_growth_tracker import fetch_public_readrealm_chapters
-        for c in rr_comics:
-            rr_cid = c.get("comic_id")
-            th = normalize_thai(c.get("subject", ""))
-            expected_ch = other_platform_max_chapters.get(th, 0)
-            current_rr_ch = int(c.get("chapters_count") or 0)
-
-            if expected_ch > current_rr_ch and rr_cid:
-                pub_ch = fetch_public_readrealm_chapters(rr_cid)
-                if pub_ch > current_rr_ch:
-                    print(f"🔄 [Smart Resolver] ตรวจพบผลต่างตอน {c.get('subject')} (ReadRealm API: {current_rr_ch} -> Public API จริง: {pub_ch} ตอน | แพลตฟอร์มอื่น: {expected_ch})")
-                    c["chapters_count"] = pub_ch
-                    rr_discrepancy_resolved += 1
-    except Exception as e:
-        print(f"⚠️ Smart Chapter Resolver cross-check encountered error: {e}")
-
-    # If any ReadRealm comic was corrected, persist updated ReadRealm snapshot
-    if rr_discrepancy_resolved > 0 and os.path.exists(READREALM_LATEST):
-        try:
-            rr_data["comics"] = rr_comics
-            with open(READREALM_LATEST, "w", encoding="utf-8") as f:
-                json.dump(rr_data, f, ensure_ascii=False, indent=2)
-            for out_dir in [FRONTEND_SRC_DIR, FRONTEND_PUB_DIR]:
-                if os.path.exists(out_dir):
-                    target = os.path.join(out_dir, "readrealm_growth_latest.json")
-                    with open(target, "w", encoding="utf-8") as f:
-                        json.dump(rr_data, f, ensure_ascii=False, indent=2)
-            print(f"✓ [Smart Resolver] บันทึกการแก้ไขจำนวนตอน ReadRealm ทั้งหมด {rr_discrepancy_resolved} เรื่องลงทุกไฟล์เรียบร้อย")
-        except Exception as e:
-            print(f"⚠️ ไม่สามารถบันทึก snapshot ReadRealm หลังแก้ไขตอน: {e}")
-
+    # Strictly No-API: Public API chapter resolver is disabled.
     total_comics_count = len(unified_comics)
     unified_comics.sort(key=lambda x: x.get("total_sales", 0.0), reverse=True)
+
+    # Aggregate 2026 monthly sales across all 3 platforms (portfolio & per-comic)
+    portfolio_monthly_sales_2026 = sum_monthly_dicts(
+        [
+            (breakdown.get("readrealm") or {}).get("monthly_sales", {}),
+            (breakdown.get("kairew") or {}).get("monthly_sales", {}),
+            (breakdown.get("chaply") or {}).get("monthly_sales", {}),
+        ],
+        year=TARGET_YEAR,
+    )
+
+    comics_monthly_map: Dict[str, Dict[str, Any]] = {}
+    for c in unified_comics:
+        canon_title = (c.get("canonical_title") or c.get("subject") or c.get("name") or "Unknown").strip()
+        plat = c.get("platform", "")
+        c_m = normalize_monthly_sales_2026(c.get("monthly_sales"), year=TARGET_YEAR)
+        if canon_title not in comics_monthly_map:
+            comics_monthly_map[canon_title] = {
+                "canonical_title": canon_title,
+                "platforms": [],
+                "monthly_sales": {f"{TARGET_YEAR}-{m:02d}": 0.0 for m in range(1, 13)},
+                "total_sales_2026": 0.0,
+            }
+        entry = comics_monthly_map[canon_title]
+        if plat and plat not in entry["platforms"]:
+            entry["platforms"].append(plat)
+        for ym_k, val in c_m.items():
+            if ym_k in entry["monthly_sales"]:
+                entry["monthly_sales"][ym_k] = round(entry["monthly_sales"][ym_k] + val, 2)
+
+    comics_monthly_summary_2026 = []
+    for entry in comics_monthly_map.values():
+        entry["total_sales_2026"] = round(sum(entry["monthly_sales"].values()), 2)
+        comics_monthly_summary_2026.append(entry)
+    comics_monthly_summary_2026.sort(key=lambda x: x["total_sales_2026"], reverse=True)
 
     unified_output = {
         "pipeline_recorded_at": recorded_at,
@@ -442,6 +453,8 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
         "total_inactive_30d": total_inactive_30d,
         "total_active_30d": total_active_30d,
         "platforms_breakdown": breakdown,
+        "portfolio_monthly_sales_2026": portfolio_monthly_sales_2026,
+        "comics_monthly_summary_2026": comics_monthly_summary_2026,
         "top_sales_comic": unified_comics[0]["subject"] if unified_comics else "",
         "comics": unified_comics
     }
@@ -460,6 +473,12 @@ def consolidate_multi_platform_data(min_match: float = DEFAULT_MIN_MATCH) -> Dic
                 print(f"✓ อัปเดตข้อมูลไปยัง Frontend: {target}")
             except Exception as e:
                 print(f"⚠️ ไม่สามารถบันทึกไปยัง {target}: {e}")
+
+    try:
+        md_path = generate_monthly_summary_markdown(unified_output, MONTHLY_SUMMARY_MD)
+        print(f"✓ สร้างรายงานสรุปรายเดือนอัตโนมัติ: {md_path}")
+    except Exception as e:
+        print(f"⚠️ ไม่สามารถสร้างรายงานสรุปรายเดือน {MONTHLY_SUMMARY_MD}: {e}")
 
     return unified_output
 
@@ -495,13 +514,8 @@ def main():
         except Exception as e:
             print(f"⚠️ ไม่สามารถรีเฟรช MangaSetting จาก GAS ใช้แคชล่าสุดแทน: {e}")
 
-    common_args = ["--min-match", str(args.min_match)]
-    if args.headless:
-        common_args.append("--headless")
-    elif args.browser or args.no_api:
-        common_args.append("--browser")
-    if args.no_api:
-        common_args.append("--no-api")
+    # Strictly enforce Real Chrome Visible (No-Headless) and No-API mode
+    common_args = ["--min-match", str(args.min_match), "--browser", "--no-api"]
     if args.live_html:
         common_args.append("--live-html")
     if args.no_cache:
@@ -515,15 +529,7 @@ def main():
         # Run ReadRealm
         if args.platform in ("all", "readrealm"):
             # readrealm uses --sync-gas
-            rr_args = ["--min-match", str(args.min_match)]
-            if args.headless:
-                rr_args.append("--headless")
-            elif args.browser or args.no_api:
-                rr_args.append("--browser")
-            if args.no_api:
-                rr_args.append("--no-api")
-            if args.force_refresh or args.no_api:
-                rr_args.append("--force-refresh")
+            rr_args = ["--min-match", str(args.min_match), "--browser", "--no-api", "--force-refresh"]
             if args.live_html:
                 rr_args.append("--live-html")
             if args.no_cache:

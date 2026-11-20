@@ -1116,16 +1116,19 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    use_browser = True if (args.no_api or args.force_refresh) else (False if args.headless else args.browser)
+    # Strictly enforce Real Chrome Visible (No-Headless) and No-API mode
+    use_browser = True
+    no_api = True
+    headless = False
 
     run_kairew_pipeline(
         send_to_gas=args.send_gas,
         gas_url=args.gas_url,
         passcode=args.passcode,
         use_browser=use_browser,
-        headless=args.headless,
+        headless=headless,
         foreground=args.foreground,
-        no_api=args.no_api,
+        no_api=no_api,
         force_refresh=args.force_refresh,
         live_html=args.live_html,
         no_cache=args.no_cache,

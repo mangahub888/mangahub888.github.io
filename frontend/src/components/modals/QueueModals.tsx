@@ -178,7 +178,7 @@ export function AddQueueModal({
         chapter: chapter.trim(),
         uploadstatus: "รอเริ่ม",
         uploadername: uploaderName,
-        extractstatus: "รอเริ่ม",
+        extractstatus: "skip",
         extractorname: extractorName || "Kikkuk",
         translatestatus: "รอเริ่ม",
         translatorname: translatorName,

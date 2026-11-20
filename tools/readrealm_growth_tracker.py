@@ -2669,11 +2669,10 @@ if __name__ == "__main__":
 
 
 
-    use_browser = False if args.headless else args.browser
-
-    force_refresh = args.force_refresh or args.no_api
-
-    no_api = args.no_api
+    # Strictly enforce Real Chrome Visible (No-Headless) and No-API mode
+    use_browser = True
+    no_api = True
+    force_refresh = True
 
 
 
