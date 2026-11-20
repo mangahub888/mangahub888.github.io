@@ -1703,9 +1703,9 @@ export function FinancialsView({
         if (rThaiMonth && mMap[rThaiMonth] !== undefined && Number.isFinite(Number(mMap[rThaiMonth]))) return Number(mMap[rThaiMonth]);
         return 0;
       };
-      const rrV = readVal(breakdown?.readrealm_monthly || platM?.readrealm?.monthly_sales);
-      const krV = readVal(breakdown?.kairew_monthly || platM?.kairew?.monthly_sales);
-      const chV = readVal(breakdown?.chaply_monthly || (platM?.chaply as any)?.monthly_sales);
+      const rrV = Math.max(readVal(breakdown?.readrealm_monthly), readVal(platM?.readrealm?.monthly_sales));
+      const krV = Math.max(readVal(breakdown?.kairew_monthly), readVal(platM?.kairew?.monthly_sales));
+      const chV = Math.max(readVal(breakdown?.chaply_monthly), readVal((platM?.chaply as any)?.monthly_sales));
       const sum = Math.round((rrV + krV + chV) * 100) / 100;
       return Number.isFinite(sum) ? sum : 0;
     };
