@@ -1673,14 +1673,50 @@ export function FinancialsView({
       });
     }
 
+    const getEffectiveSaleRevenue = (saleItem: any): number => {
+      const sheetRev = parseFloat(saleItem.revenue) || 0;
+      if (sheetRev > 0) return sheetRev;
+      const normKey = normalizeMangaTitle(saleItem.seriesname);
+      const breakdown = normKey ? platformBreakdownMap.get(normKey) : null;
+      const platM = normKey ? allMangaPlatformsMap.get(normKey) : null;
+      let rMonth = "";
+      if (saleItem.month) {
+        const mM = String(saleItem.month).match(/^(\d{4}-\d{2})/);
+        if (mM) rMonth = mM[1];
+      }
+      if (!rMonth && saleItem.date) {
+        const dM = String(saleItem.date).match(/^(\d{4}-\d{2})/);
+        if (dM) rMonth = dM[1];
+      }
+      if (!rMonth && selectedLedgerMonth && selectedLedgerMonth !== "all") {
+        const sM = String(selectedLedgerMonth).match(/^(\d{4}-\d{2})/);
+        if (sM) rMonth = sM[1];
+      }
+      let rThaiMonth = "";
+      if (rMonth) {
+        const mIdx = parseInt(rMonth.split("-")[1], 10) - 1;
+        if (mIdx >= 0 && mIdx < 12) rThaiMonth = THAI_MONTHS[mIdx];
+      }
+      const readVal = (mMap: any) => {
+        if (!mMap || typeof mMap !== "object") return 0;
+        if (rMonth && typeof mMap[rMonth] === "number") return Number(mMap[rMonth]);
+        if (rThaiMonth && typeof mMap[rThaiMonth] === "number") return Number(mMap[rThaiMonth]);
+        return 0;
+      };
+      const rrV = readVal(breakdown?.readrealm_monthly || platM?.readrealm?.monthly_sales);
+      const krV = readVal(breakdown?.kairew_monthly || platM?.kairew?.monthly_sales);
+      const chV = readVal(breakdown?.chaply_monthly || (platM?.chaply as any)?.monthly_sales);
+      return Math.round((rrV + krV + chV) * 100) / 100;
+    };
+
     // Default & Selected Sorting: Profit DESC (Highest profit on top, losses at bottom)
     list.sort((a, b) => {
-      const revA = parseFloat(a.revenue) || 0;
+      const revA = getEffectiveSaleRevenue(a);
       const rawCostA = parseFloat(a.totalcost) || 0;
       const costA = deductWithholdingTax ? Math.round(rawCostA * 0.97 * 100) / 100 : rawCostA;
       const profitA = revA - costA;
 
-      const revB = parseFloat(b.revenue) || 0;
+      const revB = getEffectiveSaleRevenue(b);
       const rawCostB = parseFloat(b.totalcost) || 0;
       const costB = deductWithholdingTax ? Math.round(rawCostB * 0.97 * 100) / 100 : rawCostB;
       const profitB = revB - costB;
@@ -4763,13 +4799,10 @@ export function FinancialsView({
                     </TableRow>
                   ) : (
                     filteredSales.map((sale, idx) => {
-                      const rev = parseFloat(sale.revenue) || 0;
-
                       const rawCost = parseFloat(sale.totalcost) || 0;
 
                       const cost = deductWithholdingTax ? Math.round(rawCost * 0.97 * 100) / 100 : rawCost;
 
-                      const profit = rev - cost;
                       const isUrgent = isTitleUrgent(sale.seriesname, sale.mangaid);
 
                       // Calculate Monthly Platform Breakdown for Tooltip & Columns
@@ -4833,6 +4866,11 @@ export function FinancialsView({
                       let rrSaleAmt = 0;
                       let krSaleAmt = 0;
                       let chSaleAmt = 0;
+
+                      const sheetRev = parseFloat(sale.revenue) || 0;
+                      const monthlyExactSum = Math.round(((rrExists ? rrMonthSales : 0) + (kwExists ? krMonthSales : 0) + (chExists ? chMonthSales : 0)) * 100) / 100;
+                      const rev = sheetRev > 0 ? sheetRev : monthlyExactSum;
+                      const profit = Math.round((rev - cost) * 100) / 100;
 
                       if (isRrExact || isKrExact || isChExact) {
                         // Priority 1: Use verified round sales directly.
