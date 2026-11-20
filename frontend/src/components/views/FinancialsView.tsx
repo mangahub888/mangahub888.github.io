@@ -4708,7 +4708,7 @@ export function FinancialsView({
                       <div className="flex items-center gap-1">
                         <span>วันที่</span>
                         {salesSortBy === "date" ? (
-                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                          salesSortOrder === "desc" ? <ArrowUp className="h-3 w-3 text-indigo-400" /> : <ArrowDown className="h-3 w-3 text-indigo-400" />
                         ) : (
                           <ArrowUpDown className="h-3 w-3 text-slate-600" />
                         )}
@@ -4719,7 +4719,7 @@ export function FinancialsView({
                       <div className="flex items-center gap-1">
                         <span>เรื่อง</span>
                         {salesSortBy === "name" ? (
-                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                          salesSortOrder === "desc" ? <ArrowUp className="h-3 w-3 text-indigo-400" /> : <ArrowDown className="h-3 w-3 text-indigo-400" />
                         ) : (
                           <ArrowUpDown className="h-3 w-3 text-slate-600" />
                         )}
@@ -4732,7 +4732,7 @@ export function FinancialsView({
                       <div className="flex items-center justify-end gap-1">
                         <span>จำนวนตอน</span>
                         {salesSortBy === "chapters" ? (
-                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                          salesSortOrder === "desc" ? <ArrowUp className="h-3 w-3 text-indigo-400" /> : <ArrowDown className="h-3 w-3 text-indigo-400" />
                         ) : (
                           <ArrowUpDown className="h-3 w-3 text-slate-600" />
                         )}
@@ -4745,7 +4745,7 @@ export function FinancialsView({
                       <div className="flex items-center justify-end gap-1">
                         <span>ต้นทุนรวม{deductWithholdingTax ? " (สุทธิ)" : ""}</span>
                         {salesSortBy === "cost" ? (
-                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-red-400" /> : <ArrowUp className="h-3 w-3 text-red-400" />
+                          salesSortOrder === "desc" ? <ArrowUp className="h-3 w-3 text-red-400" /> : <ArrowDown className="h-3 w-3 text-red-400" />
                         ) : (
                           <ArrowUpDown className="h-3 w-3 text-slate-600" />
                         )}
@@ -4756,7 +4756,7 @@ export function FinancialsView({
                       <div className="flex items-center justify-end gap-1">
                         <span>ยอดขาย</span>
                         {salesSortBy === "revenue" ? (
-                          salesSortOrder === "desc" ? <ArrowDown className="h-3 w-3 text-indigo-400" /> : <ArrowUp className="h-3 w-3 text-indigo-400" />
+                          salesSortOrder === "desc" ? <ArrowUp className="h-3 w-3 text-indigo-400" /> : <ArrowDown className="h-3 w-3 text-indigo-400" />
                         ) : (
                           <ArrowUpDown className="h-3 w-3 text-slate-600" />
                         )}
@@ -4773,9 +4773,9 @@ export function FinancialsView({
                         <span>กำไร/ขาดทุน</span>
                         {salesSortBy === "profit" ? (
                           salesSortOrder === "desc" ? (
-                            <ArrowDown className="h-4 w-4 text-emerald-400" />
-                          ) : (
                             <ArrowUp className="h-4 w-4 text-emerald-400" />
+                          ) : (
+                            <ArrowDown className="h-4 w-4 text-emerald-400" />
                           )
                         ) : (
                           <ArrowUpDown className="h-3.5 w-3.5 text-emerald-400/60" />
