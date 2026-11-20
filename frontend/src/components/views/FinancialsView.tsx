@@ -4562,7 +4562,7 @@ export function FinancialsView({
 
                   <div className="space-y-3">
                     <p className="text-xs font-semibold text-red-400">
-                      🔻 5 อันดับขาดทุนสูงสุด
+                      🔻 10 อันดับขาดทุนสูงสุด
                     </p>
 
                     {summary.topLosses.length === 0 ? (
