@@ -12,7 +12,7 @@ console.log('--- COMPREHENSIVE TEST SUITE: Queue Step Strict Sequencing & Filter
 // Test 1: USER's exact reported bug:
 // 1. อัป Raw: เสร็จแล้ว, 2. ดึงคำออโต้: เสร็จแล้ว, 3. QC ดึงคำ: รอเริ่ม (Kikkuk), แปล: รอเริ่ม (เร)
 // MUST NOT show up in "แปล" filter! MUST show up in "3. QC ดึงคำ"!
-console.log('\n[Test 1] Reported User Bug: 3. QC ดึงคำ is รอเริ่ม -> Must NOT match "translate"')
+console.log('\n[Test 1] Unified translate filter: 3. QC ดึงคำ is รอเริ่ม -> Matches "translate" and "extract"')
 const bugItem = {
   uploadstatus: 'เสร็จแล้ว',
   ocrstatus: 'เสร็จแล้ว',
@@ -28,23 +28,23 @@ assert.strictEqual(isQueueStepDone(bugItem, 'upload'), true, 'Upload is done')
 assert.strictEqual(isQueueStepDone(bugItem, 'ocr'), true, 'OCR is done')
 assert.strictEqual(isQueueStepDone(bugItem, 'extract'), false, 'QC extract is NOT done')
 assert.strictEqual(isQueueStepDone(bugItem, 'translate'), false, 'Translate is NOT done')
-assert.strictEqual(matchesStepFilter(bugItem, 'translate'), false, 'CRITICAL: Must NOT show in translate filter!')
+assert.strictEqual(matchesStepFilter(bugItem, 'translate'), true, 'Unified translate filter includes chapters after upload even if QC extract is รอเริ่ม')
 assert.strictEqual(matchesStepFilter(bugItem, 'extract'), true, 'Must show in extract filter!')
 assert.strictEqual(matchesStepFilter(bugItem, 'ocr'), false, 'Must NOT show in ocr filter')
 assert.strictEqual(matchesStepFilter(bugItem, 'upload'), false, 'Must NOT show in upload filter')
 assert.strictEqual(getQueueCurrentStep(bugItem), 'extract', 'Current step must be extract')
-console.log('✓ Test 1 Passed: Bug item successfully blocked from translate filter and directed to extract')
+console.log('✓ Test 1 Passed: Unified translate filter includes item while current step remains extract')
 
 // Test 2: QC ดึงคำ is actively กำลังทำ -> Must NOT match "translate"
-console.log('\n[Test 2] QC ดึงคำ is กำลังทำ -> Must NOT match "translate"')
+console.log('\n[Test 2] QC ดึงคำ is กำลังทำ -> Matches unified "translate" filter and "extract"')
 const inProgressExtractItem = {
   ...bugItem,
   extractstatus: 'กำลังทำ',
 }
 assert.strictEqual(isQueueStepDone(inProgressExtractItem, 'extract'), false, 'Extract in progress is NOT done')
-assert.strictEqual(matchesStepFilter(inProgressExtractItem, 'translate'), false, 'Must NOT show in translate filter')
+assert.strictEqual(matchesStepFilter(inProgressExtractItem, 'translate'), true, 'Unified translate filter includes chapters while extract is กำลังทำ')
 assert.strictEqual(matchesStepFilter(inProgressExtractItem, 'extract'), true, 'Must show in extract filter')
-console.log('✓ Test 2 Passed: In-progress extract correctly blocks translate filter')
+console.log('✓ Test 2 Passed: In-progress extract matches both extract and unified translate filter')
 
 // Test 3: Normal Translate Ready: 3 first columns done -> Shows in "translate"
 console.log('\n[Test 3] All 3 first steps (upload, ocr, extract) done -> Shows in "translate"')
@@ -159,7 +159,7 @@ const pratchayaActiveExtract = {
   translatorname: 'Pratchaya',
 }
 assert.strictEqual(isQueueStepDone(pratchayaActiveExtract, 'extract'), false, 'Active extract must not be bypassed')
-assert.strictEqual(matchesStepFilter(pratchayaActiveExtract, 'translate'), false, 'Must not show in translate while extract is waiting')
+assert.strictEqual(matchesStepFilter(pratchayaActiveExtract, 'translate'), true, 'Unified translate filter includes chapters after upload even while extract is waiting')
 assert.strictEqual(matchesStepFilter(pratchayaActiveExtract, 'extract'), true, 'Must show in extract')
 console.log('✓ Test 9 Passed: Pratchaya with active extract is not prematurely bypassed')
 
@@ -217,7 +217,8 @@ for (let s = 0; s < steps.length; s++) {
   // Verify all OTHER steps return false
   for (let other of steps) {
     if (other !== currentStep) {
-      assert.strictEqual(matchesStepFilter(progressiveItem, other), false, `matchesStepFilter should be false for ${other} while at ${currentStep}`)
+      const expectedOther = other === 'translate' && (currentStep === 'ocr' || currentStep === 'extract')
+      assert.strictEqual(matchesStepFilter(progressiveItem, other), expectedOther, `matchesStepFilter should be ${expectedOther} for ${other} while at ${currentStep}`)
     }
   }
 
