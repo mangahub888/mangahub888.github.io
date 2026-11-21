@@ -341,7 +341,7 @@ export function matchesStepFilter(q: any, stepFilter: string, manga?: any): bool
     return strPsd === "เสร็จแล้ว" && !downstreamDone
   }
 
-  if (stepFilter === "translate_any_qc") {
+  if (stepFilter === "translate") {
     // แปล (แม้ QC ยังไม่เสร็จ): ขั้นตอนอัป Raw เสร็จแล้ว, ยังไม่เสร็จขั้นตอนแปล (และงานยังไม่จบ)
     const uploadDone = isQueueStepDone(q, "upload", manga)
     const translateDone = isQueueStepDone(q, "translate", manga)

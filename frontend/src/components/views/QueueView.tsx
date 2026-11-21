@@ -199,13 +199,7 @@ export function QueueView({
 
   React.useEffect(() => {
     if (stepFilter !== "all" && stepFilter !== "publish_post") {
-      setBulkStep(
-        stepFilter === "psd_done"
-          ? "typeset"
-          : stepFilter === "translate_any_qc"
-          ? "translate"
-          : stepFilter
-      )
+      setBulkStep(stepFilter === "psd_done" ? "typeset" : stepFilter)
     }
   }, [stepFilter])
 
@@ -216,7 +210,6 @@ export function QueueView({
       waitOcr = 0,
       waitExtract = 0,
       waitTranslate = 0,
-      waitTranslateAnyQc = 0,
       waitPsd = 0,
       donePsdWaitTypeset = 0,
       waitTypeset = 0,
@@ -232,8 +225,8 @@ export function QueueView({
 
       const mangaItem = (mangaList || []).find((m: any) => String(m.mangaid) === String(q.mangaid))
 
-      if (matchesStepFilter(q, "translate_any_qc", mangaItem)) {
-        waitTranslateAnyQc += count
+      if (matchesStepFilter(q, "translate", mangaItem)) {
+        waitTranslate += count
       }
       if (matchesStepFilter(q, "psd", mangaItem)) {
         waitPsd += count
@@ -249,7 +242,7 @@ export function QueueView({
       } else if (matchesStepFilter(q, "extract", mangaItem)) {
         waitExtract += count
       } else if (matchesStepFilter(q, "translate", mangaItem)) {
-        waitTranslate += count
+        // Counted in waitTranslate above
       } else if (matchesStepFilter(q, "typeset", mangaItem)) {
         waitTypeset += count
       } else if (matchesStepFilter(q, "publish", mangaItem)) {
@@ -267,7 +260,6 @@ export function QueueView({
       waitOcr,
       waitExtract,
       waitTranslate,
-      waitTranslateAnyQc,
       waitPsd,
       donePsdWaitTypeset,
       waitTypeset,
@@ -946,8 +938,7 @@ export function QueueView({
             <option value="upload">รอ/ทำ: 1. อัป Raw</option>
             <option value="ocr">รอ/ทำ: 2. ดึงคำออโต้ (AI)</option>
             <option value="extract">รอ/ทำ: 3. QC ดึงคำ</option>
-            <option value="translate">รอ/ทำ: แปล</option>
-            <option value="translate_any_qc">🌐 รอ/ทำ: แปล (พร้อมแปล/ข้าม QC) ({queueStats.waitTranslateAnyQc} ตอน)</option>
+            <option value="translate">รอ/ทำ: แปล ({queueStats.waitTranslate} ตอน)</option>
             <option value="psd">รอ/ทำ: Export PSD ({queueStats.waitPsd} ตอน)</option>
             <option value="psd_done">Export PSD: เสร็จแล้ว / พร้อมลงคำ ({queueStats.donePsdWaitTypeset} ตอน)</option>
             <option value="typeset">รอ/ทำ: ลงคำ</option>
