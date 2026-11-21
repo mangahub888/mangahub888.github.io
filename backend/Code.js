@@ -1727,6 +1727,11 @@ function getWorkQueue(forceRefresh = false, month = 'all', year = 'all', include
   }
 }
 
+function isDoneStatusValue_(val) {
+  const s = String(val || '').trim().toLowerCase();
+  return s === 'เสร็จแล้ว' || s === 'done';
+}
+
 function addQueue(queueData) {
   const lock = LockService.getScriptLock();
   try {
@@ -1798,6 +1803,16 @@ function addQueue(queueData) {
       if (header === 'worklink') return queueData.worklink || '';
       if (header === 'note') return queueData.note || '';
 
+      if (header.endsWith('time') && header !== 'editingtime') {
+        if (queueData[header] !== undefined && queueData[header] !== null && String(queueData[header]).trim() !== '') {
+          return queueData[header];
+        }
+        const stepKey = header.replace(/time$/, '');
+        if (isDoneStatusValue_(queueData[stepKey + 'status'])) {
+          return now;
+        }
+      }
+
       return '';
     });
 
@@ -1860,8 +1875,15 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
     for (let i = 1; i < data.length; i++) {
       if (data[i][0].toString() === queueId.toString()) {
         const rowNum = i + 1;
+        const oldStatus = data[i][statusCol - 1];
         
         sheet.getRange(rowNum, statusCol).setValue(status);
+        if (isDoneStatusValue_(status) && timeCol > 0) {
+          const existingTime = data[i][timeCol - 1];
+          if (!isDoneStatusValue_(oldStatus) || !existingTime || String(existingTime).trim() === '') {
+            sheet.getRange(rowNum, timeCol).setValue(new Date());
+          }
+        }
         
         if (step.toLowerCase() === 'publish' && status === 'เสร็จแล้ว') {
           const postStatusCol = headers.indexOf('poststatus') + 1;
@@ -1945,10 +1967,8 @@ function updateQueueStep(queueId, step, status, assignee, link, note, typesetTyp
           }
         }
         
-        if (status === 'เสร็จแล้ว') {
-          const oldStatus = data[i][statusCol - 1];
-          if (oldStatus !== 'เสร็จแล้ว') {
-            if (timeCol > 0) sheet.getRange(rowNum, timeCol).setValue(new Date());
+        if (isDoneStatusValue_(status)) {
+          if (!isDoneStatusValue_(oldStatus)) {
             
             try {
               const mangaId = data[i][headers.indexOf('mangaid')];
@@ -2151,11 +2171,14 @@ function bulkUpdateQueueStep(queueIds, step, status, assignee) {
           data[i][nameColIndex] = effectiveAssignee;
         }
 
-        if (status === 'เสร็จแล้ว' && oldStatus !== 'เสร็จแล้ว') {
-          if (timeColIndex !== -1) {
+        if (isDoneStatusValue_(status) && timeColIndex !== -1) {
+          const existingTime = data[i][timeColIndex];
+          if (!isDoneStatusValue_(oldStatus) || !existingTime || String(existingTime).trim() === '') {
             data[i][timeColIndex] = now;
           }
+        }
 
+        if (isDoneStatusValue_(status) && !isDoneStatusValue_(oldStatus)) {
           const mangaId = mangaIdColIndex !== -1 ? data[i][mangaIdColIndex] : '';
           const chapter = chapterColIndex !== -1 ? data[i][chapterColIndex] : '';
           const mangaName = getMangaNameById(mangaId);
@@ -2422,6 +2445,9 @@ function updateFullQueueItem(queueId, updateData) {
         updateCell('ocrstatus', updateData.ocrstatus);
         updateCell('extractstatus', updateData.extractstatus);
         updateCell('translatestatus', updateData.translatestatus);
+        if (updateData.translatetime !== undefined) {
+          updateCell('translatetime', updateData.translatetime ? new Date(updateData.translatetime) : '');
+        }
         updateCell('psdstatus', updateData.psdstatus);
         updateCell('psdname', updateData.psdname);
         updateCell('psdtime', updateData.psdtime);
@@ -2446,6 +2472,27 @@ function updateFullQueueItem(queueId, updateData) {
         updateCell('publishername', updateData.publishername);
         updateCell('postername', updateData.postername);
 
+        // Automatically record step completion timestamps before notification logic
+        const allStepStatusFields = ['uploadstatus', 'ocrstatus', 'extractstatus', 'translatestatus', 'psdstatus', 'typesetstatus', 'publishstatus', 'poststatus'];
+        allStepStatusFields.forEach(field => {
+          const stepKey = field.replace('status', '');
+          const timeHeader = stepKey + 'time';
+          const timeCol = headers.indexOf(timeHeader) + 1;
+          if (timeCol <= 0) return;
+
+          if (updateData[timeHeader] !== undefined && updateData[timeHeader] !== null && String(updateData[timeHeader]).trim() !== '') {
+            sheet.getRange(rowNum, timeCol).setValue(updateData[timeHeader]);
+            return;
+          }
+          if (isDoneStatusValue_(updateData[field])) {
+            const oldVal = data[i][headers.indexOf(field)];
+            const existingTime = data[i][timeCol - 1];
+            if (!isDoneStatusValue_(oldVal) || !existingTime || String(existingTime).trim() === '') {
+              sheet.getRange(rowNum, timeCol).setValue(new Date());
+            }
+          }
+        });
+
         try {
           const mangaIdForNoti = data[i][headers.indexOf('mangaid')];
           const chapterForNoti = updateData.chapter || data[i][headers.indexOf('chapter')];
@@ -2464,10 +2511,8 @@ function updateFullQueueItem(queueId, updateData) {
           statusFields.forEach(field => {
             const newVal = updateData[field];
             const oldVal = data[i][headers.indexOf(field)];
-            if (newVal === 'เสร็จแล้ว' && oldVal !== 'เสร็จแล้ว') {
+            if (isDoneStatusValue_(newVal) && !isDoneStatusValue_(oldVal)) {
               const stepKey = field.replace('status', '');
-              const timeCol = headers.indexOf(stepKey + 'time') + 1;
-              if (timeCol > 0) sheet.getRange(rowNum, timeCol).setValue(new Date());
 
               const stepLabel = getStepLabel(stepKey);
               const assignee = updateData[assigneeMap[field]] || '';

@@ -525,6 +525,9 @@ export function UpdateQueueModal({
         postername: posterName,
         worklink: finalWorkLink,
         note,
+        ...(translateStatus === "เสร็จแล้ว" && !item.translatetime
+          ? { translatetime: new Date().toISOString() }
+          : {}),
       }
 
       const res = await callGasApi("UPDATE_FULL_QUEUE_ITEM", {
