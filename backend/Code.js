@@ -4514,6 +4514,9 @@ function getRawTrackerList() {
 
       // กรองมังงะที่ถูกลบออกจากระบบแล้ว (มี ID เดิมแต่ไม่พบใน Mangas) ไม่นำมาแสดงผล
       const rawMId = String(obj.mangaid || '').trim();
+      if (!rawMId && !String(obj.trackerid || '').trim() && !String(obj.url || '').trim() && !String(obj.manganame || '').trim()) {
+        continue;
+      }
       if (rawMId && !manga) {
         continue;
       }
