@@ -991,46 +991,19 @@ def run_export_psd_pipeline(args):
     drive_service = get_drive_service(args.google_access_token)
     mtp_only = getattr(args, "mtp_only", False)
 
-    # 2. Download Images & Project Files from Drive Folder (or only .mtp in --mtp-only mode)
+    # 2. Load MangaToolPlus Project (.mtp) FIRST (download only .mtp from Drive before raw images)
     image_files = []
-    if mtp_only and drive_service:
-        try:
-            from googleapiclient.http import MediaIoBaseDownload
-            query = (
-                f"'{folder_id}' in parents and "
-                f"mimeType != 'application/vnd.google-apps.folder' and "
-                f"trashed = false"
-            )
-            res = drive_service.files().list(q=query, pageSize=200, fields="files(id, name)").execute()
-            mtp_drive_files = [f for f in res.get("files", []) if f.get("name", "").lower().endswith(".mtp")]
-            for df in mtp_drive_files:
-                safe_name = safe_local_filename(df.get("name", df["id"]))
-                dest_file = work_dir / safe_name
-                request = drive_service.files().get_media(fileId=df["id"])
-                with open(dest_file, "wb") as fh:
-                    downloader = MediaIoBaseDownload(fh, request)
-                    done = False
-                    while not done:
-                        _, done = downloader.next_chunk()
-                print(f"📥 [MTP-Only] Downloaded {safe_name}")
-        except Exception as e:
-            print(f"⚠️ [MTP-Only] Error downloading .mtp via Drive API: {e}")
-    else:
-        image_files = download_images_from_gdrive(folder_id, work_dir, drive_service=drive_service)
-
-    # 3. Load MangaToolPlus Project (.mtp)
-    # Prefer original downloaded .mtp file (not *_updated.mtp)
     mtp_files = list(work_dir.glob("*.mtp"))
     original_mtps = [f for f in mtp_files if not f.name.endswith("_updated.mtp")]
     selected_mtp = original_mtps[0] if original_mtps else (mtp_files[0] if mtp_files else None)
 
-    # If no .mtp found locally, search Drive folder explicitly
+    # If no .mtp found locally, search Drive folder explicitly and download only .mtp
     if not selected_mtp and drive_service:
         try:
             from googleapiclient.http import MediaIoBaseDownload
             # 1. Search in root folder
             query = f"'{folder_id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false"
-            res = drive_service.files().list(q=query, pageSize=100, fields="files(id, name)").execute()
+            res = drive_service.files().list(q=query, pageSize=200, fields="files(id, name)").execute()
             root_mtps = [f for f in res.get("files", []) if f.get("name", "").lower().endswith(".mtp")]
             # 2. If not in root, check subfolder PSD
             if not root_mtps:
@@ -1067,6 +1040,38 @@ def run_export_psd_pipeline(args):
                 project_data = json.load(f)
         except Exception as e:
             print(f"⚠️ Could not load {selected_mtp.name}: {e}")
+
+    # 3. Check if all pages in .mtp already have embedded dataUrl images; skip downloading raw images if so
+    mtp_files_list = project_data.get("files", []) if isinstance(project_data, dict) else []
+    all_pages_have_data_url = (
+        isinstance(mtp_files_list, list)
+        and len(mtp_files_list) > 0
+        and all(
+            isinstance(f, dict) and f.get("dataUrl") and "base64," in str(f.get("dataUrl", ""))
+            for f in mtp_files_list
+        )
+    )
+
+    if not mtp_only:
+        if all_pages_have_data_url:
+            print(
+                f"⚡ [Fast MTP Mode] All {len(mtp_files_list)} pages already have embedded dataUrl "
+                f"in {selected_mtp.name if selected_mtp else '.mtp'} — skipping raw image download from Google Drive."
+            )
+        else:
+            image_files = download_images_from_gdrive(folder_id, work_dir, drive_service=drive_service)
+            # Re-check for .mtp if not loaded earlier (e.g. downloaded via gdown fallback)
+            if not project_data:
+                mtp_files = list(work_dir.glob("*.mtp"))
+                original_mtps = [f for f in mtp_files if not f.name.endswith("_updated.mtp")]
+                selected_mtp = original_mtps[0] if original_mtps else (mtp_files[0] if mtp_files else None)
+                if selected_mtp and selected_mtp.exists():
+                    try:
+                        print(f"📦 Loading MangaToolPlus Project: {selected_mtp.name}")
+                        with open(selected_mtp, "r", encoding="utf-8") as f:
+                            project_data = json.load(f)
+                    except Exception as e:
+                        print(f"⚠️ Could not load {selected_mtp.name}: {e}")
 
     if not image_files and not project_data:
         print("❌ No images or valid .mtp project found in folder!")
@@ -1254,51 +1259,56 @@ def run_export_psd_pipeline(args):
         h = int(f_info.get("height") or 1200)
 
         if not mtp_only:
-            if not img_path.exists():
-                # 1. Try finding image with exact matching stem
-                cand = list(work_dir.glob(f"{Path(fname).stem}.*"))
-                cand = [c for c in cand if c.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]]
-                # 2. Try normalized numeric stem match (e.g. '01.jpg' in .mtp vs '001.jpg' on disk)
-                if not cand:
-                    norm_target = normalize_page_stem(fname)
-                    cand = [c for c in image_files if normalize_page_stem(c.name) == norm_target]
-                # 3. Try positional match if image count matches MTP page count
-                if not cand and len(image_files) == len(all_files_info) and 1 <= file_idx <= len(image_files):
-                    cand = [image_files[file_idx - 1]]
-                # 4. Try decoding embedded base64 dataUrl from .mtp if present
-                if not cand and f_info.get("dataUrl") and "base64," in str(f_info.get("dataUrl", "")):
-                    try:
-                        b64_part = str(f_info["dataUrl"]).split("base64,", 1)[1]
-                        decoded_path = work_dir / safe_local_filename(fname or f"{file_idx:03d}.jpg")
-                        with open(decoded_path, "wb") as fb:
-                            fb.write(base64.b64decode(b64_part))
-                        cand = [decoded_path]
-                    except Exception as dec_err:
-                        print(f"   ⚠️ Failed to decode embedded dataUrl for {fname}: {dec_err}")
+            # 1. Prioritize embedded base64 dataUrl directly from .mtp (no disk I/O needed)
+            if f_info.get("dataUrl") and "base64," in str(f_info.get("dataUrl", "")):
+                try:
+                    b64_part = str(f_info["dataUrl"]).split("base64,", 1)[1]
+                    img_bytes = base64.b64decode(b64_part)
+                    img_arr = np.frombuffer(img_bytes, dtype=np.uint8)
+                    raw_img = cv2.imdecode(img_arr, cv2.IMREAD_COLOR)
+                except Exception as dec_err:
+                    print(f"   ⚠️ Failed to decode embedded dataUrl for {fname}, falling back to disk: {dec_err}")
+                    raw_img = None
 
-                if cand:
-                    img_path = cand[0]
-                else:
-                    print(f"[{file_idx}/{total_pages}] ⚠️ Image {fname} not found on disk, skipping.")
+            # 2. Fallback to disk image file if dataUrl is missing or failed to decode
+            if raw_img is None:
+                if not img_path.exists():
+                    # Try finding image with exact matching stem
+                    cand = list(work_dir.glob(f"{Path(fname).stem}.*"))
+                    cand = [c for c in cand if c.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]]
+                    # Try normalized numeric stem match (e.g. '01.jpg' in .mtp vs '001.jpg' on disk)
+                    if not cand:
+                        norm_target = normalize_page_stem(fname)
+                        cand = [c for c in image_files if normalize_page_stem(c.name) == norm_target]
+                    # Try positional match if image count matches MTP page count
+                    if not cand and len(image_files) == len(all_files_info) and 1 <= file_idx <= len(image_files):
+                        cand = [image_files[file_idx - 1]]
+
+                    if cand:
+                        img_path = cand[0]
+                    else:
+                        print(f"[{file_idx}/{total_pages}] ⚠️ Image {fname} not found in .mtp dataUrl or on disk, skipping.")
+                        continue
+
+                raw_img = cv2.imread(str(img_path))
+                if raw_img is None:
+                    print(f"[{file_idx}/{total_pages}] ⚠️ Failed to decode {fname}, skipping.")
                     continue
 
-            raw_img = cv2.imread(str(img_path))
-            if raw_img is None:
-                print(f"[{file_idx}/{total_pages}] ⚠️ Failed to decode {fname}, skipping.")
-                continue
+                if not f_info.get("dataUrl") or "base64," not in str(f_info.get("dataUrl", "")):
+                    try:
+                        ext = img_path.suffix.lower()
+                        mime_map = {".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
+                        mime_type = mime_map.get(ext, "image/jpeg")
+                        with open(img_path, "rb") as img_fb:
+                            img_b64 = base64.b64encode(img_fb.read()).decode("utf-8")
+                        f_info["dataUrl"] = f"data:{mime_type};base64,{img_b64}"
+                    except Exception as enc_err:
+                        print(f"   ⚠️ Could not encode image dataUrl for {fname}: {enc_err}")
+
             h, w = raw_img.shape[:2]
             f_info["width"] = w
             f_info["height"] = h
-            if not f_info.get("dataUrl") or "base64," not in str(f_info.get("dataUrl", "")):
-                try:
-                    ext = img_path.suffix.lower()
-                    mime_map = {".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
-                    mime_type = mime_map.get(ext, "image/jpeg")
-                    with open(img_path, "rb") as img_fb:
-                        img_b64 = base64.b64encode(img_fb.read()).decode("utf-8")
-                    f_info["dataUrl"] = f"data:{mime_type};base64,{img_b64}"
-                except Exception as enc_err:
-                    print(f"   ⚠️ Could not encode image dataUrl for {fname}: {enc_err}")
 
         # Retrieve layers for this page (check both MTP fname and actual disk filename)
         layers = get_layers_for_page(fname) or get_layers_for_page(img_path.name)
