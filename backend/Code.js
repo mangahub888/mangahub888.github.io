@@ -5789,74 +5789,93 @@ function getRawTrackerPendingChapters(targetTrackerId) {
           const topicId = topicMatch[1];
           const topicUrl = 'https://www.kuaikanmanhua.com/web/topic/' + topicId + '/';
           try {
+            const kkSession = getKuaikanSessionData();
+            const kkHeaders = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Referer': 'https://www.kuaikanmanhua.com/'
+            };
+            if (kkSession && kkSession.cookie) {
+              kkHeaders['Cookie'] = kkSession.cookie;
+            }
             const resp = UrlFetchApp.fetch(topicUrl, {
               method: 'get',
               muteHttpExceptions: true,
-              headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-              }
+              headers: kkHeaders
             });
             const html = resp.getContentText();
-            // Regex สกัด (comicId, title, chapterNum) ครอบคลุมทั้ง 第X话, 第X集, 第X回, และตัวเลขนำหน้า เช่น "4 苦战", "5 交卷离场"
+            // Extract comic entries (comicId, title) including unnumbered latest chapters
             const chapterMatches = [];
-            const regex = /(\d{5,9}),"([^"]*?)"/g;
+            const comicEntryRegex = /(\d{5,9}),"([^"]*?)","https:\\u002F\\u002F[^"]*?kkmh\.com/g;
+            let lastKnownNum = 0;
             let m;
-            while ((m = regex.exec(html)) !== null) {
+            while ((m = comicEntryRegex.exec(html)) !== null) {
               const cid = m[1];
               const title = m[2].trim();
-              
-              // 1. ลองหาแบบ 第X话 / 第X集 / 第X回
-              let numMatch = title.match(/(?:第)?\s*(\d+(?:\.\d+)?)\s*(?:话|集|回)/i);
-              // 2. ถ้าไม่พบ ลองหาตัวเลขขึ้นต้น เช่น "4 苦战" หรือ "04. 苦战"
-              if (!numMatch) {
-                numMatch = title.match(/^(?:第)?\s*(\d+(?:\.\d+)?)/i);
-              }
-              // 3. ถ้าไม่พบ ลองหา Chapter / Ch. / Ep. / ตอนที่
-              if (!numMatch) {
-                numMatch = title.match(/(?:Chapter|Ch\.|Ep\.|ตอน(?:ที่)?)\s*(\d+(?:\.\d+)?)/i);
-              }
-              
+              if (!title) continue;
+              let numMatch = title.match(/(?:\u7b2c)?\s*(\d+(?:\.\d+)?)\s*(?:\u8bdd|\u96c6|\u56de)/i);
+              if (!numMatch) numMatch = title.match(/^(?:\u7b2c)?\s*(\d+(?:\.\d+)?)/i);
+              if (!numMatch) numMatch = title.match(/(?:Chapter|Ch\.|Ep\.)\s*(\d+(?:\.\d+)?)/i);
+              let cNum = null;
               if (numMatch) {
-                const cNum = parseFloat(numMatch[1]);
-                // กรองข้ามปี พ.ศ./ค.ศ. เช่น 2024, 2025, 2026 ที่มักเป็นประกาศปีใหม่
-                if (cNum >= 1900 && cNum <= 2100 && !/(?:话|集|回)/.test(title)) {
-                  continue;
+                const parsed = parseFloat(numMatch[1]);
+                if (!isNaN(parsed) && parsed > 0 && parsed < 1900) {
+                  cNum = parsed;
+                  lastKnownNum = Math.max(lastKnownNum, Math.floor(parsed));
                 }
-                if (!isNaN(cNum) && cNum > 0 && cNum < 1900) {
-                  // ป้องกันซ้ำ
-                  if (!chapterMatches.some(function(item) { return item.comicId === cid; })) {
-                    chapterMatches.push({
-                      comicId: cid,
-                      chapterTitle: title,
-                      chapterNum: cNum
-                    });
-                  }
-                }
+              } else if (lastKnownNum > 0) {
+                lastKnownNum += 1;
+                cNum = lastKnownNum;
+              }
+              if (cNum !== null && !chapterMatches.some(function(x) { return x.comicId === cid; })) {
+                chapterMatches.push({ comicId: cid, chapterTitle: title, chapterNum: cNum });
               }
             }
 
-            // จัดเรียงเลขตอนจากน้อยไปหามาก
             chapterMatches.sort(function(a, b) { return a.chapterNum - b.chapterNum; });
+            const maxParsedNum = chapterMatches.length > 0 ? chapterMatches[chapterMatches.length - 1].chapterNum : 0;
 
-            // คัดเฉพาะตอนใหม่ที่เลขตอน > currentChap และยังไม่ได้อยู่ในคิวงาน
-            chapterMatches.forEach(function(chap) {
-              const cStr = String(chap.chapterNum);
-              const mQueued = queuedChaptersByManga[String(item.mangaid)];
-              const isAlreadyQueued = mQueued && (mQueued.has(cStr) || mQueued.has(String(Math.floor(chap.chapterNum))));
-              if (chap.chapterNum > currentChap && !isAlreadyQueued) {
-                pendingTasks.push({
-                  trackerId: item.trackerid,
-                  mangaId: item.mangaid,
-                  mangaName: item.manganame || (manga ? manga.manganame : ''),
-                  topicId: topicId,
-                  comicId: chap.comicId,
-                  chapterNum: chap.chapterNum,
-                  chapterTitle: chap.chapterTitle,
-                  sourceUrl: item.url,
-                  connector: 'kuaikan'
-                });
-              }
-            });
+            if (rawCount > currentChap && maxParsedNum > 0 && maxParsedNum <= currentChap) {
+              // Fallback when rawCount (total chapters) > title-based numbering (e.g. split/extra chapters)
+              const diffCount = Math.min(Math.max(1, Math.round(rawCount - currentChap)), chapterMatches.length);
+              const tail = chapterMatches.slice(-diffCount);
+              tail.forEach(function(chap, idx) {
+                const mappedNum = currentChap + idx + 1;
+                const mQueued = queuedChaptersByManga[String(item.mangaid)];
+                const isAlreadyQueued = mQueued && (mQueued.has(String(mappedNum)) || mQueued.has(String(chap.chapterNum)));
+                if (!isAlreadyQueued) {
+                  pendingTasks.push({
+                    trackerId: item.trackerid,
+                    mangaId: item.mangaid,
+                    mangaName: item.manganame || (manga ? manga.manganame : ''),
+                    topicId: topicId,
+                    comicId: chap.comicId,
+                    chapterNum: mappedNum,
+                    chapterTitle: chap.chapterTitle,
+                    sourceUrl: item.url,
+                    connector: 'kuaikan'
+                  });
+                }
+              });
+            } else {
+              chapterMatches.forEach(function(chap) {
+                const cStr = String(chap.chapterNum);
+                const mQueued = queuedChaptersByManga[String(item.mangaid)];
+                const isAlreadyQueued = mQueued && (mQueued.has(cStr) || mQueued.has(String(Math.floor(chap.chapterNum))));
+                if (chap.chapterNum > currentChap && !isAlreadyQueued) {
+                  pendingTasks.push({
+                    trackerId: item.trackerid,
+                    mangaId: item.mangaid,
+                    mangaName: item.manganame || (manga ? manga.manganame : ''),
+                    topicId: topicId,
+                    comicId: chap.comicId,
+                    chapterNum: chap.chapterNum,
+                    chapterTitle: chap.chapterTitle,
+                    sourceUrl: item.url,
+                    connector: 'kuaikan'
+                  });
+                }
+              });
+            }
           } catch (fetchErr) {
             console.error('Error fetching KuaiKan topic ' + topicId + ':', fetchErr);
           }

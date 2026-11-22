@@ -376,11 +376,16 @@ def main():
         except Exception as e:
             print(f"   ⚠️ ตรวจสอบเว็บต้นทางผิดพลาด ({e}) ข้ามไปยังคิวงานเดิม...")
 
-    print("\n1. กำลังสแกนรายการตอนใหม่ทั้งหมดจาก RawTracker (KuaiKan, ThunderScans & Tencent Comic)...")
+    print("\n1. Scanning RawTracker pending chapters (KuaiKan and ThunderScans; Tencent/Comix run locally)...")
     tasks = []
     res = call_gas("GET_RAW_TRACKER_PENDING_CHAPTERS", {"trackerId": target_tracker_id})
     if res.get("status") == "success" and res.get("data"):
-        tasks.extend(res["data"].get("tasks", []))
+        for t in res["data"].get("tasks", []):
+            conn = str(t.get("connector", "kuaikan")).lower()
+            src_url = str(t.get("sourceUrl", "")).lower()
+            if conn in ["tencent", "qq", "comix"] or "ac.qq.com" in src_url or "comix.to" in src_url:
+                continue
+            tasks.append(t)
 
     # ดึงคิวตอนใหม่จาก ThunderScans (en-thunderscans.com)
     try:
@@ -393,27 +398,7 @@ def main():
     except Exception as th_err:
         print(f"   ⚠️ ไม่สามารถดึงคิวงาน ThunderScans: {th_err}")
 
-    # ดึงคิวตอนใหม่จาก Tencent Comic (ac.qq.com / qq)
-    try:
-        from tencent_purchaser import get_pending_tencent_tasks, process_single_tencent_chapter
-        tencent_tasks = get_pending_tencent_tasks()
-        if tencent_tasks:
-            if target_tracker_id:
-                tencent_tasks = [t for t in tencent_tasks if str(t.get("trackerId")) == str(target_tracker_id)]
-            tasks.extend(tencent_tasks)
-    except Exception as tc_err:
-        print(f"   ⚠️ ไม่สามารถดึงคิวงาน Tencent Comic: {tc_err}")
-
-    # ดึงคิวตอนใหม่จาก Comix.to (Multi-Group Scanner เช่น CrowScans)
-    try:
-        from comix_purchaser import get_pending_comix_tasks, process_single_comix_chapter
-        comix_tasks = get_pending_comix_tasks()
-        if comix_tasks:
-            if target_tracker_id:
-                comix_tasks = [t for t in comix_tasks if str(t.get("trackerId")) == str(target_tracker_id)]
-            tasks.extend(comix_tasks)
-    except Exception as cx_err:
-        print(f"   ⚠️ ไม่สามารถดึงคิวงาน Comix.to: {cx_err}")
+    # Tencent (ac.qq.com) and Comix.to are skipped in Cloud Pipeline (handled by local scripts)
 
     max_chapters = int(os.environ.get("MAX_CHAPTERS", "0"))
     if max_chapters > 0 and len(tasks) > max_chapters:
