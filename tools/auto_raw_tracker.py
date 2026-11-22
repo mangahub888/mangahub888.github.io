@@ -120,15 +120,31 @@ def countdown_sleep(seconds):
             return
     print("\n   ✓ ครบเวลาพัก 5 นาทีแล้ว เริ่มตอนถัดไปทันที!\n")
 
+def format_kuaikan_chapter_name(chapter_title, chapter_num):
+    """Ensure KuaiKan chapter title includes chapter_num when original title has no number."""
+    title = str(chapter_title or "").strip()
+    if chapter_num is None or chapter_num == "":
+        return title
+    try:
+        num_val = float(chapter_num)
+        num_str = str(int(num_val)) if num_val.is_integer() else str(num_val)
+    except Exception:
+        num_str = str(chapter_num).strip()
+    if not title:
+        return num_str
+    if re.search(r"\d+", title):
+        return title
+    return f"{num_str} - {title}"
+
 def process_single_chapter(task):
     """
     ประมวลผล 1 ตอน: ดึงภาพ -> เย็บ 20 หน้า (001-020) -> อัปโหลดขึ้น Drive -> ลงคิวงาน WorkQueue
     """
     manga_name = task.get("mangaName") or "มังงะ"
-    chapter_title = task.get("chapterTitle") or f"第{task.get('chapterNum')}话"
-    comic_id = task.get("comicId")
-    manga_id = str(task.get("mangaId") or "")
     chapter_num = task.get("chapterNum")
+    chapter_title = format_kuaikan_chapter_name(task.get("chapterTitle") or f"\u7b2c{chapter_num}\u8bdd", chapter_num)
+    manga_id = str(task.get("mangaId") or "")
+    manga_id = str(task.get("mangaId") or "")
 
     print(f"\n=======================================================")
     print(f"📖 กำลังประมวลผล: {manga_name} | {chapter_title} (ComicID: {comic_id})")

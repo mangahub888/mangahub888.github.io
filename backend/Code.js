@@ -5740,6 +5740,56 @@ function hourlyRawTrackerJob() {
  * ตรวจสอบเฉพาะรายการที่มีสถานะ "มีตอนใหม่" หรือ lastrawcount > currentChapter
  * รองรับการดึง Chapter list จาก KuaiKan topic URL โดยอัตโนมัติ
  */
+/**
+ * Resolve KuaiKan chapter numbers for titles without explicit numbers
+ * by comparing against previous numbered chapters and currentChap in system.
+ * Also filters out non-chapter noise (avatar URLs, timestamps, etc.).
+ */
+function resolveKuaikanChapterNumbers_(rawChapters, currentChap) {
+  const resolved = [];
+  const seenIds = {};
+  const baseCurrent = Math.floor(parseFloat(currentChap) || 0);
+  let lastKnownNum = 0;
+
+  for (let i = 0; i < rawChapters.length; i++) {
+    const cid = String(rawChapters[i].comicId || "").trim();
+    const title = String(rawChapters[i].title || "").trim();
+    if (!cid || !title || seenIds[cid]) continue;
+    // Filter out non-chapter noise (URLs, avatar images, dates)
+    if (/https?:|kkmh\.com|\\u002F|^\d{4}-\d{2}-\d{2}|^\d{2}-\d{2}\s+\d{2}:\d{2}/.test(title)) {
+      continue;
+    }
+
+    let numMatch = title.match(/(?:\u7b2c)?\s*(\d+(?:\.\d+)?)\s*(?:\u8bdd|\u96c6|\u56de)/i);
+    if (!numMatch) numMatch = title.match(/^(?:\u7b2c)?\s*(\d+(?:\.\d+)?)/i);
+    if (!numMatch) numMatch = title.match(/(?:Chapter|Ch\.|Ep\.)\s*(\d+(?:\.\d+)?)/i);
+
+    let cNum = null;
+    let finalTitle = title;
+    if (numMatch) {
+      const parsed = parseFloat(numMatch[1]);
+      if (!isNaN(parsed) && parsed > 0 && parsed < 1900) {
+        cNum = parsed;
+        lastKnownNum = Math.max(lastKnownNum, Math.floor(parsed));
+      }
+    } else if (lastKnownNum > 0 || baseCurrent > 0) {
+      // Unnumbered chapter: compare with previous chapter and currentChap in system
+      const anchor = Math.max(lastKnownNum, baseCurrent);
+      lastKnownNum = anchor + 1;
+      cNum = lastKnownNum;
+      finalTitle = cNum + " - " + title;
+    }
+
+    if (cNum !== null) {
+      seenIds[cid] = true;
+      resolved.push({ comicId: cid, chapterTitle: finalTitle, chapterNum: cNum });
+    }
+  }
+
+  resolved.sort(function(a, b) { return a.chapterNum - b.chapterNum; });
+  return resolved;
+}
+
 function getRawTrackerPendingChapters(targetTrackerId) {
   try {
     const trackerList = getRawTrackerList();
@@ -5804,34 +5854,13 @@ function getRawTrackerPendingChapters(targetTrackerId) {
             });
             const html = resp.getContentText();
             // Extract comic entries (comicId, title) including unnumbered latest chapters
-            const chapterMatches = [];
+            const rawChapters = [];
             const comicEntryRegex = /(\d{5,9}),"([^"]*?)","https:\\u002F\\u002F[^"]*?kkmh\.com/g;
-            let lastKnownNum = 0;
             let m;
             while ((m = comicEntryRegex.exec(html)) !== null) {
-              const cid = m[1];
-              const title = m[2].trim();
-              if (!title) continue;
-              let numMatch = title.match(/(?:\u7b2c)?\s*(\d+(?:\.\d+)?)\s*(?:\u8bdd|\u96c6|\u56de)/i);
-              if (!numMatch) numMatch = title.match(/^(?:\u7b2c)?\s*(\d+(?:\.\d+)?)/i);
-              if (!numMatch) numMatch = title.match(/(?:Chapter|Ch\.|Ep\.)\s*(\d+(?:\.\d+)?)/i);
-              let cNum = null;
-              if (numMatch) {
-                const parsed = parseFloat(numMatch[1]);
-                if (!isNaN(parsed) && parsed > 0 && parsed < 1900) {
-                  cNum = parsed;
-                  lastKnownNum = Math.max(lastKnownNum, Math.floor(parsed));
-                }
-              } else if (lastKnownNum > 0) {
-                lastKnownNum += 1;
-                cNum = lastKnownNum;
-              }
-              if (cNum !== null && !chapterMatches.some(function(x) { return x.comicId === cid; })) {
-                chapterMatches.push({ comicId: cid, chapterTitle: title, chapterNum: cNum });
-              }
+              rawChapters.push({ comicId: m[1], title: m[2] });
             }
-
-            chapterMatches.sort(function(a, b) { return a.chapterNum - b.chapterNum; });
+            const chapterMatches = resolveKuaikanChapterNumbers_(rawChapters, currentChap);
             const maxParsedNum = chapterMatches.length > 0 ? chapterMatches[chapterMatches.length - 1].chapterNum : 0;
 
             if (rawCount > currentChap && maxParsedNum > 0 && maxParsedNum <= currentChap) {
