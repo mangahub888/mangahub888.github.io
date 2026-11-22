@@ -81,6 +81,7 @@ export function QueueView({
   const now = new Date()
   const [search, setSearch] = React.useState("")
   const [completionFilter, setCompletionFilter] = React.useState("incomplete")
+  const [statusFilter, setStatusFilter] = React.useState<"all" | "กำลังทำ" | "รอเริ่ม" | "เสร็จแล้ว">("all")
   const [stepFilter, setStepFilter] = React.useState("all")
   const [urgentFilter, setUrgentFilter] = React.useState("all")
   const [assigneeFilter, setAssigneeFilter] = React.useState("all")
@@ -331,8 +332,46 @@ export function QueueView({
       } else {
         // Strict Sequential Step Rule:
         // งานที่ขั้นตอนนั้นยังไม่เสร็จสิ้น และขั้นตอนก่อนหน้าทั้งหมดเสร็จสิ้นแล้ว
-        if (!matchesStepFilter(q, stepFilter, manga)) {
+        if (statusFilter !== "เสร็จแล้ว" && !matchesStepFilter(q, stepFilter, manga)) {
           return false
+        }
+      }
+
+      // Status filter ("ทั้งหมด" | "กำลังทำ" | "รอเริ่ม" | "เสร็จแล้ว")
+      if (statusFilter !== "all") {
+        const allStepKeys = ["upload", "ocr", "extract", "translate", "psd", "typeset", "publish", "post"]
+        const normalizeStatus = (val: any) => String(val || "").trim() || "รอเริ่ม"
+
+        if (stepFilter === "all") {
+          const hasInProgress = allStepKeys.some(
+            (k) => normalizeStatus(q[k + "status"]) === "กำลังทำ"
+          )
+          if (statusFilter === "เสร็จแล้ว") {
+            if (!isFinished) return false
+          } else if (statusFilter === "กำลังทำ") {
+            if (!hasInProgress) return false
+          } else if (statusFilter === "รอเริ่ม") {
+            const curStatus =
+              currentStep && currentStep !== "done"
+                ? normalizeStatus(q[currentStep + "status"])
+                : "เสร็จแล้ว"
+            if (isFinished || hasInProgress || curStatus !== "รอเริ่ม") return false
+          }
+        } else if (stepFilter === "publish_post") {
+          const pubStatus = normalizeStatus(q.publishstatus)
+          const postStatus = normalizeStatus(q.poststatus)
+          if (statusFilter === "กำลังทำ") {
+            if (pubStatus !== "กำลังทำ" && postStatus !== "กำลังทำ") return false
+          } else if (statusFilter === "รอเริ่ม") {
+            if (pubStatus === "กำลังทำ" || postStatus === "กำลังทำ") return false
+            if (pubStatus !== "รอเริ่ม" && postStatus !== "รอเริ่ม") return false
+          } else if (statusFilter === "เสร็จแล้ว") {
+            if (pubStatus !== "เสร็จแล้ว" && postStatus !== "เสร็จแล้ว") return false
+          }
+        } else {
+          const targetStep = stepFilter === "psd_done" ? "typeset" : stepFilter
+          const stepStatus = normalizeStatus(q[targetStep + "status"])
+          if (stepStatus !== statusFilter) return false
         }
       }
 
@@ -487,6 +526,7 @@ export function QueueView({
     monthFilter,
     yearFilter,
     completionFilter,
+    statusFilter,
     stepFilter,
     assigneeFilter,
     urgentFilter,
@@ -622,12 +662,13 @@ export function QueueView({
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             🕒 สถานะคิวงานแยกตามขั้นตอน (จำนวนตอน) • คลิกการ์ดเพื่อกรอง
           </p>
-          {(stepFilter !== "all" || completionFilter !== "incomplete") && (
+          {(stepFilter !== "all" || completionFilter !== "incomplete" || statusFilter !== "all") && (
             <button
               type="button"
               onClick={() => {
                 setStepFilter("all")
                 setCompletionFilter("incomplete")
+                setStatusFilter("all")
               }}
               className="text-xs text-indigo-400 hover:text-indigo-300 underline font-medium cursor-pointer"
             >
@@ -930,6 +971,7 @@ export function QueueView({
                 setShowPublishPost(true)
               } else if (completionFilter === "complete") {
                 setCompletionFilter("incomplete")
+                setStatusFilter("all")
               }
             }}
           >
@@ -969,6 +1011,48 @@ export function QueueView({
                 placeholder="ทีมงาน: ทั้งหมด"
                 searchPlaceholder="ค้นหาทีมงาน..."
               />
+            </div>
+
+            {/* Status Filter Pills: ทั้งหมด / กำลังทำ / รอเริ่ม / เสร็จแล้ว */}
+            <div
+              className="inline-flex flex-wrap items-center gap-1 rounded-lg border border-[#26334d] bg-[#0b1120] p-1"
+              role="group"
+              aria-label="กรองตามสถานะงาน"
+            >
+              {(
+                [
+                  { value: "all", label: "ทั้งหมด", activeClass: "bg-indigo-600 text-white shadow-sm" },
+                  { value: "กำลังทำ", label: "⏳ กำลังทำ", activeClass: "bg-amber-500/25 text-amber-300 border border-amber-500/50 shadow-sm" },
+                  { value: "รอเริ่ม", label: "🕒 รอเริ่ม", activeClass: "bg-slate-700 text-slate-100 border border-slate-500/60 shadow-sm" },
+                  { value: "เสร็จแล้ว", label: "✅ เสร็จแล้ว", activeClass: "bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 shadow-sm" },
+                ] as const
+              ).map((opt) => {
+                const isActive = statusFilter === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter(opt.value)
+                      if (opt.value === "เสร็จแล้ว" && stepFilter === "all" && completionFilter === "incomplete") {
+                        setCompletionFilter("all")
+                      } else if (
+                        (opt.value === "กำลังทำ" || opt.value === "รอเริ่ม") &&
+                        completionFilter === "complete"
+                      ) {
+                        setCompletionFilter("incomplete")
+                      }
+                    }}
+                    className={`h-8 px-2.5 rounded-md text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
+                      isActive
+                        ? opt.activeClass
+                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/70"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
             </div>
 
             {/* Quick Toggle in Toolbar */}
