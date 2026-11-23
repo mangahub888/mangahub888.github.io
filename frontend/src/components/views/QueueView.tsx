@@ -542,18 +542,33 @@ export function QueueView({
     ]
   }, [teamList])
 
+  React.useEffect(() => {
+    const visibleIds = new Set(filteredQueue.map((q) => String(q.queueid)))
+    setSelectedIds((prev) => {
+      if (prev.size === 0) return prev
+      let changed = false
+      const next = new Set<string>()
+      prev.forEach((id) => {
+        if (visibleIds.has(id)) {
+          next.add(id)
+        } else {
+          changed = true
+        }
+      })
+      return changed ? next : prev
+    })
+  }, [filteredQueue])
+
   const allVisibleSelected =
     filteredQueue.length > 0 &&
     filteredQueue.every((q) => selectedIds.has(String(q.queueid)))
 
   const toggleSelectAll = (checked: boolean) => {
-    const next = new Set(selectedIds)
-    filteredQueue.forEach((q) => {
-      const id = String(q.queueid)
-      if (checked) next.add(id)
-      else next.delete(id)
-    })
-    setSelectedIds(next)
+    if (checked) {
+      setSelectedIds(new Set(filteredQueue.map((q) => String(q.queueid))))
+    } else {
+      setSelectedIds(new Set())
+    }
   }
 
   const toggleRow = (queueId: string, checked: boolean) => {
