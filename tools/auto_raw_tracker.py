@@ -143,7 +143,7 @@ def process_single_chapter(task):
     manga_name = task.get("mangaName") or "มังงะ"
     chapter_num = task.get("chapterNum")
     chapter_title = format_kuaikan_chapter_name(task.get("chapterTitle") or f"\u7b2c{chapter_num}\u8bdd", chapter_num)
-    manga_id = str(task.get("mangaId") or "")
+    comic_id = task.get("comicId")
     manga_id = str(task.get("mangaId") or "")
 
     print(f"\n=======================================================")
