@@ -25,6 +25,7 @@ import {
   isQueueStepDone,
   isStepDone,
   isUrgentManga,
+  getTypesetDifficultyMeta,
   matchesStepFilter,
   resolveTypesetterName,
   parseQueueDate,
@@ -306,7 +307,9 @@ export function QueueView({
       // Search
       if (cleanSearch) {
         const name = manga ? String(manga.manganame).toLowerCase() : ""
-        if (!name.includes(cleanSearch)) return false
+        const diffMeta = getTypesetDifficultyMeta(manga)
+        const diffLabel = diffMeta ? diffMeta.label.toLowerCase() : ""
+        if (!name.includes(cleanSearch) && !diffLabel.includes(cleanSearch)) return false
       }
 
       // Completion
@@ -1238,6 +1241,7 @@ export function QueueView({
                 )
                 const mangaName = resolveMangaName(q.mangaid, manga?.manganame, mangaList)
                 const urgent = isUrgentManga(manga)
+                const diffMeta = getTypesetDifficultyMeta(manga)
                 const createdDate = parseQueueDate(q.createdat)
                 const dateStr = createdDate
                   ? createdDate.toLocaleDateString("th-TH") +
@@ -1285,6 +1289,15 @@ export function QueueView({
                         {urgent && (
                           <span className="rounded bg-red-500/20 border border-red-500/30 px-1.5 py-0.2 text-[10px] font-bold text-red-300 whitespace-nowrap">
                             ด่วน
+                          </span>
+                        )}
+                        {diffMeta && (
+                          <span
+                            className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.2 text-[10px] font-semibold whitespace-nowrap ${diffMeta.badgeClass}`}
+                            title={`ระดับงานลงคำ: ${diffMeta.label}`}
+                          >
+                            <span className={`h-1.5 w-1.5 rounded-full ${diffMeta.dotClass}`} />
+                            {diffMeta.label}
                           </span>
                         )}
                       </div>
@@ -1510,6 +1523,14 @@ export function QueueView({
                           {(q.typesettype === "เกาหลี" || q.typesetratetype === "เกาหลี") && (
                             <span className="inline-block text-[10px] text-sky-400 font-bold bg-sky-500/10 px-1 py-0.2 rounded border border-sky-500/30 shrink-0">
                               เกาหลี
+                            </span>
+                          )}
+                          {diffMeta && (
+                            <span
+                              className={`inline-block text-[10px] font-bold px-1 py-0.2 rounded border shrink-0 ${diffMeta.badgeClass}`}
+                              title={`ระดับงานลงคำ: ${diffMeta.label}`}
+                            >
+                              {diffMeta.label}
                             </span>
                           )}
                         </div>

@@ -16,9 +16,12 @@ import { SearchableSelect } from "@/components/ui/searchable-select"
 import {
   RELEASE_DAYS,
   TARGET_PLATFORMS,
+  TYPESET_DIFFICULTIES,
   parsePlatforms,
   isUrgentManga,
   isTranslatePayoutExcluded,
+  getMangaTypesetDifficulty,
+  setLocalTypesetDifficulty,
 } from "@/lib/utils"
 import { callGasApi } from "@/api/gasClient"
 import { toast } from "sonner"
@@ -34,6 +37,7 @@ import {
   Coins,
   CheckCircle2,
   Globe,
+  Tag,
 } from "lucide-react"
 import { ComixUrlSearchDialog } from "@/components/modals/ComixUrlSearchDialog"
 
@@ -55,6 +59,7 @@ const mangaSchema = z.object({
   notifyonadd: z.boolean().default(false),
   isurgent: z.boolean().default(false),
   excludetranslatepayout: z.boolean().default(false),
+  typesetdifficulty: z.string().optional(),
   platforms: z.union([z.array(z.string()), z.string()]).optional(),
 })
 
@@ -108,6 +113,7 @@ export function MangaModal({
       notifyonadd: false,
       isurgent: false,
       excludetranslatepayout: false,
+      typesetdifficulty: "",
     },
   })
 
@@ -217,6 +223,7 @@ export function MangaModal({
             String(editItem.notifyonadd).toLowerCase() === "true",
           isurgent: isUrgentManga(editItem),
           excludetranslatepayout: isTranslatePayoutExcluded(editItem),
+          typesetdifficulty: getMangaTypesetDifficulty(editItem),
         })
         if (editItem.releaseday && editItem.releaseday !== "None") {
           setSelectedDays(
@@ -249,6 +256,7 @@ export function MangaModal({
           notifyonadd: false,
           isurgent: false,
           excludetranslatepayout: false,
+          typesetdifficulty: "",
         })
         setSelectedDays([])
         const rawPlats = editItem?.platforms || editItem?.Platforms || ""
@@ -320,26 +328,47 @@ export function MangaModal({
   const onSubmit = async (values: MangaFormValues) => {
     setSubmitting(true)
     try {
+      const diffVal = values.typesetdifficulty || ""
       const payload = {
         ...values,
         platforms: selectedPlatforms.join(", "),
         Platforms: selectedPlatforms.join(", "),
         excludetranslatepayout: Boolean(values.excludetranslatepayout),
         ExcludeTranslatePayout: Boolean(values.excludetranslatepayout),
+        typesetdifficulty: diffVal,
+        TypesetDifficulty: diffVal,
         releaseday: selectedDays.length > 0 ? selectedDays.join(", ") : "None",
       }
 
       if (editItem?.mangaid) {
+        setLocalTypesetDifficulty(editItem.mangaid, diffVal)
         const updatedList = await callGasApi("UPDATE_MANGA", {
           id: editItem.mangaid,
           data: payload,
         })
         toast.success("อัปเดตข้อมูลมังงะเรียบร้อยแล้ว")
-        onSuccess(Array.isArray(updatedList) ? updatedList : [])
+        const mergedList = Array.isArray(updatedList)
+          ? updatedList.map((m: any) =>
+              String(m.mangaid) === String(editItem.mangaid)
+                ? { ...m, typesetdifficulty: diffVal, TypesetDifficulty: diffVal }
+                : m
+            )
+          : []
+        onSuccess(mergedList)
       } else {
         const res = await callGasApi("ADD_MANGA", payload)
+        if (res?.mangaId != null) {
+          setLocalTypesetDifficulty(res.mangaId, diffVal)
+        }
         toast.success("เพิ่มมังงะใหม่เรียบร้อยแล้ว")
-        onSuccess(res.list || [], res.mangaId)
+        const mergedList = Array.isArray(res?.list)
+          ? res.list.map((m: any) =>
+              res?.mangaId != null && String(m.mangaid) === String(res.mangaId)
+                ? { ...m, typesetdifficulty: diffVal, TypesetDifficulty: diffVal }
+                : m
+            )
+          : []
+        onSuccess(mergedList, res.mangaId)
       }
       onClose()
     } catch (err: any) {
@@ -357,6 +386,7 @@ export function MangaModal({
   const notifyOnAdd = watch("notifyonadd")
   const isUrgent = watch("isurgent")
   const excludeTranslatePayout = watch("excludetranslatepayout")
+  const typesetDifficulty = watch("typesetdifficulty") || ""
 
   return (
     <>
@@ -367,15 +397,32 @@ export function MangaModal({
             <DialogTitle className="text-xl">
               {editItem ? "แก้ไขข้อมูลมังงะ" : "เปิดโปรเจคใหม่ / เพิ่มมังงะใหม่"}
             </DialogTitle>
-            <span
-              className={`text-xs px-2.5 py-0.5 rounded-full border font-medium self-start sm:self-auto ${
-                excludeTranslatePayout
-                  ? "bg-amber-500/20 border-amber-500/60 text-amber-300"
-                  : "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
-              }`}
-            >
-              {excludeTranslatePayout ? "🚫 ไม่นับยอดเบิกจ่าย" : "✅ นับยอดเบิกจ่ายปกติ"}
-            </span>
+            <div className="flex flex-wrap items-center gap-1.5 self-start sm:self-auto">
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${
+                  typesetDifficulty === "easy"
+                    ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
+                    : typesetDifficulty === "hard"
+                      ? "bg-rose-500/20 border-rose-500/50 text-rose-300"
+                      : "bg-slate-800/80 border-slate-700 text-slate-400"
+                }`}
+              >
+                {typesetDifficulty === "easy"
+                  ? "🟢 ลงคำง่าย"
+                  : typesetDifficulty === "hard"
+                    ? "🔴 ลงคำยาก"
+                    : "⚪ ยังไม่ระบุความยาก"}
+              </span>
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${
+                  excludeTranslatePayout
+                    ? "bg-amber-500/20 border-amber-500/60 text-amber-300"
+                    : "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
+                }`}
+              >
+                {excludeTranslatePayout ? "🚫 ไม่นับยอดเบิกจ่าย" : "✅ นับยอดเบิกจ่ายปกติ"}
+              </span>
+            </div>
           </div>
         </DialogHeader>
 
@@ -401,6 +448,83 @@ export function MangaModal({
             {errors.manganame && (
               <p className="text-xs text-red-400">{errors.manganame.message}</p>
             )}
+          </div>
+
+          {/* ระดับความยากการลงคำ (วางด้านบนสุดให้เลือกได้ทันทีเมื่อกดแก้ไขข้อมูลมังงะ) */}
+          <div
+            className={`rounded-xl border-2 p-3.5 space-y-2.5 transition-all ${
+              typesetDifficulty === "easy"
+                ? "border-emerald-500/60 bg-emerald-950/25 shadow-sm"
+                : typesetDifficulty === "hard"
+                  ? "border-rose-500/60 bg-rose-950/25 shadow-sm"
+                  : "border-emerald-500/30 bg-[#0c1427]/80"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-1.5 text-sm font-semibold text-emerald-200">
+                <Tag className="h-4 w-4 text-emerald-400" />
+                ระดับงานลงคำ (ลงคำง่าย / ลงคำยาก)
+              </Label>
+              {typesetDifficulty ? (
+                <span
+                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                    typesetDifficulty === "easy"
+                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50"
+                      : "bg-rose-500/20 text-rose-300 border-rose-500/50"
+                  }`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      typesetDifficulty === "easy" ? "bg-emerald-400" : "bg-rose-400"
+                    }`}
+                  />
+                  {typesetDifficulty === "easy" ? "ลงคำง่าย" : "ลงคำยาก"}
+                </span>
+              ) : (
+                <span className="text-xs text-slate-400">ยังไม่ระบุ</span>
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setValue("typesetdifficulty", "", {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+                className={`flex items-center justify-center gap-1.5 h-10 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
+                  typesetDifficulty === ""
+                    ? "border-slate-500 bg-slate-800 text-slate-100 ring-1 ring-slate-500/50"
+                    : "border-slate-800 bg-[#0b1120] text-slate-400 hover:border-slate-700 hover:text-slate-200"
+                }`}
+              >
+                ไม่ระบุ
+              </button>
+              {TYPESET_DIFFICULTIES.map((diff) => {
+                const isSelected = typesetDifficulty === diff.id
+                return (
+                  <button
+                    key={diff.id}
+                    type="button"
+                    onClick={() =>
+                      setValue("typesetdifficulty", isSelected ? "" : diff.id, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                    className={`flex items-center justify-center gap-1.5 h-10 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
+                      isSelected
+                        ? diff.activeCardClass
+                        : "border-slate-800 bg-[#0b1120] text-slate-300 hover:border-slate-700 hover:bg-slate-900/60"
+                    }`}
+                  >
+                    <span className={`h-2 w-2 rounded-full ${diff.dotClass}`} />
+                    {diff.label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -642,6 +766,75 @@ export function MangaModal({
               placeholder="-- ไม่มีการล็อคคนลงคำ --"
               searchPlaceholder="ค้นหาคนลงคำ..."
             />
+          </div>
+
+          {/* Label ระดับความยากการลงคำ (ลงคำง่าย / ลงคำยาก) */}
+          <div className="rounded-xl border border-emerald-500/30 bg-[#0c1427]/80 p-3.5 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-1.5 text-sm font-semibold text-emerald-200">
+                <Tag className="h-4 w-4 text-emerald-400" />
+                Label ความยากการลงคำ (ลงคำง่าย / ลงคำยาก)
+              </Label>
+              {typesetDifficulty ? (
+                <span
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${
+                    typesetDifficulty === "easy"
+                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50"
+                      : "bg-rose-500/20 text-rose-300 border-rose-500/50"
+                  }`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      typesetDifficulty === "easy" ? "bg-emerald-400" : "bg-rose-400"
+                    }`}
+                  />
+                  {typesetDifficulty === "easy" ? "ลงคำง่าย" : "ลงคำยาก"}
+                </span>
+              ) : (
+                <span className="text-xs text-slate-400">ยังไม่ระบุ</span>
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setValue("typesetdifficulty", "", {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+                className={`flex items-center justify-center gap-1.5 h-10 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
+                  typesetDifficulty === ""
+                    ? "border-slate-500 bg-slate-800 text-slate-100 ring-1 ring-slate-500/50"
+                    : "border-slate-800 bg-[#0b1120] text-slate-400 hover:border-slate-700 hover:text-slate-200"
+                }`}
+              >
+                ไม่ระบุ
+              </button>
+              {TYPESET_DIFFICULTIES.map((diff) => {
+                const isSelected = typesetDifficulty === diff.id
+                return (
+                  <button
+                    key={diff.id}
+                    type="button"
+                    onClick={() =>
+                      setValue("typesetdifficulty", isSelected ? "" : diff.id, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                    className={`flex items-center justify-center gap-1.5 h-10 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
+                      isSelected
+                        ? diff.activeCardClass
+                        : "border-slate-800 bg-[#0b1120] text-slate-300 hover:border-slate-700 hover:bg-slate-900/60"
+                    }`}
+                  >
+                    <span className={`h-2 w-2 rounded-full ${diff.dotClass}`} />
+                    {diff.label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           <div className="space-y-1.5">

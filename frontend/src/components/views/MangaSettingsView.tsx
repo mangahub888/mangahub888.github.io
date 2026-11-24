@@ -16,6 +16,11 @@ import {
   isTranslatePayoutExcluded,
   timeSince,
   TARGET_PLATFORMS,
+  TYPESET_DIFFICULTIES,
+  TypesetDifficultyId,
+  getMangaTypesetDifficulty,
+  getTypesetDifficultyMeta,
+  setLocalTypesetDifficulty,
   parsePlatforms,
 } from "@/lib/utils"
 import { callGasApi, DEFAULT_GAS_URL, getGasUrl, setGasUrl } from "@/api/gasClient"
@@ -34,6 +39,7 @@ import {
   Loader2,
   Search,
   Globe,
+  Tag,
 } from "lucide-react"
 
 interface MangaSettingsViewProps {
@@ -53,9 +59,60 @@ export function MangaSettingsView({
 }: MangaSettingsViewProps) {
   const [gasUrlInput, setGasUrlInput] = React.useState(getGasUrl())
   const [updatingPayoutId, setUpdatingPayoutId] = React.useState<string | number | null>(null)
+  const [updatingDiffId, setUpdatingDiffId] = React.useState<string | number | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
   const [filterPayout, setFilterPayout] = React.useState<"all" | "excluded" | "included">("all")
   const [filterPlatform, setFilterPlatform] = React.useState<string>("all")
+  const [filterDifficulty, setFilterDifficulty] = React.useState<"all" | "easy" | "hard" | "unset">("all")
+
+  const handleSetTypesetDifficulty = async (manga: any, targetDiff: "easy" | "hard") => {
+    const mangaId = manga.mangaid
+    const currentDiff = getMangaTypesetDifficulty(manga)
+    const newDiff: TypesetDifficultyId = currentDiff === targetDiff ? "" : targetDiff
+    setUpdatingDiffId(mangaId)
+    setLocalTypesetDifficulty(mangaId, newDiff)
+
+    // Optimistic update
+    const updatedList = mangaList.map((m) =>
+      String(m.mangaid) === String(mangaId)
+        ? { ...m, typesetdifficulty: newDiff, TypesetDifficulty: newDiff }
+        : m
+    )
+    onMangaChange(updatedList)
+
+    try {
+      const payload = {
+        ...manga,
+        typesetdifficulty: newDiff,
+        TypesetDifficulty: newDiff,
+      }
+      const res = await callGasApi("UPDATE_MANGA", {
+        id: mangaId,
+        data: payload,
+      })
+      if (Array.isArray(res)) {
+        const merged = res.map((m: any) =>
+          String(m.mangaid) === String(mangaId)
+            ? { ...m, typesetdifficulty: newDiff, TypesetDifficulty: newDiff }
+            : m
+        )
+        onMangaChange(merged)
+      }
+      toast.success(
+        newDiff === "easy"
+          ? `ตั้งค่า "${manga.manganame}": ลงคำง่าย`
+          : newDiff === "hard"
+          ? `ตั้งค่า "${manga.manganame}": ลงคำยาก`
+          : `ล้างค่าความยากลงคำของ "${manga.manganame}" แล้ว`
+      )
+    } catch (err: any) {
+      setLocalTypesetDifficulty(mangaId, currentDiff)
+      onMangaChange(mangaList)
+      toast.error(err.message || "เกิดข้อผิดพลาดในการอัปเดต Label ความยากลงคำ")
+    } finally {
+      setUpdatingDiffId(null)
+    }
+  }
 
   const handleToggleExcludePayout = async (manga: any) => {
     const mangaId = manga.mangaid
@@ -109,14 +166,31 @@ export function MangaSettingsView({
     return counts
   }, [mangaList])
 
+  const difficultyCounts = React.useMemo(() => {
+    const counts = { easy: 0, hard: 0, unset: 0 }
+    mangaList.forEach((m) => {
+      const diff = getMangaTypesetDifficulty(m)
+      if (diff === "easy") counts.easy++
+      else if (diff === "hard") counts.hard++
+      else counts.unset++
+    })
+    return counts
+  }, [mangaList])
+
   const filteredMangaList = React.useMemo(() => {
     return mangaList.filter((m) => {
       const q = searchQuery.trim().toLowerCase()
       const plats = parsePlatforms(m.platforms || m.Platforms)
+      const diff = getMangaTypesetDifficulty(m)
+      const diffMeta = getTypesetDifficultyMeta(diff)
 
       if (filterPlatform !== "all" && !plats.includes(filterPlatform)) {
         return false
       }
+
+      if (filterDifficulty === "easy" && diff !== "easy") return false
+      if (filterDifficulty === "hard" && diff !== "hard") return false
+      if (filterDifficulty === "unset" && diff !== "") return false
 
       const matchQuery =
         !q ||
@@ -124,6 +198,7 @@ export function MangaSettingsView({
         (m.originalname && m.originalname.toLowerCase().includes(q)) ||
         (m.slug && m.slug.toLowerCase().includes(q)) ||
         (m.scangroup && m.scangroup.toLowerCase().includes(q)) ||
+        (diffMeta && diffMeta.label.toLowerCase().includes(q)) ||
         plats.some((p) => p.includes(q))
 
       if (!matchQuery) return false
@@ -133,7 +208,7 @@ export function MangaSettingsView({
       if (filterPayout === "included") return !isExcluded
       return true
     })
-  }, [mangaList, searchQuery, filterPayout, filterPlatform])
+  }, [mangaList, searchQuery, filterPayout, filterPlatform, filterDifficulty])
 
   const totalExcluded = React.useMemo(() => {
     return mangaList.filter((m) => isTranslatePayoutExcluded(m)).length
@@ -252,6 +327,50 @@ export function MangaSettingsView({
             )
           })}
         </div>
+
+        {/* Typeset Difficulty Quick Filter */}
+        <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-800/80">
+          <span className="text-xs text-slate-400 flex items-center gap-1 mr-1">
+            <Tag className="h-3.5 w-3.5 text-slate-400" /> ระดับงานลงคำ:
+          </span>
+          <Button
+            type="button"
+            variant={filterDifficulty === "all" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilterDifficulty("all")}
+            className="text-xs h-7 px-2.5"
+          >
+            ทั้งหมด ({mangaList.length})
+          </Button>
+          {TYPESET_DIFFICULTIES.map((diff) => {
+            const isSelected = filterDifficulty === diff.id
+            const count = difficultyCounts[diff.id] || 0
+            return (
+              <Button
+                key={diff.id}
+                type="button"
+                variant={isSelected ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFilterDifficulty(isSelected ? "all" : diff.id)}
+                className={`text-xs h-7 px-2.5 flex items-center gap-1.5 ${
+                  isSelected ? "" : diff.badgeClass
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${diff.dotClass}`} />
+                {diff.label} ({count})
+              </Button>
+            )
+          })}
+          <Button
+            type="button"
+            variant={filterDifficulty === "unset" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilterDifficulty(filterDifficulty === "unset" ? "all" : "unset")}
+            className="text-xs h-7 px-2.5 text-slate-400"
+          >
+            ยังไม่ระบุ ({difficultyCounts.unset})
+          </Button>
+        </div>
       </div>
 
       {/* Manga Table */}
@@ -266,6 +385,11 @@ export function MangaSettingsView({
               <TableHead>วันปล่อยดิบ</TableHead>
               <TableHead>ตอนล่าสุด</TableHead>
               <TableHead>Google Docs รวมแปล</TableHead>
+              <TableHead className="text-center min-w-[165px] bg-emerald-500/5">
+                <span className="flex items-center justify-center gap-1 text-emerald-300 font-semibold">
+                  <Tag className="h-3.5 w-3.5" /> ระดับงานลงคำ
+                </span>
+              </TableHead>
               <TableHead className="text-center min-w-[170px] bg-amber-500/5">
                 <span className="flex items-center justify-center gap-1 text-amber-300 font-semibold">
                   <Coins className="h-3.5 w-3.5" /> เกณฑ์เบิกจ่าย (แปล)
@@ -279,10 +403,10 @@ export function MangaSettingsView({
             {filteredMangaList.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={10}
+                  colSpan={11}
                   className="text-center py-12 text-slate-400"
                 >
-                  {searchQuery || filterPayout !== "all" || filterPlatform !== "all"
+                  {searchQuery || filterPayout !== "all" || filterPlatform !== "all" || filterDifficulty !== "all"
                     ? "ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา/ตัวกรอง"
                     : "ไม่มีข้อมูลแสดงผล"}
                 </TableCell>
@@ -292,12 +416,23 @@ export function MangaSettingsView({
                 const urgent = isUrgentManga(m)
                 const excludeTranslate = isTranslatePayoutExcluded(m)
                 const scanGroup = m.scangroup || m.ScanGroup || ""
+                const diff = getMangaTypesetDifficulty(m)
+                const diffMeta = getTypesetDifficultyMeta(diff)
                 return (
                   <TableRow key={m.mangaid}>
                     <TableCell>
                       <div className="font-semibold text-slate-100 flex items-center gap-1.5 flex-wrap">
                         {urgent && <span>🔥</span>}
                         <span>{m.manganame || "Untitled"}</span>
+                        {diffMeta && (
+                          <span
+                            className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-semibold shadow-sm ${diffMeta.badgeClass}`}
+                            title={`ระดับงานลงคำ: ${diffMeta.label}`}
+                          >
+                            <span className={`h-1.5 w-1.5 rounded-full ${diffMeta.dotClass}`} />
+                            {diffMeta.label}
+                          </span>
+                        )}
                         {scanGroup && (
                           <span
                             className="inline-flex items-center gap-1 rounded bg-purple-950/60 border border-purple-500/40 px-1.5 py-0.5 text-[10px] font-medium text-purple-300"
@@ -414,6 +549,48 @@ export function MangaSettingsView({
                           <Plus className="h-3 w-3" /> เพิ่มลิงก์ Docs
                         </button>
                       )}
+                    </TableCell>
+
+                    {/* Quick Toggle ระดับงานลงคำ (ลงคำง่าย / ลงคำยาก) */}
+                    <TableCell className="text-center bg-emerald-500/5">
+                      <div className="inline-flex items-center gap-1 rounded-lg bg-[#0b1120] p-1 border border-slate-800">
+                        <button
+                          type="button"
+                          disabled={updatingDiffId === m.mangaid}
+                          onClick={() => handleSetTypesetDifficulty(m, "easy")}
+                          title={
+                            diff === "easy"
+                              ? "ขณะนี้: ลงคำง่าย (คลิกอีกครั้งเพื่อล้างค่า)"
+                              : "คลิกเพื่อตั้งค่าเป็น ลงคำง่าย"
+                          }
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer border ${
+                            diff === "easy"
+                              ? "bg-emerald-500/25 text-emerald-300 border-emerald-500/60 shadow-sm"
+                              : "bg-transparent text-slate-400 border-transparent hover:text-emerald-300 hover:bg-emerald-500/10"
+                          }`}
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0" />
+                          <span>ลงคำง่าย</span>
+                        </button>
+                        <button
+                          type="button"
+                          disabled={updatingDiffId === m.mangaid}
+                          onClick={() => handleSetTypesetDifficulty(m, "hard")}
+                          title={
+                            diff === "hard"
+                              ? "ขณะนี้: ลงคำยาก (คลิกอีกครั้งเพื่อล้างค่า)"
+                              : "คลิกเพื่อตั้งค่าเป็น ลงคำยาก"
+                          }
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer border ${
+                            diff === "hard"
+                              ? "bg-rose-500/25 text-rose-300 border-rose-500/60 shadow-sm"
+                              : "bg-transparent text-slate-400 border-transparent hover:text-rose-300 hover:bg-rose-500/10"
+                          }`}
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-rose-400 shrink-0" />
+                          <span>ลงคำยาก</span>
+                        </button>
+                      </div>
                     </TableCell>
 
                     {/* Quick Toggle เกณฑ์เบิกจ่าย */}

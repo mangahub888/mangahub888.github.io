@@ -887,6 +887,7 @@ function ensureSheetHeaders(sheet, name) {
       ensureCol('KairewURL', '');
       ensureCol('ChaplyURL', '');
       ensureCol('ExcludeTranslatePayout', false);
+      ensureCol('TypesetDifficulty', '');
     }
   }
 
@@ -960,7 +961,7 @@ function getSheet(name = SHEET_NAME) {
       sheet.appendRow([
         'MangaID', 'MangaName', 'OriginalName', 'OriginalUrl', 'Status',
         'LastChapter', 'LastUpdated', 'NeedsExtract', 'ReleaseDay',
-        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup', 'LockedTypesetter', 'LockedPublisher', 'LockedPoster', 'ExcludeTranslatePayout'
+        'CostPerChapter', 'LockedTranslator', 'NotifyOnAdd', 'Slug', 'IsUrgent', 'TranslationDocUrl', 'ScanGroup', 'LockedTypesetter', 'LockedPublisher', 'LockedPoster', 'ExcludeTranslatePayout', 'TypesetDifficulty'
       ]);
       sheet.getRange(1, 1, 1, 15).setFontWeight('bold').setBackground('#4f46e5').setFontColor('#ffffff');
     } else if (name === QUEUE_SHEET_NAME) {
@@ -1136,6 +1137,11 @@ function getMangaList() {
       if (obj.platforms !== undefined) {
         obj.Platforms = obj.platforms;
       }
+      const rawDiff = obj.typesetdifficulty !== undefined ? obj.typesetdifficulty : obj.TypesetDifficulty;
+      if (rawDiff !== undefined) {
+        obj.typesetdifficulty = String(rawDiff || '').trim();
+        obj.TypesetDifficulty = obj.typesetdifficulty;
+      }
       return obj;
     }).filter(item => item.manganame);
   } catch (err) {
@@ -1192,6 +1198,15 @@ function addManga(manga) {
       headers.push('platforms');
     }
 
+    if (headers.indexOf('typesetdifficulty') === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('TypesetDifficulty');
+      if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue('');
+      }
+      headers.push('typesetdifficulty');
+    }
+
     const id = getNextId();
     const timestamp = new Date();
     
@@ -1227,6 +1242,12 @@ function addManga(manga) {
               ? manga.ExcludeTranslatePayout 
               : (manga.excludeTranslatePayout !== undefined ? manga.excludeTranslatePayout : undefined));
         return parseBooleanParam(rawVal, false);
+      }
+      if (header === 'typesetdifficulty') {
+        const rawDiff = manga.typesetdifficulty !== undefined
+          ? manga.typesetdifficulty
+          : (manga.TypesetDifficulty !== undefined ? manga.TypesetDifficulty : manga.typesetDifficulty);
+        return rawDiff !== undefined && rawDiff !== null ? String(rawDiff).trim() : '';
       }
       return '';
     });
@@ -1339,6 +1360,15 @@ function updateManga(id, updatedManga) {
       }
       headers.push('platforms');
     }
+
+    if (headers.indexOf('typesetdifficulty') === -1) {
+      const newCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, newCol).setValue('TypesetDifficulty');
+      if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, newCol, sheet.getLastRow() - 1, 1).setValue('');
+      }
+      headers.push('typesetdifficulty');
+    }
     
     for (let i = 1; i < data.length; i++) {
       if (data[i][0].toString() === id.toString()) {
@@ -1377,6 +1407,14 @@ function updateManga(id, updatedManga) {
                   ? updatedManga.ExcludeTranslatePayout 
                   : (updatedManga.excludeTranslatePayout !== undefined ? updatedManga.excludeTranslatePayout : undefined));
             sheet.getRange(rowNum, colNum).setValue(parseBooleanParam(rawVal, false));
+          }
+          if (header === 'typesetdifficulty') {
+            const rawDiff = updatedManga.typesetdifficulty !== undefined
+              ? updatedManga.typesetdifficulty
+              : (updatedManga.TypesetDifficulty !== undefined ? updatedManga.TypesetDifficulty : updatedManga.typesetDifficulty);
+            if (rawDiff !== undefined) {
+              sheet.getRange(rowNum, colNum).setValue(rawDiff !== null ? String(rawDiff).trim() : '');
+            }
           }
         });
         invalidateCache('mangaList');

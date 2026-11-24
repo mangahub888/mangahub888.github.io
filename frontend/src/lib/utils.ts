@@ -106,6 +106,98 @@ export function isTranslatePayoutExcluded(manga: any): boolean {
   return s === 'true' || s === '1' || s === 'yes'
 }
 
+export const TYPESET_DIFFICULTIES = [
+  {
+    id: "easy",
+    label: "ลงคำง่าย",
+    shortLabel: "ลงคำง่าย",
+    badgeClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+    activeCardClass: "border-emerald-500/70 bg-emerald-500/15 ring-1 ring-emerald-500/40 text-emerald-200",
+    dotClass: "bg-emerald-400",
+  },
+  {
+    id: "hard",
+    label: "ลงคำยาก",
+    shortLabel: "ลงคำยาก",
+    badgeClass: "bg-rose-500/20 text-rose-300 border-rose-500/40",
+    activeCardClass: "border-rose-500/70 bg-rose-500/15 ring-1 ring-rose-500/40 text-rose-200",
+    dotClass: "bg-rose-400",
+  },
+] as const
+
+export type TypesetDifficultyId = "easy" | "hard" | ""
+
+const STORAGE_TYPESET_DIFF_KEY = "mangahub_typeset_difficulty_map"
+
+export function normalizeTypesetDifficulty(val: any): TypesetDifficultyId {
+  if (val === undefined || val === null) return ""
+  const s = String(val).trim().toLowerCase()
+  if (s === "easy" || s === "ลงคำง่าย" || s === "ง่าย") return "easy"
+  if (s === "hard" || s === "ลงคำยาก" || s === "ยาก") return "hard"
+  return ""
+}
+
+function getLocalTypesetDifficultyMap(): Record<string, TypesetDifficultyId> {
+  try {
+    if (typeof window === "undefined" || !window.localStorage) return {}
+    const raw = window.localStorage.getItem(STORAGE_TYPESET_DIFF_KEY)
+    if (!raw) return {}
+    return JSON.parse(raw) || {}
+  } catch {
+    return {}
+  }
+}
+
+export function setLocalTypesetDifficulty(mangaId: string | number | undefined | null, val: any) {
+  try {
+    if (mangaId === undefined || mangaId === null) return
+    if (typeof window === "undefined" || !window.localStorage) return
+    const key = String(mangaId).trim()
+    if (!key) return
+    const map = getLocalTypesetDifficultyMap()
+    const normalized = normalizeTypesetDifficulty(val)
+    map[key] = normalized
+    window.localStorage.setItem(STORAGE_TYPESET_DIFF_KEY, JSON.stringify(map))
+  } catch {
+    // ignore storage errors
+  }
+}
+
+export function getMangaTypesetDifficulty(manga: any): TypesetDifficultyId {
+  if (!manga) return ""
+  const raw =
+    manga.typesetdifficulty !== undefined
+      ? manga.typesetdifficulty
+      : manga.TypesetDifficulty !== undefined
+      ? manga.TypesetDifficulty
+      : manga.typesetDifficulty !== undefined
+      ? manga.typesetDifficulty
+      : manga.typeset_difficulty
+
+  if (raw !== undefined && raw !== null && String(raw).trim() !== "") {
+    return normalizeTypesetDifficulty(raw)
+  }
+
+  // Fallback to localStorage override if GAS sheet hasn't returned the column yet
+  const mid = manga.mangaid != null ? String(manga.mangaid).trim() : ""
+  if (mid) {
+    const map = getLocalTypesetDifficultyMap()
+    if (mid in map) {
+      return normalizeTypesetDifficulty(map[mid])
+    }
+  }
+  return ""
+}
+
+export function getTypesetDifficultyMeta(mangaOrVal: any) {
+  const diff: TypesetDifficultyId =
+    typeof mangaOrVal === "object" && mangaOrVal !== null
+      ? getMangaTypesetDifficulty(mangaOrVal)
+      : normalizeTypesetDifficulty(mangaOrVal)
+  if (!diff) return null
+  return TYPESET_DIFFICULTIES.find((d) => d.id === diff) || null
+}
+
 /**
  * Global Fallback Dictionary for unlisted/historical Manga IDs
  * Ensures that whenever a manga ID is not in live MangaList, the system can still resolve its true name.
